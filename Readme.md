@@ -4,6 +4,9 @@ This repo holds a collection of Fluence examples and tutorials across the entire
 
 ### call_parameters
 
+To Do:
+- [ ] Add documentation
+
 ### greeting
 Fluence's peer-to-peer analogy to "Hello World."
 
@@ -41,7 +44,12 @@ To Do:
 - [x] Add documentation
 - [ ] Add Rust frontend
 
+### web3-examples
+Illustrate Ethereum RPC calls as Fluence services.
 
+To Do:
+- [x] Add documentation
+- [x] Add frontend
 
 
 ## Contributing
