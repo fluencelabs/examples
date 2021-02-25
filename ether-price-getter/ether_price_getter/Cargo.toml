@@ -1,0 +1,15 @@
+[package]
+name = "ether_price_getter"
+version = "0.1.0"
+authors = ["Fluence Labs"]
+edition = "2018"
+publish = false
+
+[[bin]]
+name = "ether_price_getter"
+path = "src/main.rs"
+
+[dependencies]
+fluence = { version = "0.2.18", features = ["logger"]}
+log = "0.4.8"
+fstrings = { version="0.2.3" }
