@@ -16,6 +16,7 @@
 #![allow(improper_ctypes)]
 
 use fluence::fce;
+use fluence::MountedBinaryResult as Result;
 use fluence::WasmLoggerBuilder;
 
 pub fn main() {
@@ -25,21 +26,32 @@ pub fn main() {
 /// Combining of modules: `curl` and `local_storage`.
 /// Calls `curl` and stores returned result into a file.
 #[fce]
-pub fn get_n_save(url: String, file_name: String) -> String {
+pub fn get_n_save(url: String, file_name: String) -> i32 {
     let result = unsafe { download(url) };
-    unsafe { file_put(file_name, result.into_bytes()) };
+    if result.is_success() {
+        log::info!("saving file {}", file_name);
+        unsafe { file_put(file_name, result.stdout) };
+    } else {
+        log::error!("download failed: {:#?}", result.as_std())
+    }
 
-    String::from("Ok")
+    result.ret_code
 }
 
-/// Importing `curl` module
+#[fce]
+pub fn load_file(file_name: String) -> String {
+    let bytes = unsafe { file_get(file_name) };
+    base64::encode(bytes)
+}
+
+/// Import `curl_adapter` module
 #[fce]
 #[link(wasm_import_module = "curl_adapter")]
 extern "C" {
-    pub fn download(url: String) -> String;
+    pub fn download(url: String) -> Result;
 }
 
-/// Importing `local_storage` module
+/// Import `local_storage` module
 #[fce]
 #[link(wasm_import_module = "local_storage")]
 extern "C" {
