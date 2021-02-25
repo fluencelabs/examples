@@ -26,19 +26,19 @@ pub fn main() {
 /// Combining of modules: `curl` and `local_storage`.
 /// Calls `curl` and stores returned result into a file.
 #[fce]
-pub fn get_n_save(url: String, file_name: String) -> i32 {
+pub fn get_n_save(url: String, file_name: String) -> String {
     let result = unsafe { download(url) };
     if result.is_success() {
         log::info!("saving file {}", file_name);
-        unsafe { file_put(file_name, result.stdout) };
+        unsafe { file_put(file_name, result.stdout) }
     } else {
-        log::error!("download failed: {:#?}", result.as_std())
+        log::error!("download failed: {:#?}", result.as_std());
+        format!("download failed: {:#?}", result.as_std())
     }
-
-    result.ret_code
 }
 
 #[fce]
+/// Loads file from disk and returns its content as base64
 pub fn load_file(file_name: String) -> String {
     let bytes = unsafe { file_get(file_name) };
     base64::encode(bytes)
