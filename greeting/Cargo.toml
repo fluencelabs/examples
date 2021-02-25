@@ -1,0 +1,13 @@
+[package]
+name = "wasm-greeting"
+version = "0.1.0"
+authors = ["Fluence Labs"]
+edition = "2018"
+publish = false
+
+[[bin]]
+name = "greeting"
+path = "src/main.rs"
+
+[dependencies]
+fluence = "=0.3.2"
