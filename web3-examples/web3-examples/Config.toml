@@ -1,0 +1,12 @@
+modules_dir = "artifacts/"
+
+[[module]]
+    name = "curl_adapter"
+    # logger_enabled = false
+
+    [module.mounted_binaries]
+    curl = "/usr/bin/curl"
+
+[[module]]
+    name = "facade"
+    # logger_enabled = true
