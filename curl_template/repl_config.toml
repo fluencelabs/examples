@@ -1,0 +1,8 @@
+modules_dir = "backend/target/wasm32-wasi/release/"
+
+[[module]]
+    name = "curl_template"
+    logger_enabled = true
+
+    [module.mounted_binaries]
+    curl = "/usr/bin/curl"
