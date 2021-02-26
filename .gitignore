@@ -10,3 +10,4 @@ node_modules
 /artifacts
 keypair.json
 *.wasm
+logo.svg

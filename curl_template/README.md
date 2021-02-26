@@ -1,6 +1,6 @@
 # Download & return URL via curl
 
-An example repo to kick-off building services on Fluence.
+An example to kick-off building services on Fluence.
 
 What it does:
 - exploits `mounted_binaries` to call `/usr/bin/curl` on the host OS
