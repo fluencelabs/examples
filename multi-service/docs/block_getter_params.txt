@@ -1,0 +1,64 @@
+mbp16~/localdev/fluence-examples/multi-service(multi-service|✚3…) % fldist new_service --env testnet -s BtN9ikmpcSRgBWgwLF9yoSZeyuzmYvc5Czyn8XRy514P -n eth_block_getter --ms artifacts/curl_adapter.wasm:config/curl_cfg.json artifacts/block_getter.wasm:config/block_getter_cfg.json --node 12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9
+client seed: BtN9ikmpcSRgBWgwLF9yoSZeyuzmYvc5Czyn8XRy514P
+client peerId: 12D3KooWJLm7n3GpZasv5gsAkta8BYBKHHC19PZ6U8kzWNaabjNz
+node peerId: 12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9
+uploading blueprint eth_block_getter to node 12D3KooWEXNUbCXooUwHrHBbrmjsrpHXoEphPwbjQXEGyzbqKnE9 via client 12D3KooWJLm7n3GpZasv5gsAkta8BYBKHHC19PZ6U8kzWNaabjNz
+creating service f653a73d-ad25-47f2-8b38-a400b8122e3e
+service id: 6e1318e7-836f-4407-b355-e774c3fe1d87
+service created successfully
+
+mbp16~/localdev/fluence-examples/multi-service(multi-service|✚3…) % fldist new_service --env testnet -s BtN9ikmpcSRgBWgwLF9yoSZeyuzmYvc5Czyn8XRy514P -n eth_block_getter --ms artifacts/curl_adapter.wasm:config/curl_cfg.json artifacts/block_getter.wasm:config/block_getter_cfg.json --node 12D3KooWHk9BjDQBUqnavciRPhAYFvqKBe4ZiPPvde7vDaqgn5er
+client seed: BtN9ikmpcSRgBWgwLF9yoSZeyuzmYvc5Czyn8XRy514P
+client peerId: 12D3KooWJLm7n3GpZasv5gsAkta8BYBKHHC19PZ6U8kzWNaabjNz
+node peerId: 12D3KooWHk9BjDQBUqnavciRPhAYFvqKBe4ZiPPvde7vDaqgn5er
+uploading blueprint eth_block_getter to node 12D3KooWHk9BjDQBUqnavciRPhAYFvqKBe4ZiPPvde7vDaqgn5er via client 12D3KooWJLm7n3GpZasv5gsAkta8BYBKHHC19PZ6U8kzWNaabjNz
+creating service ae43ae17-455c-49c0-8819-f3c081f23b75
+service id: 5023eb9a-9d2e-45da-9291-68db5fef30ad
+service created successfully
+mbp16~/localdev/fluence-examples/multi-service(multi-service|✚3…) %
+
+
+
+
+mbp16~/localdev/fluence-examples/multi-service(multi-service|✚3…) % fldist new_service --env testnet -s BtN9ikmpcSRgBWgwLF9yoSZeyuzmYvc5Czyn8XRy514P -n hex2int_converter --ms artifacts/hex_converter.wasm:config/hex_converter_cfg.json --node 12D3KooWMhVpgfQxBLkQkJed8VFNvgN4iE6MD7xCybb1ZYWW2Gtz
+client seed: BtN9ikmpcSRgBWgwLF9yoSZeyuzmYvc5Czyn8XRy514P
+client peerId: 12D3KooWJLm7n3GpZasv5gsAkta8BYBKHHC19PZ6U8kzWNaabjNz
+node peerId: 12D3KooWMhVpgfQxBLkQkJed8VFNvgN4iE6MD7xCybb1ZYWW2Gtz
+uploading blueprint hex2int_converter to node 12D3KooWMhVpgfQxBLkQkJed8VFNvgN4iE6MD7xCybb1ZYWW2Gtz via client 12D3KooWJLm7n3GpZasv5gsAkta8BYBKHHC19PZ6U8kzWNaabjNz
+creating service e2c2bb33-8b73-4e5c-a1b0-2f8df2bd4bc6
+service id: 7b162215-6413-4385-a4bb-f7cc64017ebb
+service created successfully
+
+mbp16~/localdev/fluence-examples/multi-service(multi-service|✚3…) % fldist new_service --env testnet -s BtN9ikmpcSRgBWgwLF9yoSZeyuzmYvc5Czyn8XRy514P -n hex2int_converter --ms artifacts/hex_converter.wasm:config/hex_converter_cfg.json --node 12D3KooWCKCeqLPSgMnDjyFsJuWqREDtKNHx1JEBiwaMXhCLNTRb
+client seed: BtN9ikmpcSRgBWgwLF9yoSZeyuzmYvc5Czyn8XRy514P
+client peerId: 12D3KooWJLm7n3GpZasv5gsAkta8BYBKHHC19PZ6U8kzWNaabjNz
+node peerId: 12D3KooWCKCeqLPSgMnDjyFsJuWqREDtKNHx1JEBiwaMXhCLNTRb
+uploading blueprint hex2int_converter to node 12D3KooWCKCeqLPSgMnDjyFsJuWqREDtKNHx1JEBiwaMXhCLNTRb via client 12D3KooWJLm7n3GpZasv5gsAkta8BYBKHHC19PZ6U8kzWNaabjNz
+creating service d291af92-1f94-41c6-aa8d-a7e8670f0ab2
+service id: d21b154d-6cf0-4cc7-95be-f95ba35ea528
+service created successfully
+mbp16~/localdev/fluence-examples/multi-service(multi-service|✚3…) %
+
+
+
+
+
+mbp16~/localdev/fluence-examples/multi-service(multi-service|✚3…) % fldist new_service --env testnet -s BtN9ikmpcSRgBWgwLF9yoSZeyuzmYvc5Czyn8XRy514P -n extract_miner_address --ms artifacts/extract_miner_address.wasm:config/extract_miner_address_cfg.json --node 12D3KooWBSdm6TkqnEFrgBuSkpVE3dR1kr6952DsWQRNwJZjFZBv
+client seed: BtN9ikmpcSRgBWgwLF9yoSZeyuzmYvc5Czyn8XRy514P
+client peerId: 12D3KooWJLm7n3GpZasv5gsAkta8BYBKHHC19PZ6U8kzWNaabjNz
+node peerId: 12D3KooWBSdm6TkqnEFrgBuSkpVE3dR1kr6952DsWQRNwJZjFZBv
+uploading blueprint extract_miner_address to node 12D3KooWBSdm6TkqnEFrgBuSkpVE3dR1kr6952DsWQRNwJZjFZBv via client 12D3KooWJLm7n3GpZasv5gsAkta8BYBKHHC19PZ6U8kzWNaabjNz
+creating service 7697fdf2-e91c-4dd3-bdad-2aab553727ff
+service id: c49b9e98-8f54-4293-954f-ed35a2f891a4
+service created successfully
+
+mbp16~/localdev/fluence-examples/multi-service(multi-service|✚3…) % fldist new_service --env testnet -s BtN9ikmpcSRgBWgwLF9yoSZeyuzmYvc5Czyn8XRy514P -n extract_miner_address --ms artifacts/extract_miner_address.wasm:config/extract_miner_address_cfg.json --node 12D3KooWF7gjXhQ4LaKj6j7ntxsPpGk34psdQicN2KNfBi9bFKXg
+client seed: BtN9ikmpcSRgBWgwLF9yoSZeyuzmYvc5Czyn8XRy514P
+client peerId: 12D3KooWJLm7n3GpZasv5gsAkta8BYBKHHC19PZ6U8kzWNaabjNz
+node peerId: 12D3KooWF7gjXhQ4LaKj6j7ntxsPpGk34psdQicN2KNfBi9bFKXg
+uploading blueprint extract_miner_address to node 12D3KooWF7gjXhQ4LaKj6j7ntxsPpGk34psdQicN2KNfBi9bFKXg via client 12D3KooWJLm7n3GpZasv5gsAkta8BYBKHHC19PZ6U8kzWNaabjNz
+creating service 8422a207-5ac6-4be0-81aa-e1035b0d0153
+service id: c7f959ca-7716-429f-9203-118fc67e420b
+service created successfully
+mbp16~/localdev/fluence-examples/multi-service(multi-service|✚3…) %
+

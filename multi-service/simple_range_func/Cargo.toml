@@ -1,0 +1,9 @@
+[package]
+name = "simple_range_list"
+version = "0.1.0"
+authors = ["Fluence Team"]
+edition = "2018"
+
+[dependencies]
+fluence = { version = "0.2.18", features = ["logger"]}
+log = "0.4.8"
