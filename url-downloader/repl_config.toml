@@ -1,0 +1,21 @@
+modules_dir = "artifacts/"
+
+[[module]]
+name = "local_storage"
+logger_enabled = true
+
+[module.wasi]
+preopened_files = ["."]
+# this is where files will be stored
+mapped_dirs = { "sites" = "." }
+
+[[module]]
+name = "curl_adapter"
+logger_enabled = true
+
+[module.mounted_binaries]
+curl = "/usr/bin/curl"
+
+[[module]]
+name = "facade"
+logger_enabled = true

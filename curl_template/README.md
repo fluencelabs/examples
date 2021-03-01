@@ -1,6 +1,6 @@
 # Download & return URL via curl
 
-An example repo to kick-off building services on Fluence.
+An example to kick-off building services on Fluence.
 
 What it does:
 - exploits `mounted_binaries` to call `/usr/bin/curl` on the host OS
@@ -29,7 +29,7 @@ P.S. JSON5 has comments! yaaay!
 
 # Call it
 ```shell
-fldist run_air -p air.clj -d '{"service": "e90bfbaf-ede7-4fbe-b45a-6250bf36ed3e"}'
+fldist run_air -p request.air -d '{"service": "e90bfbaf-ede7-4fbe-b45a-6250bf36ed3e"}'
 ```
 
 # Run frontend

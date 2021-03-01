@@ -1,0 +1,10 @@
+(xor
+    (seq
+        (seq
+           (call relay (service "get_n_save") ["https://fluence.network/img/svg/logo_new.svg" "logo.svg"] ret_code)
+           (call relay (service "load_file") ["logo.svg"] bytes)
+        )
+        (call %init_peer_id% (returnService "run") [ret_code bytes])
+    )
+    (call %init_peer_id% (returnService "run") [%last_error%])
+)

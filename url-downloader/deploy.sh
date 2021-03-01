@@ -1,7 +1,7 @@
 #!/bin/sh -euo pipefail
 
 # build wasms
-sh build.sh
+./build.sh
 
 (
   cd artifacts
