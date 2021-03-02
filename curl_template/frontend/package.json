@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@fluencelabs/fluence": "^0.9.17",
+    "@fluencelabs/fluence": "^0.9.25",
     "@fluencelabs/fluence-network-environment": "^1.0.8",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",

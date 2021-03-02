@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const relayNode = testNet[3];
 const node = relayNode.peerId;
 
-const serviceId = 'e90bfbaf-ede7-4fbe-b45a-6250bf36ed3e';
+const serviceId = '4d082281-c72c-468b-b30a-e9ebad70546c';
 
 export const curlRequest = async (client: FluenceClient, url: String, ttl: number) => {
     const script = `
@@ -30,5 +30,5 @@ export const curlRequest = async (client: FluenceClient, url: String, ttl: numbe
     data.set('callback', callbackId);
     data.set('url', url);
 
-    return await sendParticleAsFetch<String>(client, new Particle(script, data, ttl), callbackId);
+    return await sendParticleAsFetch<any>(client, new Particle(script, data, ttl), callbackId);
 };

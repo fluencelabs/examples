@@ -29,7 +29,7 @@ P.S. JSON5 has comments! yaaay!
 
 # Call it
 ```shell
-fldist run_air -p request.air -d '{"service": "e90bfbaf-ede7-4fbe-b45a-6250bf36ed3e"}'
+fldist run_air -p request.air -d '{"service": "19e70712-04b6-496e-96d9-9eab87bef9c6"}'
 ```
 
 # Run frontend

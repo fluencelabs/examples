@@ -30,7 +30,8 @@ const App = () => {
         }
 
         let response = await curlRequest(client, url, 10000);
-        setData((prev) => [...prev, { url, response }]);
+        console.log(JSON.stringify(response));
+        setData((prev) => [...prev, { url, response: response[0].stdout }]);
     };
 
     const stop = async () => {
