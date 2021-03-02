@@ -98,7 +98,7 @@ service id: 9840c6be-11c8-47e2-98e0-88d758b5a456
 service created successfully
 ```
 
-We can now discover the service on the [Fluenced dashboard](https://dash.fluence.dev/blueprint/a7959f53-a70b-4183-83e0-649f4f91160c) and put it to use. Whether we want to write a frontend application or use the `fldist` tool to execute the remote service, we need an AIR script. Using the prepared [AIR script](../air-scripts/get_eth_price.js) for which you need to supply your own API key:
+We can now discover the service on the [Fluence dashboard](https://dash.fluence.dev/blueprint/a7959f53-a70b-4183-83e0-649f4f91160c) and put it to use. Whether we want to write a frontend application or use the `fldist` tool to execute the remote service, we need an AIR script. Using the prepared [AIR script](../air-scripts/get_eth_price.js) for which you need to supply your own API key:
 
 ```bash
 fldist run_air  -p get_eth_price.clj -d '{"service":"9840c6be-11c8-47e2-98e0-88d758b5a456"}'
