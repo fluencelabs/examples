@@ -13,43 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#![allow(improper_ctypes)]
 
 use fluence::fce;
-use fluence::WasmLoggerBuilder;
+// use fluence::MountedBinaryStringResult as StringResult;
+use fluence::MountedBinaryResult as Result;
 
-/// Log level can be changed by `RUST_LOG` env as well.
-pub fn main() {
-    WasmLoggerBuilder::new().build().unwrap();
-}
+fn main() {}
 
 #[fce]
-pub fn curl_request(url: String) -> String {
-    // log::info!("get called with url {}", url);
-
-    unsafe { curl(url) }
+pub fn curl_request(curl_cmd: Vec<String>) -> Result {
+    let response = unsafe { curl(curl_cmd.clone()) };
+    log::info!("curl response for {:?} : {:?}", curl_cmd, response);
+    response
 }
 
-/// Permissions in `Config.toml` should exist to use host functions.
+// mounted_binaries are available to import like this:
 #[fce]
 #[link(wasm_import_module = "host")]
 extern "C" {
-    fn curl(cmd: String) -> String;
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn curl_test() {
-        let args = r#"-X POST --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["0x1b4", true],"id":1}'"#;
-        let url = "https://kovan.infura.io/v3//0cc023286cae4ab886598ecd14e256fd";
-
-        let cmd = format!("{} {}", args, url);
-        println!("cmd: {}", cmd);
-
-        let res = curl_request(cmd);
-        println!("res: {}", res);
-        assert!(true);
-    }
+    pub fn curl(cmd: Vec<String>) -> Result;
 }
