@@ -17,6 +17,7 @@
 extern crate fstrings;
 
 use fluence::{fce, WasmLoggerBuilder};
+use fluence::MountedBinaryResult as Result;
 
 mod eth_block_getters;
 
@@ -27,5 +28,6 @@ fn main() {
 #[fce]
 #[link(wasm_import_module = "curl_adapter")]
 extern "C" {
-    pub fn curl_request(url: String) -> String;
+    pub fn curl_request(curl_cmd: Vec<String>) -> Result;
 }
+

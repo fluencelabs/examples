@@ -16,21 +16,42 @@
 
 use crate::curl_request;
 use fluence::fce;
+use fluence::MountedBinaryResult;
 
-#[fce]
-pub fn get_latest_block(api_key: String) -> String {
-    let url =
-        f!("https://api.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey={api_key}");
 
-    let response: String = unsafe { curl_request(url) };
-    response
+fn result_to_string(result:MountedBinaryResult) -> String {
+    if result.is_success() {
+        return String::from_utf8(result.stdout).expect("Found invalid UTF-8");
+    }
+    String::from_utf8(result.stderr).expect("Found invalid UTF-8")
 }
 
 #[fce]
-pub fn get_block(api_key: String, block_number: u64) -> String {
-    // let block_num = format!("{:X}", block_number);
-    let url = f!("https://api.etherscan.io/api?module=block&action=getblockreward&blockno={block_number}&apikey={api_key}");
+pub fn get_latest_block(api_key: String) -> String {
+    let url = f!("https://api.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey={api_key}");
+    let header = "-d \"\"";
 
-    let response: String = unsafe { curl_request(url) };
-    response
+    let curl_cmd:Vec<String> = vec![header.into(), url.into()];
+    let response = unsafe { curl_request(curl_cmd) };
+    result_to_string(response)
+
+    /*
+    let raw_string = result_to_string(response);
+    let obj = serde_json::from_str(&raw_string);
+    let res = match obj {
+        Ok(x) => x["result"],
+        Err(_) => "",
+    };
+    String::from(res)
+    */
+}
+
+#[fce]
+pub fn get_block(api_key: String, block_number: u32) -> String {
+    let url = f!("https://api.etherscan.io/api?module=block&action=getblockreward&blockno={block_number}&apikey={api_key}");
+    let header = "-d \"\"";
+
+    let curl_cmd:Vec<String> = vec![header.into(), url];
+    let response = unsafe { curl_request(curl_cmd) };
+    result_to_string(response)
 }
