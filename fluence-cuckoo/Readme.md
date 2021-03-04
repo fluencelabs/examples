@@ -119,9 +119,11 @@ Take note of the keys and seed and keep them safe. Now that we have our seed, we
 We also need a service configuration file, which is trivial in our case, see [cuckoo_cfg.json](fce-cuckoo/cuckoo_cfg.json) and merely specifies the service name:
 
 ```bash
+cat <<EOF > cuckoo_cfg.json
 {
     "name": "fce-cuckoo"
 }
+EOF
 ```
 
 Almost there. We want a name for our blueprint, which should be a UUID. You can generate a valid uuid anyway you want including the nifty `uuidgen`:
@@ -134,8 +136,7 @@ CD610F03-D631-4F28-B22F-AFC637373626
 We're finally ready to deploy our service:
 
 ```bash
-mbp16~/localdev/lw3d/fluence-cuckoo/fce-cuckoo(main|●1…) % fldist new_service -n CD610F03-D631-4F28-B22F-AFC637373626  --ms artifacts/fce-cuckoo.wasm:cuckoo_cfg.json -s 
-6vVXJFGhmDk3h58aGNzrGxuoK9jvrfYax1rCBJaNDnUi --env testnet
+mbp16~/localdev/lw3d/fluence-cuckoo/fce-cuckoo(main|●1…) % fldist new_service --name 'Cuckoo Filter' --ms artifacts/fce-cuckoo.wasm:cuckoo_cfg.json -s 6vVXJFGhmDk3h58aGNzrGxuoK9jvrfYax1rCBJaNDnUi
 
 client seed: 6vVXJFGhmDk3h58aGNzrGxuoK9jvrfYax1rCBJaNDnUi
 client peerId: 12D3KooWRKibxAS9NmdXcJ95GYc5CU25UTw8ABzfgNtsHkwHLnHm
@@ -153,7 +154,7 @@ There are different ways to interact with our distributed service but they all g
 Let's test the `service_info` function we reviewed earlier and use the `cuckoo_service_info.clj`:
 
 ```bash
-mbp16~/localdev/lw3d/fluence-cuckoo/fce-cuckoo(main|●1…) % fldist run_air -p air-scripts/cuckoo_service_info.clj -d '{"service": "f3137ae9-e687-443d-be1a-9f20a3894d4a"}' --env testnet
+mbp16~/localdev/lw3d/fluence-cuckoo/fce-cuckoo(main|●1…) % fldist run_air -p air-scripts/cuckoo_service_info.clj -d '{"service": "f3137ae9-e687-443d-be1a-9f20a3894d4a"}'
 client seed: rcxj5V4CxGPqFi4Z4ddQLGYajSKa9mj9Rfi5KqJcLjX
 client peerId: 12D3KooWHzbkGB8NjLpTsX7GWu687jsWy3G5Tux5DWfhj7HiYkj8
 node peerId: 12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb
@@ -188,7 +189,7 @@ Calling our remote `fn service_info() -> String` with the air script gives us th
 Let's get ourselves a cuckoo filter:
 
  ```bash
- mbp16~/localdev/lw3d/fluence-cuckoo/fce-cuckoo(main|●1…) % fldist run_air -p air-scripts/cuckoo_create_cf.clj -d '{"service": "f3137ae9-e687-443d-be1a-9f20a3894d4a"}' --env testnet
+ mbp16~/localdev/lw3d/fluence-cuckoo/fce-cuckoo(main|●1…) % fldist run_air -p air-scripts/cuckoo_create_cf.clj -d '{"service": "f3137ae9-e687-443d-be1a-9f20a3894d4a"}'
 client seed: 76qEx9wTgUweViSCdLMc7Z9tma9AkawGTFWZCKZNER7Z
 client peerId: 12D3KooWCeZV2qMyiaVTKUYBQXp5Moxf9gptDFHTDuCZfivZz9Fn
 node peerId: 12D3KooWBUJifCTgaxAUrcM9JysqCcS4CS8tiYH5hExbdWCAoNwb

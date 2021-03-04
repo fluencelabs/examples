@@ -4,7 +4,7 @@
 cargo update
 fce build --release
 
-rm artifacts/*
+mkdir -p artifacts
+rm artifacts/*.wasm
 cp ../../target/wasm32-wasi/release/sqlite_test.wasm artifacts/
-wget https://github.com/fluencelabs/sqlite/releases/download/v0.9.0_w/sqlite3.wasm
-mv sqlite3.wasm artifacts/
+wget https://github.com/fluencelabs/sqlite/releases/download/v0.10.0_w/sqlite3.wasm -O artifacts/sqlite3.wasm
