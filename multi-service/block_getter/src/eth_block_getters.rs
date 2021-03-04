@@ -33,17 +33,9 @@ pub fn get_latest_block(api_key: String) -> String {
 
     let curl_cmd:Vec<String> = vec![header.into(), url.into()];
     let response = unsafe { curl_request(curl_cmd) };
-    result_to_string(response)
-
-    /*
-    let raw_string = result_to_string(response);
-    let obj = serde_json::from_str(&raw_string);
-    let res = match obj {
-        Ok(x) => x["result"],
-        Err(_) => "",
-    };
-    String::from(res)
-    */
+    let res = result_to_string(response);
+    let obj = serde_json::from_str::<serde_json::Value>(&res).unwrap();
+    serde_json::from_value(obj["result"].clone()).unwrap()
 }
 
 #[fce]
