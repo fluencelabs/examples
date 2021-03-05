@@ -1,0 +1,10 @@
+{
+    "name": "Sqlite Paywall",
+    "mem_page_count": 1,
+    "preopened_files": [
+        "/var"
+    ],
+    "mapped_dirs": {
+        "var": "./var"
+    }
+}

@@ -19,6 +19,8 @@ use fluence::WasmLoggerBuilder;
 use fce_sqlite_connector;
 use fce_sqlite_connector::{Connection, State, Value};
 
+use uuid::Uuid;
+
 use std::path::{Path, PathBuf};
 use serde::Deserialize;
 use serde_json;
@@ -31,6 +33,16 @@ fn main() {
     // WasmLoggerBuilder::new().build().unwrap();
 }
 
+const KOVAN_ACCT: &str = "";
+
+pub enum EthereumChains {
+    MAINNET  =  1,
+    ROPSTEN  =  3,
+    RINKEBY  =  4,
+    GOERLI   =  5,
+    KOVAN    = 42,
+
+}
 
 fn get_connection() -> Connection {
     Connection::open(DB_PATH).unwrap()
@@ -53,9 +65,18 @@ fn create_table(conn: &Connection) -> std::result::Result<(), fce_sqlite_connect
             timestamp integer not null,
             amount integer not null,
             unit text not null,
-            unique(tx_number, chain_id)
+            available integer not null,
+            unique(chain_id, tx_number)
         );
 
+        create table if not exists costs (
+            chain_id integer not null primary key,
+            query_cost integer not null,
+            cost_unit string not null ,
+            currency string not null
+        );
+
+        insert or ignore into costs values(42, 10, 'gwei', 'eth');
         ",
     );
     res
@@ -74,25 +95,34 @@ pub fn init_service() -> bool {
 
 #[fce]
 pub fn update_reward_blocks(data_string: String) -> bool {  
-   
-    let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
-    create_table(&conn).unwrap();
 
-    let data_string = "{\"status\":\"1\",\"message\":\"OK\",\"result\":{\"blockNumber\":\"11973516\",\"timeStamp\":\"1614884018\",\"blockMiner\":\"0x99c85bb64564d9ef9a99621301f22c9993cb89e3\",\"blockReward\":\"4640547346291918049\",\"uncles\":[],\"uncleInclusionReward\":\"0\"}}";
+    println!("{}", data_string);
     let obj:serde_json::Value = serde_json::from_str(&data_string).unwrap();
+    let obj = obj["result"].clone();
+    println!("result obj: {:?}", obj);
+    println!("blockNumber: {:?}", obj["blockNumber"]);
+
+    let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
+    println!("crate table: {:?}", create_table(&conn).unwrap());
+
+    
+    // let data_string = "{\"status\":\"1\",\"message\":\"OK\",\"result\":{\"blockNumber\":\"11980217\",\"timeStamp\":\"1614972187\",\"blockMiner\":\"0x2a0eee948fbe9bd4b661adedba57425f753ea0f6\",\"blockReward\":\"4106318342441412983\",\"uncles\":[],\"uncleInclusionReward\":\"0\"}}";
+    // let obj:serde_json::Value = serde_json::from_str(&data_string).unwrap();
 
     let insert = "insert or ignore into reward_blocks values(?, ?, ?, ?)";
     let mut ins_cur = conn.prepare(insert).unwrap().cursor();
     
-    
+
     let insert = ins_cur.bind(
-        &[Value::Integer(i64::from_str_radix(obj["result"]["blockNumber"].as_str().unwrap(), 10).unwrap()),
-          Value::Integer(i64::from_str_radix(obj["result"]["timeStamp"].as_str().unwrap(), 10).unwrap()),
-          Value::String(obj["result"]["blockMiner"].to_string()), 
-          Value::Integer(i64::from_str_radix(obj["result"]["blockReward"].as_str().unwrap(), 10).unwrap()),
+ &[Value::Integer(i64::from_str_radix(obj["blockNumber"].as_str().unwrap(), 10).unwrap()),
+          Value::Integer(i64::from_str_radix(obj["timeStamp"].as_str().unwrap(), 10).unwrap()),
+          Value::String(obj["blockMiner"].to_string()), 
+          Value::Integer(i64::from_str_radix(obj["blockReward"].clone().as_str().unwrap(), 10).unwrap()),
         ]
     );
-    
+
+    println!("insert: {:?}", insert);
+
     if insert.is_ok() {
         ins_cur.next().unwrap();
         let mut select = conn.prepare("select * from reward_blocks").unwrap().cursor();
@@ -106,35 +136,13 @@ pub fn update_reward_blocks(data_string: String) -> bool {
     false
 } 
 
-
-#[fce]
-pub fn get_latest_reward_block() -> Vec<String> {
-    // let db_path = "/tmp/db.sqlite";
-    let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
-
-    let mut result:Vec<String> = Vec::new();
-    let select = conn.prepare("select * from reward_blocks order by block_number desc limit 1");
-    match select {
-        Ok(s) => {
-            let mut select = s.cursor(); 
-            while let Some(row) = select.next().unwrap() {
-                println!("select row {:?}", row);
-                println!("{}, {}", row[0].as_integer().unwrap(), row[2].as_string().unwrap());
-                result.push(format!("{}, {}", row[0].as_integer().unwrap(), row[2].as_string().unwrap()));
-            }
-        }
-        Err(e) => log::error!("no bueno"), // result.push(format!("{:?}",e))
-    }
-    result
-}
-
 #[fce]
 #[derive(Debug)]
 pub struct RewardBlock {
     pub block_number: i64,
     pub timestamp: i64,
     pub block_miner: String,
-    pub block_reward: i64,
+    pub block_reward: String,
 }
 
 impl RewardBlock {
@@ -143,16 +151,49 @@ impl RewardBlock {
             block_number: row[0].as_integer().unwrap(), 
             timestamp: row[1].as_integer().unwrap(), 
             block_miner: row[2].as_string().unwrap().into(), 
-            block_reward: row[3].as_integer().unwrap(), 
+            block_reward: row[3].as_integer().unwrap().to_string(), 
         }
     }
+
+    fn from_err() -> Self {
+        RewardBlock { 
+            block_number: -1,
+            timestamp: -1,
+            block_miner: String::from(""), 
+            block_reward: String::from(""),
+        }
+    }
+
 }
 
 #[fce]
-pub fn get_reward_block(block_number: u32) -> Vec<RewardBlock> {
+pub fn get_latest_reward_block() -> RewardBlock {
+    // let db_path = "/tmp/db.sqlite";
+    let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
+    let mut reward_block = RewardBlock::from_err();
+
+    let select = conn.prepare("select * from reward_blocks order by block_number desc limit 1");
+    let result = match select {
+        Ok(s) => {
+            let mut select = s.cursor(); 
+            while let Some(row) = select.next().unwrap() {
+                println!("get_latest_reward_block: {:?}", row);
+                reward_block = RewardBlock::from_row(row);
+            };
+            return reward_block;
+        }
+        Err(e) => reward_block,
+    };
+    result
+}
+
+
+
+#[fce]
+pub fn get_reward_block(block_number: u32) -> RewardBlock {
     let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
 
-    let mut result:Vec<RewardBlock> = Vec::new();
+    let mut reward_block = RewardBlock::from_err();
     let stmt = "select * from reward_blocks where block_number = ?";
     let select = conn.prepare(stmt);
     match select {
@@ -160,43 +201,91 @@ pub fn get_reward_block(block_number: u32) -> Vec<RewardBlock> {
             let mut select = s.cursor();
             select.bind(&[Value::Integer(block_number as i64)]).unwrap(); 
             while let Some(row) = select.next().unwrap() {
-                let rblock:RewardBlock = RewardBlock::from_row(row);
-                result.push(rblock);
-            }
+                println!("get_reward_block: {:?}", row);
+                reward_block = RewardBlock::from_row(row);
+            };
+            return reward_block;
         }
-        Err(e) => log::error!("suck it"), //(format!("{:?}",e))
+        Err(e) => reward_block
     }
-    result
 }
 
 #[fce]
-pub fn get_miner_rewards(miner_address: String) -> Vec<i64> {
+pub struct MinerRewards {
+    pub miner_address: String,
+    pub rewards: Vec<String>
+}
+impl MinerRewards {
+    fn new(miner_address: String) -> Self {
+        let rewards:Vec<String> = Vec::new();
+
+        MinerRewards {
+            miner_address,
+            rewards
+        } 
+    }
+}
+
+#[fce]
+pub fn get_miner_rewards(miner_address: String) -> MinerRewards {
     let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
 
-    let mut result:Vec<i64> = Vec::new();
     let stmt = "select block_reward from reward_blocks where block_miner = ?";
     let select = conn.prepare(stmt);
+    let mut miner_rewards = MinerRewards::new(miner_address.clone());
+
     match select {
         Ok(s) => {
             let mut select = s.cursor();
-            select.bind(&[Value::String(miner_address)]).unwrap(); 
+            select.bind(&[Value::String(miner_address)]).unwrap();
             while let Some(row) = select.next().unwrap() {
                 println!("reward row {:?}", row);
-                result.push(row[0].as_integer().unwrap());
+                miner_rewards.rewards.push(row[0].as_string().unwrap().into());
             }
+            
         }
         Err(e) => log::error!("suck it"), //(format!("{:?}",e))
     }
-    result
+    miner_rewards
 }
 
+/*
 
+#[fce]
+pub fn get_account(chain_id:u32) -> String {
+    KOVAN_ACCT.into()
 
-fn get_tx(tx_string: String) {
+}
+
+fn deposit(tx_string: String, chain_id:u32) {
+
+    if chain_id != 42 {
+        return "only kovan network, 42, is currently available";
+    }
+
+    // check deposit, get amount
+    // if valid tx
+
+    let stmt = "select * from credits where tx_id = ? and chain_id = ? ";
+
+    // if exists: ...alloc
+
+    // else:
+
+    // credit = amount fro wei to gwei
+    // select cost from costs where chain_id = ?
+
+    let stmt = "insert into credits values (?, ?, ?)";
+
+    let my_uuid = Uuid::new_v4();
+}
+
+fn get_balance(reference_id: String, ) {
 
 }
 
-fn update_payments(conn: &Connection) {
+fn update_payments() {
 
 
 }
+*/
