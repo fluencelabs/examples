@@ -211,6 +211,7 @@ pub fn get_reward_block(block_number: u32) -> RewardBlock {
 }
 
 #[fce]
+#[derive(Debug)]
 pub struct MinerRewards {
     pub miner_address: String,
     pub rewards: Vec<String>
@@ -230,6 +231,8 @@ impl MinerRewards {
 pub fn get_miner_rewards(miner_address: String) -> MinerRewards {
     let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
 
+    println!("miner address: {}", miner_address);
+
     let stmt = "select block_reward from reward_blocks where block_miner = ?";
     let select = conn.prepare(stmt);
     let mut miner_rewards = MinerRewards::new(miner_address.clone());
@@ -240,12 +243,13 @@ pub fn get_miner_rewards(miner_address: String) -> MinerRewards {
             select.bind(&[Value::String(miner_address)]).unwrap();
             while let Some(row) = select.next().unwrap() {
                 println!("reward row {:?}", row);
-                miner_rewards.rewards.push(row[0].as_string().unwrap().into());
-            }
-            
+                miner_rewards.rewards.push(row[0].as_integer().unwrap().to_string());
+            };
         }
         Err(e) => log::error!("suck it"), //(format!("{:?}",e))
-    }
+    };
+
+    println!("miner reward: {:?}", miner_rewards);
     miner_rewards
 }
 
