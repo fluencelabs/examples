@@ -1,5 +1,5 @@
 {
-    "name": "Sqlite Paywall",
+    "name": "EthQlite",
     "mem_page_count": 1,
     "preopened_files": [
         "/var"
