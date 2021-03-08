@@ -19,7 +19,7 @@ use fce_sqlite_connector::{Connection, State, Value};
 
 use std::sync::atomic::{AtomicBool, Ordering};
 
-use crate::{AUTH, PAYWALL};
+use crate::AUTH;
 use crate::get_connection;
 use crate::auth::is_owner;
 

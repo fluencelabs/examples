@@ -20,7 +20,6 @@ use fluence::WasmLoggerBuilder;
 use fce_sqlite_connector;
 use fce_sqlite_connector::{Connection, State, Value};
 
-use uuid::Uuid;
 
 use std::path::{Path, PathBuf};
 use serde::Deserialize;
@@ -36,7 +35,6 @@ const DB_PATH: &str  = "/tmp/fluence_service_db.sqlite";
 
 mod crud;
 mod auth;
-// mod paywall;
 
 
 fn main() { 
@@ -46,7 +44,6 @@ fn main() {
 const KOVAN_ACCT: &str = "";
 
 pub static AUTH: AtomicBool = AtomicBool::new(false);
-pub static PAYWALL: AtomicBool = AtomicBool::new(false);
 pub static INIT: AtomicBool = AtomicBool::new(false);
 
 
@@ -87,7 +84,6 @@ pub fn init_service(is_auth:bool, is_paywall: bool, api_data: String) -> InitRes
     }
 
     AUTH.store(is_auth, Ordering::Relaxed);
-    PAYWALL.store(is_paywall, Ordering::Relaxed);
 
 
     if api_data.len() > 0 {
@@ -124,7 +120,6 @@ pub fn owner_nuclear_reset() -> bool {
     }
 
     AUTH.store(false, Ordering::Relaxed);
-    PAYWALL.store(false, Ordering::Relaxed);
     INIT.store(false, Ordering::Relaxed);
 
     let conn = get_connection();
@@ -137,25 +132,3 @@ pub fn owner_nuclear_reset() -> bool {
 
     true
 }
-
-/*
-#[fce]
-fn get_balance(reference_id: String, ) {
-    let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
-
-    let stmt = "select balance from payments where block_miner = ?";
-    let select = conn.prepare(stmt);
-    let mut miner_rewards = MinerRewards::new(miner_address.clone());
-
-}
-*/
-
-/*
-fn check_funding(compute_units: u32, unit_cost: u32) -> bool {
-    let conn = get_connection();
-
-    let req_balance:i64 = (compute_units * unit_cost).into();
-    get_balance(user_id)
-    true
-}
-*/
