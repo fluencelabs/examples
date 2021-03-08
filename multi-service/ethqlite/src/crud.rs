@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-use crate::*;
 use fluence::fce;
 use fce_sqlite_connector;
 use fce_sqlite_connector::{Connection, State, Value};
 
+use std::sync::atomic::{AtomicBool, Ordering};
 
-fn create_table(conn: &Connection) -> std::result::Result<(), fce_sqlite_connector::Error> {
+use crate::{AUTH, PAYWALL};
+use crate::get_connection;
+use crate::auth::is_owner;
 
+
+pub fn create_table(conn: &Connection) -> std::result::Result<(), fce_sqlite_connector::Error> {
     let res = conn.execute(
         "
         create table if not exists reward_blocks (
@@ -56,6 +59,11 @@ fn create_table(conn: &Connection) -> std::result::Result<(), fce_sqlite_connect
             fn_name Text not null, 
             json_path Text not null
         );
+
+        create table if not exists api_keys (
+            provider text not null primary key,
+            api_key text not null
+        );
         ",
     );
     res
@@ -63,14 +71,14 @@ fn create_table(conn: &Connection) -> std::result::Result<(), fce_sqlite_connect
 
 #[fce]
 pub fn update_reward_blocks(data_string: String) -> bool {
-    if !is_owner() {
+    if AUTH.load(Ordering::Relaxed) && !is_owner() {
         return false;
     }
 
     let obj:serde_json::Value = serde_json::from_str(&data_string).unwrap();
     let obj = obj["result"].clone();
 
-    let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
+    let conn = get_connection();
 
     let insert = "insert or ignore into reward_blocks values(?, ?, ?, ?)";
     let mut ins_cur = conn.prepare(insert).unwrap().cursor();
@@ -130,7 +138,7 @@ impl RewardBlock {
 #[fce]
 pub fn get_latest_reward_block() -> RewardBlock {
     // let db_path = "/tmp/db.sqlite";
-    let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
+    let conn = get_connection();
     let mut reward_block = RewardBlock::from_err();
 
     let select = conn.prepare("select * from reward_blocks order by block_number desc limit 1");
@@ -148,11 +156,9 @@ pub fn get_latest_reward_block() -> RewardBlock {
     result
 }
 
-
-
 #[fce]
 pub fn get_reward_block(block_number: u32) -> RewardBlock {
-    let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
+    let conn = get_connection();
 
     let mut reward_block = RewardBlock::from_err();
     let stmt = "select * from reward_blocks where block_number = ?";
@@ -190,7 +196,7 @@ impl MinerRewards {
 
 #[fce]
 pub fn get_miner_rewards(miner_address: String) -> MinerRewards {
-    let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
+    let conn = get_connection();
 
     let stmt = "select block_reward from reward_blocks where block_miner = ?";
     let select = conn.prepare(stmt);
@@ -209,4 +215,18 @@ pub fn get_miner_rewards(miner_address: String) -> MinerRewards {
     };
 
     miner_rewards
+}
+
+
+#[fce]
+#[derive(Debug)]
+pub struct UpdateResult {
+    pub success: bool,
+    pub err_str: String,
+}
+
+#[fce]
+pub fn update_balance(user_id: String, tx_id: String, chain_id:u32) -> bool {
+    // check balance 
+    true
 }

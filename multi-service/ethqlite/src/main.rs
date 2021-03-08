@@ -26,14 +26,17 @@ use std::path::{Path, PathBuf};
 use serde::Deserialize;
 use serde_json;
 
+use std::sync::atomic::{AtomicBool, Ordering};
 
-// const DB_PATH: &str  = "/tmp/db_1.sqlite";
+use crate::crud::create_table;
+use crate::auth::is_owner;
+
 const DB_PATH: &str  = "/tmp/fluence_service_db.sqlite";
 
 
 mod crud;
 mod auth;
-mod paywall;
+// mod paywall;
 
 
 fn main() { 
@@ -42,44 +45,100 @@ fn main() {
 
 const KOVAN_ACCT: &str = "";
 
-pub enum EthereumChains {
-    MAINNET  =  1,
-    ROPSTEN  =  3,
-    RINKEBY  =  4,
-    GOERLI   =  5,
-    KOVAN    = 42,
+pub static AUTH: AtomicBool = AtomicBool::new(false);
+pub static PAYWALL: AtomicBool = AtomicBool::new(false);
+pub static INIT: AtomicBool = AtomicBool::new(false);
 
-}
 
 fn get_connection() -> Connection {
     Connection::open(DB_PATH).unwrap()
 }
 
 
-
 #[fce]
-pub fn init_service() -> bool {
-    let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
-    let res = create_table(&conn);
-    match res {
-        Ok(_) => true,
-        Err(_) => false,
+#[derive(Debug)]
+pub struct InitResult {
+    pub success: bool,
+    pub err_msg: String,
+}
+
+impl InitResult {
+    fn success() -> Self {
+        InitResult {success: true, err_msg: String::from(""),}
+    }
+
+    fn error(err_msg: String) -> Self {
+        InitResult {success: false, err_msg,}
     }
 }
 
+#[fce]
+pub fn init_service(is_auth:bool, is_paywall: bool, api_data: String) -> InitResult {
+
+    if INIT.load(Ordering::Relaxed) {
+        return InitResult::error("Service already initiated".into());
+    }
+
+    let conn = get_connection();
+    let res = create_table(&conn);
+    println!("create tables: {:?}", res);
+    if res.is_err() {
+        return InitResult::error("Failure to create tables".into());
+    }
+
+    AUTH.store(is_auth, Ordering::Relaxed);
+    PAYWALL.store(is_paywall, Ordering::Relaxed);
 
 
-pub fn is_owner() -> bool {
-    let meta = fluence::get_call_parameters();
-    let caller = meta.init_peer_id;
-    let owner = meta.service_creator_peer_id;
+    if api_data.len() > 0 {
+        let tokens: Vec<&str> = api_data.as_str().split(":").collect();
+        if tokens.len() != 2{
+            return InitResult::error("Invalid api data".into());
+        }
 
-    caller == owner
+        let ins_stmt = "insert or ignore into api_keys values (?, ?)";
+        let mut ins_cur = conn.prepare(ins_stmt).unwrap().cursor();
+        let insert = ins_cur.bind(
+        &[Value::String(tokens[0].into()),
+                 Value::String(tokens[1].into()),
+                ]
+        );
+        if insert.is_err() {
+            return InitResult::error("Failure to insert api data".into());
+        }
+    } else {
+        return InitResult::error("Missing api data".into());
+    }
+    
+    //Todo: implement rollbacks
+
+    INIT.store(true, Ordering::Relaxed);
+    InitResult::success()
 }
 
 
-/*
+#[fce]
+pub fn owner_nuclear_reset() -> bool {
+    if !is_owner() {
+        return false;
+    }
 
+    AUTH.store(false, Ordering::Relaxed);
+    PAYWALL.store(false, Ordering::Relaxed);
+    INIT.store(false, Ordering::Relaxed);
+
+    let conn = get_connection();
+    let t_names = vec!["api_keys", "reward_blocks", "payments", "costs", "security"];
+    for t_name in t_names {
+        let stmt = format!("delete from {}", t_name);
+        let mut del_cur = conn.prepare(&stmt).unwrap().cursor();
+        del_cur.next().unwrap();
+    }
+
+    true
+}
+
+/*
 #[fce]
 fn get_balance(reference_id: String, ) {
     let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
@@ -89,35 +148,14 @@ fn get_balance(reference_id: String, ) {
     let mut miner_rewards = MinerRewards::new(miner_address.clone());
 
 }
+*/
 
-fn update_payments() {
+/*
+fn check_funding(compute_units: u32, unit_cost: u32) -> bool {
+    let conn = get_connection();
 
-
-}
-
-#[fce]
-pub struct AccountStatus {
-    
-}
-
-fn check_funding(compute_units: u32) -> bool {
-    let conn = fce_sqlite_connector::open(DB_PATH).unwrap();
-
-
-    let stmt = "select block_reward from reward_blocks where block_miner = ?";
-    let select = conn.prepare(stmt);
-    let mut miner_rewards = MinerRewards::new(miner_address.clone());
-
-    match select {
-        Ok(s) => {
-            let mut select = s.cursor();
-            select.bind(&[Value::String(miner_address)]).unwrap();
-            while let Some(row) = select.next().unwrap() {
-                println!("reward row {:?}", row);
-                miner_rewards.rewards.push(row[0].as_integer().unwrap().to_string());
-            };
-        }
-        Err(e) => log::error!("suck it"), //(format!("{:?}",
-
+    let req_balance:i64 = (compute_units * unit_cost).into();
+    get_balance(user_id)
+    true
 }
 */
