@@ -1,3 +1,10 @@
 {
-    "name": "EthereumBlockGetter"
+    "name": "Ethereum Block Getter",
+    "DESCRIPTION": "Provides etherscan.io get_latest_block and get_block data Ethereum getters",
+    "INTERFACES": [
+        "fn get_block(api_key: String, block_number: U32) -> String",
+        "fn get_latest_block(api_key: String) -> String"
+    ],
+    "WEBSITE": "https://github.com/fluencelabs/examples/tree/main/multi-service/block_getter",
+    "INTERFACES": "fn curl_request(curl_cmd: Array<String>) -> Result"
 }

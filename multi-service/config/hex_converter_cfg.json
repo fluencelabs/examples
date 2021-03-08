@@ -1,3 +1,5 @@
 {
-    "name": "Hex2Int"
+    "name": "Hex Converter",
+    "WEBSITE": "https://github.com/fluencelabs/examples/tree/main/multi-service/hex_converter",
+    "INTERFACES": "fn hex_to_int(data: String) -> U64"
 }

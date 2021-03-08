@@ -2,5 +2,8 @@
     "name": "curl_adapter",
     "mountedBinaries": {
         "curl": "/usr/bin/curl"
-    }
+    },
+    "DESCRIPTION": "Adapter for node-level curl call",
+    "WEBSITE": "https://github.com/fluencelabs/examples/tree/main/multi-service/curl_adapter",
+    "INTERFACES": "fn curl_request(curl_cmd: Array<String>) -> Result"
 }
