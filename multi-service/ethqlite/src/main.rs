@@ -36,15 +36,9 @@ const DB_PATH: &str  = "/tmp/fluence_service_db.sqlite";
 mod crud;
 mod auth;
 
-
-fn main() { 
-    // WasmLoggerBuilder::new().build().unwrap();
-}
-
-const KOVAN_ACCT: &str = "";
-
-pub static AUTH: AtomicBool = AtomicBool::new(false);
 pub static INIT: AtomicBool = AtomicBool::new(false);
+
+fn main() {}
 
 
 fn get_connection() -> Connection {
@@ -59,57 +53,27 @@ pub struct InitResult {
     pub err_msg: String,
 }
 
-impl InitResult {
-    fn success() -> Self {
-        InitResult {success: true, err_msg: String::from(""),}
-    }
-
-    fn error(err_msg: String) -> Self {
-        InitResult {success: false, err_msg,}
-    }
-}
-
 #[fce]
-pub fn init_service(is_auth:bool, api_data: String) -> InitResult {
+pub fn init_service() -> InitResult {
+
+    if !is_owner() {
+        return InitResult {success: false, err_msg: "Not authorized to use this service".into()};
+    }
 
     if INIT.load(Ordering::Relaxed) {
-        return InitResult::error("Service already initiated".into());
+        return InitResult {success: false, err_msg: "Service already initiated".into()};
     }
 
     let conn = get_connection();
     let res = create_table(&conn);
-    println!("create tables: {:?}", res);
     if res.is_err() {
-        return InitResult::error("Failure to create tables".into());
-    }
-
-    AUTH.store(is_auth, Ordering::Relaxed);
-
-
-    if api_data.len() > 0 {
-        let tokens: Vec<&str> = api_data.as_str().split(":").collect();
-        if tokens.len() != 2{
-            return InitResult::error("Invalid api data".into());
-        }
-
-        let ins_stmt = "insert or ignore into api_keys values (?, ?)";
-        let mut ins_cur = conn.prepare(ins_stmt).unwrap().cursor();
-        let insert = ins_cur.bind(
-        &[Value::String(tokens[0].into()),
-                 Value::String(tokens[1].into()),
-                ]
-        );
-        if insert.is_err() {
-            return InitResult::error("Failure to insert api data".into());
-        }
-    } else {
-        return InitResult::error("Missing api data".into());
+        return InitResult {success: false, err_msg: "Failure to create tables".into()};
     }
     
-    //Todo: implement rollbacks
+    // TODO: implement rollbacks
 
     INIT.store(true, Ordering::Relaxed);
-    InitResult::success()
+    InitResult {success: true, err_msg: "".into()}
 }
 
 
@@ -119,11 +83,10 @@ pub fn owner_nuclear_reset() -> bool {
         return false;
     }
 
-    AUTH.store(false, Ordering::Relaxed);
     INIT.store(false, Ordering::Relaxed);
 
     let conn = get_connection();
-    let t_names = vec!["api_keys", "reward_blocks", "payments", "costs", "security"];
+    let t_names = vec!["reward_blocks"];
     for t_name in t_names {
         let stmt = format!("delete from {}", t_name);
         let mut del_cur = conn.prepare(&stmt).unwrap().cursor();

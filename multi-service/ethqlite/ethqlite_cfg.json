@@ -1,10 +1,10 @@
 {
-    "name": "EthQlite",
+    "name": "ethqlite",
     "mem_page_count": 1,
     "preopened_files": [
-        "/var"
+        "/tmp"
     ],
     "mapped_dirs": {
-        "var": "./var"
+        "tmp": "./tmp"
     }
 }

@@ -15,11 +15,8 @@
  */
 use fluence::fce;
 use fce_sqlite_connector;
-use fce_sqlite_connector::{Connection, State, Value};
+use fce_sqlite_connector::{Connection, Value};
 
-use std::sync::atomic::{AtomicBool, Ordering};
-
-use crate::AUTH;
 use crate::get_connection;
 use crate::auth::is_owner;
 
@@ -34,36 +31,6 @@ pub fn create_table(conn: &Connection) -> std::result::Result<(), fce_sqlite_con
             block_reward integer not null
         );
 
-        create table if not exists payments (
-            tx_number text  not null primary key, 
-            chain_id integer not null,
-            timestamp integer not null,
-            balance integer not null,
-            unit text not null,
-            available integer not null,
-            unique(chain_id, tx_number)
-        );
-
-        create table if not exists costs (
-            chain_id integer not null primary key,
-            query_cost integer not null,
-            cost_unit string not null ,
-            currency string not null
-        );
-
-        insert or ignore into costs values(42, 10, 'gwei', 'eth');
-
-        create table if not exists security (
-            peer_id Text not null, 
-            service_id Text not null primary key, 
-            fn_name Text not null, 
-            json_path Text not null
-        );
-
-        create table if not exists api_keys (
-            provider text not null primary key,
-            api_key text not null
-        );
         ",
     );
     res
