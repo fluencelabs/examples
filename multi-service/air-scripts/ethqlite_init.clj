@@ -2,7 +2,7 @@
     (seq
         (seq
             (call relay ("op" "identity") [])
-            (call node_1 (service "init_service") [use_owner api_key] result)
+            (call node_1 (service "init_service") [] result)
         )
         (seq
             (call relay ("op" "identity") [])
