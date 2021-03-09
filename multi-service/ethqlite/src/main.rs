@@ -70,7 +70,7 @@ impl InitResult {
 }
 
 #[fce]
-pub fn init_service(is_auth:bool, is_paywall: bool, api_data: String) -> InitResult {
+pub fn init_service(is_auth:bool, api_data: String) -> InitResult {
 
     if INIT.load(Ordering::Relaxed) {
         return InitResult::error("Service already initiated".into());

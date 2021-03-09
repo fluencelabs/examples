@@ -69,14 +69,26 @@ pub fn create_table(conn: &Connection) -> std::result::Result<(), fce_sqlite_con
     res
 }
 
-#[fce]
-pub fn update_reward_blocks(data_string: String) -> bool {
-    if AUTH.load(Ordering::Relaxed) && !is_owner() {
-        return false;
-    }
 
+#[fce]
+#[derive(Debug)]
+pub struct UpdateResult {
+    pub success: bool,
+    pub err_str: String,
+}
+
+#[fce]
+pub fn update_reward_blocks(data_string: String) -> UpdateResult {   
+    if !is_owner() {
+        return UpdateResult { success:false, err_str: "You are not the owner".into()};
+    }
+    
     let obj:serde_json::Value = serde_json::from_str(&data_string).unwrap();
     let obj = obj["result"].clone();
+
+    if obj["blockNumber"] == serde_json::Value::Null {
+        return UpdateResult { success:false, err_str: "Empty reward block string".into()};
+    }
 
     let conn = get_connection();
 
@@ -99,10 +111,10 @@ pub fn update_reward_blocks(data_string: String) -> bool {
             println!("select row {:?}", row);
             println!("{}, {}", row[0].as_integer().unwrap(), row[2].as_string().unwrap());
         }
-        return true;
+        return UpdateResult { success:true, err_str: "".into()};
     }
-    
-    false
+
+    UpdateResult { success:false, err_str: "Insert failed".into()}
 } 
 
 #[fce]
@@ -215,18 +227,4 @@ pub fn get_miner_rewards(miner_address: String) -> MinerRewards {
     };
 
     miner_rewards
-}
-
-
-#[fce]
-#[derive(Debug)]
-pub struct UpdateResult {
-    pub success: bool,
-    pub err_str: String,
-}
-
-#[fce]
-pub fn update_balance(user_id: String, tx_id: String, chain_id:u32) -> bool {
-    // check balance 
-    true
 }
