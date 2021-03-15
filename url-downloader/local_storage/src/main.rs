@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-use std::fs;
 use fluence::fce;
+use fluence::module_manifest;
 use fluence::WasmLoggerBuilder;
-use std::path::Path;
+
+use std::fs;
+use std::path::PathBuf;
+
+module_manifest!();
 
 const SITES_DIR: &str = "/sites/";
 
@@ -28,14 +32,14 @@ pub fn main() {
 
 /// You can read or write files from the file system if there is permission to use directories described in `Config.toml`.
 #[fce]
-pub fn put(file_name: String, file_content: Vec<u8>) -> String {
-    log::info!("put called with file name {}", file_name);
+pub fn put(name: String, file_content: Vec<u8>) -> String {
+    log::info!("put called with file name {}", name);
 
-    let path = Path::new(SITES_DIR).join(file_name);
+    let rpc_tmp_filepath = format!("{}{}", SITES_DIR, name);
 
-    let result = fs::write(&path, file_content);
+    let result = fs::write(PathBuf::from(rpc_tmp_filepath.clone()), file_content);
     if let Err(e) = result {
-        return format!("file {} can't be written: {}", path.to_string_lossy(), e);
+        return format!("file can't be written: {}", e);
     }
 
     String::from("Ok")
@@ -45,7 +49,7 @@ pub fn put(file_name: String, file_content: Vec<u8>) -> String {
 pub fn get(file_name: String) -> Vec<u8> {
     log::info!("get called with file name: {}", file_name);
 
-    let path = Path::new(SITES_DIR).join(file_name);
+    let tmp_filepath = format!("{}{}", SITES_DIR, file_name);
 
-    fs::read(&path).unwrap_or_else(|err| format!("error while reading file {}: {}", path.to_string_lossy(), err).into_bytes())
+    fs::read(tmp_filepath).unwrap_or_else(|_| b"error while reading file".to_vec())
 }

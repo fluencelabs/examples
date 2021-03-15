@@ -1,7 +1,0 @@
-{
-  "name": "curl_adapter",
-  "mountedBinaries":
-    {
-      "curl": "/usr/bin/curl"
-    }
-}
