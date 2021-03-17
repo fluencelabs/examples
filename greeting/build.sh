@@ -5,4 +5,4 @@ cargo update
 fce build --release
 
 rm artifacts/*
-cp ../../target/wasm32-wasi/release/greeting.wasm artifacts/
+cp target/wasm32-wasi/release/greeting.wasm artifacts/
