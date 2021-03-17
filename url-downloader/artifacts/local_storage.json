@@ -1,0 +1,12 @@
+{
+  "name": "local_storage",
+  "preopenedFiles": [
+    "/tmp"
+  ],
+  "mappedDirs": {
+    "sites": "/tmp"
+  },
+  "mountedBinaries": {
+    "curl": "/usr/bin/curl"
+  }
+}

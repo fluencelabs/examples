@@ -13,3 +13,4 @@ path = "src/main.rs"
 fluence = { version = "=0.5.0", features = ["logger"]}
 anyhow = "1.0.31"
 log = "0.4.8"
+base64 = "0.13.0"
