@@ -17,12 +17,10 @@
 #![allow(improper_ctypes)]
 
 use fluence::fce;
-use fluence::module_manifest;
 
 use fluence::WasmLoggerBuilder;
-use fluence::MountedBinaryResult;
-
-module_manifest!();
+use fluence::MountedBinaryResult as Result;
+use fluence::MountedBinaryStringResult as StringResult;
 
 /// Log level can be changed by `RUST_LOG` env as well.
 pub fn main() {
@@ -30,16 +28,21 @@ pub fn main() {
 }
 
 #[fce]
-pub fn download(url: String) -> String {
-    log::info!("get called with url {}", url);
-
-    let result = unsafe { curl(vec![url]) };
-    String::from_utf8(result.stdout).unwrap()
+pub fn request(url: String) -> StringResult {
+    unsafe { curl(vec![url]) }.stringify().unwrap()
 }
+
+#[fce]
+pub fn download(url: String) -> Result {
+    log::info!("download called with url {}", url);
+
+    unsafe { curl(vec![url]) }
+}
+
 
 /// Permissions in `Config.toml` should exist to use host functions.
 #[fce]
 #[link(wasm_import_module = "host")]
 extern "C" {
-    fn curl(cmd: Vec<String>) -> MountedBinaryResult;
+    fn curl(cmd: Vec<String>) -> Result;
 }

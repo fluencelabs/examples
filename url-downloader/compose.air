@@ -1,0 +1,13 @@
+(xor
+    (seq
+        (seq
+           (seq
+               (call relay (curl "download") ["https://fluence.network/img/svg/logo_new.svg"] contents)
+               (call relay (storage "put") ["logo.svg" contents.$.stdout!] ret_code)
+           )
+           (call relay (storage "get") ["logo.svg"] bytes)
+        )
+        (call %init_peer_id% (returnService "run") [ret_code bytes])
+    )
+    (call %init_peer_id% (returnService "run") [%last_error%])
+)
