@@ -35,21 +35,3 @@ pub fn curl_request(url: String) -> String {
 extern "C" {
     fn curl(cmd: String) -> String;
 }
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn curl_test() {
-        let args = r#"-X POST --data '{"jsonrpc":"2.0","method":"eth_getBlockByNumber","params":["0x1b4", true],"id":1}'"#;
-        let url = "https://kovan.infura.io/v3//0cc023286cae4ab886598ecd14e256fd";
-
-        let cmd = format!("{} {}", args, url);
-        println!("cmd: {}", cmd);
-
-        let res = curl_request(cmd);
-        println!("res: {}", res);
-        assert!(true);
-    }
-}

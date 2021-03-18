@@ -1,0 +1,14 @@
+modules_dir = "artifacts/"
+
+[[module]]
+    name = "curl_adapter"
+
+    [module.mounted_binaries]
+    curl = "/usr/bin/curl"
+
+
+[[module]]
+    name = "block_getter"
+
+[[module]]
+    name = "hex_converter"
