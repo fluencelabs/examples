@@ -1,0 +1,7 @@
+(seq
+	(seq
+		(call relay (service "request") ["https://api.duckduckgo.com/?q=condensed%20milk&format=json"] milk)
+		(call relay (service "request") ["https://api.duckduckgo.com/?q=beetroot&format=json"] beetroot)
+	)
+	(call %init_peer_id% (returnService "run") [milk.$.stdout beetroot.$.stdout])
+)

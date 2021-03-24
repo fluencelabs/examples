@@ -1,4 +1,4 @@
-#!/bin/sh -euo pipefail
+#!/usr/bin/env bash -o errexit -o nounset -o pipefail
 
 # build wasms
 ./build.sh

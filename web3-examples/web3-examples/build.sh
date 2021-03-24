@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash -o errexit -o nounset -o pipefail
 
 # This script builds all subprojects and puts all created Wasm modules in one dir
 # cd sqlite
