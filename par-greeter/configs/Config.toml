@@ -1,0 +1,9 @@
+modules_dir = "/Users/bebo/localdev/fluence-examples/par-greeter/artifacts/"
+
+[[module]]
+    name = "echo_service"
+    logger_enabled = true
+
+[[module]]
+    name = "greeting"
+    logger_enabled = true
