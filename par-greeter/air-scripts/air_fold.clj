@@ -33,11 +33,11 @@
         (seq
             (seq
                 (call relay ("op" "identity") [])
-                (call node (greeting_service "greeting") [array_result.$.[0]!] greeter_result)
+                (call node (greeting_service "greeting") ["boo yah"] last_result)
             )
             (seq
                 (call relay ("op" "identity") [])
-                (call %init_peer_id% (returnService "run") [greeter_result])
+                (call %init_peer_id% (returnService "run") [last_result])
             )
         )
     )
