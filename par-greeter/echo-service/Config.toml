@@ -1,0 +1,6 @@
+modules_dir = "artifacts/"
+
+[[module]]
+    name = "echo_service"
+    mem_pages_count = 1
+    logger_enabled = false
