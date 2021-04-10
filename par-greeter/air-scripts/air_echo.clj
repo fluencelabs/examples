@@ -7,7 +7,6 @@
         (seq
             (call relay ("op" "identity") [])
             (call %init_peer_id% (returnService "run") [array_result])
-            ; (call %init_peer_id% (returnService "run") [array_result.$.[2]!])
         )
     )
     (seq
