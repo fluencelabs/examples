@@ -5,5 +5,5 @@ mkdir -p artifacts
 cargo update
 fce build --release
 
-rm artifacts/*
+rm -f artifacts/*.wasm
 cp target/wasm32-wasi/release/greeting.wasm artifacts/

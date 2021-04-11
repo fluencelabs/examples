@@ -22,6 +22,9 @@ module_manifest!();
 pub fn main() {}
 
 #[fce]
-pub fn greeting(name: String) -> String {
-    format!("Hi, {}", name)
+pub fn greeting(name: String, greeter: bool) -> String {
+    match greeter {
+        true => format!("Hi, {}", name),
+        false => format!("Bye, {}", name),
+    }
 }
