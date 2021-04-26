@@ -1,0 +1,6 @@
+service Echo("service-id"):
+    echo: []string -> []string
+
+func echo(data: []string) -> []string:
+    res <- Echo.echo(data)
+    <- res
