@@ -15,7 +15,7 @@
  */
 
 use ::fluence;
-use fluence::{fce, CallParameters};
+use fluence::fce;
 
 pub fn is_owner() -> bool {
     let meta = fluence::get_call_parameters();
