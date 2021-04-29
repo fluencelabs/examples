@@ -1,6 +1,6 @@
 service Greeting("service-id"):
     greeting: string, bool -> string    
-    -- greeting: string -> string
+
 
 func greeting(name: string, greeter:bool) -> string:
     res <- Greeting.greeting(name, greeter)

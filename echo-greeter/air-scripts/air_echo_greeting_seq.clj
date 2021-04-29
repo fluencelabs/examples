@@ -37,5 +37,4 @@
         (call relay ("op" "identity") [])
         (call %init_peer_id% (returnService "run") ["XOR FAILED" %last_error%])
     )
-
 )
