@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 use crate::curl_request;
+use crate::eth_calls::{eth_get_tx_by_hash, eth_get_txs_by_hashes, Tx};
 use crate::eth_utils::{check_response_string, get_nonce};
-use crate::eth_calls::{eth_get_tx_by_hash, Tx, eth_get_txs_by_hashes};
 use crate::fce_results::JsonRpcResult;
 use crate::jsonrpc_helpers::Request;
 use crate::jsonrpc_helpers::JSON_RPC;
@@ -35,7 +35,8 @@ pub fn uninstall_filter(url: String, filter_id: String) -> bool {
     // let request = Request::new(method, params, id);
     let curl_args = Request::new(method, params, id).as_sys_string(&url);
 
-    let response: String = unsafe { curl_request(curl_args) };
+    let response = curl_request(vec![curl_args]);
+    let response = String::from_utf8(response.stdout).unwrap();
 
     /*
     if response.len() == 0 || response.contains("error") {
@@ -71,7 +72,8 @@ pub fn new_pending_tx_filter(url: String) -> String {
     let id = get_nonce();
 
     let curl_args = Request::new(method, params, id).as_sys_string(&url);
-    let response: String = unsafe { curl_request(curl_args) };
+    let response = curl_request(vec![curl_args]);
+    let response = String::from_utf8(response.stdout).unwrap();
 
     let result_obj: Value = serde_json::from_str(&response).unwrap();
     let result: String = serde_json::from_value(result_obj["result"].clone()).unwrap();
@@ -89,10 +91,10 @@ pub fn get_filter_changes(url: String, filter_id: String) -> String {
 
     let curl_args = Request::new(method, params, id).as_sys_string(&url);
 
-    let response: String = unsafe { curl_request(curl_args) };
+    let response = curl_request(vec![curl_args]);
+    let response = String::from_utf8(response.stdout).unwrap();
     response
 }
-
 
 #[fce]
 pub fn get_filter_changes_list(url: String, filter_id: String) -> Vec<String> {
@@ -102,7 +104,8 @@ pub fn get_filter_changes_list(url: String, filter_id: String) -> Vec<String> {
 
     let curl_args = Request::new(method, params, id).as_sys_string(&url);
 
-    let response = unsafe { curl_request(curl_args) };
+    let response = curl_request(vec![curl_args]);
+    let response = String::from_utf8(response.stdout).unwrap();
     log::info!("response: {}", response);
     let mut response: Value = serde_json::from_str(&response).unwrap_or_else(|_| {
         log::error!("failed to parse ETH RPC response as json");
@@ -113,10 +116,13 @@ pub fn get_filter_changes_list(url: String, filter_id: String) -> Vec<String> {
         panic!("no 'result' field found in ETH RPC response");
     });
     if let Value::Array(results) = result.take() {
-        let tx_hashes: Vec<_> = results.into_iter().flat_map(|r| {
-            let hash = r.as_str()?;
-            Some(hash.to_string())
-        }).collect();
+        let tx_hashes: Vec<_> = results
+            .into_iter()
+            .flat_map(|r| {
+                let hash = r.as_str()?;
+                Some(hash.to_string())
+            })
+            .collect();
         log::info!("got {} tx hashes", tx_hashes.len());
         tx_hashes
     } else {

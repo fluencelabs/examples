@@ -91,7 +91,7 @@ pub fn eth_get_balance(url: String, account: String, block_number: String) -> Js
 
     let params: Vec<String> = vec![account, block_identifier];
     let curl_args: String = Request::new(method, params, id).as_sys_string(&url);
-    let response: String = unsafe { curl_request(curl_args) };
+    let response: String = curl_request(vec![curl_args]);
     check_response_string(response, &id)
 }
 ```  

@@ -17,10 +17,10 @@
 use crate::curl_request;
 use crate::eth_utils::{check_response_string, get_nonce, BLOCK_NUMBER_TAGS};
 use crate::fce_results::JsonRpcResult;
-use crate::jsonrpc_helpers::{Request, batch};
+use crate::jsonrpc_helpers::{batch, Request};
 use chrono::Utc;
 use fluence::fce;
-use serde::{Deserialize, Serialize, Deserializer};
+use serde::{Deserialize, Deserializer, Serialize};
 use serde_json;
 use serde_json::Value;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -42,7 +42,8 @@ pub fn eth_get_balance(url: String, account: String, block_number: String) -> Js
 
     let params: Vec<String> = vec![account, block_identifier];
     let curl_args: String = Request::new(method, params, id).as_sys_string(&url);
-    let response: String = unsafe { curl_request(curl_args) };
+    let response = curl_request(vec![curl_args]);
+    let response = String::from_utf8(response.stdout).unwrap();
     check_response_string(response, &id)
 }
 
@@ -53,7 +54,8 @@ pub fn eth_get_block_height(url: String) -> JsonRpcResult {
     let id = get_nonce();
 
     let curl_args: String = Request::new(method, params, id).as_sys_string(&url);
-    let response: String = unsafe { curl_request(curl_args) };
+    let response = curl_request(vec![curl_args]);
+    let response = String::from_utf8(response.stdout).unwrap();
     check_response_string(response, &id)
 }
 
@@ -64,7 +66,8 @@ pub fn eth_get_tx_by_hash(url: String, tx_hash: String) -> String {
     let id = get_nonce();
 
     let curl_args: String = Request::new(method, params, id).as_sys_string(&url);
-    let response: String = unsafe { curl_request(curl_args) };
+    let response = curl_request(vec![curl_args]);
+    let response = String::from_utf8(response.stdout).unwrap();
     response
 }
 
@@ -95,9 +98,9 @@ pub struct TxSerde {
 }
 
 fn null_to_default<'de, D, T>(d: D) -> Result<T, D::Error>
-    where
-        D: Deserializer<'de>,
-        T: Default + Deserialize<'de>,
+where
+    D: Deserializer<'de>,
+    T: Default + Deserialize<'de>,
 {
     let opt = Option::deserialize(d)?;
     let val = opt.unwrap_or_else(T::default);
@@ -107,7 +110,7 @@ fn null_to_default<'de, D, T>(d: D) -> Result<T, D::Error>
 #[derive(serde::Deserialize)]
 struct GetTxResponse {
     #[serde(deserialize_with = "null_to_default")]
-    result: Option<TxSerde>
+    result: Option<TxSerde>,
 }
 
 #[fce]
@@ -138,7 +141,7 @@ impl From<TxSerde> for Tx {
             nonce: ser.nonce.unwrap_or_default(),
             to: ser.to.unwrap_or_default(),
             transactionIndex: ser.transactionIndex.unwrap_or_default(),
-            value: ser.value.unwrap_or_default()
+            value: ser.value.unwrap_or_default(),
         }
     }
 }
@@ -149,16 +152,19 @@ pub fn eth_get_txs_by_hashes(url: String, tx_hashes: Vec<String>) -> Vec<Tx> {
     let params: Vec<_> = tx_hashes.into_iter().map(|h| vec![h]).collect();
     let requests = batch(url, method, params, get_nonce());
     match requests {
-        Ok(requests) => {
-            requests.into_iter().flat_map(|req| {
-                let response: String = unsafe { curl_request(req) };
-                let responses: Vec<GetTxResponse> = serde_json::from_str(response.as_str()).unwrap_or_else(|err| {
-                    log::error!("failed to deserialize batch response: {}", err);
-                    panic!("failed to deserialize batch response: {}", err);
-                });
+        Ok(requests) => requests
+            .into_iter()
+            .flat_map(|req| {
+                let response = curl_request(vec![req]);
+                let response = String::from_utf8(response.stdout).unwrap();
+                let responses: Vec<GetTxResponse> = serde_json::from_str(response.as_str())
+                    .unwrap_or_else(|err| {
+                        log::error!("failed to deserialize batch response: {}", err);
+                        panic!("failed to deserialize batch response: {}", err);
+                    });
                 responses.into_iter().flat_map(|r| Some(r.result?.into()))
-            }).collect()
-        },
+            })
+            .collect(),
         Err(err) => {
             log::error!("failed to create batch request: {}", err);
             vec![]

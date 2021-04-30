@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-#![allow(non_snake_case, unused_variables, unused_imports, unused_parens, unused_mut)]
+#![allow(
+    non_snake_case,
+    unused_variables,
+    unused_imports,
+    unused_parens,
+    unused_mut
+)]
 
 use fluence::fce;
+use fluence::module_manifest;
+use fluence::MountedBinaryResult;
 use fluence::WasmLoggerBuilder;
 
 mod data_processing;
@@ -31,6 +39,8 @@ mod jsonrpc_helpers;
 
 pub(crate) type Result<T> = std::result::Result<T, T>;
 
+module_manifest!();
+
 pub fn main() {
     WasmLoggerBuilder::new().build().ok();
 }
@@ -38,5 +48,5 @@ pub fn main() {
 #[fce]
 #[link(wasm_import_module = "curl_adapter")]
 extern "C" {
-    pub fn curl_request(url: String) -> String;
+    pub fn curl_request(url: Vec<String>) -> MountedBinaryResult;
 }
