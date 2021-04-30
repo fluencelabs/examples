@@ -13,25 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#![allow(improper_ctypes)]
 
 use fluence::fce;
+use fluence::module_manifest;
+use fluence::MountedBinaryResult;
 use fluence::WasmLoggerBuilder;
 
-/// Log level can be changed by `RUST_LOG` env as well.
-pub fn main() {
+module_manifest!();
+
+fn main() {
     WasmLoggerBuilder::new().build().unwrap();
 }
 
 #[fce]
-pub fn curl_request(url: String) -> String {
-    // log::info!("get called with url {}", url);
-
-    unsafe { curl(url) }
+pub fn curl_request(curl_cmd: Vec<String>) -> MountedBinaryResult {
+    let response = curl(curl_cmd);
+    response
 }
 
-/// Permissions in `Config.toml` should exist to use host functions.
+// mounted_binaries are available to import like this:
 #[fce]
 #[link(wasm_import_module = "host")]
 extern "C" {
-    fn curl(cmd: String) -> String;
+    pub fn curl(cmd: Vec<String>) -> MountedBinaryResult;
 }

@@ -13,16 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#![allow(non_snake_case, unused_variables, unused_imports, unused_parens, unused_mut)]
+#![allow(
+    non_snake_case,
+    unused_variables,
+    unused_imports,
+    unused_parens,
+    unused_mut
+)]
 
 #[macro_use]
 extern crate fstrings;
 
 use fluence::fce;
+use fluence::module_manifest;
+use fluence::MountedBinaryResult;
 use fluence::WasmLoggerBuilder;
 
 mod eth_price_getter;
 
+module_manifest!();
+
+#[allow(dead_code)]
 pub(crate) type Result<T> = std::result::Result<T, T>;
 
 pub fn main() {
@@ -32,5 +43,5 @@ pub fn main() {
 #[fce]
 #[link(wasm_import_module = "curl_adapter")]
 extern "C" {
-    pub fn curl_request(url: String) -> String;
+    pub fn curl_request(url: Vec<String>) -> MountedBinaryResult;
 }

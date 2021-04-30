@@ -1,11 +1,11 @@
 use cuckoofilter::{CuckooFilter, ExportedCuckooFilter};
+use flate2::read::ZlibDecoder;
+use flate2::write::ZlibEncoder;
+use flate2::Compression;
 use fluence::fce;
 use serde::Serialize;
 use serde_json;
 use std::collections::hash_map::DefaultHasher;
-use flate2::Compression;
-use flate2::read::ZlibDecoder;
-use flate2::write::ZlibEncoder;
 use std::io::prelude::*;
 
 type CF = CuckooFilter<DefaultHasher>;
@@ -39,7 +39,7 @@ fn de_cf(cf: Vec<u8>) -> Result<CF, String> {
 #[fce]
 pub fn create_cf(with_capacity: String) -> Vec<u8> {
     let capacity = with_capacity.parse::<u32>().unwrap();
-    let cf = match  capacity{
+    let cf = match capacity {
         0 => CuckooFilter::<DefaultHasher>::new(),
         _ => CuckooFilter::<DefaultHasher>::with_capacity(capacity as usize),
     };
@@ -62,7 +62,7 @@ pub fn create_and_add_cf(data: Vec<Vec<u8>>) -> Vec<u8> {
 #[fce]
 pub fn add(cf: Vec<u8>, data: Vec<Vec<u8>>) -> Vec<u8> {
     let mut cf: CF = de_cf(cf).unwrap();
-    let mut result = Vec::<bool>::new();
+    let result = Vec::<bool>::new();
     for v in data.iter() {
         cf.add(v).unwrap();
         // TODO check for error
