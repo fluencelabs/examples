@@ -10,7 +10,7 @@ name = "facade"
 path = "src/main.rs"
 
 [dependencies]
-fluence = { version = "=0.5.0", features = ["logger"]}
-anyhow = "1.0.31"
+fluence = { version = "=0.6.2", features = ["logger"]}
+anyhow = "1.0.40"
 log = "0.4.8"
 base64 = "0.13.0"
