@@ -16,15 +16,19 @@
 #![allow(improper_ctypes)]
 
 use fluence::fce;
-// use fluence::MountedBinaryStringResult as StringResult;
-use fluence::MountedBinaryResult as Result;
+use fluence::module_manifest;
+use fluence::MountedBinaryResult;
+use fluence::WasmLoggerBuilder;
 
-fn main() {}
+module_manifest!();
+
+fn main() {
+    WasmLoggerBuilder::new().build().unwrap();
+}
 
 #[fce]
-pub fn curl_request(curl_cmd: Vec<String>) -> Result {
-    let response = unsafe { curl(curl_cmd.clone()) };
-    log::info!("curl response for {:?} : {:?}", curl_cmd, response);
+pub fn curl_request(curl_cmd: Vec<String>) -> MountedBinaryResult {
+    let response = curl(curl_cmd);
     response
 }
 
@@ -32,5 +36,5 @@ pub fn curl_request(curl_cmd: Vec<String>) -> Result {
 #[fce]
 #[link(wasm_import_module = "host")]
 extern "C" {
-    pub fn curl(cmd: Vec<String>) -> Result;
+    pub fn curl(cmd: Vec<String>) -> MountedBinaryResult;
 }
