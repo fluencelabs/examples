@@ -1,4 +1,7 @@
 use fluence::fce;
+use fluence::module_manifest;
+
+module_manifest!();
 
 fn main() {}
 

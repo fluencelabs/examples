@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+use fluence::module_manifest;
 use fluence::{fce, WasmLoggerBuilder};
 use serde_json;
+
+module_manifest!();
 
 fn main() {
     WasmLoggerBuilder::new().build().ok();
@@ -29,11 +32,13 @@ pub fn hex_to_int(data: String) -> u64 {
             return res.unwrap();
         }
     }
-    
     if data.contains("result") {
         let obj = serde_json::from_str::<serde_json::Value>(&data);
         let res = match obj {
-            Ok(x) => { let res = x["result"].to_string(); u64::from_str_radix(&res[2..], 16).unwrap()},
+            Ok(x) => {
+                let res = x["result"].to_string();
+                u64::from_str_radix(&res[2..], 16).unwrap()
+            }
             Err(_) => 0u64,
         };
         return res;
