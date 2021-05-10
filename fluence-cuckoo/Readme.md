@@ -33,7 +33,8 @@ and proceed to run the `build` script:
 Let's unpack the script:
 
 ```bash
-#!/usr/bin/env bash -o errexit -o nounset -o pipefail
+#!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail
 mkdir -p artifacts
 
 cd fce-cuckoo
