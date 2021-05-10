@@ -1,4 +1,5 @@
-#!/usr/bin/env bash -o errexit -o nounset -o pipefail
+#!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail
 
 cargo update
 fce build --release
