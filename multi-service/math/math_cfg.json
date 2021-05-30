@@ -1,3 +1,4 @@
 {
-    "name" : "math"
+    "name": "math",
+    "mem_page_count": 1
 }
