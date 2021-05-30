@@ -96,7 +96,7 @@ mod tests {
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts/")]
     fn add_u256() {
         assert_eq!(
-            super::add_u256(
+            math.add_u256(
                 "100000000000000000000000000000000".to_string(),
                 "100000000000000000000000000000000".to_string()
             ),
