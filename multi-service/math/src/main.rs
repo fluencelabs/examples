@@ -39,7 +39,7 @@ pub fn add_u256(number_1: String, number_2: String) -> String {
         return "Overflow".to_string();
     }
 
-    "InputNonANumber".to_string()
+    "InputNonAU256Number".to_string()
 }
 
 #[marine]
@@ -55,7 +55,7 @@ pub fn sub_u256(number_1: String, number_2: String) -> String {
         return "Underflow".to_string();
     }
 
-    "InputNonANumber".to_string()
+    "InputNonAU256Number".to_string()
 }
 
 #[marine]
@@ -71,7 +71,7 @@ pub fn mul_u256(number_1: String, number_2: String) -> String {
         return "Overflow".to_string();
     }
 
-    "InputNonANumber".to_string()
+    "InputNonAU256Number".to_string()
 }
 
 #[marine]
@@ -87,12 +87,13 @@ pub fn div_u256(number_1: String, number_2: String) -> String {
         return "DivisionByZero".to_string();
     }
 
-    "InputNonANumber".to_string()
+    "InputNonAU256Number".to_string()
 }
 
 #[cfg(test)]
 mod tests {
-    #[test]
+    use fluence_test::marine_test;
+    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts/")]
     fn add_u256() {
         assert_eq!(
             super::add_u256(

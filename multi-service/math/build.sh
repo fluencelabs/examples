@@ -6,5 +6,5 @@ cargo update
 marine build --release
 
 rm -f -r artifacts/*
-mkdir artifacts
+mkdir --parents artifacts
 cp target/wasm32-wasi/release/math.wasm artifacts/

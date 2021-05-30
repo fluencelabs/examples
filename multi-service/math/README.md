@@ -1,5 +1,10 @@
 
-
+Check:
 ```
-fldist upload --path artifacts/math.wasm --env testnet --name math
+./build.sh; cargo test --release; 
+```
+
+Deploy:
+```
+fldist upload --path artifacts/math.wasm --name math --env FLUENCE_ENV
 ```
