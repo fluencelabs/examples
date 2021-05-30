@@ -1,0 +1,16 @@
+[package]
+name = "wasm-math"
+version = "0.1.0"
+authors = ["Fluence Labs"]
+description = "The math module for the Fluence network"
+repository = "https://github.com/fluencelabs/fce/tree/master/examples/multi-service/math"
+edition = "2018"
+publish = false
+
+[[bin]]
+name = "math"
+path = "src/main.rs"
+
+[dependencies]
+fluence = "0.6.2"
+ethnum = "1.0.3"
