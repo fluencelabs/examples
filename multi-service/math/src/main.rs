@@ -24,70 +24,104 @@ module_manifest!();
 
 pub fn main() {}
 
+/// Result<u256, MathError: ToPrimitive + FromPrimitive> like
+#[marine]
+pub struct MathResult {
+    /// u256 string representation
+    pub u256: String,
+    pub ret_code: u8,
+    /// error string representation
+    pub err_msg: String,
+}
+
+mod math_result {
+    use ethnum::u256;
+
+    use crate::MathResult;
+
+    pub fn ok(ok: u256) -> MathResult {
+        MathResult {
+            u256: ok.to_string(),
+            ret_code: 0,
+            err_msg: Default::default(),
+        }
+    }
+
+    pub fn err(err: &str) -> MathResult {
+        MathResult {
+            u256: Default::default(),
+            ret_code: 1,
+            err_msg: err.to_string(),
+        }
+    }
+}
+
+use math_result::{err, ok};
+
 /// adds 2 256 bits integers (ETH compatible)
 /// return number or error (failed to parse input or overflow of output)
 #[marine]
-pub fn add_u256(number_1: String, number_2: String) -> String {
+pub fn add_u256(number_1: String, number_2: String) -> MathResult {
     let number_1 = number_1.parse::<u256>();
     let number_2 = number_2.parse::<u256>();
     if let (Ok(number_1), Ok(number_2)) = (number_1, number_2) {
         let number = number_1.checked_add(number_2);
         if let Some(number) = number {
-            return number.to_string();
+            return ok(number);
         }
 
-        return "Overflow".to_string();
+        return err("Overflow");
     }
 
-    "InputNonAU256Number".to_string()
+    err("InputNonAU256Number")
 }
 
 #[marine]
-pub fn sub_u256(number_1: String, number_2: String) -> String {
+pub fn sub_u256(number_1: String, number_2: String) -> MathResult {
     let number_1 = number_1.parse::<u256>();
     let number_2 = number_2.parse::<u256>();
     if let (Ok(number_1), Ok(number_2)) = (number_1, number_2) {
         let number = number_1.checked_sub(number_2);
         if let Some(number) = number {
-            return number.to_string();
+            return ok(number);
         }
 
-        return "Underflow".to_string();
+        return err("Underflow");
     }
 
-    "InputNonAU256Number".to_string()
+    err("InputNonAU256Number")
 }
 
 #[marine]
-pub fn mul_u256(number_1: String, number_2: String) -> String {
+pub fn mul_u256(number_1: String, number_2: String) -> MathResult {
     let number_1 = number_1.parse::<u256>();
     let number_2 = number_2.parse::<u256>();
     if let (Ok(number_1), Ok(number_2)) = (number_1, number_2) {
         let number = number_1.checked_mul(number_2);
         if let Some(number) = number {
-            return number.to_string();
+            return ok(number);
         }
 
-        return "Overflow".to_string();
+        return err("Overflow");
     }
 
-    "InputNonAU256Number".to_string()
+    err("InputNonAU256Number")
 }
 
 #[marine]
-pub fn div_u256(number_1: String, number_2: String) -> String {
+pub fn div_u256(number_1: String, number_2: String) -> MathResult {
     let number_1 = number_1.parse::<u256>();
     let number_2 = number_2.parse::<u256>();
     if let (Ok(number_1), Ok(number_2)) = (number_1, number_2) {
         let number = number_1.checked_div(number_2);
         if let Some(number) = number {
-            return number.to_string();
+            return ok(number);
         }
 
-        return "DivisionByZero".to_string();
+        return err("DivisionByZero");
     }
 
-    "InputNonAU256Number".to_string()
+    err("InputNonAU256Number")
 }
 
 #[cfg(test)]
