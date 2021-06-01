@@ -16,7 +16,24 @@
  * limitations under the License.
  */
 
-use ethnum::*;
+#![warn(rust_2018_idioms)]
+#![deny(
+    dead_code,
+    nonstandard_style,
+    unused_imports,
+    unused_mut,
+    unused_variables,
+    unused_unsafe,
+    unreachable_patterns
+)]
+
+mod errors;
+mod result;
+
+use errors::U256Error;
+use result::U256Result;
+
+use ethnum::u256;
 use fluence::marine;
 use fluence::module_manifest;
 
@@ -24,104 +41,69 @@ module_manifest!();
 
 pub fn main() {}
 
-/// Result<u256, MathError: ToPrimitive + FromPrimitive> like
-#[marine]
-pub struct MathResult {
-    /// u256 string representation
-    pub u256: String,
-    pub ret_code: u8,
-    /// error string representation
-    pub err_msg: String,
-}
-
-mod math_result {
-    use ethnum::u256;
-
-    use crate::MathResult;
-
-    pub fn ok(ok: u256) -> MathResult {
-        MathResult {
-            u256: ok.to_string(),
-            ret_code: 0,
-            err_msg: Default::default(),
-        }
-    }
-
-    pub fn err(err: &str) -> MathResult {
-        MathResult {
-            u256: Default::default(),
-            ret_code: 1,
-            err_msg: err.to_string(),
-        }
-    }
-}
-
-use math_result::{err, ok};
+use std::convert::identity;
+use U256Error::U256Overflow;
 
 /// adds 2 256 bits integers (ETH compatible)
 /// return number or error (failed to parse input or overflow of output)
 #[marine]
-pub fn add_u256(number_1: String, number_2: String) -> MathResult {
-    let number_1 = number_1.parse::<u256>();
-    let number_2 = number_2.parse::<u256>();
-    if let (Ok(number_1), Ok(number_2)) = (number_1, number_2) {
-        let number = number_1.checked_add(number_2);
-        if let Some(number) = number {
-            return ok(number);
-        }
+pub fn add_u256(lhs: String, rhs: String) -> U256Result {
+    add_u256_impl(lhs, rhs)
+        .map_err(Into::into)
+        .unwrap_or_else(identity)
+}
 
-        return err("Overflow");
-    }
+pub fn add_u256_impl(lhs: String, rhs: String) -> Result<U256Result, U256Error> {
+    let lhs = lhs.parse::<u256>()?;
+    let rhs = rhs.parse::<u256>()?;
+    let result = lhs.checked_add(rhs).ok_or_else(|| U256Overflow)?;
 
-    err("InputNonAU256Number")
+    Ok(U256Result::from_u256(result))
 }
 
 #[marine]
-pub fn sub_u256(number_1: String, number_2: String) -> MathResult {
-    let number_1 = number_1.parse::<u256>();
-    let number_2 = number_2.parse::<u256>();
-    if let (Ok(number_1), Ok(number_2)) = (number_1, number_2) {
-        let number = number_1.checked_sub(number_2);
-        if let Some(number) = number {
-            return ok(number);
-        }
+pub fn sub_u256(lhs: String, rhs: String) -> U256Result {
+    sub_u256_impl(lhs, rhs)
+        .map_err(Into::into)
+        .unwrap_or_else(identity)
+}
 
-        return err("Underflow");
-    }
+pub fn sub_u256_impl(lhs: String, rhs: String) -> Result<U256Result, U256Error> {
+    let lhs = lhs.parse::<u256>()?;
+    let rhs = rhs.parse::<u256>()?;
+    let result = lhs.checked_sub(rhs).ok_or_else(|| U256Overflow)?;
 
-    err("InputNonAU256Number")
+    Ok(U256Result::from_u256(result))
 }
 
 #[marine]
-pub fn mul_u256(number_1: String, number_2: String) -> MathResult {
-    let number_1 = number_1.parse::<u256>();
-    let number_2 = number_2.parse::<u256>();
-    if let (Ok(number_1), Ok(number_2)) = (number_1, number_2) {
-        let number = number_1.checked_mul(number_2);
-        if let Some(number) = number {
-            return ok(number);
-        }
+pub fn mul_u256(lhs: String, rhs: String) -> U256Result {
+    mul_u256_impl(lhs, rhs)
+        .map_err(Into::into)
+        .unwrap_or_else(identity)
+}
 
-        return err("Overflow");
-    }
+pub fn mul_u256_impl(lhs: String, rhs: String) -> Result<U256Result, U256Error> {
+    let lhs = lhs.parse::<u256>()?;
+    let rhs = rhs.parse::<u256>()?;
+    let result = lhs.checked_mul(rhs).ok_or_else(|| U256Overflow)?;
 
-    err("InputNonAU256Number")
+    Ok(U256Result::from_u256(result))
 }
 
 #[marine]
-pub fn div_u256(number_1: String, number_2: String) -> MathResult {
-    let number_1 = number_1.parse::<u256>();
-    let number_2 = number_2.parse::<u256>();
-    if let (Ok(number_1), Ok(number_2)) = (number_1, number_2) {
-        let number = number_1.checked_div(number_2);
-        if let Some(number) = number {
-            return ok(number);
-        }
+pub fn div_u256(lhs: String, rhs: String) -> U256Result {
+    div_u256_impl(lhs, rhs)
+        .map_err(Into::into)
+        .unwrap_or_else(identity)
+}
 
-        return err("DivisionByZero");
-    }
+pub fn div_u256_impl(lhs: String, rhs: String) -> Result<U256Result, U256Error> {
+    let lhs = lhs.parse::<u256>()?;
+    let rhs = rhs.parse::<u256>()?;
+    let result = lhs.checked_div(rhs).ok_or_else(|| U256Overflow)?;
 
-    err("InputNonAU256Number")
+    Ok(U256Result::from_u256(result))
 }
 
 #[cfg(test)]

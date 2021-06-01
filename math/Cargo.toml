@@ -15,5 +15,7 @@ path = "src/main.rs"
 fluence = "0.6.9"
 ethnum = "1.0.3"
 
+thiserror = "1.0.25"
+
 [dev-dependencies]
 fluence-test = "0.1.9"
