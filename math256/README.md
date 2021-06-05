@@ -1,7 +1,7 @@
 
 Check:
 ```
-cargo fmt --all; ./build.sh; cargo test --release; 
+cargo clippy; cargo fmt --all; ./build.sh; cargo test --release
 ```
 
 Upload binary:

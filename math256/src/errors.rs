@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+use std::num::ParseIntError;
+
 use num_derive::ToPrimitive;
 use thiserror::Error as ThisError;
 
@@ -30,4 +32,10 @@ pub enum Error {
 
     #[error("ParseError")]
     ParseError,
+}
+
+impl From<ParseIntError> for Error {
+    fn from(_: ParseIntError) -> Self {
+        Error::ParseError
+    }
 }

@@ -30,8 +30,8 @@ pub struct MathResult {
     pub err_msg: String,
 }
 
-impl From<std::result::Result<u256, Error>> for MathResult {
-    fn from(result: std::result::Result<u256, Error>) -> Self {
+impl From<Result<u256, Error>> for MathResult {
+    fn from(result: Result<u256, Error>) -> Self {
         match result {
             Ok(ok) => MathResult {
                 value: ok.to_string(),
