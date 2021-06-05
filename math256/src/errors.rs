@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
+use num_derive::ToPrimitive;
 use thiserror::Error as ThisError;
 
-use std::num::ParseIntError;
+#[derive(ThisError, Debug, ToPrimitive)]
+pub enum Error {
+    #[error("Overflow")]
+    Overflow,
 
-#[derive(ThisError, Debug)]
-pub enum U256Error {
-    #[error("an overflow is occured")]
-    U256Overflow,
+    #[error("Underflow")]
+    Underflow,
 
-    #[error("{0}")]
-    ParseError(#[from] ParseIntError),
+    #[error("DivisionByZero")]
+    DivisionByZero,
+
+    #[error("ParseError")]
+    ParseError,
 }

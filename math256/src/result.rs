@@ -14,42 +14,34 @@
  * limitations under the License.
  */
 
-use crate::errors::U256Error;
-
+use crate::errors::Error;
 use ethnum::u256;
 use fluence::marine;
+use num_traits::ToPrimitive;
 
 #[marine]
 #[derive(Default, Debug)]
-pub struct U256Result {
+pub struct MathResult {
     /// u256 string representation
     pub value: String,
+    // 0 means success
     pub ret_code: u8,
     /// contains error as a string
     pub err_msg: String,
 }
 
-impl U256Result {
-    pub(crate) fn from_u256(value: u256) -> Self {
-        Self {
-            value: value.to_string(),
-            ret_code: 0, // 0 means success
-            err_msg: <_>::default(),
-        }
-    }
-}
-
-impl From<U256Error> for U256Result {
-    fn from(e: U256Error) -> Self {
-        let ret_code = match e {
-            U256Error::ParseError(_) => 1,
-            U256Error::U256Overflow => 2,
-        };
-
-        Self {
-            ret_code,
-            err_msg: e.to_string(),
-            ..<_>::default()
+impl From<std::result::Result<u256, Error>> for MathResult {
+    fn from(result: std::result::Result<u256, Error>) -> Self {
+        match result {
+            Ok(ok) => MathResult {
+                value: ok.to_string(),
+                ..<_>::default()
+            },
+            Err(err) => MathResult {
+                ret_code: err.to_u8().unwrap(),
+                err_msg: err.to_string(),
+                ..<_>::default()
+            },
         }
     }
 }

@@ -7,4 +7,4 @@ marine build --release
 
 rm -f -r artifacts/*
 mkdir --parents artifacts
-cp target/wasm32-wasi/release/math.wasm artifacts/
+cp target/wasm32-wasi/release/math256.wasm artifacts/

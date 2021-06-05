@@ -1,20 +1,21 @@
 [package]
-name = "wasm-math"
+name = "wasm-math256"
 version = "0.1.0"
 authors = ["Fluence Labs"]
 description = "The math module for the Fluence network"
-repository = "https://github.com/fluencelabs/fce/tree/master/examples/multi-service/math"
+repository = "https://github.com/fluencelabs/examples/math256"
 edition = "2018"
 publish = false
 
 [[bin]]
-name = "math"
+name = "math256"
 path = "src/main.rs"
 
 [dependencies]
 fluence = "0.6.9"
 ethnum = "1.0.3"
-
+num-traits = "0.2"
+num-derive = "0.3"
 thiserror = "1.0.25"
 
 [dev-dependencies]
