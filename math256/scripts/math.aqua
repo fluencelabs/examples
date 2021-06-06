@@ -1,0 +1,21 @@
+data MathResult:
+  ret_code: u8
+  err_msg: string
+  value: string
+
+service Math256("service-id"):
+  add(s: string, b:string) -> MathResult
+  mul(s: string, b:string) -> MathResult
+  div(s: string, b:string) -> MathResult
+  sub(s: string, b:string) -> MathResult
+
+
+func add(relay: string, a:string, b:string) -> MathResult:
+  res <- Math256.add(a,b)
+  <- res
+
+-- sums and than squares
+func sum_square(relay: string, a:string, b:string) -> MathResult:
+  sum <- Math256.add(a,b)
+  square <- Math256.mul(sum.value, sum.value)
+  <- square

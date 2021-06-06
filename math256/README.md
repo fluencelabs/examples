@@ -28,3 +28,9 @@ Fail add:
 ```
 fldist run_air --path ./scripts/math.clj --data "{\"service_id\":\"$SERVICE_ID\",\"a\":\"999999999999999999999999999999999999999999999999999999999999999999999999999999\", \"b\":\"0\"}" -v --ttl 5000
 ```
+
+
+To generate script from Aqua:
+```
+aqua-cli --input scripts/math.aqua --output ./scripts --air --no-relay
+```

@@ -1,3 +1,7 @@
+# manual
+.env
+
+# generated
 .DS_Store
 .repl_history
 /target
