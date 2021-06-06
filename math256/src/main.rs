@@ -16,64 +16,8 @@
  * limitations under the License.
  */
 
-#![warn(rust_2018_idioms)]
-#![deny(
-    dead_code,
-    nonstandard_style,
-    unused_imports,
-    unused_mut,
-    unused_variables,
-    unused_unsafe,
-    unreachable_patterns
-)]
-
-mod errors;
-mod math;
-mod result;
-
-use fluence::marine;
 use fluence::module_manifest;
-
-use crate::result::MathResult;
 
 module_manifest!();
 
 pub fn main() {}
-
-/// adds 2 256 bits integers (ETH compatible)
-/// return number or error (failed to parse input or overflow of output)
-#[marine]
-pub fn add(lhs: String, rhs: String) -> MathResult {
-    math::add(lhs, rhs).into()
-}
-
-#[marine]
-pub fn sub(lhs: String, rhs: String) -> MathResult {
-    math::sub(lhs, rhs).into()
-}
-
-#[marine]
-pub fn mul(lhs: String, rhs: String) -> MathResult {
-    math::mul(lhs, rhs).into()
-}
-
-#[marine]
-pub fn div(lhs: String, rhs: String) -> MathResult {
-    math::div(lhs, rhs).into()
-}
-
-#[cfg(test)]
-mod tests {
-    use fluence_test::marine_test;
-    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts/")]
-    fn add_test() {
-        assert_eq!(
-            super::add(
-                "1000000000000000000000000000000000".to_string(),
-                "1000000000000000000000000000000000".to_string()
-            )
-            .value,
-            "2000000000000000000000000000000000"
-        );
-    }
-}

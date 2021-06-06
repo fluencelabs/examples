@@ -1,7 +1,7 @@
 
-Check:
+Checked build:
 ```
-cargo clippy; cargo fmt --all; ./build.sh; cargo test --release
+./build.sh;
 ```
 
 Upload binary:

@@ -20,27 +20,23 @@ use ethnum::u256;
 pub fn add(lhs: String, rhs: String) -> Result<u256, Error> {
     let lhs = lhs.parse::<u256>()?;
     let rhs = rhs.parse::<u256>()?;
-    let result = lhs.checked_add(rhs).ok_or(Error::Overflow)?;
-    Ok(result)
+    lhs.checked_add(rhs).ok_or(Error::Overflow)
 }
 
 pub fn sub(lhs: String, rhs: String) -> Result<u256, Error> {
     let lhs = lhs.parse::<u256>()?;
     let rhs = rhs.parse::<u256>()?;
-    let result = lhs.checked_sub(rhs).ok_or(Error::Underflow)?;
-    Ok(result)
+    lhs.checked_sub(rhs).ok_or(Error::Underflow)
 }
 
 pub fn mul(lhs: String, rhs: String) -> Result<u256, Error> {
     let lhs = lhs.parse::<u256>()?;
     let rhs = rhs.parse::<u256>()?;
-    let result = lhs.checked_mul(rhs).ok_or(Error::Overflow)?;
-    Ok(result)
+    lhs.checked_mul(rhs).ok_or(Error::Overflow)
 }
 
 pub fn div(lhs: String, rhs: String) -> Result<u256, Error> {
     let lhs = lhs.parse::<u256>()?;
     let rhs = rhs.parse::<u256>()?;
-    let result = lhs.checked_div(rhs).ok_or(Error::DivisionByZero)?;
-    Ok(result)
+    lhs.checked_div(rhs).ok_or(Error::DivisionByZero)
 }

@@ -11,6 +11,9 @@ publish = false
 name = "math256"
 path = "src/main.rs"
 
+[lib]
+crate-type = ["lib"]
+
 [dependencies]
 fluence = "0.6.9"
 ethnum = "1.0.3"

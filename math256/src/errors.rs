@@ -22,7 +22,7 @@ use thiserror::Error as ThisError;
 #[derive(ThisError, Debug, ToPrimitive)]
 pub enum Error {
     #[error("Overflow")]
-    Overflow,
+    Overflow = 1,
 
     #[error("Underflow")]
     Underflow,
