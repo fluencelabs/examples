@@ -6,11 +6,13 @@ set -o errexit -o nounset -o pipefail
 cargo update
 cargo clippy --all -- -D warnings 
 cargo fmt --all
-marine build --release
 
-# tests are fast, so run them here
-cargo +nightly test --release
+marine build --release
 
 rm -f -r artifacts/*
 mkdir -p artifacts
 cp target/wasm32-wasi/release/math256.wasm artifacts/
+
+# tests are fast, so run them here
+cargo +nightly test --release
+

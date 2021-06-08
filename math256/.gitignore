@@ -1,8 +1,5 @@
 # manual
 .env
-# marine tests compilation requires wasm already be here, `nice` recursion
-!artifacts/*
-
 
 # generated
 .DS_Store
