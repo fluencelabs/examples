@@ -32,5 +32,12 @@ fldist run_air --path ./scripts/math.clj --data "{\"service_id\":\"$SERVICE_ID\"
 
 To generate script from Aqua:
 ```
-aqua-cli --input scripts/math.aqua --output ./scripts --air --no-relay
+aqua-cli --input ./scripts/math.aqua --output ./scripts --air
 ```
+
+Interactive run from REPL:
+```
+mrepl Config.toml 
+```
+
+and then `call math256 add ["1"  "2"]`

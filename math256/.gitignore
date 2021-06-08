@@ -7,5 +7,5 @@
 /target
 **/**.bak
 **/**.bk
-/artifacts
+
 keypair.json

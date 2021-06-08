@@ -2,13 +2,10 @@
  (seq
   (seq
    (seq
-    (seq
-     (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-     (call %init_peer_id% ("getDataSrv" "a") [] a)
-    )
-    (call %init_peer_id% ("getDataSrv" "b") [] b)
+    (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+    (call %init_peer_id% ("getDataSrv" "n") [] n)
    )
-   (call %init_peer_id% ("math256-service-id" "add") [a b] res)
+   (call %init_peer_id% ("math256-service-id" "mul") [n n] res)
   )
   (xor
    (call %init_peer_id% ("callbackSrv" "response") [res])

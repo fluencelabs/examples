@@ -3,19 +3,26 @@ data MathResult:
   err_msg: string
   value: string
 
-service Math256("service-id"):
+service Math256("math256-service-id"):
   add(s: string, b:string) -> MathResult
   mul(s: string, b:string) -> MathResult
   div(s: string, b:string) -> MathResult
   sub(s: string, b:string) -> MathResult
 
 
-func add(relay: string, a:string, b:string) -> MathResult:
+func add(a:string, b:string) -> MathResult:
   res <- Math256.add(a,b)
   <- res
 
+func square(n:string) -> MathResult:  
+  res <- Math256.mul(n, n)  
+  <- res
+
 -- sums and than squares
-func sum_square(relay: string, a:string, b:string) -> MathResult:
+func sum_square(a:string, b:string) -> MathResult:
   sum <- Math256.add(a,b)
-  square <- Math256.mul(sum.value, sum.value)
-  <- square
+  if sum.ret_code != 0:    
+    <- sum
+  res <- square(sum.value)
+  <- res      
+
