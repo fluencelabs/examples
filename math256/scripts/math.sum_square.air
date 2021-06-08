@@ -11,15 +11,29 @@
     )
     (call %init_peer_id% ("math256-service-id" "add") [a b] sum)
    )
-   (call %init_peer_id% ("math256-service-id" "mul") [sum.$.value! sum.$.value!] res)
+   (xor
+    (match sum.$.ret_code! 0
+     (xor
+      (call %init_peer_id% ("math256-service-id" "mul") [a a] res)
+      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+     )
+    )
+    (seq
+     (seq
+      (call -relay- ("op" "identity") [])
+      (call %init_peer_id% ("op" "identity") [sum] $ret)
+     )
+     (call -relay- ("op" "identity") [])
+    )
+   )
   )
   (xor
-   (call %init_peer_id% ("callbackSrv" "response") [res])
-   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+   (call %init_peer_id% ("callbackSrv" "response") [res.$.[0]!])
+   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
   )
  )
  (seq
   (call -relay- ("op" "identity") [])
-  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
  )
 )

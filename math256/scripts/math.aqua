@@ -9,20 +9,20 @@ service Math256("math256-service-id"):
   div(s: string, b:string) -> MathResult
   sub(s: string, b:string) -> MathResult
 
-
-func add(a:string, b:string) -> MathResult:
-  res <- Math256.add(a,b)
-  <- res
-
 func square(n:string) -> MathResult:  
   res <- Math256.mul(n, n)  
   <- res
 
--- sums and than squares
-func sum_square(a:string, b:string) -> MathResult:
-  sum <- Math256.add(a,b)
-  if sum.ret_code != 0:    
-    <- sum
-  res <- square(sum.value)
-  <- res      
+service Op("op"):
+   identity: MathResult -> MathResult
 
+
+-- sums and than squares
+func sum_square(a:string, b:string) -> MathResult:  
+  ret: *MathResult                   
+  sum <- Math256.add(a,b)               
+  if sum.ret_code == 0: 
+    ret <- square(a)
+  else:
+    ret  <- Op.identity(sum)
+  <- ret!
