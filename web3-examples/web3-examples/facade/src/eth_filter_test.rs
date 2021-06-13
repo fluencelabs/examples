@@ -18,11 +18,11 @@ use crate::eth_calls::{eth_get_balance, eth_get_tx_by_hash};
 use crate::eth_filters::{get_filter_changes, new_pending_tx_filter, uninstall_filter};
 use crate::eth_utils::wei_to_eth;
 use crate::fce_results::TestResult;
-use fluence::fce;
+use fluence::marine;
 use serde_json;
 use serde_json::Value;
 
-#[fce]
+#[marine]
 fn test_filters(url: String) -> TestResult {
     let pending_filter_id = new_pending_tx_filter(url.clone());
     let result = get_filter_changes(url.clone(), pending_filter_id.clone());
@@ -35,7 +35,7 @@ fn test_filters(url: String) -> TestResult {
     TestResult::from(Result::from(Err(String::from(err_msg))))
 }
 
-#[fce]
+#[marine]
 pub fn test_pending_with_null_filter(url: String) -> String {
     let mut matches: Vec<(String, String, String, String)> = Vec::new();
     let pending_filter_id = new_pending_tx_filter(url.clone());

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use fluence::fce;
+use fluence::marine;
 use tiny_keccak::{Hasher, Keccak};
 
-#[fce]
+#[marine]
 pub fn eth_hash_method_id(input: Vec<u8>) -> Vec<u8> {
     let mut output = [0u8; 32];
     let mut keccak = Keccak::v256();
@@ -26,7 +26,7 @@ pub fn eth_hash_method_id(input: Vec<u8>) -> Vec<u8> {
     output.to_vec()
 }
 
-#[fce]
+#[marine]
 pub fn test_eth_hash_method_id() -> String {
     use hex::encode;
 

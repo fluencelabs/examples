@@ -19,13 +19,13 @@ use crate::eth_utils::{check_response_string, get_nonce, BLOCK_NUMBER_TAGS};
 use crate::fce_results::JsonRpcResult;
 use crate::jsonrpc_helpers::{batch, Request};
 use chrono::Utc;
-use fluence::fce;
+use fluence::marine;
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_json;
 use serde_json::Value;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-#[fce]
+#[marine]
 pub fn eth_get_balance(url: String, account: String, block_number: String) -> JsonRpcResult {
     let method = String::from("eth_getBalance");
     let id = get_nonce();
@@ -47,7 +47,7 @@ pub fn eth_get_balance(url: String, account: String, block_number: String) -> Js
     check_response_string(response, &id)
 }
 
-#[fce]
+#[marine]
 pub fn eth_get_block_height(url: String) -> JsonRpcResult {
     let method = "eth_blockNumber".to_string();
     let params: Vec<String> = Vec::new();
@@ -59,7 +59,7 @@ pub fn eth_get_block_height(url: String) -> JsonRpcResult {
     check_response_string(response, &id)
 }
 
-#[fce]
+#[marine]
 pub fn eth_get_tx_by_hash(url: String, tx_hash: String) -> String {
     let method: String = String::from("eth_getTransactionByHash");
     let params: Vec<String> = vec![tx_hash];
@@ -113,7 +113,7 @@ struct GetTxResponse {
     result: Option<TxSerde>,
 }
 
-#[fce]
+#[marine]
 pub struct Tx {
     pub blockHash: String,
     pub blockNumber: String,
@@ -146,7 +146,7 @@ impl From<TxSerde> for Tx {
     }
 }
 
-#[fce]
+#[marine]
 pub fn eth_get_txs_by_hashes(url: String, tx_hashes: Vec<String>) -> Vec<Tx> {
     let method: String = String::from("eth_getTransactionByHash");
     let params: Vec<_> = tx_hashes.into_iter().map(|h| vec![h]).collect();

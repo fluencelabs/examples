@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use serde_json;
+use fluence::marine;
 use serde::{Deserialize, Serialize};
-use fluence::fce;
+use serde_json;
 
-
-#[fce]
+#[marine]
 pub fn test_drop_outliers_and_average() {
-
     let data: Vec<String> = vec![
         r#"{"result": "0x64"}"#.to_string(),
         r#"{"result": "0x6E"}"#.to_string(),
@@ -37,7 +35,6 @@ pub fn test_drop_outliers_and_average() {
 
     let result = drop_outliers_and_average(data);
     println!("{:?}", result);
-
 
     let data: Vec<String> = vec![
         r#"{"result": "0x64"}"#.to_string(),
@@ -48,9 +45,8 @@ pub fn test_drop_outliers_and_average() {
     println!("{:?}", result);
 }
 
-#[fce]
+#[marine]
 pub fn test_simple_average() {
-
     let data: Vec<String> = vec![
         r#"{"result": "0x64"}"#.to_string(),
         r#"{"result": "0x6E"}"#.to_string(),
@@ -68,7 +64,6 @@ pub fn test_simple_average() {
     let result = simple_average(data);
     println!("{:?}", result);
 
-
     let data: Vec<String> = vec![
         r#"{"result": "0x64"}"#.to_string(),
         r#"{"result": "0x6E"}"#.to_string(),
@@ -76,6 +71,4 @@ pub fn test_simple_average() {
 
     let result = simple_average(data);
     println!("{:?}", result);
-
-
 }

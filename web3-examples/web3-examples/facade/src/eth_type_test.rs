@@ -1,6 +1,6 @@
-use fluence::fce;
+use fluence::marine;
 
-#[fce]
+#[marine]
 pub fn eth_type_test() {
     use ethereum_types::{H160, H256, U256, U512};
     use serde_json as ser;
