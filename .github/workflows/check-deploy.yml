@@ -1,0 +1,55 @@
+name: "check-deploy"
+
+on:
+  push:
+    # branches:
+    #   - "master"
+
+jobs:
+  install-rust:
+    name: "Check deployment"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          profile: minimal
+          override: true
+  
+  install-fldist:
+    runs-on: ubuntu-latest
+    steps:
+      run: npm install -g @fluencelabs/fldist
+
+  run-node:
+    runs-on: ubuntu-latest
+    steps:
+      docker run -d --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj --local
+
+  call-parameters:
+    runs-on: ubuntu-latest
+    needs: [ install-rust, install-fldist, run-node ]
+    steps:
+      - run: |
+        export NODE="/ip4/127.0.0.1/tcp/9990/ws/p2p/12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK"
+        SERVICE_ID=$(./deploy.sh)
+        fldist --node-addr $NODE run_air -d '{"service_id": "'$SERVICE_ID'"}' -p <(echo '
+          (seq
+              (call relay (service_id "call_parameters") [] result)
+              (call %init_peer_id% (returnService "run") [result])
+          )
+        ')
