@@ -1,19 +1,22 @@
 #![allow(improper_ctypes)]
 
-use fluence::fce;
-use fluence::MountedBinaryStringResult as StringResult;
-use fluence::MountedBinaryResult as Result;
+use fluence::marine;
+use fluence::module_manifest;
+use fluence::MountedBinaryResult;
+use fluence::MountedBinaryStringResult;
+
+module_manifest!();
 
 fn main() {}
 
-#[fce]
-pub fn request(url: String) -> StringResult {
-    unsafe { curl(vec!["-sS".into(), url]) }.stringify().unwrap()
+#[marine]
+pub fn request(url: String) -> MountedBinaryStringResult {
+    curl(vec!["-sS".into(), url]).stringify().unwrap()
 }
 
 // mounted_binaries are available to import like this:
-#[fce]
+#[marine]
 #[link(wasm_import_module = "host")]
 extern "C" {
-    pub fn curl(cmd: Vec<String>) -> Result;
+    pub fn curl(cmd: Vec<String>) -> MountedBinaryResult;
 }
