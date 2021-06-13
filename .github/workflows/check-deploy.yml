@@ -57,7 +57,7 @@ jobs:
 
   call-parameters:
     runs-on: ubuntu-latest
-    needs: [ install-rust, install-fldist, run-node ]
+    needs: [ checkout, install-rust, install-fldist, run-node ]
     steps:
       - name: "Check call parameters deployment"
         run: |
@@ -69,3 +69,4 @@ jobs:
                 (call %init_peer_id% (returnService "run") [result])
             )
           ')
+    working-directory: call_parameters
