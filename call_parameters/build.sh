@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
 
-cargo update
-fce build --release
+cargo update --aggressive
+marine build --release
 
-rm -f artifacts/*
-cp ../../target/wasm32-wasi/release/call_parameters.wasm artifacts/
+mkdir -p artifacts
+rm -f artifacts/*.wasm
+cp target/wasm32-wasi/release/call_parameters.wasm artifacts/
