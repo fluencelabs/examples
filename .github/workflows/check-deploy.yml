@@ -6,9 +6,14 @@ on:
     #   - "master"
 
 jobs:
-  install-rust:
-    name: "Check deployment"
+  run-node:
     runs-on: ubuntu-latest
+    steps:
+      - run: docker run -d --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj --local
+
+  check-deployment:
+    runs-on: ubuntu-latest
+    needs: run-node
     defaults:
       run:
         shell: bash
@@ -30,9 +35,6 @@ jobs:
           profile: minimal
           override: true
   
-  install-fldist:
-    runs-on: ubuntu-latest
-    steps:
       - uses: actions/cache@v2
         with:
             path: ~/.npm
@@ -45,21 +47,6 @@ jobs:
             node-version: 14
       - run: npm install -g @fluencelabs/fldist
 
-  run-node:
-    runs-on: ubuntu-latest
-    steps:
-      - run: docker run -d --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj --local
-
-  checkout:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-  call-parameters:
-    runs-on: ubuntu-latest
-    needs: [ checkout, install-rust, run-node ] # install-fldist
-    steps:
-      - run: ls -l
       - name: "Check call parameters deployment"
         run: |
           ls -l
