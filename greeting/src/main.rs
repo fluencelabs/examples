@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fluence Labs Limited
+ * Copyright 2021 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,31 @@
  * limitations under the License.
  */
 
-use fluence::fce;
+use fluence::marine;
 use fluence::module_manifest;
 
 module_manifest!();
 
 pub fn main() {}
 
-#[fce]
+#[marine]
 pub fn greeting(name: String) -> String {
     format!("Hi, {}", name)
+}
+
+#[cfg(test)]
+mod tests {
+    use fluence_test::marine_test;
+
+    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
+    fn empty_string() {
+        let actual = greeting.greeting(String::new());
+        assert_eq!(actual, "Hi, ");
+    }
+
+    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
+    fn non_empty_string() {
+        let actual = greeting.greeting("name".to_string());
+        assert_eq!(actual, "Hi, name");
+    }
 }
