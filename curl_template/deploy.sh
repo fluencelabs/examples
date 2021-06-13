@@ -2,13 +2,13 @@
 set -euo pipefail
 
 # check `fcli` and `fldist` tools are installed or install them
-(command -v fce || cargo install fcli) >/dev/null
+(command -v marine || cargo install marine) >/dev/null
 (command -v fldist || npm install -g @fluencelabs/fldist) >/dev/null
 
 # build .wasm
 (
     cd backend
-    fce build --release
+    marine build --release
 )
 
 # check it .wasm was built
