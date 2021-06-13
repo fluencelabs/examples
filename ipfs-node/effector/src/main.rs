@@ -20,10 +20,10 @@ mod path;
 
 use crate::path::to_full_path;
 
-use fluence::fce;
+use fluence::marine;
 use fluence::module_manifest;
-use fluence::WasmLoggerBuilder;
 use fluence::MountedBinaryResult;
+use fluence::WasmLoggerBuilder;
 
 const RESULT_FILE_PATH: &str = "/tmp/ipfs_rpc_file";
 const IPFS_ADDR_ENV_NAME: &str = "IPFS_ADDR";
@@ -39,7 +39,7 @@ pub fn main() {
 }
 
 /// Put file from specified path to IPFS and return its hash.
-#[fce]
+#[marine]
 pub fn put(file_path: String) -> String {
     log::info!("put called with file path {}", file_path);
 
@@ -54,7 +54,7 @@ pub fn put(file_path: String) -> String {
         file_path,
     ];
 
-    let ipfs_result = unsafe { ipfs(cmd) };
+    let ipfs_result = ipfs(cmd);
     ipfs_result
         .into_std()
         .unwrap()
@@ -62,7 +62,7 @@ pub fn put(file_path: String) -> String {
 }
 
 /// Get file by provided hash from IPFS, saves it to a temporary file and returns a path to it.
-#[fce]
+#[marine]
 pub fn get(hash: String) -> String {
     log::info!("get called with hash {}", hash);
 
@@ -78,11 +78,11 @@ pub fn get(hash: String) -> String {
         hash,
     ];
 
-    unsafe { ipfs(cmd) };
+    ipfs(cmd);
     RESULT_FILE_PATH.to_string()
 }
 
-#[fce]
+#[marine]
 pub fn get_address() -> String {
     match std::env::var(IPFS_ADDR_ENV_NAME) {
         Ok(addr) => addr,
@@ -93,7 +93,7 @@ pub fn get_address() -> String {
     }
 }
 
-#[fce]
+#[marine]
 #[link(wasm_import_module = "host")]
 extern "C" {
     /// Execute provided cmd as a parameters of ipfs cli, return result.
