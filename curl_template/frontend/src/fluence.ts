@@ -1,11 +1,11 @@
 import { FluenceClient, Particle, sendParticleAsFetch } from '@fluencelabs/fluence';
-import { testNet } from '@fluencelabs/fluence-network-environment';
+import { krasnodar } from '@fluencelabs/fluence-network-environment';
 import { v4 as uuidv4 } from 'uuid';
 
-export const relayNode = testNet[3];
+export const relayNode = krasnodar[3];
 const node = relayNode.peerId;
 
-const serviceId = '4d082281-c72c-468b-b30a-e9ebad70546c';
+const serviceId = '4bfcd7ba-4b97-440c-9909-b2cc55e41e2a';
 
 export const curlRequest = async (client: FluenceClient, url: String, ttl: number) => {
     const script = `
