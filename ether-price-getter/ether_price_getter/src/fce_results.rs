@@ -19,7 +19,7 @@ use crate::Result;
 use fluence::marine;
 use serde_json::Value;
 
-#[fce]
+#[marine]
 #[derive(Debug)]
 pub struct JsonRpcResult {
     pub jsonrpc: String,
@@ -59,7 +59,7 @@ impl From<Result<String>> for JsonRpcResult {
     }
 }
 
-#[fce]
+#[marine]
 #[derive(Debug)]
 pub struct TestResult {
     pub test_passed: bool,

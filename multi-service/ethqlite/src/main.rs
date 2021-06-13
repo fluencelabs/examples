@@ -50,7 +50,7 @@ pub struct InitResult {
     pub err_msg: String,
 }
 
-#[fmarinece]
+#[marine]
 pub fn init_service() -> InitResult {
     if !is_owner() {
         return InitResult {
