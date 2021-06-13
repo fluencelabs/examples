@@ -30,12 +30,12 @@ pub enum Error {
     #[error("DivisionByZero")]
     DivisionByZero,
 
-    #[error("ParseError")]
-    ParseError,
+    #[error("Parse")]
+    Parse,
 }
 
 impl From<ParseIntError> for Error {
     fn from(_: ParseIntError) -> Self {
-        Error::ParseError
+        Error::Parse
     }
 }

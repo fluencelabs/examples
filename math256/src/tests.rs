@@ -16,17 +16,17 @@
 
 #[cfg(test)]
 mod tests {
-    use crate::{add, div, mul, sub};
     use fluence_test::marine_test;
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts/")]
     fn add_test() {
         assert_eq!(
-            add(
-                "1000000000000000000000000000000000".to_string(),
-                "1000000000000000000000000000000000".to_string()
-            )
-            .value,
+            math256
+                .add(
+                    "1000000000000000000000000000000000".to_string(),
+                    "1000000000000000000000000000000000".to_string()
+                )
+                .value,
             "2000000000000000000000000000000000"
         );
     }
@@ -34,11 +34,12 @@ mod tests {
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts/")]
     fn sub_test() {
         assert_eq!(
-            sub(
-                "1000000000000000000000000000000000".to_string(),
-                "1000000000000000000000000000000000".to_string()
-            )
-            .value,
+            math256
+                .sub(
+                    "1000000000000000000000000000000000".to_string(),
+                    "1000000000000000000000000000000000".to_string()
+                )
+                .value,
             "0"
         );
     }
@@ -46,11 +47,12 @@ mod tests {
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts/")]
     fn div_test() {
         assert_eq!(
-            div(
-                "1000000000000000000000000000000000".to_string(),
-                "1000000000000000000000000000000000".to_string()
-            )
-            .value,
+            math256
+                .div(
+                    "1000000000000000000000000000000000".to_string(),
+                    "1000000000000000000000000000000000".to_string()
+                )
+                .value,
             "1"
         );
     }
@@ -58,11 +60,12 @@ mod tests {
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts/")]
     fn mul_test() {
         assert_eq!(
-            mul(
-                "1000000000000000000000000000000000".to_string(),
-                "1000000000000000000000000000000000".to_string()
-            )
-            .value,
+            math256
+                .mul(
+                    "1000000000000000000000000000000000".to_string(),
+                    "1000000000000000000000000000000000".to_string()
+                )
+                .value,
             "1000000000000000000000000000000000000000000000000000000000000000000"
         );
     }
@@ -70,11 +73,12 @@ mod tests {
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts/")]
     fn mul_oveflow_test() {
         assert_eq!(
-            mul(
-                "100000000000000000000000000000000000000000000000000000".to_string(),
-                "100000000000000000000000000000000000000000000000000000".to_string()
-            )
-            .ret_code,
+            math256
+                .mul(
+                    "100000000000000000000000000000000000000000000000000000".to_string(),
+                    "100000000000000000000000000000000000000000000000000000".to_string()
+                )
+                .ret_code,
             1
         );
     }
@@ -82,21 +86,21 @@ mod tests {
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts/")]
     fn add_oveflow_test() {
         let max = ethnum::u256::MAX.to_string();
-        assert_eq!(add(max, "100".to_string(),).ret_code, 1);
+        assert_eq!(math256.add(max, "100".to_string(),).ret_code, 1);
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts/")]
     fn mul_underlow_test() {
-        assert_eq!(sub("1".to_string(), "10".to_string()).ret_code, 2);
+        assert_eq!(math256.sub("1".to_string(), "10".to_string()).ret_code, 2);
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts/")]
     fn div_zero_test() {
-        assert_eq!(div("1".to_string(), "0".to_string()).ret_code, 3);
+        assert_eq!(math256.div("1".to_string(), "0".to_string()).ret_code, 3);
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts/")]
     fn parse_fail_test() {
-        assert_eq!(add("a".to_string(), "b".to_string()).ret_code, 4);
+        assert_eq!(math256.add("a".to_string(), "b".to_string()).ret_code, 4);
     }
 }
