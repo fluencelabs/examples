@@ -3,26 +3,28 @@ data MathResult:
   err_msg: string
   value: string
 
-service Math256("math256-service-id"):
+-- deploy with alias or put your service id here
+-- imlementation of service should be deployed to Fluence node as WASM module with configuraition
+service Math256("math256"):
   add(s: string, b:string) -> MathResult
   mul(s: string, b:string) -> MathResult
   div(s: string, b:string) -> MathResult
   sub(s: string, b:string) -> MathResult
 
-func square(n:string) -> MathResult:  
-  res <- Math256.mul(n, n)  
-  <- res
-
+-- reference to build in function
 service Op("op"):
    identity: MathResult -> MathResult
 
+func square(n:string) -> MathResult:  
+  res <- Math256.mul(n, n)  
+  <- res
 
 -- sums and than squares
 func sum_square(a:string, b:string) -> MathResult:  
   ret: *MathResult                   
   sum <- Math256.add(a,b)               
-  if sum.ret_code == 0: 
+  if sum.ret_code == 0: -- non zero code is error
     ret <- square(a)
   else:
-    ret  <- Op.identity(sum)
+    ret  <- Op.identity(sum) -- cannot set value directly, must call some functions
   <- ret!

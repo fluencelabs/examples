@@ -8,3 +8,4 @@
 **/**.bak
 **/**.bk
 keypair.json
+*.wasm
