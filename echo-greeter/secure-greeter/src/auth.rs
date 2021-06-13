@@ -15,7 +15,7 @@
  */
 
 use ::fluence;
-use fluence::fce;
+use fluence::marine;
 
 pub fn is_owner() -> bool {
     let meta = fluence::get_call_parameters();
@@ -25,7 +25,7 @@ pub fn is_owner() -> bool {
     caller == owner
 }
 
-#[fce]
+#[marine]
 pub fn am_i_owner() -> bool {
     is_owner()
 }

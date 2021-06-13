@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-use fluence::fce;
+use fluence::marine;
 use fluence::module_manifest;
 
 module_manifest!();
 
 pub fn main() {}
 
-#[fce]
+#[marine]
 pub fn greeting(name: String, greeter: bool) -> String {
     match greeter {
         true => format!("Hi, {}", name),

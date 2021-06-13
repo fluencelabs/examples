@@ -9,5 +9,5 @@ name = "secure_greeter"
 path = "src/main.rs"
 
 [dependencies]
-fluence = { version="0.6.2", feature=["log"]}
+fluence = { version="0.6.9", feature=["log"]}
 log = "0.4.14"

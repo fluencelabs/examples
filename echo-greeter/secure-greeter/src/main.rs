@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use fluence::fce;
+use fluence::marine;
 use fluence::module_manifest;
 
 mod auth;
@@ -24,23 +24,23 @@ module_manifest!();
 
 pub fn main() {}
 
-#[fce]
+#[marine]
 #[derive(Debug)]
 pub struct Gresult {
     pub greeting: String,
     pub err_str: String,
 }
 
-#[fce]
+#[marine]
 pub fn greeting(name: String) -> Gresult {
-    if !is_owner() {
-        return Gresult {
+    match is_owner() {
+        true => Gresult {
+            greeting: format!("Hi, {}", name),
+            err_str: "".into(),
+        },
+        false => Gresult {
             greeting: "".into(),
             err_str: "You are not the owner".into(),
-        };
-    }
-    Gresult {
-        greeting: format!("Hi, {}", name),
-        err_str: "".into(),
+        },
     }
 }

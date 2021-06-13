@@ -1,11 +1,11 @@
-use fluence::fce;
+use fluence::marine;
 
-#[fce]
+#[marine]
 pub struct Echo {
     pub echo: String,
 }
 
-#[fce]
+#[marine]
 pub fn echo(inputs: Vec<String>) -> Vec<Echo> {
     inputs
         .iter()

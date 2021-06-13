@@ -1,4 +1,4 @@
-modules_dir = "/Users/bebo/localdev/fluence-examples/par-greeter/artifacts/"
+modules_dir = "./artifacts"
 
 [[module]]
     name = "echo_service"
