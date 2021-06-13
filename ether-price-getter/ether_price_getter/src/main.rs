@@ -24,7 +24,7 @@
 #[macro_use]
 extern crate fstrings;
 
-use fluence::fce;
+use fluence::marine;
 use fluence::module_manifest;
 use fluence::MountedBinaryResult;
 use fluence::WasmLoggerBuilder;
@@ -40,7 +40,7 @@ pub fn main() {
     WasmLoggerBuilder::new().build().ok();
 }
 
-#[fce]
+#[marine]
 #[link(wasm_import_module = "curl_adapter")]
 extern "C" {
     pub fn curl_request(url: Vec<String>) -> MountedBinaryResult;

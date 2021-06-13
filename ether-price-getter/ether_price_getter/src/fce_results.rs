@@ -16,7 +16,7 @@
 
 use crate::jsonrpc_helpers::JSON_RPC;
 use crate::Result;
-use fluence::fce;
+use fluence::marine;
 use serde_json::Value;
 
 #[fce]

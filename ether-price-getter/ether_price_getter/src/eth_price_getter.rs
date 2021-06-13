@@ -15,12 +15,12 @@
  */
 
 use crate::curl_request;
-use fluence::fce;
+use fluence::marine;
 
 static URL_LATEST: &'static str =
     "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest";
 
-#[fce]
+#[marine]
 pub fn ether_price_getter(api_key: String, currency_symbol: String) -> String {
     let curl_args = f!(
         r#"-H "X-CMC_PRO_API_KEY: {api_key}" -H "Accept: application/json" -d "symbol=ETH&convert={currency_symbol}" -G {URL_LATEST}"#
