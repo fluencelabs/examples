@@ -48,7 +48,20 @@ jobs:
 
       - run: npm install -g @fluencelabs/fldist
 
-      - name: "Check call parameters deployment"
+      - name: "Check call_parameters deployment"
+        run: |
+          set -x
+          export NODE="/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3"
+          SERVICE_ID=`./deploy.sh`
+          fldist --node-addr $NODE run_air -d '{"service_id": "'$SERVICE_ID'"}' -p <(echo '
+            (seq
+                (call relay (service_id "call_parameters") [] result)
+                (call %init_peer_id% (returnService "run") [result])
+            )
+          ')
+        working-directory: call_parameters
+      
+      - name: "Check curl_template deployment"
         run: |
           set -x
           export NODE="/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3"
