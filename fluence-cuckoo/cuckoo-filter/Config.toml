@@ -1,6 +1,6 @@
 modules_dir = "artifacts/"
 
 [[module]]
-    name = "fce-cuckoo"
+    name = "cuckoo_filter"
     logger_enabled = true
 

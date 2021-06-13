@@ -2,7 +2,7 @@ use cuckoofilter::{CuckooFilter, ExportedCuckooFilter};
 use flate2::read::ZlibDecoder;
 use flate2::write::ZlibEncoder;
 use flate2::Compression;
-use fluence::fce;
+use fluence::marine;
 use serde::Serialize;
 use serde_json;
 use std::collections::hash_map::DefaultHasher;
@@ -36,7 +36,7 @@ fn de_cf(cf: Vec<u8>) -> Result<CF, String> {
     ))
 }
 
-#[fce]
+#[marine]
 pub fn create_cf(with_capacity: String) -> Vec<u8> {
     let capacity = with_capacity.parse::<u32>().unwrap();
     let cf = match capacity {
@@ -46,7 +46,7 @@ pub fn create_cf(with_capacity: String) -> Vec<u8> {
     ser_cf(cf)
 }
 
-#[fce]
+#[marine]
 // one day, this may be available
 // pub fn create_and_add_cf<T: ?Sized + Hash>(data: &T) -> String {
 // until then, we use bytesrings although a json string of array of values should also work
@@ -59,7 +59,7 @@ pub fn create_and_add_cf(data: Vec<Vec<u8>>) -> Vec<u8> {
     ser_cf(cf)
 }
 
-#[fce]
+#[marine]
 pub fn add(cf: Vec<u8>, data: Vec<Vec<u8>>) -> Vec<u8> {
     let mut cf: CF = de_cf(cf).unwrap();
     let result = Vec::<bool>::new();
@@ -70,7 +70,7 @@ pub fn add(cf: Vec<u8>, data: Vec<Vec<u8>>) -> Vec<u8> {
     ser_cf(cf)
 }
 
-#[fce]
+#[marine]
 pub fn delete(cf: Vec<u8>, items: Vec<Vec<u8>>) -> Vec<bool> {
     let mut cf = de_cf(cf).unwrap();
     let mut result = Vec::<bool>::new();
@@ -80,7 +80,7 @@ pub fn delete(cf: Vec<u8>, items: Vec<Vec<u8>>) -> Vec<bool> {
     result
 }
 
-#[fce]
+#[marine]
 pub fn contains(cf: Vec<u8>, items: Vec<Vec<u8>>) -> Vec<bool> {
     let cf = de_cf(cf).unwrap();
     let mut result = Vec::<bool>::new();
@@ -90,25 +90,25 @@ pub fn contains(cf: Vec<u8>, items: Vec<Vec<u8>>) -> Vec<bool> {
     result
 }
 
-#[fce]
+#[marine]
 pub fn is_empty(cf: Vec<u8>) -> bool {
     let cf = de_cf(cf).unwrap();
     cf.is_empty()
 }
 
-#[fce]
+#[marine]
 pub fn memory_usage(cf: Vec<u8>) -> u64 {
     let cf = de_cf(cf).unwrap();
     cf.memory_usage() as u64
 }
 
-#[fce]
+#[marine]
 pub fn len(cf: Vec<u8>) -> u64 {
     let cf = de_cf(cf).unwrap();
     cf.len() as u64
 }
 
-#[fce]
+#[marine]
 pub fn service_info() -> String {
     #[derive(Serialize)]
     struct ServiceInfo {
@@ -131,7 +131,7 @@ pub fn service_info() -> String {
 }
 
 /*
-#[fce]
+#[marine]
 pub fn smoker() {
     let mut data: Vec<Vec<u8>> = Vec::new();
     data.push(5_u32.to_le_bytes().to_vec());
