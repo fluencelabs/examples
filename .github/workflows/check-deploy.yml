@@ -68,7 +68,7 @@ jobs:
           SERVICE_ID=`./deploy.sh`
           fldist --node-addr $NODE run_air -d '{"service_id": "'$SERVICE_ID'"}' -p <(echo '
             (seq
-                (call relay (service_id "call_parameters") [] result)
+                (call relay (service_id "request") ["https://fluence.network/join.html"] result)
                 (call %init_peer_id% (returnService "run") [result])
             )
           ')
