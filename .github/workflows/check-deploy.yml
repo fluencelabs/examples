@@ -61,7 +61,9 @@ jobs:
     steps:
       - name: "Check call parameters deployment"
         run: |
-          export NODE="/ip4/127.0.0.1/tcp/9990/ws/p2p/12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK"
+          ls -l
+          set -x
+          export NODE="/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3"
           SERVICE_ID=`./deploy.sh`
           fldist --node-addr $NODE run_air -d '{"service_id": "'$SERVICE_ID'"}' -p <(echo '
             (seq
