@@ -57,8 +57,9 @@ jobs:
 
   call-parameters:
     runs-on: ubuntu-latest
-    needs: [ checkout, install-rust, install-fldist, run-node ]
+    needs: [ checkout, install-rust, run-node ] # install-fldist
     steps:
+      - run: ls -l
       - name: "Check call parameters deployment"
         run: |
           ls -l
