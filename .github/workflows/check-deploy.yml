@@ -69,4 +69,4 @@ jobs:
                 (call %init_peer_id% (returnService "run") [result])
             )
           ')
-    working-directory: call_parameters
+        working-directory: call_parameters
