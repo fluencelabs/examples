@@ -1,15 +1,18 @@
-#!/usr/bin/env bash
+#!/bin/sh
 set -o errexit -o nounset -o pipefail
 
 # This script builds all subprojects and puts all created Wasm modules in one dir
 cd effector
-cargo update
-fce build --release
+cargo update --aggressive
+marine build --release
+
 cd ../pure
-cargo update
-fce build --release
+cargo update --aggressive
+marine build --release
 
 cd ..
-rm artifacts/*
-cp ../../target/wasm32-wasi/release/records_effector.wasm artifacts/
-cp ../../target/wasm32-wasi/release/records_pure.wasm artifacts/
+
+mkdir -p artifacts
+rm -f artifacts/*.wasm
+cp effector/target/wasm32-wasi/release/records_effector.wasm artifacts/
+cp pure/target/wasm32-wasi/release/records_pure.wasm artifacts/
