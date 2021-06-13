@@ -10,6 +10,6 @@ path = "src/main.rs"
 name = "curl_adapter"
 
 [dependencies]
-fluence = { version = "=0.6.2", features = ["logger"] }
+fluence = { version = "=0.6.9", features = ["logger"] }
 log = "0.4.14"
 serde_json = "1.0.64"

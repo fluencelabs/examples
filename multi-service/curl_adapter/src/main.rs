@@ -15,7 +15,7 @@
  */
 #![allow(improper_ctypes)]
 
-use fluence::fce;
+use fluence::marine;
 use fluence::module_manifest;
 use fluence::MountedBinaryResult;
 use fluence::WasmLoggerBuilder;
@@ -26,14 +26,14 @@ fn main() {
     WasmLoggerBuilder::new().build().unwrap();
 }
 
-#[fce]
+#[marine]
 pub fn curl_request(curl_cmd: Vec<String>) -> MountedBinaryResult {
     let response = curl(curl_cmd);
     response
 }
 
 // mounted_binaries are available to import like this:
-#[fce]
+#[marine]
 #[link(wasm_import_module = "host")]
 extern "C" {
     pub fn curl(cmd: Vec<String>) -> MountedBinaryResult;

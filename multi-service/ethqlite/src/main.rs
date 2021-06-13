@@ -14,70 +14,76 @@
  * limitations under the License.
  */
 
-use fluence::fce; ///, WasmLoggerBuilder};
-use fluence;
-use fluence::WasmLoggerBuilder;
 use fce_sqlite_connector;
 use fce_sqlite_connector::{Connection, State, Value};
+///, WasmLoggerBuilder};
+use fluence;
+use fluence::marine;
+use fluence::WasmLoggerBuilder;
 
-
-use std::path::{Path, PathBuf};
 use serde::Deserialize;
 use serde_json;
+use std::path::{Path, PathBuf};
 
 use std::sync::atomic::{AtomicBool, Ordering};
 
-use crate::crud::create_table;
 use crate::auth::is_owner;
+use crate::crud::create_table;
 
-const DB_PATH: &str  = "/tmp/fluence_service_db.sqlite";
+const DB_PATH: &str = "/tmp/fluence_service_db.sqlite";
 
-
-mod crud;
 mod auth;
+mod crud;
 
 pub static INIT: AtomicBool = AtomicBool::new(false);
 
 fn main() {}
 
-
 fn get_connection() -> Connection {
     Connection::open(DB_PATH).unwrap()
 }
 
-
-#[fce]
+#[marine]
 #[derive(Debug)]
 pub struct InitResult {
     pub success: bool,
     pub err_msg: String,
 }
 
-#[fce]
+#[fmarinece]
 pub fn init_service() -> InitResult {
-
     if !is_owner() {
-        return InitResult {success: false, err_msg: "Not authorized to use this service".into()};
+        return InitResult {
+            success: false,
+            err_msg: "Not authorized to use this service".into(),
+        };
     }
 
     if INIT.load(Ordering::Relaxed) {
-        return InitResult {success: false, err_msg: "Service already initiated".into()};
+        return InitResult {
+            success: false,
+            err_msg: "Service already initiated".into(),
+        };
     }
 
     let conn = get_connection();
     let res = create_table(&conn);
     if res.is_err() {
-        return InitResult {success: false, err_msg: "Failure to create tables".into()};
+        return InitResult {
+            success: false,
+            err_msg: "Failure to create tables".into(),
+        };
     }
-    
     // TODO: implement rollbacks
 
     INIT.store(true, Ordering::Relaxed);
-    InitResult {success: true, err_msg: "".into()}
+    InitResult {
+        success: true,
+        err_msg: "".into(),
+    }
 }
 
-
-#[fce]
+#[marine]
 pub fn owner_nuclear_reset() -> bool {
     if !is_owner() {
         return false;

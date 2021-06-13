@@ -15,7 +15,7 @@
  */
 
 use fluence::module_manifest;
-use fluence::{fce, WasmLoggerBuilder};
+use fluence::{marine, WasmLoggerBuilder};
 use serde_json;
 
 module_manifest!();
@@ -24,7 +24,7 @@ fn main() {
     WasmLoggerBuilder::new().build().ok();
 }
 
-#[fce]
+#[marine]
 pub fn hex_to_int(data: String) -> u64 {
     if data.starts_with("0x") {
         let res = u64::from_str_radix(&data[2..], 16);

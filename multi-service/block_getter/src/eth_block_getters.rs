@@ -15,7 +15,7 @@
  */
 
 use crate::curl_request;
-use fluence::fce;
+use fluence::marine;
 use fluence::MountedBinaryResult;
 
 fn result_to_string(result: MountedBinaryResult) -> String {
@@ -25,7 +25,7 @@ fn result_to_string(result: MountedBinaryResult) -> String {
     String::from_utf8(result.stderr).expect("Found invalid UTF-8")
 }
 
-#[fce]
+#[marine]
 pub fn get_latest_block(api_key: String) -> String {
     let url =
         f!("https://api.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey={api_key}");
@@ -38,7 +38,7 @@ pub fn get_latest_block(api_key: String) -> String {
     serde_json::from_value(obj["result"].clone()).unwrap()
 }
 
-#[fce]
+#[marine]
 pub fn get_block(api_key: String, block_number: u32) -> String {
     let url = f!("https://api.etherscan.io/api?module=block&action=getblockreward&blockno={block_number}&apikey={api_key}");
     let header = "-d \"\"";

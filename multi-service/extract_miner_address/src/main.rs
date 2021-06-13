@@ -1,5 +1,5 @@
 use fluence::module_manifest;
-use fluence::{fce, WasmLoggerBuilder};
+use fluence::{marine, WasmLoggerBuilder};
 use serde_json;
 
 module_manifest!();
@@ -8,7 +8,7 @@ fn main() {
     WasmLoggerBuilder::new().build().ok();
 }
 
-#[fce]
+#[marine]
 pub fn extract_miner_address(json_string: String) -> String {
     let obj = serde_json::from_str::<serde_json::Value>(&json_string);
     match obj {

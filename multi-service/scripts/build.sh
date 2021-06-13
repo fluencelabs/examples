@@ -1,24 +1,20 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
 
-mkdir -p artifacts
-
 cd curl_adapter
-fce build --release
+marine build --release
+
+cd ../hex_converter
+marine build --release
+
+cd ../block_getter
+marine build --release
+
+cd ../extract_miner_address
+marine build --release
 cd ..
 
-cd hex_converter
-fce build --release
-cd ..
-
-cd block_getter
-fce build --release
-cd ..
-
-cd extract_miner_address
-fce build --release
-cd ..
-
+mkdir -p artifacts
 rm -f artifacts/*.wasm
 
 cp curl_adapter/target/wasm32-wasi/release/curl_adapter.wasm artifacts/

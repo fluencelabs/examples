@@ -1,11 +1,11 @@
-use fluence::fce;
+use fluence::marine;
 use fluence::module_manifest;
 
 module_manifest!();
 
 fn main() {}
 
-#[fce]
+#[marine]
 fn simple_range_list(start: i64, step: u32, n: u32) -> Vec<i64> {
     let mut result: Vec<i64> = Vec::new();
     let stop = start - n as i64;

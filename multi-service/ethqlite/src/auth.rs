@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-use fluence::{fce, CallParameters};
-use::fluence;
 use crate::get_connection;
+use ::fluence;
+use fluence::{marine, CallParameters};
 
 pub fn is_owner() -> bool {
     let meta = fluence::get_call_parameters();
@@ -26,7 +26,7 @@ pub fn is_owner() -> bool {
     caller == owner
 }
 
-#[fce]
+#[marine]
 pub fn am_i_owner() -> bool {
     is_owner()
 }
