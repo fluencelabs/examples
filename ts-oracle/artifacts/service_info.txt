@@ -1,0 +1,7 @@
+mbp16~/localdev/ts-cons(main|…) % fldist new_service --ms artifacts/ts_cons.wasm:artifacts/ts_cons_cfg.json --name ts-consensus --verbose
+client seed: 9Kak5cFVaFGgKVAEshEraT9xCWYonjB4svwT3Y8m5mTs
+client peerId: 12D3KooWBJgXUgYw3Tc5nmzhgxLirYmpSwMX9dPcAxphSQ8WbrXN
+relay peerId: 12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf
+service id: 519ba491-d32a-4994-b7ae-03ba532f15fb
+service created successfully
+mbp16~/localdev/ts-cons(main|…) %

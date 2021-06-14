@@ -1,0 +1,30 @@
+import "builtin.aqua"
+
+service Op2("op"):
+    identity(s: u64)
+     array(a: string, b: u64) -> string
+
+data Oracle:
+    n: u32
+    mode: u64
+    freq: u32
+    err_str: string
+
+service TSOracle("service-id"):
+    point_estimate: []u64, u32 -> Oracle
+
+func ts_oracle(node: string, oracle_service_id: string, min_points:u32) -> Oracle:
+  on node:
+    k <- Op.string_to_b58(node)
+    nodes <- Kademlia.neighborhood(k, false)
+    res: *u64
+    for n <- nodes par:
+      on n:
+        try:
+          res <- Peer.timestamp_ms()
+    Op2.identity(res!9)
+
+  on node:
+    TSOracle oracle_service_id
+    oracle <- TSOracle.point_estimate(res, min_points)
+  <- oracle
