@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-use ::fluence;
 use marine_rs_sdk::marine;
 
 pub fn is_owner() -> bool {
