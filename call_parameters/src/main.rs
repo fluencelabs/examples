@@ -27,7 +27,7 @@ pub fn main() {}
 #[marine]
 #[cfg(target_arch = "wasm32")]
 pub fn call_parameters() -> String {
-    let cp = fluence::get_call_parameters();
+    let cp = marine_rs_sdk::get_call_parameters();
     format!(
         "{}\n{}\n{}\n{}\n{}\n{:?}",
         cp.init_peer_id,
