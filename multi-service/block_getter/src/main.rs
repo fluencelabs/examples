@@ -16,9 +16,9 @@
 #[macro_use]
 extern crate fstrings;
 
-use fluence::module_manifest;
-use fluence::MountedBinaryResult;
-use fluence::{marine, WasmLoggerBuilder};
+use marine_rs_sdk::module_manifest;
+use marine_rs_sdk::MountedBinaryResult;
+use marine_rs_sdk::{marine, WasmLoggerBuilder};
 
 mod eth_block_getters;
 

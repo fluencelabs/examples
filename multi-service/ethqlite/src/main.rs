@@ -18,8 +18,8 @@ use fce_sqlite_connector;
 use fce_sqlite_connector::{Connection, State, Value};
 ///, WasmLoggerBuilder};
 use fluence;
-use fluence::marine;
-use fluence::WasmLoggerBuilder;
+use marine_rs_sdk::marine;
+use marine_rs_sdk::WasmLoggerBuilder;
 
 use serde::Deserialize;
 use serde_json;

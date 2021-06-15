@@ -18,7 +18,7 @@ use crate::eth_calls::{eth_get_balance, eth_get_tx_by_hash};
 use crate::eth_filters::{get_filter_changes, new_pending_tx_filter, uninstall_filter};
 use crate::eth_utils::wei_to_eth;
 use crate::fce_results::TestResult;
-use fluence::marine;
+use marine_rs_sdk::marine;
 
 #[marine]
 fn test_eth_get_balance_good(url: String) -> TestResult {

@@ -16,7 +16,7 @@
 
 use crate::get_connection;
 use ::fluence;
-use fluence::{marine, CallParameters};
+use marine_rs_sdk::{marine, CallParameters};
 
 pub fn is_owner() -> bool {
     let meta = fluence::get_call_parameters();

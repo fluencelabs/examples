@@ -15,7 +15,7 @@
  */
 use fce_sqlite_connector;
 use fce_sqlite_connector::{Connection, Value};
-use fluence::marine;
+use marine_rs_sdk::marine;
 
 use crate::auth::is_owner;
 use crate::get_connection;

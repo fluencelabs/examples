@@ -19,7 +19,7 @@ use crate::eth_utils::{check_response_string, get_nonce};
 use crate::fce_results::JsonRpcResult;
 use crate::jsonrpc_helpers::Request;
 use crate::jsonrpc_helpers::JSON_RPC;
-use fluence::marine;
+use marine_rs_sdk::marine;
 use serde_json::Value;
 
 /// see:

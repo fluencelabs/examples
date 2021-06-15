@@ -15,8 +15,8 @@
  */
 
 use crate::curl_request;
-use fluence::marine;
-use fluence::MountedBinaryResult;
+use marine_rs_sdk::marine;
+use marine_rs_sdk::MountedBinaryResult;
 
 fn result_to_string(result: MountedBinaryResult) -> String {
     if result.is_success() {

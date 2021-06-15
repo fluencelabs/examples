@@ -1,4 +1,4 @@
-use fluence::marine;
+use marine_rs_sdk::marine;
 
 #[marine]
 pub fn eth_type_test() {

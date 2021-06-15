@@ -15,7 +15,7 @@
  */
 
 use ::fluence;
-use fluence::marine;
+use marine_rs_sdk::marine;
 
 pub fn is_owner() -> bool {
     let meta = fluence::get_call_parameters();

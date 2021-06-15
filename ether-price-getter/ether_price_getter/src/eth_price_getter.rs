@@ -15,7 +15,7 @@
  */
 
 use crate::curl_request;
-use fluence::marine;
+use marine_rs_sdk::marine;
 
 static URL_LATEST: &'static str =
     "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest";

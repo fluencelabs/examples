@@ -2,7 +2,7 @@ use cuckoofilter::{CuckooFilter, ExportedCuckooFilter};
 use flate2::read::ZlibDecoder;
 use flate2::write::ZlibEncoder;
 use flate2::Compression;
-use fluence::marine;
+use marine_rs_sdk::marine;
 use serde::Serialize;
 use serde_json;
 use std::collections::hash_map::DefaultHasher;

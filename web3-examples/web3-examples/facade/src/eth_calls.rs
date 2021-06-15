@@ -19,7 +19,7 @@ use crate::eth_utils::{check_response_string, get_nonce, BLOCK_NUMBER_TAGS};
 use crate::fce_results::JsonRpcResult;
 use crate::jsonrpc_helpers::{batch, Request};
 use chrono::Utc;
-use fluence::marine;
+use marine_rs_sdk::marine;
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_json;
 use serde_json::Value;

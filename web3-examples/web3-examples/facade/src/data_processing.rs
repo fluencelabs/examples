@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use fluence::marine;
+use marine_rs_sdk::marine;
 use serde::{Deserialize, Serialize};
 use serde_json;
 

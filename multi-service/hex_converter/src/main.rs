@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-use fluence::module_manifest;
-use fluence::{marine, WasmLoggerBuilder};
+use marine_rs_sdk::module_manifest;
+use marine_rs_sdk::{marine, WasmLoggerBuilder};
 use serde_json;
 
 module_manifest!();
