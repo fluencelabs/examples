@@ -25,6 +25,7 @@ pub fn is_owner() -> bool {
 }
 
 #[marine]
+#[allow(dead_code)]
 pub fn am_i_owner() -> bool {
     is_owner()
 }

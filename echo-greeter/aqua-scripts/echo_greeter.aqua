@@ -1,0 +1,67 @@
+service OpString("op"):
+    identity(s: string)
+
+data EchoResult:
+  echo: string
+
+service EchoService:
+  echo: []string -> []EchoResult
+
+service GreetingService("service-id"):
+    greeting: string, bool -> string
+
+-- basic echo service: string array, return array of structs
+func echo(names: []string, node: string, echo_service: string) -> []EchoResult:
+  on node:
+    EchoService echo_service
+    res <- EchoService.echo(names)
+  <- res
+
+func greeting(name:string, greet:bool, node:string, greeting_service_id: string) -> string:
+  on node:
+    GreetingService greeting_service_id
+    res <- GreetingService.greeting(name, greet)
+  <- res
+
+
+
+-- call echo service and and sequentailly call greeting service on each name
+-- one service, on one node for all processing needs
+func echo_greeting_seq(names: []string, greet: bool, node: string, echo_service_id: string,greeting_service_id: string) -> []string:
+  res: *string
+  on node:
+    EchoService echo_service_id
+    GreetingService greeting_service_id
+    echo_names <- EchoService.echo(names)
+    <- echo_names
+    for result <- echo_names:
+      res <- GreetingService.greeting(result.echo, greet)
+  <- res
+
+
+data NodeServicePair:
+  node: string
+  service_id: string
+
+
+data EchoServiceInput:
+  node: string
+  service_id: string
+  names: []string
+
+
+-- call echo service
+func echo_greeting_par(names: []string, greet: bool, echo_service: EchoServiceInput, greeting_services: []NodeServicePair) -> []string:
+    res: *string
+    on echo_service.node:
+        EchoService echo_service.service_id
+        echo_results <- EchoService.echo(names)
+
+    for result <- echo_results par:
+      for greeting_service <- greeting_services:
+        GreetingService greeting_service.service_id
+        on greeting_service.node:
+          res <- GreetingService.greeting(result.echo, greet)
+          -- this is super annoying
+          OpString.identity(res!2)
+    <- res

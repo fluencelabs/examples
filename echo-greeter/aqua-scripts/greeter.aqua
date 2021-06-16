@@ -1,7 +1,0 @@
-service Greeting("service-id"):
-    greeting: string, bool -> string    
-
-
-func greeting(name: string, greeter:bool) -> string:
-    res <- Greeting.greeting(name, greeter)
-    <- res
