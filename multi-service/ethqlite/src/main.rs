@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-use fce_sqlite_connector;
-use fce_sqlite_connector::{Connection, State, Value};
 ///, WasmLoggerBuilder};
 use fluence;
 use marine_rs_sdk::marine;
 use marine_rs_sdk::WasmLoggerBuilder;
+use marine_sqlite_connector;
+use marine_sqlite_connector::{Connection, State, Value};
 
 use serde::Deserialize;
 use serde_json;

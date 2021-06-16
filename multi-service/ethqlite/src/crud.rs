@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use fce_sqlite_connector;
-use fce_sqlite_connector::{Connection, Value};
 use marine_rs_sdk::marine;
+use marine_sqlite_connector;
+use marine_sqlite_connector::{Connection, Value};
 
 use crate::auth::is_owner;
 use crate::get_connection;
 
-pub fn create_table(conn: &Connection) -> std::result::Result<(), fce_sqlite_connector::Error> {
+pub fn create_table(conn: &Connection) -> std::result::Result<(), marine_sqlite_connector::Error> {
     let res = conn.execute(
         "
         create table if not exists reward_blocks (
