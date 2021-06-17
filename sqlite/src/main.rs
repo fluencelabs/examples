@@ -124,7 +124,9 @@ pub fn test_last_rowid() -> i64 {
         )
         .expect("insert");
 
-    let stmt = connection.prepare("SELECT last_insert_rowid();").unwrap();
+    let stmt = connection
+        .prepare("SELECT last_insert_rowid();")
+        .expect("select");
 
     let mut cursor = stmt.cursor();
     match cursor.next() {
