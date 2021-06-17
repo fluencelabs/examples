@@ -105,3 +105,43 @@ pub fn test3() {
 
     println!("table size is: {:?}", cursor.count());
 }
+
+#[marine]
+pub fn last_cursor() {
+    let db_path = "/tmp/users.sqlite";
+    let connection = marine_sqlite_connector::open(db_path).expect("db should be opened");
+
+    // let mut select = conn
+    //     .prepare("select * from reward_blocks")
+    //     .unwrap()
+    //     .cursor();
+
+    let mut cursor = connection
+        .prepare(
+            "
+            CREATE TABLE IF NOT EXISTS users (id integer not null primary key, name TEXT, age INTEGER);
+            INSERT INTO users VALUES ('Alice', 42);
+            INSERT INTO users VALUES ('Bob', 69);
+            returning id;
+        ",
+        )
+        .expect("table should be created successfully")
+        .cursor();
+
+    // println!("cursor is: {:?}", cursor);
+    println!("cursor count is: {:?}", cursor.count());
+    println!("next is: {:?}", cursor.next())
+}
+
+#[cfg(test)]
+mod tests {
+    use marine_rs_sdk_test::marine_test;
+    use marine_rs_sdk_test::CallParameters;
+    use marine_rs_sdk_test::SecurityTetraplet;
+
+    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
+    fn test() {
+        sqlite_test.last_cursor();
+        // println!("last cursor is: {:?}", result);
+    }
+}
