@@ -8,7 +8,7 @@ Getting accurate timestamps can be problematic in various contexts including blo
 
 Timestamp oracles can alleviate this concern by aggregating and processing a variety of timestamp sources into a point- or range-estimate. The Fluence peer-to-peer network offers a (soon to be) large number of independent nodes that can serve as timestamp sources. Moreover, through Kademlia or Trustgraph neighborhood specification, trustworthy, spam-free nodes can be queried to seed a timestamp oracle.
 
-**Note: The timestamps are currently NOT signed by the nodes. But that should be easily improved. Also, we are not using a Trustgraph.**
+**Note: The timestamps are currently NOT signed by the nodes. But that could be easily addressed. Also, we are not using a Trustgraph.**
 
 ### Approach
 
