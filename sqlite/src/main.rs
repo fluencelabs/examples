@@ -18,7 +18,7 @@ use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 
 use marine_sqlite_connector;
-use marine_sqlite_connector::State;
+use marine_sqlite_connector::{State, Value};
 
 module_manifest!();
 
@@ -107,30 +107,33 @@ pub fn test3() {
 }
 
 #[marine]
-pub fn last_cursor() {
+pub fn test_last_rowid() -> i64 {
     let db_path = "/tmp/users.sqlite";
     let connection = marine_sqlite_connector::open(db_path).expect("db should be opened");
 
-    // let mut select = conn
-    //     .prepare("select * from reward_blocks")
-    //     .unwrap()
-    //     .cursor();
+    connection.execute(
+        "CREATE TABLE IF NOT EXISTS users (id integer not null primary key AUTOINCREMENT, name TEXT, age INTEGER);"
+    ).expect("table should be created successfully");
 
-    let mut cursor = connection
-        .prepare(
+    connection
+        .execute(
             "
-            CREATE TABLE IF NOT EXISTS users (id integer not null primary key, name TEXT, age INTEGER);
-            INSERT INTO users VALUES ('Alice', 42);
-            INSERT INTO users VALUES ('Bob', 69);
-            returning id;
+            INSERT INTO users (name, age) VALUES ('Alice', 42);
+            INSERT INTO users (name, age) VALUES ('Bob', 69);
         ",
         )
-        .expect("table should be created successfully")
-        .cursor();
+        .expect("insert");
 
-    // println!("cursor is: {:?}", cursor);
-    println!("cursor count is: {:?}", cursor.count());
-    println!("next is: {:?}", cursor.next())
+    let stmt = connection.prepare("SELECT last_insert_rowid();").unwrap();
+
+    let mut cursor = stmt.cursor();
+    match cursor.next() {
+        Ok(Some(&[Value::Integer(id)])) => return id,
+        other => panic!(
+            "Expected integer to be returned from last_insert_rowid, got {:?}",
+            other
+        ),
+    }
 }
 
 #[cfg(test)]
@@ -141,7 +144,6 @@ mod tests {
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
     fn test() {
-        sqlite_test.last_cursor();
-        // println!("last cursor is: {:?}", result);
+        assert!(sqlite_test.test_last_rowid() > 0);
     }
 }
