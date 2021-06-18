@@ -148,4 +148,21 @@ mod tests {
         let res = utilities.crement_u64(value, step, false);
         assert!(res.err_msg.len() > 0);
     }
+
+    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
+    fn array_splitter_u64() {
+        let test_vec: Vec<u64> = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
+        let res = utilities.array_splitter_u64(test_vec, 3);
+        assert_eq!(res.len(), 3);
+        assert_eq!(res[0], vec![1, 2, 3]);
+        assert_eq!(res[1], vec![4, 5, 6]);
+        assert_eq!(res[2], vec![7, 8, 9]);
+
+        let test_vec: Vec<u64> = vec![1, 2, 3, 4, 5, 6, 7, 8];
+        let res = utilities.array_splitter_u64(test_vec, 3);
+        assert_eq!(res.len(), 3);
+        assert_eq!(res[0], vec![1, 2, 3]);
+        assert_eq!(res[1], vec![4, 5, 6]);
+        assert_eq!(res[2], vec![7, 8]);
+    }
 }
