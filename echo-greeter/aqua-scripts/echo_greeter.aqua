@@ -61,7 +61,7 @@ func echo_greeting_par(names: []string, greet: bool, echo_service: EchoServiceIn
       for greeting_service <- greeting_services:
         GreetingService greeting_service.service_id
         on greeting_service.node:
-          res <- GreetingService.greeting(result.echo, greet)
+          res_2 <- GreetingService.greeting(result.echo, greet)
           -- this is super annoying
-          OpString.identity(res!2)
+        OpString.identity(res_2!2)
     <- res

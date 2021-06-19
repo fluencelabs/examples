@@ -35,19 +35,19 @@
       (seq
        (seq
         (seq
-         (call -relay- ("op" "identity") [])
-         (xor
-          (seq
+         (seq
+          (call -relay- ("op" "identity") [])
+          (xor
            (call greeting_service.$.node! (greeting_service.$.service_id! "greeting") [result.$.echo! greet] $res)
-           (call greeting_service.$.node! ("op" "identity") [$res.$.[2]!])
-          )
-          (seq
-           (call -relay- ("op" "identity") [])
-           (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+           (seq
+            (call -relay- ("op" "identity") [])
+            (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+           )
           )
          )
+         (call -relay- ("op" "identity") [])
         )
-        (call -relay- ("op" "identity") [])
+        (call %init_peer_id% ("op" "identity") [$res.$.[2]!])
        )
        (next greeting_service)
       )
