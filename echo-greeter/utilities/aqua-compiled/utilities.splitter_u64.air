@@ -1,0 +1,43 @@
+(xor
+ (seq
+  (seq
+   (seq
+    (seq
+     (seq
+      (seq
+       (seq
+        (seq
+         (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+         (call %init_peer_id% ("getDataSrv" "array") [] array)
+        )
+        (call %init_peer_id% ("getDataSrv" "chunk_size") [] chunk_size)
+       )
+       (call %init_peer_id% ("getDataSrv" "node") [] node)
+      )
+      (call %init_peer_id% ("getDataSrv" "service_id") [] service_id)
+     )
+     (call -relay- ("op" "identity") [])
+    )
+    (xor
+     (call node (service_id "array_splitter_u64") [array chunk_size] res)
+     (seq
+      (seq
+       (call -relay- ("op" "identity") [])
+       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+      )
+      (call -relay- ("op" "identity") [])
+     )
+    )
+   )
+   (call -relay- ("op" "identity") [])
+  )
+  (xor
+   (call %init_peer_id% ("callbackSrv" "response") [res])
+   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+  )
+ )
+ (seq
+  (call -relay- ("op" "identity") [])
+  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+ )
+)
