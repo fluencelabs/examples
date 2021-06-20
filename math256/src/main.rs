@@ -43,23 +43,29 @@ pub fn main() {}
 
 use fluence::marine;
 
-/// adds 2 256 bits integers (ETH compatible)
-/// return number or error (failed to parse input or overflow of output)
+/// Adds two 256 bits integers (ETH compatible).
+/// Returns number or error (failed to parse input or overflow of output).
 #[marine]
 pub fn add(lhs: String, rhs: String) -> MathResult {
     math::add(lhs, rhs).into()
 }
 
+/// Subtracts two 256 bits integers (ETH compatible).
+/// Returns number or error (failed to parse input or underflow of output).
 #[marine]
 pub fn sub(lhs: String, rhs: String) -> MathResult {
     math::sub(lhs, rhs).into()
 }
 
+/// Multiplies two 256 bits integers (ETH compatible).
+/// Returns number or error (failed to parse input or overflow of output).
 #[marine]
 pub fn mul(lhs: String, rhs: String) -> MathResult {
     math::mul(lhs, rhs).into()
 }
 
+/// Divides 256 bits integer by other (ETH compatible).
+/// Returns number or error (failed to parse input or division by zero).
 #[marine]
 pub fn div(lhs: String, rhs: String) -> MathResult {
     math::div(lhs, rhs).into()
