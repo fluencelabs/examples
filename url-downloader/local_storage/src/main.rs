@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-use fluence::fce;
-use fluence::module_manifest;
-use fluence::WasmLoggerBuilder;
+use marine_rs_sdk::marine;
+use marine_rs_sdk::module_manifest;
+use marine_rs_sdk::WasmLoggerBuilder;
 
 use std::fs;
 use std::path::PathBuf;
@@ -31,7 +31,7 @@ pub fn main() {
 }
 
 /// You can read or write files from the file system if there is permission to use directories described in `Config.toml`.
-#[fce]
+#[marine]
 pub fn put(name: String, file_content: Vec<u8>) -> String {
     log::info!("put called with file name {}\n", name);
     let rpc_tmp_filepath = format!("{}{}", SITES_DIR, name);
@@ -44,7 +44,7 @@ pub fn put(name: String, file_content: Vec<u8>) -> String {
     String::from("Ok")
 }
 
-#[fce]
+#[marine]
 pub fn get(file_name: String) -> Vec<u8> {
     log::info!("get called with file name: {}\n", file_name);
 

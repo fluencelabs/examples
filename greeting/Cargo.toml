@@ -3,7 +3,7 @@ name = "wasm-greeting"
 version = "0.1.0"
 authors = ["Fluence Labs"]
 description = "The greeting module for the Fluence network"
-repository = "https://github.com/fluencelabs/fce/tree/master/examples/greeting"
+repository = "https://github.com/fluencelabs/marine/tree/master/examples/greeting"
 edition = "2018"
 publish = false
 
@@ -12,4 +12,7 @@ name = "greeting"
 path = "src/main.rs"
 
 [dependencies]
-fluence = "0.6.2"
+marine-rs-sdk = "0.6.10"
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.1.9"

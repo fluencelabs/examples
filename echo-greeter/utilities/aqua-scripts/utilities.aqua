@@ -1,0 +1,42 @@
+data U64Result:
+  value: u64
+  err_msg: string
+
+data U32Result:
+  value: u32
+  err_msg: string
+
+service Utility:
+  array_splitter_u32(array: []u32, chunk_size: u32) -> [][]u32
+  array_splitter_u64(array: []u64, chunk_size: u64) -> [][]u64
+  crement_u32(value: u32, step: u32, increment: bool) -> U32Result
+  crement_u64(value: u64, step: u64, increment: bool) -> U64Result
+  greeting(name: string) -> string
+
+
+
+func splitter_u64(array:[]u64, chunk_size: u64, node:string, service_id: string) -> [][]u64:
+  on node:
+    Utility service_id
+    res <- Utility.array_splitter_u64(array, chunk_size)
+  <- res
+
+func splitter_u32(array:[]u32, chunk_size: u32, node:string, service_id: string) -> [][]u32:
+  on node:
+    Utility service_id
+    res <- Utility.array_splitter_u32(array, chunk_size)
+  <- res
+
+
+func increment_u64(value: u64, step: u64, incr:bool, node:string, service_id: string) -> U64Result:
+  on node:
+    Utility service_id
+    res <- Utility.crement_u64(value, step, incr)
+  <- res
+
+func increment_u32(value: u32, step: u32, incr:bool, node:string, service_id: string) -> U64Result:
+  on node:
+    Utility service_id
+    res <- Utility.crement_u64(value, step, incr)
+  <- res
+

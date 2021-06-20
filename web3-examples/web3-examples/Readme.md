@@ -218,7 +218,7 @@ That's it !!
 While there are no hard and fast rules to determine optional service granularity, [theory](https://onlinelibrary.wiley.com/doi/full/10.1002/spe.2869) and common sense do help. Let's look at what could be a fine-grained, self-contained service: A service that could generate the [method id](https://docs.soliditylang.org/en/latest/abi-spec.html) for Ethereum smart contract functions. A simple method id [generator](facade/src/eth_hashers.rs) may look like this:
 
 ```rust
-use fluence::fce;
+use marine_rs_sdk::fce;
 use tiny_keccak::Sha3;
 
 #[fce]

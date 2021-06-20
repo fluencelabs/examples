@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-#[fluence::fce]
+use marine_rs_sdk::marine;
+
+#[marine]
 pub struct TestRecord {
     pub field_0: bool,
     pub field_1: i8,

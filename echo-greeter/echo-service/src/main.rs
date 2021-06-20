@@ -1,11 +1,14 @@
-use fluence::fce;
+use marine_rs_sdk::marine;
+use marine_rs_sdk::module_manifest;
 
-#[fce]
+module_manifest!();
+
+#[marine]
 pub struct Echo {
     pub echo: String,
 }
 
-#[fce]
+#[marine]
 pub fn echo(inputs: Vec<String>) -> Vec<Echo> {
     inputs
         .iter()

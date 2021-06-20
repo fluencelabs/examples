@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -o errexit -o nounset -o pipefail
 
-# check `fcli` and `fldist` tools are installed or install them
-(command -v fce || cargo install fcli) >/dev/null
+if [[ -z "${NODE:-}" ]]; then
+    NODE_ADDR=""
+else
+    NODE_ADDR="--node-addr $NODE"
+fi
+
+# check `marine` and `fldist` tools are installed or install them
+(command -v marine || cargo install marine) >/dev/null
 (command -v fldist || npm install -g @fluencelabs/fldist) >/dev/null
 
 # build .wasm
 (
     cd backend
-    fce build --release
+    marine build --release
 )
 
 # check it .wasm was built
@@ -17,4 +23,5 @@ test -f "$WASM" || echo >&2 "Couldn't find $WASM"
 
 # create a service from that .wasm
 CONFIG="$(pwd)/backend/BackendConfig.json"
-fldist new_service --modules "$WASM:$CONFIG" --name curl_template
+SERVICE_ID=$(fldist new_service $NODE_ADDR --modules "$WASM:$CONFIG" --name call_parameters | head -n1 | sed -e 's/service id: //')
+echo $SERVICE_ID

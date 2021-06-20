@@ -22,10 +22,10 @@
     unused_mut
 )]
 
-use fluence::fce;
-use fluence::module_manifest;
-use fluence::MountedBinaryResult;
-use fluence::WasmLoggerBuilder;
+use marine_rs_sdk::marine;
+use marine_rs_sdk::module_manifest;
+use marine_rs_sdk::MountedBinaryResult;
+use marine_rs_sdk::WasmLoggerBuilder;
 
 mod data_processing;
 mod eth_calls;
@@ -45,7 +45,7 @@ pub fn main() {
     WasmLoggerBuilder::new().build().ok();
 }
 
-#[fce]
+#[marine]
 #[link(wasm_import_module = "curl_adapter")]
 extern "C" {
     pub fn curl_request(url: Vec<String>) -> MountedBinaryResult;

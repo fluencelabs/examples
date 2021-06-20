@@ -16,9 +16,9 @@
 
 #![allow(improper_ctypes)]
 
-use fluence::fce;
-use fluence::module_manifest;
-use fluence::WasmLoggerBuilder;
+use marine_rs_sdk::marine;
+use marine_rs_sdk::module_manifest;
+use marine_rs_sdk::WasmLoggerBuilder;
 
 use std::fs;
 use std::path::PathBuf;
@@ -34,12 +34,12 @@ pub fn main() {
         .unwrap();
 }
 
-#[fce]
+#[marine]
 pub fn invoke() -> String {
     "IPFS_RPC wasm example, it allows to:\ninvoke\nput\nget".to_string()
 }
 
-#[fce]
+#[marine]
 pub fn put(file_content: Vec<u8>) -> String {
     log::info!("put called with {:?}", file_content);
 
@@ -50,18 +50,18 @@ pub fn put(file_content: Vec<u8>) -> String {
         return format!("file can't be written: {}", e);
     }
 
-    unsafe { ipfs_put(rpc_tmp_filepath) }
+    ipfs_put(rpc_tmp_filepath)
 }
 
-#[fce]
+#[marine]
 pub fn get(hash: String) -> Vec<u8> {
     log::info!("get called with hash: {}", hash);
 
-    let file_path = unsafe { ipfs_get(hash) };
+    let file_path = ipfs_get(hash);
     fs::read(file_path).unwrap_or_else(|_| b"error while reading file".to_vec())
 }
 
-#[fce]
+#[marine]
 #[link(wasm_import_module = "ipfs_effector")]
 extern "C" {
     /// Put provided file to ipfs, return ipfs hash of the file.

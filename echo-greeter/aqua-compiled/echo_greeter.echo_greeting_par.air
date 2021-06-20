@@ -1,0 +1,68 @@
+(xor
+ (seq
+  (seq
+   (seq
+    (seq
+     (seq
+      (seq
+       (seq
+        (seq
+         (seq
+          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+          (call %init_peer_id% ("getDataSrv" "names") [] names)
+         )
+         (call %init_peer_id% ("getDataSrv" "greet") [] greet)
+        )
+        (call %init_peer_id% ("getDataSrv" "echo_service") [] echo_service)
+       )
+       (call %init_peer_id% ("getDataSrv" "greeting_services") [] greeting_services)
+      )
+      (call -relay- ("op" "identity") [])
+     )
+     (xor
+      (call echo_service.$.node! (echo_service.$.service_id! "echo") [names] echo_results)
+      (seq
+       (call -relay- ("op" "identity") [])
+       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+      )
+     )
+    )
+    (call -relay- ("op" "identity") [])
+   )
+   (fold echo_results result
+    (par
+     (fold greeting_services greeting_service
+      (seq
+       (seq
+        (seq
+         (seq
+          (call -relay- ("op" "identity") [])
+          (xor
+           (call greeting_service.$.node! (greeting_service.$.service_id! "greeting") [result.$.echo! greet] $res)
+           (seq
+            (call -relay- ("op" "identity") [])
+            (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+           )
+          )
+         )
+         (call -relay- ("op" "identity") [])
+        )
+        (call %init_peer_id% ("op" "identity") [$res.$.[2]!])
+       )
+       (next greeting_service)
+      )
+     )
+     (next result)
+    )
+   )
+  )
+  (xor
+   (call %init_peer_id% ("callbackSrv" "response") [$res])
+   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+  )
+ )
+ (seq
+  (call -relay- ("op" "identity") [])
+  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 4])
+ )
+)

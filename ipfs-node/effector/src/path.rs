@@ -18,8 +18,8 @@ pub(super) fn to_full_path<S>(cmd: S) -> String
 where
     S: Into<String>,
 {
-    use std::path::Path;
     use std::path::Component;
+    use std::path::Path;
 
     let cmd = cmd.into();
     let path = Path::new(&cmd);

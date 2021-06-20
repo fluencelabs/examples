@@ -1,0 +1,40 @@
+(xor
+ (seq
+  (seq
+   (seq
+    (seq
+     (seq
+      (seq
+       (seq
+        (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+        (call %init_peer_id% ("getDataSrv" "names") [] names)
+       )
+       (call %init_peer_id% ("getDataSrv" "node") [] node)
+      )
+      (call %init_peer_id% ("getDataSrv" "echo_service") [] echo_service)
+     )
+     (call -relay- ("op" "identity") [])
+    )
+    (xor
+     (call node (echo_service "echo") [names] res)
+     (seq
+      (seq
+       (call -relay- ("op" "identity") [])
+       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+      )
+      (call -relay- ("op" "identity") [])
+     )
+    )
+   )
+   (call -relay- ("op" "identity") [])
+  )
+  (xor
+   (call %init_peer_id% ("callbackSrv" "response") [res])
+   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+  )
+ )
+ (seq
+  (call -relay- ("op" "identity") [])
+  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+ )
+)

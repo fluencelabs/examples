@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Fluence Labs Limited
+ * Copyright 2021 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-use fluence::fce;
-use fluence::module_manifest;
+use marine_rs_sdk::marine;
+use marine_rs_sdk::module_manifest;
 
 module_manifest!();
 
 pub fn main() {}
 
-#[fce]
+#[marine]
 pub fn greeting(name: String, greeter: bool) -> String {
     match greeter {
         true => format!("Hi, {}", name),

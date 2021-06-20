@@ -19,14 +19,14 @@ use crate::eth_utils::{check_response_string, get_nonce};
 use crate::fce_results::JsonRpcResult;
 use crate::jsonrpc_helpers::Request;
 use crate::jsonrpc_helpers::JSON_RPC;
-use fluence::fce;
+use marine_rs_sdk::marine;
 use serde_json::Value;
 
 /// see:
 /// https://eth.wiki/json-rpc/API#eth_uninstallfilter
 /// https://docs.alchemyapi.io/alchemy/documentation/alchemy-api-reference/json-rpc#eth_uninstallfilter
 /// https://infura.io/docs/ethereum/json-rpc/eth-uninstallFilter
-#[fce]
+#[marine]
 pub fn uninstall_filter(url: String, filter_id: String) -> bool {
     let method = String::from("eth_uninstallFilter");
     let params: Vec<String> = vec![filter_id];
@@ -53,7 +53,7 @@ pub fn uninstall_filter(url: String, filter_id: String) -> bool {
 // https://eth.wiki/json-rpc/API#eth_newpendingtransactionfilter
 // https://infura.io/docs/ethereum/wss/eth_newPendingTransactionFilter
 // https://docs.alchemyapi.io/alchemy/documentation/alchemy-api-reference/json-rpc#eth_getfilterchanges
-#[fce]
+#[marine]
 pub fn new_pending_tx_filter(url: String) -> String {
     let method: String;
     let mut params: Vec<String> = Vec::new();
@@ -83,7 +83,7 @@ pub fn new_pending_tx_filter(url: String) -> String {
 // https://eth.wiki/json-rpc/API#eth_getfilterchanges
 // https://infura.io/docs/ethereum/json-rpc/eth-getFilterChanges
 // https://docs.alchemyapi.io/alchemy/documentation/alchemy-api-reference/json-rpc#eth_getfilterchanges
-#[fce]
+#[marine]
 pub fn get_filter_changes(url: String, filter_id: String) -> String {
     let method = String::from("eth_getFilterChanges");
     let params: Vec<String> = vec![filter_id];
@@ -96,7 +96,7 @@ pub fn get_filter_changes(url: String, filter_id: String) -> String {
     response
 }
 
-#[fce]
+#[marine]
 pub fn get_filter_changes_list(url: String, filter_id: String) -> Vec<String> {
     let method = String::from("eth_getFilterChanges");
     let params: Vec<String> = vec![filter_id];
@@ -131,7 +131,7 @@ pub fn get_filter_changes_list(url: String, filter_id: String) -> Vec<String> {
     }
 }
 
-#[fce]
+#[marine]
 pub fn get_filter_changes_without_null(url: String, filter_id: String, limit: String) -> Vec<Tx> {
     let tx_hashes = get_filter_changes_list(url.clone(), filter_id.clone());
     let limit: usize = limit.parse().unwrap_or(5000);

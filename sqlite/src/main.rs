@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-use fluence::fce;
-use fluence::module_manifest;
+use marine_rs_sdk::marine;
+use marine_rs_sdk::module_manifest;
 
-use fce_sqlite_connector;
-use fce_sqlite_connector::State;
+use marine_sqlite_connector;
+use marine_sqlite_connector::{State, Value};
 
 module_manifest!();
 
 pub fn main() {}
 
-#[fce]
+#[marine]
 pub fn test1(age: i64) {
-    let connection = fce_sqlite_connector::open(":memory:").unwrap();
+    let connection = marine_sqlite_connector::open(":memory:").unwrap();
 
     connection
         .execute(
@@ -50,11 +50,11 @@ pub fn test1(age: i64) {
     }
 }
 
-#[fce]
+#[marine]
 pub fn test2(age: i64) {
-    use fce_sqlite_connector::Value;
+    use marine_sqlite_connector::Value;
 
-    let connection = fce_sqlite_connector::open(":memory:").unwrap();
+    let connection = marine_sqlite_connector::open(":memory:").unwrap();
 
     connection
         .execute(
@@ -85,10 +85,10 @@ pub fn test2(age: i64) {
     }
 }
 
-#[fce]
+#[marine]
 pub fn test3() {
     let db_path = "/tmp/users.sqlite";
-    let connection = fce_sqlite_connector::open(db_path).expect("db should be opened");
+    let connection = marine_sqlite_connector::open(db_path).expect("db should be opened");
 
     connection
         .execute(
@@ -100,8 +100,52 @@ pub fn test3() {
         )
         .expect("table should be created successfully");
 
-    let connection = fce_sqlite_connector::open(db_path).expect("db should be opened");
+    let connection = marine_sqlite_connector::open(db_path).expect("db should be opened");
     let cursor = connection.prepare("SELECT * FROM users").unwrap().cursor();
 
     println!("table size is: {:?}", cursor.count());
+}
+
+#[marine]
+pub fn test_last_rowid() -> i64 {
+    let db_path = "/tmp/users.sqlite";
+    let connection = marine_sqlite_connector::open(db_path).expect("db should be opened");
+
+    connection.execute(
+        "CREATE TABLE IF NOT EXISTS users (id integer not null primary key AUTOINCREMENT, name TEXT, age INTEGER);"
+    ).expect("table should be created successfully");
+
+    connection
+        .execute(
+            "
+            INSERT INTO users (name, age) VALUES ('Alice', 42);
+            INSERT INTO users (name, age) VALUES ('Bob', 69);
+        ",
+        )
+        .expect("insert");
+
+    let stmt = connection
+        .prepare("SELECT last_insert_rowid();")
+        .expect("select");
+
+    let mut cursor = stmt.cursor();
+    match cursor.next() {
+        Ok(Some(&[Value::Integer(id)])) => return id,
+        other => panic!(
+            "Expected integer to be returned from last_insert_rowid, got {:?}",
+            other
+        ),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use marine_rs_sdk_test::marine_test;
+    use marine_rs_sdk_test::CallParameters;
+    use marine_rs_sdk_test::SecurityTetraplet;
+
+    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
+    fn test() {
+        assert!(sqlite_test.test_last_rowid() > 0);
+    }
 }

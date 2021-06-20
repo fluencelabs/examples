@@ -10,5 +10,8 @@ name = "sqlite_test"
 path = "src/main.rs"
 
 [dependencies]
-fluence = "0.5.0"
-fce-sqlite-connector = "0.2.0"
+marine-rs-sdk = "0.6.10"
+marine-sqlite-connector = "0.5.0"
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.1.11"

@@ -18,9 +18,9 @@ use crate::eth_calls::{eth_get_balance, eth_get_tx_by_hash};
 use crate::eth_filters::{get_filter_changes, new_pending_tx_filter, uninstall_filter};
 use crate::eth_utils::wei_to_eth;
 use crate::fce_results::TestResult;
-use fluence::fce;
+use marine_rs_sdk::marine;
 
-#[fce]
+#[marine]
 fn test_eth_get_balance_good(url: String) -> TestResult {
     let burn_address = String::from("0x0000000000000000000000000000000000000000");
     let block_height = String::from("latest");
@@ -41,7 +41,7 @@ fn test_eth_get_balance_good(url: String) -> TestResult {
     TestResult::from(Result::from(Err(err_msg)))
 }
 
-#[fce]
+#[marine]
 fn test_eth_get_balance_bad(url: String) -> TestResult {
     let burn_address = String::from("0x0000000000000000000000000000000000000000");
     let block_height = String::from("latest");
@@ -62,7 +62,7 @@ fn test_eth_get_balance_bad(url: String) -> TestResult {
     TestResult::from(Result::from(Err(err_msg)))
 }
 
-#[fce]
+#[marine]
 fn test_eth_get_tx_by_hash(url: String, tx_hash: String) {
     let res: String = eth_get_tx_by_hash(url, tx_hash.clone());
     let obj: serde_json::Value = serde_json::from_str(&res).unwrap();
