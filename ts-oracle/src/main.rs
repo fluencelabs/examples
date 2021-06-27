@@ -14,30 +14,13 @@
  * limitations under the License.
  */
 use fluence::{marine, module_manifest, WasmLoggerBuilder};
-use std::collections::HashMap;
+
+mod stats;
 
 module_manifest!();
 
 pub fn main() {
     WasmLoggerBuilder::new().build().unwrap();
-}
-
-fn mode(data: &Vec<u64>) -> (u32, u64) {
-    let frequencies = data
-        .into_iter()
-        .fold(HashMap::<u64, u32>::new(), |mut freqs, value| {
-            *freqs.entry(*value).or_insert(0) += 1;
-            freqs
-        });
-
-    let mode = frequencies
-        .clone()
-        .into_iter()
-        .max_by_key(|&(_, count)| count)
-        .map(|(value, _)| value)
-        .unwrap();
-
-    (*frequencies.get(&mode).unwrap(), mode)
 }
 
 #[marine]
@@ -54,7 +37,7 @@ pub fn point_estimate(tstamps: Vec<u64>, min_points: u32) -> Oracle {
     if tstamps.len() < min_points as usize {
         return Oracle {
             err_str: format!(
-                "Expected at least {} points but onl got {}",
+                "Expected at least {} points but only got {}.",
                 min_points,
                 tstamps.len()
             ),
@@ -64,42 +47,81 @@ pub fn point_estimate(tstamps: Vec<u64>, min_points: u32) -> Oracle {
 
     if tstamps.len() < 1 {
         return Oracle {
-            err_str: format!("Expected at least one point but onl got none"),
+            err_str: format!("Expected at least one timestamp."),
             ..<_>::default()
         };
     }
 
-    let (freq, mode) = mode(&tstamps);
+    let (freq, mode) = stats::mode(tstamps.iter());
 
     Oracle {
         n: tstamps.len() as u32,
         mode,
         freq,
+
         ..<_>::default()
     }
 }
 
-// To run tests:
-// cargo test --release
-// Since the unit tests are using the wasm module via the marine_test crate import
-// the modules and Config.toml need to exist. That is, run ./build.sh before you run cargo test.
-// Moreover, the test function(s) need to be prefixed by the wasm module namespace, which
-// generally is derived from the project name.
-// if you name the project "greeting", e.g., cargo generate -g https:// ... --name greeting
-// the unit test can be executed as is. If not, the project needs to replace the "greeting"
-// reference in place
-// if
-// cargo generate -g https:// ... --name project-name
-// then
-// let res = project_name.greeting(name.to_string());
 #[cfg(test)]
 mod tests {
+    use super::*;
     use fluence_test::marine_test;
 
+    #[test]
+    fn test_mean_good() {
+        let data = vec![1u64, 2u64, 3u64];
+        let res = stats::mean(data.iter());
+        assert!(res.is_some());
+        assert_eq!(res.unwrap(), 2f64)
+    }
+
+    #[test]
+    fn test_mean_bad() {
+        let data = vec![];
+        let res = stats::mean(data.iter());
+        assert!(res.is_none());
+    }
+
+    #[test]
+    fn test_mode() {
+        let data = vec![1u64, 1u64, 3u64, 3u64, 3u64, 5u64];
+        let (freq, mode) = stats::mode(data.iter());
+        assert_eq!(mode, 3u64);
+        assert_eq!(freq, 3);
+    }
+
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
-    fn test_greeting() {
-        let name = "Marine";
-        let res = greeting.greeting(name.to_string());
-        assert_eq!(res, format!("Hi, {}", name));
+    fn test_point_estimate_good() {
+        let data = vec![1u64, 1u64, 3u64, 3u64, 3u64, 5u64];
+        let min_points = 2u32;
+        let res = ts_oracle.point_estimate(data, min_points);
+        assert_eq!(res.mode, 3u64);
+        assert_eq!(res.freq, 3u32);
+    }
+
+    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
+    fn test_point_estimate_bad() {
+        let data = vec![1u64, 1u64, 3u64, 3u64, 3u64, 5u64];
+        let n = data.len();
+        let min_points = 20u32;
+        let res = ts_oracle.point_estimate(data, min_points);
+        assert_eq!(
+            res.err_str,
+            format!(
+                "Expected at least {} points but only got {}.",
+                min_points, n
+            )
+        );
+    }
+
+    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
+    fn test_point_estimate_bad_2() {
+        let data = vec![];
+        let n = data.len();
+        let min_points = 0u32;
+        let res = ts_oracle.point_estimate(data, min_points);
+        println!("res: {:?}", res);
+        assert_eq!(res.err_str, "Expected at least one timestamp.".to_string());
     }
 }

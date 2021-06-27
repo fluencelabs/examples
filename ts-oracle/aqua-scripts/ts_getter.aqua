@@ -9,6 +9,7 @@ data Oracle:
     mode: u64
     freq: u32
     err_str: string
+    raw_data: []u64
 
 service TSOracle("service-id"):
     point_estimate: []u64, u32 -> Oracle

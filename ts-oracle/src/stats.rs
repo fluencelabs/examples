@@ -1,28 +1,28 @@
-fn mean(data: &[i32]) -> Option<f32> {
-    let sum = data.iter().sum::<i32>() as f32;
-    let count = data.len();
+use std::collections::HashMap;
 
-    match count {
-        positive if positive > 0 => Some(sum / count as f32),
-        _ => None,
-    }
+pub fn mode<'a>(data: impl ExactSizeIterator<Item = &'a u64>) -> (u32, u64) {
+    let frequencies = data
+        .into_iter()
+        .fold(HashMap::<u64, u32>::new(), |mut freqs, value| {
+            *freqs.entry(*value).or_insert(0) += 1;
+            freqs
+        });
+
+    let mode = frequencies
+        .clone()
+        .into_iter()
+        .max_by_key(|&(_, count)| count)
+        .map(|(value, _)| value)
+        .unwrap();
+
+    (*frequencies.get(&mode).unwrap(), mode)
 }
 
-fn std_deviation(data: &[i32]) -> Option<f32> {
-    match (mean(data), data.len()) {
-        (Some(data_mean), count) if count > 0 => {
-            let variance = data
-                .iter()
-                .map(|value| {
-                    let diff = data_mean - (*value as f32);
-
-                    diff * diff
-                })
-                .sum::<f32>()
-                / count as f32;
-
-            Some(variance.sqrt())
-        }
-        _ => None,
+pub fn mean<'a>(data: impl ExactSizeIterator<Item = &'a u64>) -> Option<f64> {
+    let n = data.len() as u64;
+    if n < 1 {
+        return None;
     }
+    let res = (data.sum::<u64>() / n) as f64;
+    Some(res)
 }

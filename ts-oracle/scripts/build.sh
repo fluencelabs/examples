@@ -3,4 +3,4 @@
 mkdir -p artifacts
 rm -f artifacts/*.wasm
 marine build --release
-cp target/wasm32-wasi/release/ts_cons.wasm artifacts/
+cp target/wasm32-wasi/release/ts_oracle.wasm artifacts/
