@@ -1,7 +1,6 @@
-mbp16~/localdev/ts-cons(main|…) % fldist new_service --ms artifacts/ts_cons.wasm:artifacts/ts_cons_cfg.json --name ts-consensus --verbose
-client seed: 9Kak5cFVaFGgKVAEshEraT9xCWYonjB4svwT3Y8m5mTs
-client peerId: 12D3KooWBJgXUgYw3Tc5nmzhgxLirYmpSwMX9dPcAxphSQ8WbrXN
+fldist new_service --ms artifacts/ts_oracle.wasm:artifacts/ts_oracle_cfg.json --name ts-consensus --verbose
+client seed: 7EbFfPnbjZHBWmkDT5dc5mXfY4ntFxiQ9hwynYxjL1S4
+client peerId: 12D3KooWAw1obs4xApwechRaz7GEqTA54JLTq8KR7MJwRShjxBaH
 relay peerId: 12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf
-service id: 519ba491-d32a-4994-b7ae-03ba532f15fb
+service id: ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9
 service created successfully
-mbp16~/localdev/ts-cons(main|…) %

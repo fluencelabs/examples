@@ -12,6 +12,93 @@ import { RequestFlow } from '@fluencelabs/fluence/dist/internal/RequestFlow';
 
 
 
+export async function ts_getter(client: FluenceClient, node: string, config?: {ttl?: number}): Promise<number[]> {
+    let request: RequestFlow;
+    const promise = new Promise<number[]>((resolve, reject) => {
+        request = new RequestFlowBuilder()
+            .disableInjections()
+            .withTTL(config?.ttl || 5000)
+            .withRawScript(
+                `
+(xor
+ (seq
+  (seq
+   (seq
+    (seq
+     (seq
+      (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+      (call %init_peer_id% ("getDataSrv" "node") [] node)
+     )
+     (call -relay- ("op" "noop") [])
+    )
+    (xor
+     (seq
+      (seq
+       (seq
+        (call node ("op" "string_to_b58") [node] k)
+        (call node ("kad" "neighborhood") [k false] nodes)
+       )
+       (fold nodes n
+        (par
+         (seq
+          (xor
+           (call n ("peer" "timestamp_ms") [] $res)
+           (null)
+          )
+          (call node ("op" "noop") [])
+         )
+         (next n)
+        )
+       )
+      )
+      (call node ("op" "identity") [$res.$.[9]!])
+     )
+     (seq
+      (call -relay- ("op" "noop") [])
+      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+     )
+    )
+   )
+   (call -relay- ("op" "noop") [])
+  )
+  (xor
+   (call %init_peer_id% ("callbackSrv" "response") [$res])
+   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+  )
+ )
+ (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+)
+
+            `,
+            )
+            .configHandler((h) => {
+                h.on('getDataSrv', '-relay-', () => {
+                    return client.relayPeerId!;
+                });
+                h.on('getDataSrv', 'node', () => {return node;});
+                h.onEvent('callbackSrv', 'response', (args) => {
+  const [res] = args;
+  resolve(res);
+});
+
+                h.onEvent('errorHandlingSrv', 'error', (args) => {
+                    // assuming error is the single argument
+                    const [err] = args;
+                    reject(err);
+                });
+            })
+            .handleScriptError(reject)
+            .handleTimeout(() => {
+                reject('Request timed out for ts_getter');
+            })
+            .build();
+    });
+    await client.initiateFlow(request!);
+    return promise;
+}
+      
+
+
 export async function ts_oracle(client: FluenceClient, node: string, oracle_service_id: string, min_points: number, config?: {ttl?: number}): Promise<{err_str:string;freq:number;mode:number;n:number;raw_data:number[]}> {
     let request: RequestFlow;
     const promise = new Promise<{err_str:string;freq:number;mode:number;n:number;raw_data:number[]}>((resolve, reject) => {

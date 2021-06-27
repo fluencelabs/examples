@@ -14,18 +14,24 @@ data Oracle:
 service TSOracle("service-id"):
     point_estimate: []u64, u32 -> Oracle
 
-func ts_oracle(node: string, oracle_service_id: string, min_points:u32) -> Oracle:
+
+func ts_getter(node: string) -> []u64:
+  res: *u64
   on node:
     k <- Op.string_to_b58(node)
     nodes <- Kademlia.neighborhood(k, false)
-    res: *u64
     for n <- nodes par:
       on n:
         try:
           res <- Peer.timestamp_ms()
     Op2.identity(res!9)
+  <- res
 
+func ts_oracle(node: string, oracle_service_id: string, min_points:u32) -> Oracle:
+  res <- ts_getter(node)
+  
   on node:
     TSOracle oracle_service_id
     oracle <- TSOracle.point_estimate(res, min_points)
   <- oracle
+
