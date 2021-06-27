@@ -1,0 +1,23 @@
+[package]
+name = "ts_oracle"
+version = "0.1.0"
+authors = ["boneyard93501 <4523011+boneyard93501@users.noreply.github.com>"]
+edition = "2018"
+description = "ts-cons, a Marine wasi module"
+license = "Apache-2.0"
+
+[[bin]]
+name = "ts_oracle"
+path = "src/main.rs"
+
+[dependencies]
+fluence = { version="0.6.9", features=["logger"]}
+log = "0.4.14"
+
+
+[dev-dependencies]
+fluence-test = "0.1.9"
+
+[dev]
+[profile.release]
+opt-level = "s"
