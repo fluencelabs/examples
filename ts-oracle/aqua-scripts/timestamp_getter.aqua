@@ -1,0 +1,28 @@
+import "builtin.aqua"
+-- create and identity service to join our results
+service Op2("op"):
+    identity(s: u64)
+     array(a: string, b: u64) -> string
+
+-- function to get ten timestamps from our Kademlia
+-- neighborhood and return as an array of u64 timestamps
+-- the function arguement node is our per id
+func ts_getter(node: string) -> []u64:
+  -- create a streaming variable
+  res: *u64
+  -- execute on the pecified peer
+  on node:
+    -- get the base58 representation of the peer id
+    k <- Op.string_to_b58(node)
+    -- find all (default 20) neighborhood peers from k
+    nodes <- Kademlia.neighborhood(k, false)
+    -- for each peer in our neighborhood and in parallel
+    for n <- nodes par:
+      on n:
+        -- try and get the peer's timestamp
+        try:
+          res <- Peer.timestamp_ms()
+    -- flatten nine of our joined results
+    Op2.identity(res!9)
+    -- return an array of ten timestamps
+  <- res
