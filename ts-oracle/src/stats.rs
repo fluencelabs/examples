@@ -9,13 +9,12 @@ pub fn mode<'a>(data: impl ExactSizeIterator<Item = &'a u64>) -> (u32, u64) {
         });
 
     let mode = frequencies
-        .clone()
-        .into_iter()
+        .iter()
         .max_by_key(|&(_, count)| count)
         .map(|(value, _)| value)
         .unwrap();
 
-    (*frequencies.get(&mode).unwrap(), mode)
+    (*frequencies.get(&mode).unwrap(), *mode)
 }
 
 pub fn mean<'a>(data: impl ExactSizeIterator<Item = &'a u64>) -> Option<f64> {
