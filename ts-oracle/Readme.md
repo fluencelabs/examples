@@ -4,24 +4,25 @@
 
 Getting accurate timestamps can be problematic in various contexts including blockchains. Timestamp oracles can alleviate this concern by aggregating and processing a variety of timestamp sources into a point- or range-estimate. Of course, the acquisition of accurate timestamps not subject to manipulation is a critical attribute of a good oracle.  The Fluence peer-to-peer network offers a large number of independent nodes that can serve as timestamp sources from either Kademilia or TrustGraph neighborhoods.
 
-**Note: The timestamps are currently NOT signed by the nodes. But that could be easily addressed.**
+**Note: The timestamps are currently** **not** **signed by the nodes. But that could be easily addressed.**
 
 ### Fluence Solution
-Fluence Labs provides an open Web3 protocol, framework and associated tooling to develop and host applications, interfaces and backends on permissionless peer-to-peer networks. An integral part of the Fluence solution is the Aquamarine stack comprised of Aqua and Marine. 
 
-Aqua is a new programming language and paradigm purpose-built to program distributed networks and compose applications from distributed services. For more information on Aqua, see
+Fluence provides an open Web3 protocol, framework and associated tooling to develop and host applications, interfaces and backends on permissionless peer-to-peer networks. An integral part of the Fluence solution is the Aquamarine stack comprised of Aqua and Marine. Aqua is a new programming language and paradigm purpose-built to program distributed networks and compose applications from distributed services. For more information on Aqua, see
+
 * [Aqua Book](https://app.gitbook.com/@fluence/s/aqua-book/)
 * [Aqua Playground](https://github.com/fluencelabs/aqua-playground)
 * [Aqua repo](https://github.com/fluencelabs/aqua)
 
 
-Marine is a general purpose Wasm runtime and toolkit, allows developers to build distributed services that can be composed into applications by Aqua. For more information on Marine, see
+Marine is a general purpose Wasm runtime and toolkit, allows developers to build distributed services that can be composed into distributed applications by Aqua. For more information on Marine, see
+
 * [Marine repo](https://github.com/fluencelabs/marine)
 * [Marine SDK](https://github.com/fluencelabs/marine-rs-sdk)
 
 ### Setup
 
-*Please note that we already deployed the Rust service to node `12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf` with service id `ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9`, which is all that's needed to use the service in Aqua.*
+*Note that we already deployed the service to node `12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf` with service id `ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9`, which is all what's needed to use the service in Aqua.*
 
 In order to run the entire code base, Rust and Node required. If necessary see [Install Rust](https://www.rust-lang.org/tools/install) and [NVM](https://github.com/nvm-sh/nvm) for details.
 
@@ -82,7 +83,7 @@ We implemented a custom service that returns the mode and frequency for an array
 
 Our oracle solution is implemented in Aqua and utilizes timestamps from peers selected from our Kademlia neighborhood and, for illustrative purposes, use the deployed service to arrive at the point estimate for our oracle. See `src/main.rs`. There certanly are better ways to process the timestamps into an oracle but for our purposes, mode works.
 
-In our Aqua script, `aqua-scripts/ts_getter`, we separate the timestamp collections from the subsequent oracle processing. That is, if a peer-client wants to process the timestamps locally, all that's needed are the timestamps, which can be obtained by calling the `ts_getter` function. Alternatively, the timestamps may be processed by calling one or more `ts-oracle` services deployed to the network.
+In our Aqua script, `aqua-scripts/ts_getter.aqua`, we separate the timestamp collections from the subsequent oracle processing. That is, if a peer-client wants to process the timestamps locally, all that's needed are the timestamps, which can be obtained by calling the `ts_getter` function. Alternatively, the timestamps may be processed by calling one or more `ts-oracle` services deployed on the network.
 
 ```aqua
 -- aqua-scripts/ts_getter.aqua
