@@ -2,7 +2,7 @@
 set -o errexit -o nounset -o pipefail
 
 # This script builds all subprojects and puts all created Wasm modules in one dir
-cargo update
+cargo update --aggressive
 marine build --release
 
 mkdir -p artifacts

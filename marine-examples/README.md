@@ -502,8 +502,67 @@ result: String("Ok")
 
 You can build, inspect and test the project as outlined in the [Greeting Example](#Greeting-Example).
 
-## Summary
 
-The examples in this section illustrate how to use Rust to create and link Wasm IT modules into services. For more detailed information regarding the Fluence solution see the [Fluence documentation](https://doc.fluence.dev/docs/).
+## Deploying Services
 
-If you have any questions, comments or suggestions for improvements, please open create Issue or open a PR.
+In each of the examples we created modules and services configurations and tested and inspected them with the Marine REPL. Feels like we're all dressed up and nowhere to go. In this section we briefly discuss how to deploy our modules and configurations to the network as services using the *Greeting* example.
+
+Before we begin, you need to have the `fldist` tool installed. See the [Tools documentation](https://doc.fluence.dev/docs/knowledge_tools) for more information.
+
+We use the `fldist new_service` command to do our bidding:
+
+```zsh
+fldist new_service --help
+fldist new_service
+
+Create service from a list of modules
+
+Options:
+      --help              Show help                                    [boolean]
+      --version           Show version number                          [boolean]
+  -v, --verbose           Display verbose information such as created client
+                          seed + peer Id and relay peer id
+                                                      [boolean] [default: false]
+  -s, --seed              Client seed                                   [string]
+      --sk, --secret-key  Clients ed25519 private key in base64 (32 byte)
+                                                                        [string]
+      --env               Environment to use
+        [required] [choices: "krasnodar", "local", "testnet", "stage"] [default:
+                                                                    "krasnodar"]
+      --node-id, --node   PeerId of the node to use
+      --node-addr         Multiaddr of the node to use
+      --log               log level
+       [required] [choices: "trace", "debug", "info", "warn", "error"] [default:
+                                                                        "error"]
+      --ttl               particle time to live in ms
+                                            [number] [required] [default: 60000]
+      --ms, --modules     array of path:config pairs; meaning <path to wasm
+                          module>:<path to config>            [array] [required]
+  -n, --name              name of the service; will be set in the blueprint
+                                                             [string] [required]
+```
+
+Aside from our modules and configuration, we also want to supply the peer id of the node we want to host our service. You cna find all available nodes on the [Fluence Dashboard](https://dash.fluence.dev/nodes). Please note that for all of our examples we will use peer `12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA`. Alternatively, we can deploy to a local node -- see  [Deploy A Local Node](https://doc.fluence.dev/docs/tutorials_tutorials/tutorial_run_local_node) for instructions.
+
+To create our greeting service on peer `12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA`:
+
+```zsh
+fldist --node-id 12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA new_service \
+       --ms artifacts/greeting.wasm:configs/greeting_cfg.json \
+       --name my-greeting-service
+```
+
+To recap the `fldist` command: We specify the
+
+1. Peer id with the `node-id` flag
+2. Module and config file location with the `--ms` flag
+3. Service name with the `--name` flag
+
+Which results in a success message and more importantly, the unique id for the deployed service:
+
+```zsh
+service id: 810b8abc-6b9d-4227-a228-a53145086464
+service created successfully
+```
+
+The (peer id, service id) tuple is going to be useful once you start putting the service to work with, say, [Aqua](https://doc.fluence.dev/aqua-book/) and you should hold on the data for future use. Also, you can look up your service on the [Fluence Dashboard](https://dash.fluence.dev/blueprint/d67cdb81c416bff902e0b5847a39b84e2cb42d21dde6426de14bb75d1d61236d/). For more detailed information regarding the Fluence solution see the [Fluence documentation](https://doc.fluence.dev/docs/) and if you have any questions, comments or suggestions for improvements, please open create Issue or open a PR.
