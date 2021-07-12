@@ -1,0 +1,43 @@
+{
+  "name": "timestamp-oracle",
+  "version": "0.1.0",
+  "description": "Fluence Timestamp Oracle Demo",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "files": [
+    "dist/*"
+  ],
+  "bic": [
+    "typescript/*",
+    "*.aqua",
+    "package-lock.json"
+  ],
+  "dependencies": {
+    "@fluencelabs/aqua-lib": "^0.1.5",
+    "@fluencelabs/fluence": "^0.9.50",
+    "@fluencelabs/fluence-network-environment": "^1.0.10",
+    "ethers": "^5.4.1"
+  },
+  "scripts": {
+    "compile-aqua": "aqua-cli -i ./aqua-scripts -o ./typescript",
+    "prebuild": "npm run compile-aqua",
+    "build": "tsc",
+    "prestart": "npx bic -s",
+    "start": "node typescript/dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "aqua",
+    "fluence"
+  ],
+  "author": "Fluence Labs",
+  "license": "MIT",
+  "devDependencies": {
+    "@fluencelabs/aqua-cli": "^0.1.8-160",
+    "build-if-changed": "^1.5.5",
+    "typescript": "^3.9.5"
+  }
+}
