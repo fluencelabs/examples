@@ -45,10 +45,9 @@ function ts_getter(client, node, config) {
             switch (_a.label) {
                 case 0:
                     promise = new Promise(function (resolve, reject) {
-                        request = new api_unstable_1.RequestFlowBuilder()
+                        var r = new api_unstable_1.RequestFlowBuilder()
                             .disableInjections()
-                            .withTTL((config === null || config === void 0 ? void 0 : config.ttl) || 5000)
-                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n      (call %init_peer_id% (\"getDataSrv\" \"node\") [] node)\n     )\n     (call -relay- (\"op\" \"noop\") [])\n    )\n    (xor\n     (seq\n      (seq\n       (seq\n        (call node (\"op\" \"string_to_b58\") [node] k)\n        (call node (\"kad\" \"neighborhood\") [k false] nodes)\n       )\n       (fold nodes n\n        (par\n         (seq\n          (xor\n           (call n (\"peer\" \"timestamp_ms\") [] $res)\n           (null)\n          )\n          (call node (\"op\" \"noop\") [])\n         )\n         (next n)\n        )\n       )\n      )\n      (call node (\"op\" \"identity\") [$res.$.[9]!])\n     )\n     (seq\n      (call -relay- (\"op\" \"noop\") [])\n      (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n     )\n    )\n   )\n   (call -relay- (\"op\" \"noop\") [])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [$res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n)\n\n            ")
+                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (seq\n       (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n       (call %init_peer_id% (\"getDataSrv\" \"node\") [] node)\n      )\n      (call %init_peer_id% (\"op\" \"identity\") [100] $nsize)\n     )\n     (call -relay- (\"op\" \"noop\") [])\n    )\n    (xor\n     (seq\n      (seq\n       (seq\n        (call node (\"op\" \"string_to_b58\") [node] k)\n        (call node (\"kad\" \"neighborhood\") [k $none $nsize] nodes)\n       )\n       (fold nodes n\n        (par\n         (seq\n          (xor\n           (seq\n            (call n (\"peer\" \"timestamp_ms\") [] ts)\n            (call n (\"op\" \"array\") [n ts] $res)\n           )\n           (null)\n          )\n          (call node (\"op\" \"noop\") [])\n         )\n         (next n)\n        )\n       )\n      )\n      (call node (\"op\" \"identity\") [$res.$.[9]!])\n     )\n     (seq\n      (call -relay- (\"op\" \"noop\") [])\n      (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n     )\n    )\n   )\n   (call -relay- (\"op\" \"noop\") [])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [$res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n)\n\n            ")
                             .configHandler(function (h) {
                             h.on('getDataSrv', '-relay-', function () {
                                 return client.relayPeerId;
@@ -67,8 +66,11 @@ function ts_getter(client, node, config) {
                             .handleScriptError(reject)
                             .handleTimeout(function () {
                             reject('Request timed out for ts_getter');
-                        })
-                            .build();
+                        });
+                        if (config === null || config === void 0 ? void 0 : config.ttl) {
+                            r.withTTL(config.ttl);
+                        }
+                        request = r.build();
                     });
                     return [4 /*yield*/, client.initiateFlow(request)];
                 case 1:

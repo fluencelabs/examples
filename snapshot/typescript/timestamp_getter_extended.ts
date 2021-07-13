@@ -12,9 +12,9 @@ import { RequestFlow } from '@fluencelabs/fluence/dist/internal/RequestFlow';
 
 
 
-export async function ts_getter(client: FluenceClient, node: string, n_neighbors: number, config?: {ttl?: number}): Promise<number[]> {
+export async function ts_getter(client: FluenceClient, node: string, n_neighbors: number, config?: {ttl?: number}): Promise<string[][]> {
     let request: RequestFlow;
-    const promise = new Promise<number[]>((resolve, reject) => {
+    const promise = new Promise<string[][]>((resolve, reject) => {
         const r = new RequestFlowBuilder()
             .disableInjections()
             .withRawScript(
@@ -41,13 +41,16 @@ export async function ts_getter(client: FluenceClient, node: string, n_neighbors
       (seq
        (seq
         (call node ("op" "string_to_b58") [node] k)
-        (call node ("kad" "neighborhood") [k $none_bool $nsize] nodes)
+        (call node ("kad" "neighborhood") [k $none $nsize] nodes)
        )
        (fold nodes n
         (par
          (seq
           (xor
-           (call n ("peer" "timestamp_ms") [] $res)
+           (seq
+            (call n ("peer" "timestamp_ms") [] ts)
+            (call n ("op" "array") [n ts] $res)
+           )
            (null)
           )
           (call node ("op" "noop") [])

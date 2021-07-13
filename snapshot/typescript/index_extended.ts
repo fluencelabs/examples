@@ -17,20 +17,15 @@
 import { createClient, setLogLevel, FluenceClient } from "@fluencelabs/fluence";
 import { krasnodar, Node } from "@fluencelabs/fluence-network-environment";
 // import { ethers } from "ethers";
-import { ts_getter } from "./timestamp_getter";
+import { ts_getter } from "./timestamp_getter_extended";
 
-// simple timestamp diff calculator and counter
-function timestamp_delta(proposal_ts_ms: number, network_ts_ms: number[]): Map<string, Array<number>> {
 
-    // acceptable deviation for proposed timestamp from network timestamps
+function timestamp_delta(proposal_ts_ms: number, network_ts_ms: Array<number>): Map<string, Array<number>> {
+
     const acceptable_ts_diff: number = 60 * 1_000; // 1 Minute
-
-    // valid and invalid array counters
     let valid_ts: Array<number> = [];
     let invalid_ts: Array<number> = [];
 
-    // if proposed timestamp <= network timestamp + acceptable delta 
-    // we have a valid proposed timestamp
     for (var t of network_ts_ms) {
         let upper_threshold: number = t + acceptable_ts_diff;
         let lower_threshold: number = t - acceptable_ts_diff;
@@ -45,49 +40,52 @@ function timestamp_delta(proposal_ts_ms: number, network_ts_ms: number[]): Map<s
 
     }
 
-    // return results as a map for further, e..g, consensus, processing
+    console.log("valid_ts: ", valid_ts);
+    console.log("invalid_ts: ", invalid_ts);
+
     let results = new Map<string, Array<number>>();
     results.set("valid", valid_ts);
     results.set("invalid", invalid_ts);
-    return results;
+    return results
 }
 
 async function main() {
+    console.log("hello");
     // setLogLevel('DEBUG');
     const fluence = await createClient(krasnodar[2]);
     // console.log("created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
 
-
-    // Proxy for timestamp extracted from EIP712 proposal
     var now = new Date;
     var utc_ts = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
-        now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
-    console.log("proxy for EIP712 proposed timestamp (utc): ", utc_ts);
+        now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(),
+        now.getUTCMilliseconds());
+    console.log(utc_ts);
 
-
-    // fetch timestamps from Krsnodar network with ts_getter 
-    // see timestamp_getter.ts which was created by compiling ./aqua-scripts/timestamp_getter.aqua
     const network_result = await ts_getter(fluence, krasnodar[2].peerId, Number(20));
+    console.log(network_result);
 
-    // calculate the deltas between network timestamps + delta and proposed timestamp  
-    const ts_diffs = timestamp_delta(utc_ts, network_result);
+    const ts_results: number[] = network_result.map(a => Number(a[1]));
+    console.log(ts_results);
 
-    // exceedingly simple consensus calculator
-    // if 2/3 of ts deltas are valid, we have consensus for a valid proposed timestamp
+    const ts_diffs = timestamp_delta(utc_ts, ts_results);
+    console.log(ts_diffs);
+
     if (ts_diffs.has("valid") && ts_diffs.has("invalid")) {
         let valid_ts = ts_diffs.get("valid")?.length;
         let invalid_ts = ts_diffs.get("invalid")?.length;
 
+        console.log(valid_ts, invalid_ts);
+
         if (valid_ts !== undefined && invalid_ts !== undefined && (valid_ts / (valid_ts + invalid_ts)) >= (2 / 3)) {
-            console.log("We have network consensus and accept the proposed timestamp ", utc_ts);
-            console.log("Now, the client can sign the EIP712 document.");
+            console.log("consensus");
         }
         else {
-            console.log("We do not have network consensus and reject the proposed timestamp ", utc_ts);
+            console.log("no consensus");
         }
+
     }
     else {
-        console.log("Error: Something went wrong with getting our timestamp validated.");
+        console.log("error: something went wrong with getting our timestamp validated");
     }
 
     return;

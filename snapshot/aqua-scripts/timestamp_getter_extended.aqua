@@ -1,0 +1,30 @@
+import "@fluencelabs/aqua-lib/builtin.aqua"
+
+data TSResult:
+  timestamp: u64
+  peer_id: string
+
+service OpTS("op"):
+    identity(s: []string)
+    array(a: string, b: u64) -> []string
+
+service ToU32("op"):
+    identity(u: u32) -> u32
+
+
+func ts_getter(node: string, n_neighbors: u32) -> [][]string:
+  res: *[]string
+  none: *bool
+  nsize: *u32
+  nsize <- ToU32.identity(n_neighbors)
+
+  on node:
+    k <- Op.string_to_b58(node)
+    nodes <- Kademlia.neighborhood(k, none, nsize)
+    for n <- nodes par:
+      on n:
+        try:
+          ts <-  Peer.timestamp_ms()
+          res <-  OpTS.array(n, ts)
+    OpTS.identity(res!9)
+  <- res

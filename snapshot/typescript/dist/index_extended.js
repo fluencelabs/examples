@@ -54,21 +54,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fluence_1 = require("@fluencelabs/fluence");
 var fluence_network_environment_1 = require("@fluencelabs/fluence-network-environment");
 // import { ethers } from "ethers";
-var timestamp_getter_1 = require("./timestamp_getter");
+var timestamp_getter_extended_1 = require("./timestamp_getter_extended");
 function timestamp_delta(proposal_ts_ms, network_ts_ms) {
     var acceptable_ts_diff = 60 * 1000; // 1 Minute
     var valid_ts = [];
     var invalid_ts = [];
     for (var _i = 0, network_ts_ms_1 = network_ts_ms; _i < network_ts_ms_1.length; _i++) {
         var t = network_ts_ms_1[_i];
-        var threshold_ts = t + acceptable_ts_diff;
-        console.log(t, threshold_ts);
-        if (threshold_ts > proposal_ts_ms) {
-            // results.get("valid"); // .valid_ts.push(t);
+        var upper_threshold = t + acceptable_ts_diff;
+        var lower_threshold = t - acceptable_ts_diff;
+        // console.log(t, threshold_ts);
+        if (lower_threshold <= proposal_ts_ms && proposal_ts_ms <= upper_threshold) {
             valid_ts.push(t);
         }
         else {
-            // results.set("invalid", invalid_ts.push(t));
             invalid_ts.push(t);
         }
     }
@@ -80,47 +79,41 @@ function timestamp_delta(proposal_ts_ms, network_ts_ms) {
     return results;
 }
 function main() {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function () {
-        var fluence, network_result;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var fluence, now, utc_ts, network_result, ts_results, ts_diffs, valid_ts, invalid_ts;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     console.log("hello");
                     return [4 /*yield*/, fluence_1.createClient(fluence_network_environment_1.krasnodar[2])];
                 case 1:
-                    fluence = _a.sent();
-                    return [4 /*yield*/, timestamp_getter_1.ts_getter(fluence, fluence_network_environment_1.krasnodar[2].peerId)];
-                case 2:
-                    network_result = _a.sent();
-                    console.log(network_result);
-                    console.log(network_result[5]);
-                    /*
-                    var now = new Date;
-                    var utc_ts = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
-                        now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
+                    fluence = _c.sent();
+                    now = new Date;
+                    utc_ts = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
                     console.log(utc_ts);
-                
-                    const ts_diffs = timestamp_delta(utc_ts, network_result);
+                    return [4 /*yield*/, timestamp_getter_extended_1.ts_getter(fluence, fluence_network_environment_1.krasnodar[2].peerId, Number(20))];
+                case 2:
+                    network_result = _c.sent();
+                    console.log(network_result);
+                    ts_results = network_result.map(function (a) { return Number(a[1]); });
+                    console.log(ts_results);
+                    ts_diffs = timestamp_delta(utc_ts, ts_results);
                     console.log(ts_diffs);
-                
                     if (ts_diffs.has("valid") && ts_diffs.has("invalid")) {
-                        let valid_ts = ts_diffs.get("valid")?.length;
-                        let invalid_ts = ts_diffs.get("invalid")?.length;
-                
+                        valid_ts = (_a = ts_diffs.get("valid")) === null || _a === void 0 ? void 0 : _a.length;
+                        invalid_ts = (_b = ts_diffs.get("invalid")) === null || _b === void 0 ? void 0 : _b.length;
                         console.log(valid_ts, invalid_ts);
-                
                         if (valid_ts !== undefined && invalid_ts !== undefined && (valid_ts / (valid_ts + invalid_ts)) >= (2 / 3)) {
                             console.log("consensus");
                         }
                         else {
                             console.log("no consensus");
                         }
-                
                     }
                     else {
                         console.log("error: something went wrong with getting our timestamp validated");
                     }
-                    */
                     return [2 /*return*/];
             }
         });

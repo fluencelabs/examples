@@ -55,25 +55,28 @@ var fluence_1 = require("@fluencelabs/fluence");
 var fluence_network_environment_1 = require("@fluencelabs/fluence-network-environment");
 // import { ethers } from "ethers";
 var timestamp_getter_1 = require("./timestamp_getter");
+// simple timestamp diff calculator and counter
 function timestamp_delta(proposal_ts_ms, network_ts_ms) {
+    // acceptable deviation for proposed timestamp from network timestamps
     var acceptable_ts_diff = 60 * 1000; // 1 Minute
+    // valid and invalid array counters
     var valid_ts = [];
     var invalid_ts = [];
+    // if proposed timestamp <= network timestamp + acceptable delta 
+    // we have a valid proposed timestamp
     for (var _i = 0, network_ts_ms_1 = network_ts_ms; _i < network_ts_ms_1.length; _i++) {
         var t = network_ts_ms_1[_i];
-        var threshold_ts = t + acceptable_ts_diff;
-        console.log(t, threshold_ts);
-        if (threshold_ts > proposal_ts_ms) {
-            // results.get("valid"); // .valid_ts.push(t);
+        var upper_threshold = t + acceptable_ts_diff;
+        var lower_threshold = t - acceptable_ts_diff;
+        // console.log(t, threshold_ts);
+        if (lower_threshold <= proposal_ts_ms && proposal_ts_ms <= upper_threshold) {
             valid_ts.push(t);
         }
         else {
-            // results.set("invalid", invalid_ts.push(t));
             invalid_ts.push(t);
         }
     }
-    console.log("valid_ts: ", valid_ts);
-    console.log("invalid_ts: ", invalid_ts);
+    // return results as a map for further, e..g, consensus, processing
     var results = new Map();
     results.set("valid", valid_ts);
     results.set("invalid", invalid_ts);
@@ -82,37 +85,34 @@ function timestamp_delta(proposal_ts_ms, network_ts_ms) {
 function main() {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function () {
-        var fluence, network_result, now, utc_ts, ts_diffs, valid_ts, invalid_ts;
+        var fluence, now, utc_ts, network_result, ts_diffs, valid_ts, invalid_ts;
         return __generator(this, function (_c) {
             switch (_c.label) {
-                case 0:
-                    console.log("hello");
-                    return [4 /*yield*/, fluence_1.createClient(fluence_network_environment_1.krasnodar[2])];
+                case 0: return [4 /*yield*/, fluence_1.createClient(fluence_network_environment_1.krasnodar[2])];
                 case 1:
                     fluence = _c.sent();
-                    return [4 /*yield*/, timestamp_getter_1.ts_getter(fluence, fluence_network_environment_1.krasnodar[2].peerId)];
-                case 2:
-                    network_result = _c.sent();
-                    console.log(network_result);
-                    console.log(network_result[5]);
                     now = new Date;
                     utc_ts = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
-                    console.log(utc_ts);
+                    console.log("proxy for EIP712 proposed timestamp (utc): ", utc_ts);
+                    return [4 /*yield*/, timestamp_getter_1.ts_getter(fluence, fluence_network_environment_1.krasnodar[2].peerId, Number(20))];
+                case 2:
+                    network_result = _c.sent();
                     ts_diffs = timestamp_delta(utc_ts, network_result);
-                    console.log(ts_diffs);
+                    // exceedingly simple consensus calculator
+                    // if 2/3 of ts deltas are valid, we have consensus for a valid proposed timestamp
                     if (ts_diffs.has("valid") && ts_diffs.has("invalid")) {
                         valid_ts = (_a = ts_diffs.get("valid")) === null || _a === void 0 ? void 0 : _a.length;
                         invalid_ts = (_b = ts_diffs.get("invalid")) === null || _b === void 0 ? void 0 : _b.length;
-                        console.log(valid_ts, invalid_ts);
                         if (valid_ts !== undefined && invalid_ts !== undefined && (valid_ts / (valid_ts + invalid_ts)) >= (2 / 3)) {
-                            console.log("consensus");
+                            console.log("We have network consensus and accept the proposed timestamp ", utc_ts);
+                            console.log("Now, the client can sign the EIP712 document.");
                         }
                         else {
-                            console.log("no consensus");
+                            console.log("We do not have network consensus and reject the proposed timestamp ", utc_ts);
                         }
                     }
                     else {
-                        console.log("error: something went wrong with getting our timestamp validated");
+                        console.log("Error: Something went wrong with getting our timestamp validated.");
                     }
                     return [2 /*return*/];
             }
