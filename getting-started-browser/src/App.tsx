@@ -36,9 +36,16 @@ function App() {
       </header>
 
       <div className="content">
-        <div>Status: {isConnected ? "Connected" : "Disconnected"}</div>
-        <button onClick={doGetRelayTime}>Get relay time</button>
-        <div>RelayTime: {relayTime?.toLocaleString() || ""}</div>
+        <h1>Status: {isConnected ? "Connected" : "Disconnected"}</h1>
+        <button className="btn" onClick={doGetRelayTime}>
+          Get relay time
+        </button>
+        {relayTime && (
+          <>
+            <h2>Relay time:</h2>
+            <div>{relayTime?.toLocaleString() || ""}</div>
+          </>
+        )}
       </div>
     </div>
   );
