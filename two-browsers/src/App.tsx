@@ -22,8 +22,8 @@ function App() {
       .then((client) => {
         client.callServiceHandler.on("HelloWorld", "recieveHello", (args) => {
           const [from] = args;
-          setHelloFrom("Hello from" + from);
-          return "Hello back to" + from;
+          setHelloFrom("Hello from: \n" + from);
+          return "Hello back to you, \n" + from;
         });
         setClient(client);
       })
@@ -38,6 +38,10 @@ function App() {
     setHelloFrom(res);
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
+
   return (
     <div className="App">
       <header>
@@ -45,36 +49,89 @@ function App() {
       </header>
 
       <div className="content">
-        <div>Status: {isConnected ? "Connected" : "Disconnected"}</div>
         {isConnected ? (
-          <div>
-            <div>Peer id: {client!.selfPeerId}</div>
-            <div>Connected to: {client!.relayPeerId} </div>
-          </div>
+          <>
+            <h1>Connected</h1>
+            <table>
+              <tr>
+                <td className="bold">Peer id:</td>
+                <td className="mono">{client!.selfPeerId}</td>
+                <td>
+                  <button
+                    className="btn-clipboard"
+                    onClick={() => copyToClipboard(client!.selfPeerId)}
+                  >
+                    <i className="gg-clipboard"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td className="bold">Relay peer id:</td>
+                <td className="mono">{client!.relayPeerId}</td>
+                <td>
+                  <button
+                    className="btn-clipboard"
+                    onClick={() => copyToClipboard(client!.relayPeerId!)}
+                  >
+                    <i className="gg-clipboard"></i>
+                  </button>
+                </td>
+              </tr>
+            </table>
+
+            <div>
+              <h2>Say hello!</h2>
+              <p>
+                To connect with another Open the application in another browser
+                and say hello
+              </p>
+              <div className="row">
+                <label className="label bold">Peer id</label>
+                <input
+                  className="input"
+                  type="text"
+                  onChange={(e) => setPeerIdInput(e.target.value)}
+                  value={peerIdInput}
+                />
+              </div>
+              <div className="row">
+                <label className="label bold">Relay</label>
+                <input
+                  className="input"
+                  type="text"
+                  onChange={(e) => setRelayPeerIdInput(e.target.value)}
+                  value={relayPeerIdInput}
+                />
+              </div>
+              <div className="row">
+                <button className="btn btn-hello" onClick={doSayHello}>
+                  say hello
+                </button>
+              </div>
+            </div>
+          </>
         ) : (
-          <ul>
-            {relayNodes.map((x) => (
-              <li key={x.peerId}>
-                <div>{x.peerId}</div>
-                <button onClick={() => connect(x.multiaddr)}>Connect</button>
-              </li>
-            ))}
-          </ul>
+          <>
+            <h1>Pick a relay</h1>
+            <ul>
+              {relayNodes.map((x) => (
+                <li key={x.peerId}>
+                  <span className="mono">{x.peerId}</span>
+                  <button className="btn" onClick={() => connect(x.multiaddr)}>
+                    Connect
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
-        <div>
-          <label>Peer id</label>
-          <input
-            onChange={(e) => setPeerIdInput(e.target.value)}
-            value={peerIdInput}
-          />
-          <label>Relay</label>
-          <input
-            onChange={(e) => setRelayPeerIdInput(e.target.value)}
-            value={relayPeerIdInput}
-          />
-          <button onClick={doSayHello}>Say hello</button>
-        </div>
-        <div> {helloFrom} </div>
+
+        {helloFrom && (
+          <>
+            <h2>Hello from</h2>
+            <div> {helloFrom} </div>
+          </>
+        )}
       </div>
     </div>
   );
