@@ -8,6 +8,10 @@ import { sayHello } from "./_aqua/getting-started";
 
 const relayNodes = [krasnodar[0], krasnodar[1], krasnodar[2]];
 
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
+};
+
 function App() {
   const [client, setClient] = useState<FluenceClient | null>(null);
   const [helloFrom, setHelloFrom] = useState<string | null>(null);
@@ -20,6 +24,8 @@ function App() {
   const connect = (relayPeerId: string) => {
     createClient(relayPeerId)
       .then((client) => {
+        // Register handler for this call in aqua:
+        // HelloWorld.recieveHello(%init_peer_id%)
         client.callServiceHandler.on("HelloWorld", "recieveHello", (args) => {
           const [from] = args;
           setHelloFrom("Hello from: \n" + from);
@@ -36,10 +42,6 @@ function App() {
     }
     const res = await sayHello(client!, peerIdInput, relayPeerIdInput);
     setHelloFrom(res);
-  };
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
   };
 
   return (

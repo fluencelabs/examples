@@ -5,6 +5,5 @@ service HelloWorld("HelloWorld"):
 
 func sayHello(peerId: PeerId, relayPeerId: PeerId) -> string:
     on peerId via relayPeerId:
-        -- HelloWorld peerId
         res <- HelloWorld.recieveHello(%init_peer_id%)
     <- res
