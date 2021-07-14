@@ -1,0 +1,10 @@
+import "@fluencelabs/aqua-lib/builtin.aqua"
+
+service HelloWorld("HelloWorld"):
+    recieveHello(from: PeerId) -> string
+
+func sayHello(peerId: PeerId, relayPeerId: PeerId) -> string:
+    on peerId via relayPeerId:
+        -- HelloWorld peerId
+        res <- HelloWorld.recieveHello(%init_peer_id%)
+    <- res
