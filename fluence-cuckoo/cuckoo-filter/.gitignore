@@ -1,7 +1,0 @@
-.DS_Store
-.repl_history
-/target
-**/**.bak
-**/**.bk
-/artifacts
-keypair.json

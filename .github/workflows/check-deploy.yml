@@ -59,17 +59,5 @@ jobs:
                 (call %init_peer_id% (returnService "run") [result])
             )
           ')
-        working-directory: call_parameters
-      
-      - name: "Check curl_template deployment"
-        run: |
-          set -x
-          export NODE="/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3"
-          SERVICE_ID=`./deploy.sh`
-          fldist --node-addr $NODE run_air -d '{"service_id": "'$SERVICE_ID'"}' -p <(echo '
-            (seq
-                (call relay (service_id "request") ["https://fluence.network/join.html"] result)
-                (call %init_peer_id% (returnService "run") [result])
-            )
-          ')
-        working-directory: curl_template
+        working-directory: marine-examples/call_parameters
+
