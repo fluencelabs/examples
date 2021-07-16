@@ -83,9 +83,9 @@ function App() {
 
             <div>
               <h2>Say hello!</h2>
-              <p>
-                To connect with another Open the application in another browser
-                and say hello
+              <p className="p">
+                Now try opening a new tab with the same application. Copy paste
+                the peer id and relay from the second tab and say hello!
               </p>
               <div className="row">
                 <label className="label bold">Peer id</label>
