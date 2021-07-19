@@ -1,0 +1,47 @@
+(xor
+ (seq
+  (seq
+   (seq
+    (seq
+     (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+     (call %init_peer_id% ("getDataSrv" "payload") [] payload)
+    )
+    (call %init_peer_id% ("getDataSrv" "ns_pairs") [] ns_pairs)
+   )
+   (fold ns_pairs p
+    (par
+     (seq
+      (seq
+       (seq
+        (call -relay- ("op" "identity") [])
+        (xor
+         (fold payload d
+          (seq
+           (call p.$.node! (p.$.service_id! "price_getter") [d.$.coin! d.$.currency!] $prices)
+           (next d)
+          )
+         )
+         (seq
+          (call -relay- ("op" "identity") [])
+          (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+         )
+        )
+       )
+       (call -relay- ("op" "identity") [])
+      )
+      (call %init_peer_id% ("op" "identity") [])
+     )
+     (next p)
+    )
+   )
+  )
+  (xor
+   (call %init_peer_id% ("callbackSrv" "response") [$prices])
+   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+  )
+ )
+ (seq
+  (call -relay- ("op" "identity") [])
+  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+ )
+)
