@@ -13,5 +13,6 @@ marine build --release
 cd ..
 
 rm -f artifacts/*.wasm
+
 cp curl_adapter/target/wasm32-wasi/release/curl_adapter.wasm artifacts/
 cp price_getter_service/target/wasm32-wasi/release/price_getter_service.wasm artifacts/

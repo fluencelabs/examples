@@ -16,28 +16,28 @@
       )
       (call %init_peer_id% ("getDataSrv" "service_id") [] service_id)
      )
-     (call -relay- ("op" "identity") [])
+     (call -relay- ("op" "noop") [])
     )
     (xor
-     (call node (service_id "price_getter") [coin currency] price)
      (seq
       (seq
-       (call -relay- ("op" "identity") [])
-       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+       (call node ("op" "string_to_b58") [node] k)
+       (call node ("peer" "timestamp_ms") [] ts_ms)
       )
-      (call -relay- ("op" "identity") [])
+      (call node (service_id "price_getter") [coin currency ts_ms] price)
+     )
+     (seq
+      (call -relay- ("op" "noop") [])
+      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
      )
     )
    )
-   (call -relay- ("op" "identity") [])
+   (call -relay- ("op" "noop") [])
   )
   (xor
    (call %init_peer_id% ("callbackSrv" "response") [price])
    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
   )
  )
- (seq
-  (call -relay- ("op" "identity") [])
-  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
- )
+ (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
 )

@@ -1,5 +1,8 @@
+-- import "@fluencelabs/aqua-lib/builtin.aqua"
+import "builtin.aqua"
+
 service PriceGetter("service-id"):
-    price_getter: string, string -> string
+    price_getter: string, string, u64 -> string
 
 data Payload:
     coin: string
@@ -19,18 +22,21 @@ data BigPayload:
 
 func get_price(coin: string, currency: string, node: string, service_id: string) -> string:
     on node:
+        k <- Op.string_to_b58(node)
+        ts_ms <- Peer.timestamp_ms()
         PriceGetter service_id
-        price <- PriceGetter.price_getter(coin, currency)
+        price <- PriceGetter.price_getter(coin, currency, ts_ms)
     <- price
-
 
 func get_prices_seq(payloads: []Payload, ns_pairs: []NodeServicePair) -> *string:
     prices: *string
     for p <- ns_pairs:
         on p.node:
+            k <- Op.string_to_b58(p.node)
             for d <- payloads:
+                ts_ms <- Peer.timestamp_ms()
                 PriceGetter p.service_id
-                prices <- PriceGetter.price_getter(d.coin, d.currency)
+                prices <- PriceGetter.price_getter(d.coin, d.currency, ts_ms)
     <- prices
 
 func get_prices_par(payload: []Payload, ns_pairs: []NodeServicePair) -> *string:
@@ -38,8 +44,10 @@ func get_prices_par(payload: []Payload, ns_pairs: []NodeServicePair) -> *string:
     for p <- ns_pairs par:
         PriceGetter p.service_id
         on p.node:
+            k <- Op.string_to_b58(p.node)
             for d <- payload:
-                prices <- PriceGetter.price_getter(d.coin, d.currency)
+                ts_ms <- Peer.timestamp_ms()
+                prices <- PriceGetter.price_getter(d.coin, d.currency, ts_ms)
     <- prices
 
 
@@ -47,6 +55,8 @@ func get_prices_par_2(payload: []BigPayload) -> *string:
     prices: *string
     for p <- payload par:
         on p.node:
+            k <- Op.string_to_b58(p.node)
             PriceGetter p.service_id
-            prices <- PriceGetter.price_getter(p.coin, p.currency)
+            ts_ms <- Peer.timestamp_ms()
+            prices <- PriceGetter.price_getter(p.coin, p.currency, ts_ms)
     <- prices

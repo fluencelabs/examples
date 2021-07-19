@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-use marine_rs_sdk::{marine, module_manifest, MountedBinaryResult, WasmLoggerBuilder};
+use hex;
+use marine_rs_sdk::{marine, module_manifest, MountedBinaryResult};
 use picorand::{PicoRandGenerate, WyRand, RNG};
+use serde_json;
 
 #[macro_use]
 extern crate fstrings;
 
 module_manifest!();
 
-pub fn main() {
-    WasmLoggerBuilder::new().build().unwrap();
-}
+pub fn main() {}
 
 #[marine]
 pub struct Result {
@@ -32,8 +32,9 @@ pub struct Result {
     pub error_msg: String,
 }
 
+struct Response {}
 #[marine]
-pub fn price_getter(coin: String, currency: String) -> Result {
+pub fn price_getter(coin: String, currency: String, timestamp_ms: u64) -> Result {
     let url =
         f!("https://api.coingecko.com/api/v3/simple/price?ids={coin}&vs_currencies={currency}");
     let curl_cmd = vec![
@@ -54,10 +55,22 @@ pub fn price_getter(coin: String, currency: String) -> Result {
     */
 
     match result {
-        Ok(res) => Result {
-            result: res,
-            error_msg: "".to_string(),
-        },
+        Ok(res) => {
+            let mut json_res: serde_json::Value = serde_json::from_str(&res.clone()).unwrap();
+            let value: f64 = json_res[coin.to_lowercase()][currency.to_lowercase()]
+                .as_f64()
+                .unwrap();
+
+            let mut rng = RNG::<WyRand, u16>::new(timestamp_ms);
+            let multiplier = rng.generate_range(100, 1000) as f64;
+            let rnd_value = (value * multiplier) / 100f64;
+            json_res[coin.to_lowercase()][currency.to_lowercase()] =
+                serde_json::Value::from(rnd_value);
+            Result {
+                result: json_res.to_string(),
+                error_msg: "".to_string(),
+            }
+        }
         Err(_) => Result {
             result: "".to_string(),
             error_msg: String::from_utf8(response.stderr).unwrap(),

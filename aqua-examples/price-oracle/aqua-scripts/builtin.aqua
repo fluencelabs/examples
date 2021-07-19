@@ -1,0 +1,217 @@
+-- Default public interface of Fluence nodes
+
+alias Field : []string
+alias Argument : []string
+alias Bytes : []u8
+alias PeerId : string
+alias Pairs : [][]string
+alias Base58String : string
+
+-- There are two types of dependencies: named and by-hash. 
+-- name:foobar      – specifies dependency by module name, points to a module with import name 'foobar'
+-- hash:04dc884...  – specifies dependency by module hash
+-- By-hash dependencies are preffered since they are deteremenistic 
+-- while by-name dependency can yield different modules at different points in time
+alias Dependency : string
+
+data Service:
+    id: string
+    blueprint_id: string
+    owner_id: string
+
+data FunctionSignature:
+    arguments: []Argument
+    name: string
+    output_types: []string
+
+data RecordType:
+    fields: []Field
+    id: u64
+    name: string
+
+data Interface:
+    function_signatures: []FunctionSignature
+    record_types: []RecordType
+
+data Info:
+    external_addresses: []string
+
+data ModuleConfig:
+    name: string
+
+data Module:
+    name: string
+    hash: string
+    config: ModuleConfig
+
+data AddBlueprint:
+    name: string
+    dependencies: []Dependency
+
+data Blueprint:
+    id: string
+    name: string
+    dependencies: []Dependency
+
+data ScriptInfo:
+    id: string
+    src: string
+    failures: u32
+    interval: string
+    owner: string
+
+data Contact:
+    peer_id: string
+    addresses: []string
+
+service Op("op"):
+    -- does nothing
+    noop()
+    -- returns length of the passed array
+    array_length(array: []string) -> u32
+    -- takes any number of arguments and wraps them into a single array
+    array(a: string, b: ?string, c: ?string, d: ?string) -> []string
+    -- takes any number of arrays and flattens them by concatenating
+    concat(a: []string, b: ?[]string, c: ?[]string, d: ?[]string) -> []string
+    -- takes a single argument and returns it back
+    identity(s: ?string) -> ?string
+    string_to_b58(s: string) -> Base58String
+    string_from_b58(b: Base58String) -> string
+    bytes_to_b58(bs: []u8) -> Base58String
+    bytes_from_b58(b: Base58String) -> []u8
+    -- Applies SHA256 to the given string
+    -- Argument: s - string to apply sha256 to (hash is applied to utf8 bytes of s)
+    -- Returns: returns sha256 multihash encoded as base58
+    sha256_string(s: string) -> Base58String
+
+service Peer("peer"):
+    -- Checks if there is a direct connection to the peer identified by a given PeerId
+    -- Argument: PeerId – id of the peer to check if there's a connection with
+    -- Returns: bool - true if connected to the peer, false otherwise
+    is_connected(peer: PeerId) -> bool
+
+    -- Initiates a connection to the specified peer
+    -- Arguments:
+    --  id - id of the target peer
+    --  multiaddrs – an array of target peer's addresses
+    -- Returns: bool - true if connection was successful
+    connect(id: PeerId, multiaddrs: ?[]string) -> bool
+    -- Resolves the contact of a peer via Kademlia
+    -- Argument: PeerId – id of the target peer
+    -- Returns: Contact - true if connection was successful
+    get_contact(peer: PeerId) -> Contact
+
+    -- Get information about the peer
+    identify() -> Info
+
+    -- Get Unix timestamp in milliseconds
+    timestamp_ms() -> u64
+
+    -- Get Unix timestamp in seconds
+    timestamp_sec() -> u64
+
+service Kademlia("kad"):
+    -- Instructs node to return the locally-known nodes
+    -- in the Kademlia neighborhood for a given key
+    -- Arguments:
+    --  key – base58 string
+    --  already_hashed – default false; if set to true, key is considered to be a SHA256 multihash
+    --  count – default 20; limits number of returned nodes
+    neighborhood(key: Base58String, already_hashed: ?bool, count: ?u32) -> []PeerId
+    -- Merges given lists and sorts them by distance to target
+    -- Arguments:
+    --  target – base58 string; result is sorted by XOR distance to target
+    --  left – list of base58 strings
+    --  right – list of base58 strings
+    --  count – how many items to return, unlimited by default
+    -- Returns: list of base58 strings sorted by distance to target; list will contain at most count elements
+    merge(target: Base58String, left: []string, right: []string, count: ?u32) -> []string
+
+service Srv("srv"):
+    -- Used to create a service on a certain node
+    -- Arguments:
+    --  blueprint_id – ID of the blueprint that has been added to the node specified in the service call by the dist add_blueprint service.
+    -- Returns: service_id – the service ID of the created service.
+    create(blueprint_id: string) -> string
+
+    -- Used to remove a service from a certain node
+    -- Arguments:
+    --  service_id – ID of the service to remove
+    remove(service_id: string)
+
+    -- Returns a list of services running on a peer
+    list() -> []Service
+
+    -- Adds an alias on service, so, service could be called
+    -- not only by service_id but by alias as well.
+    -- Arguments:
+    --  alias - settable service name
+    --  service_id – ID of the service whose interface you want to name.
+    add_alias(alias: string, service_id: string)
+
+    -- Resolves given alias to a service id
+    -- If there's no such alias, throws an error
+    -- Returns: service id associated with the given alias
+    resolve_alias(alias: string) -> string
+
+    -- Retrieves the functional interface of a service running
+    -- on the node specified in the service call
+    -- Argument: service_id – ID of the service whose interface you want to retrieve.
+    get_interface(service_id: string) -> Interface
+
+service Dist("dist"):
+    -- Constructs a ModuleConfig structure
+    -- Arguments:
+    --  module_name        - import name of the module
+    --  mem_pages_count    - Maximum memory size accessible by a module in Wasm pages (64 Kb)
+    --  logger_enabled     - Defines whether Marine should provide a special host log_utf8_string function for this module
+    --  preopened_files    - Files available for this module. Module can access only files from this list
+    --  envs               - environment variables available for this module
+    --  mapped_dirs        - Directory mapping, e.g. [["/sites", "./web/data"]] so all 
+    --                       reads & writes to /sites will actually to go ./web/data
+    --  mounted_binaries   - Mapping of host binaries available to call from module, 
+    --                       e.g. [["curl", "/usr/bin/curl"]] will allow module to 
+    --                       call /usr/bin/curl binary as function 'curl'
+    --  logging_mask       - Binary mask to enable & disable logging targets. Targets are
+    --                       configured in WasmLoggerBuilder::with_target_map
+    --  mem_pages_count    - Maximum memory size accessible by a module in Wasm pages (64 Kb)
+    make_module_config(name: string, mem_pages_count: ?u32, logger_enabled: ?bool, preopened_files: ?[]string, envs: ?Pairs, mapped_dirs: ?Pairs, mounted_binaries: ?Pairs, logging_mask: ?i32) -> ModuleConfig
+
+    -- Used to add modules to the node specified in the service call
+    -- Arguments:
+    --  bytes – a base64 string containing the .wasm module to add.
+    --  config – module info
+    --  Returns: blake3 hash of the module
+    add_module(wasm_b56_content: Bytes, conf: ModuleConfig) -> string
+
+    -- Get a list of modules available on the node
+    list_modules() -> []Module
+
+    -- Get the interface of a module
+    get_interface(module_id: string) -> Interface
+
+    -- Creates Blueprint structure from from blueprint name and dependencies (modules)
+    make_blueprint(name: string, dependencies: []Dependency) -> AddBlueprint
+    -- Add a blueprint to the node
+    add_blueprint(blueprint: AddBlueprint) -> string
+
+    -- Used to get the blueprints available on the node specified in the service call.
+    -- A blueprint is an object of the following structure
+    list_blueprints() -> []Blueprint
+
+service Script("script"):
+    -- Adds the given script to a node
+    -- Arguments:
+    --  air_script - raw AIR script without any undefined variables
+    --  interval   - if not set, script will be ran only once
+    --               if set, script will be ran once in the interval 
+    --               (NOTE: actual interval may vary by up to 3 seconds)
+    -- TODO: change interval to ?u64 when node API is updated
+    add(air_script: string, interval: ?string) -> string
+
+    -- Removes recurring script from a node. Only a creator of the script can delete it
+    remove(script_id: string) -> bool
+
+    -- Returns a list of existing scripts on the node.
+    -- Each object in the list is of the following structure
+    list() -> ScriptInfo
