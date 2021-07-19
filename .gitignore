@@ -11,4 +11,4 @@ Cargo.lock
 /artifacts
 keypair.json
 *.wasm
-logo.svg
+
