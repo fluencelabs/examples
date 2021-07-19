@@ -1,0 +1,5 @@
+{
+    "name": "price_getter_service",
+    "mem_page_count": 1,
+    "logger_enabled": false
+}

@@ -1,0 +1,61 @@
+(xor
+ (seq
+  (seq
+   (seq
+    (seq
+     (seq
+      (seq
+       (seq
+        (seq
+         (seq
+          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+          (call %init_peer_id% ("getDataSrv" "coin") [] coin)
+         )
+         (call %init_peer_id% ("getDataSrv" "currency") [] currency)
+        )
+        (call %init_peer_id% ("getDataSrv" "node") [] node)
+       )
+       (call %init_peer_id% ("getDataSrv" "pg_sid") [] pg_sid)
+      )
+      (call %init_peer_id% ("getDataSrv" "mean_sid") [] mean_sid)
+     )
+     (call -relay- ("op" "noop") [])
+    )
+    (xor
+     (seq
+      (seq
+       (seq
+        (seq
+         (seq
+          (seq
+           (seq
+            (call node ("op" "string_to_b58") [node] k)
+            (call node ("peer" "timestamp_ms") [] ts_ms0)
+           )
+           (call node (pg_sid "price_getter") [coin currency ts_ms0] res0)
+          )
+          (call node ("op" "identity") [res0.$.result!] $prices)
+         )
+         (call node ("peer" "timestamp_ms") [] ts_ms1)
+        )
+        (call node (pg_sid "price_getter") [coin currency ts_ms1] res1)
+       )
+       (call node ("op" "identity") [res1.$.result!] $prices)
+      )
+      (call node (mean_sid "mean") [$prices] result)
+     )
+     (seq
+      (call -relay- ("op" "noop") [])
+      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+     )
+    )
+   )
+   (call -relay- ("op" "noop") [])
+  )
+  (xor
+   (call %init_peer_id% ("callbackSrv" "response") [result])
+   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+  )
+ )
+ (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+)

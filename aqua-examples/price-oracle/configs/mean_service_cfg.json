@@ -1,0 +1,5 @@
+{
+    "name": "mean_service",
+    "mem_page_count": 1,
+    "logger_enabled": false
+}
