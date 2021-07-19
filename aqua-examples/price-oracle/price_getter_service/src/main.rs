@@ -28,11 +28,11 @@ pub fn main() {}
 
 #[marine]
 pub struct Result {
-    pub result: String,
+    pub result: f64,
+    pub success: bool,
     pub error_msg: String,
 }
 
-struct Response {}
 #[marine]
 pub fn price_getter(coin: String, currency: String, timestamp_ms: u64) -> Result {
     let url =
@@ -46,33 +46,43 @@ pub fn price_getter(coin: String, currency: String, timestamp_ms: u64) -> Result
     ];
     let response = curl_request(curl_cmd);
     let result = String::from_utf8(response.stdout);
-    /*
-    let meta = marine_rs_sdk::get_call_parameters();
-    let caller = meta.init_peer_id;
-
-    let mut rng = RNG::<WyRand, u16>::new(name.as_str().as_bytes().to_hex());
-    let multiplier = rng.generate_range(0x64, 0x3E8);
-    */
 
     match result {
         Ok(res) => {
-            let mut json_res: serde_json::Value = serde_json::from_str(&res.clone()).unwrap();
-            let value: f64 = json_res[coin.to_lowercase()][currency.to_lowercase()]
-                .as_f64()
-                .unwrap();
+            let json_res = serde_json::from_str(&res.clone());
+            if json_res.is_err() {
+                return Result {
+                    result: -1f64,
+                    success: false,
+                    error_msg: "Failure to complete call".to_string(),
+                };
+            }
+            let json_res: serde_json::Value = json_res.unwrap();
+            let value = json_res[coin.to_lowercase()][currency.to_lowercase()].as_f64();
+            if value.is_none() {
+                return Result {
+                    result: -1f64,
+                    success: false,
+                    error_msg:
+                        "No price value from source available. Check your coin and currency values."
+                            .to_string(),
+                };
+            }
+
+            let value: f64 = value.unwrap();
 
             let mut rng = RNG::<WyRand, u16>::new(timestamp_ms);
-            let multiplier = rng.generate_range(100, 1000) as f64;
-            let rnd_value = (value * multiplier) / 100f64;
-            json_res[coin.to_lowercase()][currency.to_lowercase()] =
-                serde_json::Value::from(rnd_value);
+            let multiplier = rng.generate_range(5, 20) as f64;
+            let rnd_value = value * (1f64 + multiplier / 100f64);
             Result {
-                result: json_res.to_string(),
+                result: format!("{:.2}", rnd_value).parse::<f64>().unwrap(),
+                success: true,
                 error_msg: "".to_string(),
             }
         }
         Err(_) => Result {
-            result: "".to_string(),
+            result: -1f64,
+            success: false,
             error_msg: String::from_utf8(response.stderr).unwrap(),
         },
     }

@@ -1,4 +1,4 @@
-modules_dir = "artifacts"
+modules_dir = "artifacts/"
 
 [[module]]
     name = "curl_adapter"
@@ -10,5 +10,10 @@ modules_dir = "artifacts"
 
 [[module]]
     name = "price_getter_service"
+    logger_enabled = false
+    mem_pages_count = 1
+
+[[module]]
+    name = "mean_service"
     logger_enabled = false
     mem_pages_count = 1

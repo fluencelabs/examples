@@ -1,0 +1,16 @@
+[
+    {
+        "service": "price_getter",
+        "deployed": [
+            "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+            "f8ff8241-0d63-4234-bb38-f786bf1e077f"
+        ]
+    },
+    {
+        "service": "mean",
+        "deployed": [
+            "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+            "dd47389f-25d9-4870-a2a9-909359e73580"
+        ]
+    }
+]
