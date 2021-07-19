@@ -27,22 +27,7 @@ Price (feed) oracles are probably the most used and in-demand oracle type and te
 
 Figure 1: Stylized Price Oracle Network And Service Process
 
-```mermaid
-    sequenceDiagram
-    participant C as Client Peer
-    participant R as Relay
-    participant N as Additional Network Peers
-
-    C ->> R: request (coin, currency) oracle from k sources
-    par for k sources
-        R ->> N: request i-th quote
-        N ->> R: return i-th quote
-    end
-    R ->> R: join k quotes
-    R ->> N: process array of point quotes, e.g. calculate mean
-    N ->> R: collect process result, e.g., mean
-    R ->> C: return process result
-```
+![image](./images/figure_1.png)
 
 As outlined in Figure 1, we use one or more services distributed across the Fluence peer-to-peer network to obtain price quotes from sources. For example, we could have one service capable of querying one or more sources such as DEX contracts deployed on multiple network peers allowing us to poll price sources in parallel. We then join these results and submit them to a processing service also deployed on the peer-to-peer network to establish, for example, an oracle point-estimate. Once we've obtained our oracle, we return it to the peer-client, e.g., a browser.
 
@@ -60,13 +45,7 @@ For implementation details, see [price_getter_service]("./../price_getter_servic
 
 Figure 2: Stylized Service Creation By Marine Module Linking
 
-```mermaid
-    stateDiagram
-    
-      CurlAdpaterModule --> PriceGetterModule: linked
-    PriceGetterModule --> PriceGetterService
-    CurlAdpaterModule --> PriceGetterService
-```
+![image](./images/figure_2.png)
 
 As see in Figure 2, we link the price_getter module and curl adapter module into a price_getter service ready for deployment to the Fluence peer-to-peer network. Before we proceed, we have one more service to consider: the price quote processing service which yields the oracle. Again, we simplified what could be an extensive processing algorithm into a simple mean calculation, see [mean_service]("./../mean_service/src/main.rs") for implementation details.  Unlike the price getter service, mean service is a simple, FaaS compute module that deploys on any number of network peers.
 
@@ -110,4 +89,5 @@ That's it for service development and deployment!
 
 ## Application Composition with Aqua
 
-Whether you compiled and deployed services, it's time to use deployed service to create our oracle application. And do do just that with Aqua.
+Whether you compiled and deployed services, it's time to use deployed service to create our oracle application. And we do just that with Aqua.
+
