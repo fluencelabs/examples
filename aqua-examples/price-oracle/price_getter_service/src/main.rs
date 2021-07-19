@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-use hex;
 use marine_rs_sdk::{marine, module_manifest, MountedBinaryResult};
 use picorand::{PicoRandGenerate, WyRand, RNG};
 use serde_json;

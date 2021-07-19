@@ -7,10 +7,24 @@
         ]
     },
     {
+        "service": "price_getter",
+        "deployed": [
+            "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi",
+            "25f9123a-f386-4cb2-9c1e-bb7c247c9c09"
+        ]
+    },
+    {
         "service": "mean",
         "deployed": [
             "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
             "dd47389f-25d9-4870-a2a9-909359e73580"
+        ]
+    },
+    {
+        "service": "mean",
+        "deployed": [
+            "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi",
+            "b2790307-055e-41ca-9640-3c41856d464b"
         ]
     }
 ]
