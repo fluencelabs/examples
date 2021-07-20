@@ -7,8 +7,11 @@
     "compile-aqua": "aqua-cli -i . -o ./src/",
     "prebuild": "npm run compile-aqua",
     "build": "tsc",
-    "prestart": "npm run build",
-    "start": "node dist/index.js"
+    "prestart:local": "npm run build",
+    "start:local": "node dist/index.js local",
+    "prestart:remote": "npm run build",
+    "start:remote": "node dist/index.js testnet",
+    "start": "npm run start:remote"
   },
   "keywords": [
     "fluence",
