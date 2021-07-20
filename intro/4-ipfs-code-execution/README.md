@@ -11,4 +11,6 @@ npm i
 npm start
 ```
 
+## Aqua implementation
+The business logic is implemented in Aqua in [process.aqua](aqua/src/process_files.aqua)
 
