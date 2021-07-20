@@ -4,7 +4,7 @@
   "description": "An example of executing WASM code from IPFS over IPFS files",
   "main": "dist/index.js",
   "scripts": {
-    "compile-aqua": "aqua-cli -i . -o ./src/",
+    "compile-aqua": "aqua-cli -i . -o .",
     "prebuild": "npm run compile-aqua",
     "build": "tsc",
     "prestart:local": "npm run build",

@@ -19,6 +19,8 @@ import { put, get_from, set_timeout, get_external_swarm_multiaddr, get_external_
 import {createClient, setLogLevel} from "@fluencelabs/fluence";
 import {stage, krasnodar, Node, testNet} from "@fluencelabs/fluence-network-environment";
 import { Multiaddr, protocols } from 'multiaddr';
+import { process_file } from "./process";
+
 const { create, globSource, urlSource, CID } = require('ipfs-http-client');
 const all = require('it-all');
 const uint8ArrayConcat = require('uint8arrays/concat')
@@ -88,6 +90,9 @@ async function main(environment: Node[]) {
 
     let putResult = await put(fluence, environment[2].peerId, getResult.path, { ttl: 10000 });
     console.log("📘 Ipfs.put", putResult);
+
+    let processResult = await process_file(fluence, environment[2].peerId, file.cid.toString(), rpcAddr, { ttl: 10000 })
+    console.log("processResult", processResult);
 
     return;
 }

@@ -1,0 +1,12 @@
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/aqua-ipfs/ipfs.aqua"
+import "process_files.aqua"
+
+alias PeerId : string
+alias CID : string
+alias Multiaddr : string
+
+func process_file(relay: PeerId, cid: CID, provider_ipfs: Multiaddr) -> IpfsGetResult:
+    on relay:
+        get_result <- Ipfs.get_from(cid, provider_ipfs)
+    <- get_result

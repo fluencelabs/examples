@@ -18,14 +18,14 @@ use marine_rs_sdk::{marine, module_manifest};
 
 module_manifest!();
 
+pub fn main() { }
+
 #[marine]
 pub struct SizeResult {
     pub size: u32,
     pub success: bool,
     pub error: String,
 }
-
-pub fn main() { }
 
 #[marine]
 pub fn file_size(file_path: String) -> SizeResult {
