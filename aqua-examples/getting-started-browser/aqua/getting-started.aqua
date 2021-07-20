@@ -1,0 +1,6 @@
+import "@fluencelabs/aqua-lib/builtin.aqua"
+
+func getRelayTime(relayPeerId: PeerId) -> u64:
+    on relayPeerId:
+        ts <- Peer.timestamp_ms()
+    <- ts

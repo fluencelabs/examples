@@ -1,0 +1,17 @@
+[package]
+name = "hello_world_compute"
+version = "0.1.0"
+authors = ["Fluence Labs"]
+description = "Hello world string computation"
+edition = "2018"
+publish = false
+
+[[bin]]
+name = "hello_world_compute"
+path = "src/main.rs"
+
+[dependencies]
+marine-rs-sdk = "0.6.10"
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.1.9"

@@ -1,0 +1,63 @@
+$color1: black;
+$color2: rgb(214, 214, 214);
+$accent-color: rgb(225, 30, 90);
+
+.logo {
+  height: 15vmin;
+  pointer-events: none;
+}
+
+.mono {
+  font-family: monospace, monospace;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+header {
+  margin-top: 10vmin;
+}
+
+header,
+h1,
+h2,
+h3 {
+  text-align: center;
+}
+
+.content {
+  width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn {
+  height: 26px;
+  border: 1px solid;
+  border-color: $color2;
+
+  background-color: transparent;
+
+  margin: 5px;
+
+  font-size: 16px;
+
+  color: $color1;
+
+  &::placeholder {
+    color: $color2;
+  }
+
+  &:hover,
+  &:focus {
+    outline: 1px solid white;
+    border-color: $accent-color;
+    color: $accent-color;
+  }
+}

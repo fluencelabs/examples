@@ -1,0 +1,24 @@
+import "@fluencelabs/aqua-lib/builtin.aqua"
+
+const helloServiceNode ?= "12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf"
+const helloServiceId ?= "ba24be5b-9789-48ac-b38a-82c9d3eb0d34"
+
+data HelloComputation:
+    msg: string
+    reply: string
+
+service Hello_world_compute:
+    hello_world(from: string) -> HelloComputation
+
+service HelloWorld("HelloWorld"):
+    recieveHello(from: PeerId) -> string
+
+func sayHello(peerId: PeerId, relayPeerId: PeerId) -> string:
+    on helloServiceNode:
+        Hello_world_compute helloServiceId
+        comp <- Hello_world_compute.hello_world(%init_peer_id%)
+
+    co on peerId via relayPeerId:
+        HelloWorld.recieveHello(comp.msg)
+
+    <- comp.reply
