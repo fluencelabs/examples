@@ -257,8 +257,9 @@ function App() {
             <div>
               <h2>Get file size</h2>
               <p className="p">
-                <a href="https://anarkrypto.github.io/upload-files-to-ipfs-from-browser-panel/public/">Upload any file to IPFS</a>
-                , paste CID and get the size of that file via ProcessFiles service you have just deployed
+                Upload any file to IPFS node 
+                <p><b>{ rpcAddr }</b></p>
+                paste CID here and get the size of that file via ProcessFiles service you have just deployed
               </p>
               <div className="row">
                 <label className="label bold">IPFS CID</label>
