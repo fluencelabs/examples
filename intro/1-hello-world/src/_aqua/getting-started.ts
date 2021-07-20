@@ -12,7 +12,7 @@ import { RequestFlow } from '@fluencelabs/fluence/dist/internal/RequestFlow';
 
 
 
-export async function sayHello(client: FluenceClient, peerId: string, relayPeerId: string, config?: {ttl?: number}): Promise<string> {
+export async function sayHello(client: FluenceClient, targetPeerId: string, targetRelayPeerId: string, config?: {ttl?: number}): Promise<string> {
     let request: RequestFlow;
     const promise = new Promise<string>((resolve, reject) => {
         const r = new RequestFlowBuilder()
@@ -29,20 +29,20 @@ export async function sayHello(client: FluenceClient, peerId: string, relayPeerI
        (seq
         (seq
          (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-         (call %init_peer_id% ("getDataSrv" "peerId") [] peerId)
+         (call %init_peer_id% ("getDataSrv" "targetPeerId") [] targetPeerId)
         )
-        (call %init_peer_id% ("getDataSrv" "relayPeerId") [] relayPeerId)
+        (call %init_peer_id% ("getDataSrv" "targetRelayPeerId") [] targetRelayPeerId)
        )
        (call -relay- ("op" "noop") [])
       )
-      (call relayPeerId ("op" "noop") [])
+      (call targetRelayPeerId ("op" "noop") [])
      )
      (xor
-      (call peerId ("HelloWorld" "recieveHello") [%init_peer_id%] res)
+      (call targetPeerId ("HelloPeer" "hello") [%init_peer_id%] res)
       (seq
        (seq
         (seq
-         (call relayPeerId ("op" "noop") [])
+         (call targetRelayPeerId ("op" "noop") [])
          (call -relay- ("op" "noop") [])
         )
         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
@@ -51,7 +51,7 @@ export async function sayHello(client: FluenceClient, peerId: string, relayPeerI
       )
      )
     )
-    (call relayPeerId ("op" "noop") [])
+    (call targetRelayPeerId ("op" "noop") [])
    )
    (call -relay- ("op" "noop") [])
   )
@@ -69,8 +69,8 @@ export async function sayHello(client: FluenceClient, peerId: string, relayPeerI
                 h.on('getDataSrv', '-relay-', () => {
                     return client.relayPeerId!;
                 });
-                h.on('getDataSrv', 'peerId', () => {return peerId;});
-h.on('getDataSrv', 'relayPeerId', () => {return relayPeerId;});
+                h.on('getDataSrv', 'targetPeerId', () => {return targetPeerId;});
+h.on('getDataSrv', 'targetRelayPeerId', () => {return targetRelayPeerId;});
                 h.onEvent('callbackSrv', 'response', (args) => {
   const [res] = args;
   resolve(res);

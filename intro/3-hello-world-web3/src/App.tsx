@@ -8,18 +8,12 @@ import { sayHello } from "./_aqua/getting-started";
 
 const relayNodes = [krasnodar[0], krasnodar[1], krasnodar[2]];
 
-const copyToClipboard = (text: string) => {
-  navigator.clipboard.writeText(text);
-};
-
 function App() {
   const [client, setClient] = useState<FluenceClient | null>(null);
-  const [helloFrom, setHelloFrom] = useState<string | null>(null);
+  const [helloMessage, setHelloMessage] = useState<string | null>(null);
 
   const [peerIdInput, setPeerIdInput] = useState<string>("");
   const [relayPeerIdInput, setRelayPeerIdInput] = useState<string>("");
-
-  const isConnected = client !== null;
 
   const connect = (relayPeerId: string) => {
     createClient(relayPeerId)
@@ -30,8 +24,9 @@ function App() {
           "HelloWorld",
           "recieveHello",
           (args) => {
+            // no computation is done inside the browser
             const [msg] = args;
-            setHelloFrom(msg);
+            setHelloMessage(msg);
           }
         );
         setClient(client);
@@ -39,13 +34,16 @@ function App() {
       .catch((err) => console.log("Client initialization failed", err));
   };
 
-  const doSayHello = async () => {
+  const helloBtnOnClick = async () => {
     if (client === null) {
       return;
     }
+    // Using aqua is as easy as calling a javascript funсtion
     const res = await sayHello(client!, peerIdInput, relayPeerIdInput);
-    setHelloFrom(res);
+    setHelloMessage(res);
   };
+
+  const isConnected = client !== null;
 
   return (
     <div className="App">
@@ -58,30 +56,32 @@ function App() {
           <>
             <h1>Connected</h1>
             <table>
-              <tr>
-                <td className="bold">Peer id:</td>
-                <td className="mono">{client!.selfPeerId}</td>
-                <td>
-                  <button
-                    className="btn-clipboard"
-                    onClick={() => copyToClipboard(client!.selfPeerId)}
-                  >
-                    <i className="gg-clipboard"></i>
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td className="bold">Relay peer id:</td>
-                <td className="mono">{client!.relayPeerId}</td>
-                <td>
-                  <button
-                    className="btn-clipboard"
-                    onClick={() => copyToClipboard(client!.relayPeerId!)}
-                  >
-                    <i className="gg-clipboard"></i>
-                  </button>
-                </td>
-              </tr>
+              <tbody>
+                <tr>
+                  <td className="bold">Peer id:</td>
+                  <td className="mono">{client!.selfPeerId}</td>
+                  <td>
+                    <button
+                      className="btn-clipboard"
+                      onClick={() => copyToClipboard(client!.selfPeerId)}
+                    >
+                      <i className="gg-clipboard"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="bold">Relay peer id:</td>
+                  <td className="mono">{client!.relayPeerId}</td>
+                  <td>
+                    <button
+                      className="btn-clipboard"
+                      onClick={() => copyToClipboard(client!.relayPeerId!)}
+                    >
+                      <i className="gg-clipboard"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
             </table>
 
             <div>
@@ -91,7 +91,7 @@ function App() {
                 the peer id and relay from the second tab and say hello!
               </p>
               <div className="row">
-                <label className="label bold">Peer id</label>
+                <label className="label bold">Target peer id</label>
                 <input
                   className="input"
                   type="text"
@@ -100,7 +100,7 @@ function App() {
                 />
               </div>
               <div className="row">
-                <label className="label bold">Relay</label>
+                <label className="label bold">Target relay</label>
                 <input
                   className="input"
                   type="text"
@@ -109,7 +109,7 @@ function App() {
                 />
               </div>
               <div className="row">
-                <button className="btn btn-hello" onClick={doSayHello}>
+                <button className="btn btn-hello" onClick={helloBtnOnClick}>
                   say hello
                 </button>
               </div>
@@ -131,15 +131,19 @@ function App() {
           </>
         )}
 
-        {helloFrom && (
+        {helloMessage && (
           <>
-            <h2>Hello from</h2>
-            <div> {helloFrom} </div>
+            <h2>Message</h2>
+            <div> {helloMessage} </div>
           </>
         )}
       </div>
     </div>
   );
 }
+
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
+};
 
 export default App;

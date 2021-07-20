@@ -1,24 +1,29 @@
 import "@fluencelabs/aqua-lib/builtin.aqua"
 
-const helloServiceNode ?= "12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf"
-const helloServiceId ?= "ba24be5b-9789-48ac-b38a-82c9d3eb0d34"
+const helloWorldNodePeerId ?= "12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf"
+const helloWorldServiceId ?= "ba24be5b-9789-48ac-b38a-82c9d3eb0d34"
 
-data HelloComputation:
+data HelloResponse:
     msg: string
     reply: string
 
-service HelloWorldCompute:
-    hello_world(from: string) -> HelloComputation
+-- The service runs on a Fluence node
+service HelloWorld:
+    hello_world(from: PeerId) -> HelloResponse
 
-service HelloWorld("HelloWorld"):
-    recieveHello(message: string) -> string
+-- The service runs inside browser
+service HelloPeer("HelloPeer"):
+    hello(message: string) -> string
 
-func sayHello(peerId: PeerId, relayPeerId: PeerId) -> string:
-    on helloServiceNode:
-        HelloWorldCompute helloServiceId
-        comp <- HelloWorldCompute.hello_world(%init_peer_id%)
+func sayHello(targetPeerId: PeerId, targetRelayPeerId: PeerId) -> string:
+    -- execute computation on a Peer in the network
+    on helloWorldNodePeerId:
+        HelloWorld helloWorldServiceId
+        comp <- HelloWorld.hello_world(%init_peer_id%)
 
-    co on peerId via relayPeerId:
-        HelloWorld.recieveHello(comp.msg)
+    -- send the result to target browser in the background
+    co on targetPeerId via targetRelayPeerId:
+        res <- HelloPeer.hello(%init_peer_id%)
 
+    -- send the result to the initiator
     <- comp.reply

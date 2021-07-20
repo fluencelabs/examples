@@ -1,9 +1,10 @@
 import "@fluencelabs/aqua-lib/builtin.aqua"
 
-service HelloWorld("HelloWorld"):
-    recieveHello(from: PeerId) -> string
+-- The service runs inside browser
+service HelloPeer("HelloPeer"):
+    hello(from: PeerId) -> string
 
-func sayHello(peerId: PeerId, relayPeerId: PeerId) -> string:
-    on peerId via relayPeerId:
-        res <- HelloWorld.recieveHello(%init_peer_id%)
+func sayHello(targetPeerId: PeerId, targetRelayPeerId: PeerId) -> string:
+    on targetPeerId via targetRelayPeerId:
+        res <- HelloPeer.hello(%init_peer_id%)
     <- res
