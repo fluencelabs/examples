@@ -50,6 +50,73 @@ Figure 2: Browser Peer Client For Price Oracle Application
 
 Please note that the coin name must the full name, e.g., ethereum or bitcoin instead of eth or btc, whereas currency is specified in the traditional ISO 4217 Alpha-3 codes.
 
+If you like things a little closer to metal, see the [client-peer](./client-peer) directory for a peer-client based on the Fluence JS-SDK. To run the headless client:
+
+```text
+% cd client-peer
+% npm instal
+% npm start run 
+```
+
+which gives us:
+
+```text
+# <snip>
+created a fluence client 12D3KooWJr9dgmW7jRxRqzjugedGBCVXVxDHhNkyY88aZzN1rmgh with relay 12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA
+seq result:  { error_msg: '', result: 2005.65, success: true }
+par result:  { error_msg: '', result: 1867.33, success: true }
+```
+
+As evident from our results, we are executing two different workflows to get our price oracle: the first approach uses one price getter service twice in sequence and the second approach uses two price getter services deployed on different hosts in parallel. See the code example below.
+
+```typescript
+// client-peer/index.ts
+import { createClient, setLogLevel, FluenceClient } from "@fluencelabs/fluence";
+import { krasnodar, Node } from "@fluencelabs/fluence-network-environment";
+import { get_price, get_price_par } from "./get_crypto_prices";
+
+interface NodeServicePair {
+    node: string;
+    service_id: string;
+}
+
+// (node, service) tuples, json-style, for price getter services
+let getter_topo: Array<NodeServicePair>;
+
+// and a mean service
+let mean_topo: NodeServicePair;
+
+getter_topo = Array({ "node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS", "service_id": "c315073d-4311-4db3-be57-8f154f032d28" }, { "node": "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi", "service_id": "25f9123a-f386-4cb2-9c1e-bb7c247c9c09" });
+mean_topo = { "node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS", "service_id": "dd47389f-25d9-4870-a2a9-909359e73580" };
+
+async function main() {
+
+    // create the Fluence client for the Krasnodar testnet
+    const fluence = await createClient(krasnodar[2]);
+    console.log("created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
+
+    // call the get_price function -- sequential processing
+    const network_result = await get_price(fluence, "ethereum", "usd", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi", "25f9123a-f386-4cb2-9c1e-bb7c247c9c09", "b2790307-055e-41ca-9640-3c41856d464b");
+    console.log("seq result: ", network_result);
+
+    // call the get_price_par function -- parallel processing
+    const network_result_par = await get_price_par(fluence, "ethereum", "usd", getter_topo, mean_topo);
+    console.log("par result: ", network_result_par);
+
+    return;
+}
+
+main()
+    .then(() => process.exit(0))
+    .catch(error => {
+        console.error(error);
+        process.exit(1);
+    });
+
+```
+
+where the Aqua script can be found in the `aqua-scripts` dirctory and the compiled Aqua code is found in the `get_crypto_prices.ts` file. For more on the Aqua script, see below.
+
 ## Service Development And Deployment
 
 **Prerequisites:** If you want to follow along, compile Wasm modules, create services and deploy service, you need Rust, Node and a few Fluence tools installed. Please see follow the [Setup](https://doc.fluence.dev/docs/tutorials_tutorials/recipes_setting_up) instructions.
