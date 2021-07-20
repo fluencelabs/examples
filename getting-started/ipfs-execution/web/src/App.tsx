@@ -283,6 +283,10 @@ function App() {
               <tr>
                 <td className="bold">ProcessFiles service ID:</td>
                 <td className="mono">{serviceId}</td>
+                <button
+                    className="btn"
+                    onClick={() => removeService()}
+                ></button>
               </tr>
               <tr>
                 <td className="bold">File Size:</td>
