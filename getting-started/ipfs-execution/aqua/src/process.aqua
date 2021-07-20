@@ -5,8 +5,24 @@ import "process_files.aqua"
 alias PeerId : string
 alias CID : string
 alias Multiaddr : string
+alias Hash : string
 
-func process_file(relay: PeerId, cid: CID, provider_ipfs: Multiaddr) -> IpfsGetResult:
+service NewDist("dist"):
+    default_module_config(name: string) -> ModuleConfig
+    add_module_from_vault(path: string, config: ModuleConfig) -> Hash
+
+service NewOp("op"):
+    concat_strings(a: string, b: string) -> string
+    array(s: string) -> []string
+
+func process_file(relay: PeerId, cid: CID, provider_ipfs: Multiaddr) -> string:
     on relay:
         get_result <- Ipfs.get_from(cid, provider_ipfs)
-    <- get_result
+        config <- NewDist.default_module_config("process_files")
+        module_hash <- NewDist.add_module_from_vault(get_result.path, config)
+        prefixed_hash <- NewOp.concat_strings("hash:", module_hash)
+        dependencies <- NewOp.array(prefixed_hash)
+        blueprint <- Dist.make_blueprint("process_files", dependencies)
+        blueprint_id <- Dist.add_blueprint(blueprint)
+        service_id <- Srv.create(blueprint_id)
+    <- service_id

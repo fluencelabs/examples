@@ -12,9 +12,9 @@ import { RequestFlow } from '@fluencelabs/fluence/dist/internal/RequestFlow';
 
 
 
-export async function process_file(client: FluenceClient, relay: string, cid: string, provider_ipfs: string, config?: {ttl?: number}): Promise<{error:string;path:string;success:boolean}> {
+export async function process_file(client: FluenceClient, relay: string, cid: string, provider_ipfs: string, config?: {ttl?: number}): Promise<string> {
     let request: RequestFlow;
-    const promise = new Promise<{error:string;path:string;success:boolean}>((resolve, reject) => {
+    const promise = new Promise<string>((resolve, reject) => {
         const r = new RequestFlowBuilder()
             .disableInjections()
             .withRawScript(
@@ -37,7 +37,28 @@ export async function process_file(client: FluenceClient, relay: string, cid: st
      (call -relay- ("op" "noop") [])
     )
     (xor
-     (call relay ("ipfs-adapter" "get_from") [cid provider_ipfs] get_result)
+     (seq
+      (seq
+       (seq
+        (seq
+         (seq
+          (seq
+           (seq
+            (call relay ("ipfs-adapter" "get_from") [cid provider_ipfs] get_result)
+            (call relay ("dist" "default_module_config") ["process_files"] config)
+           )
+           (call relay ("dist" "add_module_from_vault") [get_result.$.path! config] module_hash)
+          )
+          (call relay ("op" "concat_strings") ["hash:" module_hash] prefixed_hash)
+         )
+         (call relay ("op" "array") [prefixed_hash] dependencies)
+        )
+        (call relay ("dist" "make_blueprint") ["process_files" dependencies] blueprint)
+       )
+       (call relay ("dist" "add_blueprint") [blueprint] blueprint_id)
+      )
+      (call relay ("srv" "create") [blueprint_id] service_id)
+     )
      (seq
       (call -relay- ("op" "noop") [])
       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
@@ -47,7 +68,7 @@ export async function process_file(client: FluenceClient, relay: string, cid: st
    (call -relay- ("op" "noop") [])
   )
   (xor
-   (call %init_peer_id% ("callbackSrv" "response") [get_result])
+   (call %init_peer_id% ("callbackSrv" "response") [service_id])
    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
   )
  )
