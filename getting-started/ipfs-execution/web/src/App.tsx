@@ -22,7 +22,7 @@ function App() {
   const [relayPeerIdInput, setRelayPeerIdInput] = useState<string>("");
   const [wasm, setWasm] = useState<string | null>(null);
   const [rpcAddr, setRpcAddr] = useState<string | null>("");
-  const [fileUrl, setFileUrl] = useState<string>("");
+  const [fileCID, setFileCID] = useState<string>("");
   const [fileSize, setFileSize] = useState<number | null>(null);
 
   const isConnected = client !== null;
@@ -66,12 +66,11 @@ function App() {
   };
 
   const getFileSize = async () => {
-    if (client === null || serviceId === null) {
+    if (client === null || serviceId === null || rpcAddr === null) {
       return;
     }
 
-    let {file, rpcAddr } = await provideFile(urlSource(fileUrl), client)    
-    let size = await get_file_size(client, client.relayPeerId!, file.cid.toString(), rpcAddr, serviceId, { ttl: 10000 });
+    let size = await get_file_size(client, client.relayPeerId!, fileCID, rpcAddr, serviceId, { ttl: 10000 });
     setFileSize(size.size);
   };
 
@@ -197,7 +196,7 @@ function App() {
                 </td>
               </tr>
               <tr>
-                <td className="bold">CID:</td>
+                <td className="bold">.wasm CID:</td>
                 <td className="mono">{wasm}</td>
               </tr>
             </table>
@@ -242,6 +241,83 @@ function App() {
                 />
               </div>
       */
+    } else if (deployed) {
+      return (
+        <div className="App">
+          <header>
+            <img src={logo} className="logo" alt="logo" />
+          </header>
+
+          <div className="content">
+          <>
+            <h1>Deployed</h1>
+            <table>
+              <tr>
+                <td className="bold">Peer id:</td>
+                <td className="mono">{client!.selfPeerId}</td>
+                <td>
+                  <button
+                    className="btn-clipboard"
+                    onClick={() => copyToClipboard(client!.selfPeerId)}
+                  >
+                    <i className="gg-clipboard"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td className="bold">Relay peer id:</td>
+                <td className="mono">{client!.relayPeerId}</td>
+                <td>
+                  <button
+                    className="btn-clipboard"
+                    onClick={() => copyToClipboard(client!.relayPeerId!)}
+                  >
+                    <i className="gg-clipboard"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td className="bold">.wasm CID:</td>
+                <td className="mono">{wasm}</td>
+              </tr>
+              <tr>
+                <td className="bold">ProcessFiles service ID:</td>
+                <td className="mono">{serviceId}</td>
+              </tr>
+              <tr>
+                <td className="bold">File Size:</td>
+                <td className="mono">{fileSize}</td>
+              </tr>
+            </table>
+            <div>
+              <h2>Get file size</h2>
+              <p className="p">
+                <a href="https://anarkrypto.github.io/upload-files-to-ipfs-from-browser-panel/public/">Upload any file to IPFS</a>
+                , paste CID and get the size of that file via ProcessFiles service you have just deployed
+              </p>
+              <div className="row">
+                <label className="label bold">IPFS CID</label>
+                <input
+                  className="input"
+                  type="text"
+                  onChange={(e) => setFileCID(e.target.value)}
+                  value={fileCID}
+                />
+              </div>
+              <div className="row">
+                <button className="btn btn-hello" onClick={getFileSize} >
+                  get size
+                </button>
+              </div>
+              <div className="row">
+                <label className="label bold">File Size:</label>
+                <label className="mono"> {fileSize}</label>
+              </div>
+            </div>
+          </>
+        </div>
+        </div>
+      )
     } else {
       return (
         <div className="App">
