@@ -84,15 +84,8 @@ async function main(environment: Node[]) {
     // default IPFS timeout is 1 sec, set to 10 secs to retrieve file from remote node
     await set_timeout(fluence, environment[2].peerId, 10);
 
-    console.log("📘 file hash: ", file.cid);
-    let getResult = await get_from(fluence, environment[2].peerId, file.cid.toString(), rpcAddr, { ttl: 10000 });
-    console.log("📘 Ipfs.get", getResult);
-
-    let putResult = await put(fluence, environment[2].peerId, getResult.path, { ttl: 10000 });
-    console.log("📘 Ipfs.put", putResult);
-
-    let processResult = await process_file(fluence, environment[2].peerId, file.cid.toString(), rpcAddr, { ttl: 10000 })
-    console.log("processResult", processResult);
+    let module_size = await process_file(fluence, environment[2].peerId, file.cid.toString(), rpcAddr, { ttl: 10000 })
+    console.log("Size of the .wasm module is", module_size);
 
     return;
 }
