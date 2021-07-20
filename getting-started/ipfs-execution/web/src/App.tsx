@@ -196,7 +196,7 @@ function App() {
                 </td>
               </tr>
               <tr>
-                <td className="bold">.wasm CID:</td>
+                <td className="bold">process_files.wasm CID:</td>
                 <td className="mono">{wasm}</td>
               </tr>
             </table>
@@ -218,29 +218,6 @@ function App() {
         </div>
         </div>
       );
-
-      /*
-      , then 
-
-              <div className="row">
-                <label className="label bold">Peer id</label>
-                <input
-                  className="input"
-                  type="text"
-                  onChange={(e) => setPeerIdInput(e.target.value)}
-                  value={peerIdInput}
-                />
-              </div>
-              <div className="row">
-                <label className="label bold">Relay</label>
-                <input
-                  className="input"
-                  type="text"
-                  onChange={(e) => setRelayPeerIdInput(e.target.value)}
-                  value={relayPeerIdInput}
-                />
-              </div>
-      */
     } else if (deployed) {
       return (
         <div className="App">
@@ -277,16 +254,18 @@ function App() {
                 </td>
               </tr>
               <tr>
-                <td className="bold">.wasm CID:</td>
+                <td className="bold">process_files.wasm CID:</td>
                 <td className="mono">{wasm}</td>
               </tr>
               <tr>
                 <td className="bold">ProcessFiles service ID:</td>
                 <td className="mono">{serviceId}</td>
                 <button
-                    className="btn"
+                    className="btn-clipboard"
                     onClick={() => removeService()}
-                ></button>
+                >
+                  <i className="gg-trash"></i>
+                </button>
               </tr>
               <tr>
                 <td className="bold">File Size:</td>
