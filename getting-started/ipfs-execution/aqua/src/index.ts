@@ -15,24 +15,23 @@
  */
 
 
-import { put, get_from, set_timeout, get_external_swarm_multiaddr, get_external_api_multiaddr } from "@fluencelabs/aqua-ipfs";
+import { set_timeout, get_external_swarm_multiaddr, get_external_api_multiaddr } from "@fluencelabs/aqua-ipfs";
 import {createClient, setLogLevel} from "@fluencelabs/fluence";
 import {stage, krasnodar, Node, testNet} from "@fluencelabs/fluence-network-environment";
 import { Multiaddr, protocols } from 'multiaddr';
-import { process_file } from "./process";
+import { deploy_service, get_file_size, remove_service } from "./process";
 
 const { create, globSource, urlSource, CID } = require('ipfs-http-client');
 const all = require('it-all');
 const uint8ArrayConcat = require('uint8arrays/concat')
 
-async function provideFile(path: string, host: Node): Promise<{ file: typeof CID, swarmAddr: string, rpcAddr: string }> {
+async function provideFile(source: any, host: Node): Promise<{ file: typeof CID, swarmAddr: string, rpcAddr: string }> {
     const provider = await createClient(host);
 
     var swarmAddr;
     var result = await get_external_swarm_multiaddr(provider, provider.relayPeerId!);
     if (result.success) {
         swarmAddr = result.multiaddr;
-        swarmAddr = "/ip4/134.209.186.43/tcp/4440";
     } else {
         console.error("Failed to retrieve external swarm multiaddr from %s: ", provider.relayPeerId);
         throw result.error;
@@ -42,7 +41,6 @@ async function provideFile(path: string, host: Node): Promise<{ file: typeof CID
     var result = await get_external_api_multiaddr(provider, provider.relayPeerId!);
     if (result.success) {
         rpcAddr = result.multiaddr;
-        rpcAddr = "/ip4/134.209.186.43/tcp/5550";
     } else {
         console.error("Failed to retrieve external api multiaddr from %s: ", provider.relayPeerId);
         throw result.error;
@@ -55,15 +53,15 @@ async function provideFile(path: string, host: Node): Promise<{ file: typeof CID
     await ipfs.id();
     console.log("📗 connected to ipfs");
 
-    let source = globSource(path);
     const file = await ipfs.add(source);
     console.log("📗 uploaded file:", file);
 
-    let files = await ipfs.get(file.cid);
-    for await (const file of files) {
-        const content = uint8ArrayConcat(await all(file.content));
-        console.log("📗 downloaded file of length ", content.length);
-    }
+    // To download the file, uncomment the following code:
+    //    let files = await ipfs.get(file.cid);
+    //    for await (const file of files) {
+    //        const content = uint8ArrayConcat(await all(file.content));
+    //        console.log("📗 downloaded file of length ", content.length);
+    //    }
 
     return { file, swarmAddr, rpcAddr };
 }
@@ -72,11 +70,11 @@ async function provideFile(path: string, host: Node): Promise<{ file: typeof CID
 async function main(environment: Node[]) {
     // setLogLevel('DEBUG');
     let providerHost = environment[0];
-    console.log("uploading .wasm to node %s", providerHost.multiaddr);
-    let path = '../service/artifacts/process_files.wasm';
+    console.log("📘 uploading .wasm to node %s", providerHost.multiaddr);
+    let path = globSource('../service/artifacts/process_files.wasm');
     let { file, swarmAddr, rpcAddr } = await provideFile(path, providerHost);
-    console.log("swarmAddr", swarmAddr);
-    console.log("rpcAddr", rpcAddr);
+    console.log("📗 swarmAddr", swarmAddr);
+    console.log("📗 rpcAddr", rpcAddr);
 
     const fluence = await createClient(environment[1]);
     console.log("📗 created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
@@ -84,9 +82,26 @@ async function main(environment: Node[]) {
     // default IPFS timeout is 1 sec, set to 10 secs to retrieve file from remote node
     await set_timeout(fluence, environment[2].peerId, 10);
 
-    let module_size = await process_file(fluence, environment[2].peerId, file.cid.toString(), rpcAddr, { ttl: 10000 })
-    console.log("Size of the .wasm module is", module_size);
+    console.log("\n\n📘 Will deploy ProcessFiles service");
+    let service_id = await deploy_service(
+        fluence, 
+        environment[2].peerId, file.cid.toString(), rpcAddr, 
+        (msg, value) => console.log(msg, value),
+        { ttl: 10000 }
+    )
+    console.log("📗 ProcessFiles service is now deployed and available as", service_id);
 
+    console.log("\n\n📘 Will upload file & calculate its size");
+    let { file: newFile } = await provideFile(urlSource("https://i.imgur.com/NZgK6DB.png"), providerHost)
+    let fileSize = await get_file_size(
+        fluence, 
+        environment[2].peerId, newFile.cid.toString(), rpcAddr, service_id,
+        { ttl: 10000 }
+    )
+    console.log("📗 Calculated file size:", fileSize)
+
+    let result = await remove_service(fluence, environment[2].peerId, service_id);
+    console.log("📕 ProcessFiles service removed", result);
     return;
 }
 

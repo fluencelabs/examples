@@ -12,7 +12,112 @@ import { RequestFlow } from '@fluencelabs/fluence/dist/internal/RequestFlow';
 
 
 
-export async function process_file(client: FluenceClient, relay: string, cid: string, provider_ipfs: string, config?: {ttl?: number}): Promise<{error:string;size:number;success:boolean}> {
+export async function deploy_service(client: FluenceClient, relay: string, cid: string, provider_ipfs: string, log: (arg0: string, arg1: number) => void, config?: {ttl?: number}): Promise<string> {
+    let request: RequestFlow;
+    const promise = new Promise<string>((resolve, reject) => {
+        const r = new RequestFlowBuilder()
+            .disableInjections()
+            .withRawScript(
+                `
+(xor
+ (seq
+  (seq
+   (seq
+    (seq
+     (seq
+      (seq
+       (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+       (call %init_peer_id% ("getDataSrv" "relay") [] relay)
+      )
+      (call %init_peer_id% ("getDataSrv" "cid") [] cid)
+     )
+     (call %init_peer_id% ("getDataSrv" "provider_ipfs") [] provider_ipfs)
+    )
+    (call -relay- ("op" "noop") [])
+   )
+   (xor
+    (seq
+     (seq
+      (seq
+       (seq
+        (seq
+         (seq
+          (seq
+           (seq
+            (seq
+             (seq
+              (call relay ("ipfs-adapter" "get_from") [cid provider_ipfs] get_result)
+              (call relay ("dist" "default_module_config") ["process_files"] config)
+             )
+             (call relay ("dist" "add_module_from_vault") [get_result.$.path! config] module_hash)
+            )
+            (call relay ("op" "concat_strings") ["hash:" module_hash] prefixed_hash)
+           )
+           (call relay ("op" "array") [prefixed_hash] dependencies)
+          )
+          (call relay ("dist" "make_blueprint") ["process_files" dependencies] blueprint)
+         )
+         (call relay ("dist" "add_blueprint") [blueprint] blueprint_id)
+        )
+        (call relay ("srv" "create") [blueprint_id] service_id)
+       )
+       (call relay (service_id "file_size") [get_result.$.path!] size)
+      )
+      (call -relay- ("op" "noop") [])
+     )
+     (xor
+      (call %init_peer_id% ("callbackSrv" "log") ["Size of the .wasm module is" size.$.size!])
+      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+     )
+    )
+    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+   )
+  )
+  (xor
+   (call %init_peer_id% ("callbackSrv" "response") [service_id])
+   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+  )
+ )
+ (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 4])
+)
+
+            `,
+            )
+            .configHandler((h) => {
+                h.on('getDataSrv', '-relay-', () => {
+                    return client.relayPeerId!;
+                });
+                h.on('getDataSrv', 'relay', () => {return relay;});
+h.on('getDataSrv', 'cid', () => {return cid;});
+h.on('getDataSrv', 'provider_ipfs', () => {return provider_ipfs;});
+h.on('callbackSrv', 'log', (args) => {log(args[0], args[1]); return {};});
+                h.onEvent('callbackSrv', 'response', (args) => {
+  const [res] = args;
+  resolve(res);
+});
+
+                h.onEvent('errorHandlingSrv', 'error', (args) => {
+                    // assuming error is the single argument
+                    const [err] = args;
+                    reject(err);
+                });
+            })
+            .handleScriptError(reject)
+            .handleTimeout(() => {
+                reject('Request timed out for deploy_service');
+            })
+        if(config && config.ttl) {
+            r.withTTL(config.ttl)
+        }
+        request = r.build();
+    });
+    await client.initiateFlow(request!);
+    return promise;
+}
+      
+
+
+export async function get_file_size(client: FluenceClient, relay: string, cid: string, provider_ipfs: string, service_id: string, config?: {ttl?: number}): Promise<{error:string;size:number;success:boolean}> {
     let request: RequestFlow;
     const promise = new Promise<{error:string;size:number;success:boolean}>((resolve, reject) => {
         const r = new RequestFlowBuilder()
@@ -27,39 +132,21 @@ export async function process_file(client: FluenceClient, relay: string, cid: st
      (seq
       (seq
        (seq
-        (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-        (call %init_peer_id% ("getDataSrv" "relay") [] relay)
+        (seq
+         (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+         (call %init_peer_id% ("getDataSrv" "relay") [] relay)
+        )
+        (call %init_peer_id% ("getDataSrv" "cid") [] cid)
        )
-       (call %init_peer_id% ("getDataSrv" "cid") [] cid)
+       (call %init_peer_id% ("getDataSrv" "provider_ipfs") [] provider_ipfs)
       )
-      (call %init_peer_id% ("getDataSrv" "provider_ipfs") [] provider_ipfs)
+      (call %init_peer_id% ("getDataSrv" "service_id") [] service_id)
      )
      (call -relay- ("op" "noop") [])
     )
     (xor
      (seq
-      (seq
-       (seq
-        (seq
-         (seq
-          (seq
-           (seq
-            (seq
-             (call relay ("ipfs-adapter" "get_from") [cid provider_ipfs] get_result)
-             (call relay ("dist" "default_module_config") ["process_files"] config)
-            )
-            (call relay ("dist" "add_module_from_vault") [get_result.$.path! config] module_hash)
-           )
-           (call relay ("op" "concat_strings") ["hash:" module_hash] prefixed_hash)
-          )
-          (call relay ("op" "array") [prefixed_hash] dependencies)
-         )
-         (call relay ("dist" "make_blueprint") ["process_files" dependencies] blueprint)
-        )
-        (call relay ("dist" "add_blueprint") [blueprint] blueprint_id)
-       )
-       (call relay ("srv" "create") [blueprint_id] service_id)
-      )
+      (call relay ("ipfs-adapter" "get_from") [cid provider_ipfs] get_result)
       (call relay (service_id "file_size") [get_result.$.path!] size)
      )
      (seq
@@ -87,6 +174,7 @@ export async function process_file(client: FluenceClient, relay: string, cid: st
                 h.on('getDataSrv', 'relay', () => {return relay;});
 h.on('getDataSrv', 'cid', () => {return cid;});
 h.on('getDataSrv', 'provider_ipfs', () => {return provider_ipfs;});
+h.on('getDataSrv', 'service_id', () => {return service_id;});
                 h.onEvent('callbackSrv', 'response', (args) => {
   const [res] = args;
   resolve(res);
@@ -100,7 +188,80 @@ h.on('getDataSrv', 'provider_ipfs', () => {return provider_ipfs;});
             })
             .handleScriptError(reject)
             .handleTimeout(() => {
-                reject('Request timed out for process_file');
+                reject('Request timed out for get_file_size');
+            })
+        if(config && config.ttl) {
+            r.withTTL(config.ttl)
+        }
+        request = r.build();
+    });
+    await client.initiateFlow(request!);
+    return promise;
+}
+      
+
+
+export async function remove_service(client: FluenceClient, relay: string, service_id: string, config?: {ttl?: number}): Promise<boolean> {
+    let request: RequestFlow;
+    const promise = new Promise<boolean>((resolve, reject) => {
+        const r = new RequestFlowBuilder()
+            .disableInjections()
+            .withRawScript(
+                `
+(xor
+ (seq
+  (seq
+   (seq
+    (seq
+     (seq
+      (seq
+       (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+       (call %init_peer_id% ("getDataSrv" "relay") [] relay)
+      )
+      (call %init_peer_id% ("getDataSrv" "service_id") [] service_id)
+     )
+     (call -relay- ("op" "noop") [])
+    )
+    (xor
+     (call relay ("srv" "remove") [service_id])
+     (seq
+      (call -relay- ("op" "noop") [])
+      (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+     )
+    )
+   )
+   (call -relay- ("op" "noop") [])
+  )
+  (xor
+   (call %init_peer_id% ("callbackSrv" "response") [true])
+   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+  )
+ )
+ (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+)
+
+            `,
+            )
+            .configHandler((h) => {
+                h.on('getDataSrv', '-relay-', () => {
+                    return client.relayPeerId!;
+                });
+                h.on('getDataSrv', 'relay', () => {return relay;});
+h.on('getDataSrv', 'service_id', () => {return service_id;});
+                h.onEvent('callbackSrv', 'response', (args) => {
+  const [res] = args;
+  resolve(res);
+});
+
+                h.onEvent('errorHandlingSrv', 'error', (args) => {
+                    // assuming error is the single argument
+                    const [err] = args;
+                    reject(err);
+                });
+            })
+            .handleScriptError(reject)
+            .handleTimeout(() => {
+                reject('Request timed out for remove_service');
             })
         if(config && config.ttl) {
             r.withTTL(config.ttl)
