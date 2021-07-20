@@ -21,7 +21,8 @@ services:
     volumes:
       - fluence-0:/.fluence
       - data-0:/config
-    network_mode: host
+    networks:
+      - fluence
 
   fluence-1: # /ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWRABanQHUn28dxavN9ZS1zZghqoZVAYtFpoN7FdtoGTFv
     command: -f ed25519 -k 5fNENMwkUT4dW3hPs9ZwqV4qA5pdTtUChTazAx9Awe2Vpz1yaJu3VCmcEZow6YgdFBGoZoFAZUZBbF3c2Ebd2iL -m 12D3KooWFRgVmb1uWcmCbmJqLr8tBQghL6ysSpK2VyE2VZbaQ6wy -t 7771 -w 9991 --bootstraps /ip4/127.0.0.1/tcp/7770 /ip4/127.0.0.1/tcp/7772 #/dns4/kras-00.fluence.dev/tcp/7770
@@ -44,7 +45,8 @@ services:
     volumes:
       - fluence-1:/.fluence
       - data-1:/config
-    network_mode: host
+    networks:
+      - fluence
 
   fluence-2: # /ip4/127.0.0.1/tcp/9992/ws/p2p/12D3KooWFpQ7LHxcC9FEBUh3k4nSCC12jBhijJv3gJbi7wsNYzJ5
     command: -f ed25519 -k 5DTs9LQS8Ay2dM8xBcikDRwYLMcanhsC6tynSSgpLyBZEv5Ey34LVw1fYcCuUj9A9EfvQJB2bsaGhSRoHQ7D6UE5 -m 12D3KooWFRgVmb1uWcmCbmJqLr8tBQghL6ysSpK2VyE2VZbaQ6wy -t 7772 -w 9992 --bootstraps /ip4/127.0.0.1/tcp/7770 /ip4/127.0.0.1/tcp/7771 #/dns4/kras-00.fluence.dev/tcp/7770
@@ -67,7 +69,8 @@ services:
     volumes:
       - fluence-2:/.fluence
       - data-2:/config
-    network_mode: host
+    networks:
+      - fluence
 
 version: "3.5"
 volumes:
