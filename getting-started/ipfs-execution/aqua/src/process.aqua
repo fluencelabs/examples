@@ -15,7 +15,7 @@ service NewOp("op"):
     concat_strings(a: string, b: string) -> string
     array(s: string) -> []string
 
-func process_file(relay: PeerId, cid: CID, provider_ipfs: Multiaddr) -> string:
+func process_file(relay: PeerId, cid: CID, provider_ipfs: Multiaddr) -> SizeResult:
     on relay:
         get_result <- Ipfs.get_from(cid, provider_ipfs)
         config <- NewDist.default_module_config("process_files")
@@ -25,4 +25,7 @@ func process_file(relay: PeerId, cid: CID, provider_ipfs: Multiaddr) -> string:
         blueprint <- Dist.make_blueprint("process_files", dependencies)
         blueprint_id <- Dist.add_blueprint(blueprint)
         service_id <- Srv.create(blueprint_id)
-    <- service_id
+
+        ProcessFiles service_id
+        size <- ProcessFiles.file_size(get_result.path)
+    <- size
