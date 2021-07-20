@@ -14,44 +14,46 @@
  * limitations under the License.
  */
 
-import { put, get_from, set_timeout } from '@fluencelabs/aqua-ipfs';
 
+import { put, get_from, set_timeout, get_external_swarm_multiaddr, get_external_api_multiaddr } from "@fluencelabs/aqua-ipfs";
 import {createClient, setLogLevel} from "@fluencelabs/fluence";
 import {stage, krasnodar, Node, testNet} from "@fluencelabs/fluence-network-environment";
-const { create, globSource, urlSource } = require('ipfs-http-client');
+import { Multiaddr, protocols } from 'multiaddr';
+const { create, globSource, urlSource, CID } = require('ipfs-http-client');
 const all = require('it-all');
 const uint8ArrayConcat = require('uint8arrays/concat')
 
+async function provideFile(path: string, host: Node): Promise<{ file: typeof CID, swarmAddr: string, rpcAddr: string }> {
+    const provider = await createClient(host);
 
-let local: Node[] = [
-    {
-        peerId: "12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK",
-        multiaddr: "/ip4/127.0.0.1/tcp/9990/ws/p2p/12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK"
-    },
-    {
-        peerId: "12D3KooWRABanQHUn28dxavN9ZS1zZghqoZVAYtFpoN7FdtoGTFv",
-        multiaddr: "/ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWRABanQHUn28dxavN9ZS1zZghqoZVAYtFpoN7FdtoGTFv"
-    },
-    {
-        peerId: "12D3KooWFpQ7LHxcC9FEBUh3k4nSCC12jBhijJv3gJbi7wsNYzJ5",
-        multiaddr: "/ip4/127.0.0.1/tcp/9992/ws/p2p/12D3KooWFpQ7LHxcC9FEBUh3k4nSCC12jBhijJv3gJbi7wsNYzJ5"
-    },
-];
+    var swarmAddr;
+    var result = await get_external_swarm_multiaddr(provider, provider.relayPeerId!);
+    if (result.success) {
+        swarmAddr = result.multiaddr;
+        swarmAddr = "/ip4/134.209.186.43/tcp/4440";
+    } else {
+        console.error("Failed to retrieve external swarm multiaddr from %s: ", provider.relayPeerId);
+        throw result.error;
+    }
 
-async function main(environment: Node[]) {
-    // setLogLevel('DEBUG');
-    const fluence = await createClient(environment[1]);
-    console.log("📗 created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
-    
-    let ipfsAddr = 'https://stage.fluence.dev:15001';
-    let ipfsMultiaddr = '/ip4/134.209.186.43/tcp/5001/p2p/12D3KooWEhCqQ9NBnmtSfNeXSNfhgccmH86xodkCUxZNEXab6pkw';
-    const ipfs = create(ipfsAddr);
-    console.log("📗 created ipfs client");
+    var rpcAddr;
+    var result = await get_external_api_multiaddr(provider, provider.relayPeerId!);
+    if (result.success) {
+        rpcAddr = result.multiaddr;
+        rpcAddr = "/ip4/134.209.186.43/tcp/5550";
+    } else {
+        console.error("Failed to retrieve external api multiaddr from %s: ", provider.relayPeerId);
+        throw result.error;
+    }
+
+    var rpcMaddr = new Multiaddr(rpcAddr).decapsulateCode(protocols.names.p2p.code);
+    const ipfs = create(rpcMaddr);
+    console.log("📗 created ipfs client to %s", rpcMaddr);
 
     await ipfs.id();
     console.log("📗 connected to ipfs");
 
-    let source = urlSource('https://images.adsttc.com/media/images/5ecd/d4ac/b357/65c6/7300/009d/large_jpg/02C.jpg?1590547607');
+    let source = globSource(path);
     const file = await ipfs.add(source);
     console.log("📗 uploaded file:", file);
 
@@ -61,11 +63,27 @@ async function main(environment: Node[]) {
         console.log("📗 downloaded file of length ", content.length);
     }
 
+    return { file, swarmAddr, rpcAddr };
+}
+
+
+async function main(environment: Node[]) {
+    // setLogLevel('DEBUG');
+    let providerHost = environment[0];
+    console.log("uploading .wasm to node %s", providerHost.multiaddr);
+    let path = '../service/artifacts/process_files.wasm';
+    let { file, swarmAddr, rpcAddr } = await provideFile(path, providerHost);
+    console.log("swarmAddr", swarmAddr);
+    console.log("rpcAddr", rpcAddr);
+
+    const fluence = await createClient(environment[1]);
+    console.log("📗 created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
+
     // default IPFS timeout is 1 sec, set to 10 secs to retrieve file from remote node
     await set_timeout(fluence, environment[2].peerId, 10);
 
     console.log("📘 file hash: ", file.cid);
-    let getResult = await get_from(fluence, environment[2].peerId, file.cid.toString(), ipfsMultiaddr, { ttl: 10000 });
+    let getResult = await get_from(fluence, environment[2].peerId, file.cid.toString(), rpcAddr, { ttl: 10000 });
     console.log("📘 Ipfs.get", getResult);
 
     let putResult = await put(fluence, environment[2].peerId, getResult.path, { ttl: 10000 });
@@ -76,12 +94,17 @@ async function main(environment: Node[]) {
 
 let args = process.argv.slice(2);
 var environment: Node[];
-if (args.length >= 1 && args[0] == "local") {
-    environment = local;
-    console.log("📘 Will connect to local nodes");
-} else {
+if (args.length >= 1 && args[0] == "testnet") {
     environment = testNet;
     console.log("📘 Will connect to testNet");
+} else if (args[0] == "stage") {
+    environment = stage;
+    console.log("📘 Will connect to stage");
+} else if (args[0] == "krasnodar") {
+    environment = krasnodar;
+    console.log("📘 Will connect to krasnodar");
+} else {
+    throw "Specify environment";
 }
 
 main(environment)

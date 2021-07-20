@@ -10,7 +10,7 @@
     "prestart:local": "npm run build",
     "start:local": "node dist/index.js local",
     "prestart:remote": "npm run build",
-    "start:remote": "node dist/index.js testnet",
+    "start:remote": "node dist/index.js stage",
     "start": "npm run start:remote"
   },
   "keywords": [
@@ -26,13 +26,14 @@
   "author": "Fluence Labs",
   "license": "MIT",
   "dependencies": {
-    "@fluencelabs/aqua-ipfs": "0.1.7",
+    "@fluencelabs/aqua-ipfs": "^0.1.8",
     "@fluencelabs/fluence": "0.9.53",
     "@fluencelabs/fluence-network-environment": "1.0.10",
     "@fluencelabs/aqua-lib": "0.1.9",
     "ipfs-http-client": "^50.1.2",
     "it-all": "^1.0.5",
-    "uint8arrays": "^2.1.5"
+    "uint8arrays": "^2.1.5",
+    "multiaddr": "^10.0.0"
   },
   "devDependencies": {
     "typescript": "^3.9.5",
