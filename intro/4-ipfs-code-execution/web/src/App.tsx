@@ -23,7 +23,7 @@ function App() {
   const [wasm, setWasm] = useState<string | null>("QmVg9EnanAbwTuEqjjuc1R2uf3AdtEkrNagSifQMkHfyNU");
   const [rpcAddr, setRpcAddr] = useState<string | null>("");
   const [fileCID, setFileCID] = useState<string>("");
-  const [fileSize, setFileSize] = useState<number | null>(null);
+  const [fileSize, setFileSize] = useState<string | null>(null);
 
   const isConnected = client !== null;
   const gotRpcAddr = rpcAddr !== null;
@@ -71,7 +71,11 @@ function App() {
     }
 
     let size = await get_file_size(client, client.relayPeerId!, fileCID, rpcAddr, serviceId, { ttl: 10000 });
-    setFileSize(size.size);
+    if (size.success) {
+      setFileSize(size.size.toString());
+    } else {
+      setFileSize("Error: " + size.error);
+    }
   };
 
   const removeService = async () => {
