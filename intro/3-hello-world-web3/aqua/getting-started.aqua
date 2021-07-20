@@ -7,16 +7,16 @@ data HelloComputation:
     msg: string
     reply: string
 
-service Hello_world_compute:
+service HelloWorldCompute:
     hello_world(from: string) -> HelloComputation
 
 service HelloWorld("HelloWorld"):
-    recieveHello(from: PeerId) -> string
+    recieveHello(message: string) -> string
 
 func sayHello(peerId: PeerId, relayPeerId: PeerId) -> string:
     on helloServiceNode:
-        Hello_world_compute helloServiceId
-        comp <- Hello_world_compute.hello_world(%init_peer_id%)
+        HelloWorldCompute helloServiceId
+        comp <- HelloWorldCompute.hello_world(%init_peer_id%)
 
     co on peerId via relayPeerId:
         HelloWorld.recieveHello(comp.msg)
