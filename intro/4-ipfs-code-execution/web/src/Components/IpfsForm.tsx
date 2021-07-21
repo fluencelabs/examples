@@ -1,5 +1,6 @@
-import { useRecoilState, useResetRecoilState } from "recoil";
-import { rpcAddrState, useDeployService, wasmState } from "../state";
+import { useRecoilState } from "recoil";
+import { useDeployService } from "../appLogic";
+import { rpcAddrState, wasmState } from "../appState";
 import { TextInput } from "./TextInput";
 
 export const IpfsForm = () => {

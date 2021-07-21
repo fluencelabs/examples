@@ -7,7 +7,7 @@ import {
   hasResultState,
   isConnectedState,
   isDeployedState,
-} from "./state";
+} from "./appState";
 import { useRecoilValue } from "recoil";
 import { ConnectedInfo } from "./Components/ConnectedInfo";
 import { ConnectionForm } from "./Components/ConnectionForm";

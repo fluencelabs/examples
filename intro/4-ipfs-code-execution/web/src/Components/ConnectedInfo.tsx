@@ -1,5 +1,5 @@
 import { useRecoilValue } from "recoil";
-import { clientState } from "../state";
+import { clientState } from "../appState";
 import { TextWithLabel } from "./TextInput";
 
 export const ConnectedInfo = () => {

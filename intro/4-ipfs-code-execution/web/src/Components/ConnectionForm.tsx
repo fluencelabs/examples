@@ -1,4 +1,4 @@
-import { relayNodes, useClientConnect } from "../state";
+import { relayNodes, useClientConnect } from "../appLogic";
 
 export const ConnectionForm = () => {
   const connect = useClientConnect();

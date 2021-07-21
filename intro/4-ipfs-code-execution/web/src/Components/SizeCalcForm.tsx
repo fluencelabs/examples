@@ -1,5 +1,6 @@
 import { useRecoilState, useRecoilValue } from "recoil";
-import { fileCIDState, rpcAddrState, useGetFileSize } from "../state";
+import { useGetFileSize } from "../appLogic";
+import { fileCIDState, rpcAddrState } from "../appState";
 import { TextInput } from "./TextInput";
 
 export const SizeCalcForm = () => {

@@ -1,5 +1,5 @@
 import { useRecoilValue } from "recoil";
-import { fileSizeCIDState, fileSizeState } from "../state";
+import { fileSizeCIDState, fileSizeState } from "../appState";
 import { TextWithLabel } from "./TextInput";
 
 export const SizeCalcResult = () => {

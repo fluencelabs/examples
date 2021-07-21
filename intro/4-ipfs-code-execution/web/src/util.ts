@@ -6,10 +6,6 @@ export const decapsulateP2P = (rpcAddr: string) => {
     .toString();
 };
 
-export const copyToClipboard = (text: string) => {
-  navigator.clipboard.writeText(text);
-};
-
 export const fromOption = <T>(opt: T | T[] | null): T | null => {
   if (Array.isArray(opt)) {
     if (opt.length === 0) {

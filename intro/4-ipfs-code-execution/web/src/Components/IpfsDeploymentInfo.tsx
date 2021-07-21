@@ -1,6 +1,6 @@
 import { useRecoilValue } from "recoil";
-import { serviceIdState, useRemoveService, wasmState } from "../state";
-import { copyToClipboard } from "../util";
+import { useRemoveService } from "../appLogic";
+import { serviceIdState, wasmState } from "../appState";
 import { TextWithLabel } from "./TextInput";
 
 export const IpfsDeploymentInfo = () => {
