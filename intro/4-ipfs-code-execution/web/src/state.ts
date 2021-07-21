@@ -38,19 +38,19 @@ export const rpcAddrState = atom<string | null>({
   default: null,
 });
 
-export const fileCIDState = atom<string>({
+export const fileCIDState = atom<string | null>({
   key: "fileCIDState",
-  default: "",
+  default: null,
 });
 
-export const fileSizeState = atom<string>({
+export const fileSizeState = atom<string | null>({
   key: "fileSizeState",
-  default: "",
+  default: null,
 });
 
-export const fileSizeCIDState = atom<string>({
+export const fileSizeCIDState = atom<string | null>({
   key: "fileSizeCIDState",
-  default: "",
+  default: null,
 });
 
 export const isConnectedState = selector({
@@ -78,6 +78,14 @@ export const isDeployedState = selector({
     const serviceId = get(serviceIdState);
 
     return serviceId !== null;
+  },
+});
+
+export const hasResultState = selector({
+  key: "hasResultState",
+  get: ({ get }) => {
+    const fileSize = get(fileSizeState);
+    return fileSize !== null;
   },
 });
 
@@ -140,8 +148,9 @@ export const useGetFileSize = () => {
   const rpcAddr = useRecoilValue(rpcAddrState);
   const client = useRecoilValue(clientState);
   const serviceId = useRecoilValue(serviceIdState);
+  const fileCID = useRecoilValue(fileCIDState);
   const setFileSize = useSetRecoilState(fileSizeState);
-  const [fileCID, setFileSizeCID] = useRecoilState(fileCIDState);
+  const setFileSizeCID = useSetRecoilState(fileSizeCIDState);
 
   return async () => {
     if (client === null || serviceId === null || rpcAddr === null) {
@@ -151,7 +160,7 @@ export const useGetFileSize = () => {
     var putResult = await put_file_size(
       client,
       client.relayPeerId!,
-      fileCID,
+      fileCID!,
       rpcAddr,
       serviceId,
       (size) => setFileSize(size.toString()),
@@ -170,9 +179,12 @@ export const useGetFileSize = () => {
   };
 };
 
-export const useRemoveServuce = () => {
+export const useRemoveService = () => {
   const client = useRecoilValue(clientState);
   const [serviceId, setServiceId] = useRecoilState(serviceIdState);
+  const setFileCID = useSetRecoilState(fileCIDState);
+  const setFileSize = useSetRecoilState(fileSizeState);
+  const setFileSizeCID = useSetRecoilState(fileSizeCIDState);
 
   return async () => {
     if (client === null || serviceId === null) {
@@ -183,5 +195,8 @@ export const useRemoveServuce = () => {
       ttl: 10000,
     });
     setServiceId(null);
+    setFileCID(null);
+    setFileSize(null);
+    setFileSizeCID(null);
   };
 };

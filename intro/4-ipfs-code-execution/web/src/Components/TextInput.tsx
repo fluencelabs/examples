@@ -18,3 +18,15 @@ export const TextInput = (props: {
     </div>
   );
 };
+
+export const TextWithLabel = (props: {
+  text: string;
+  value: string | null;
+}) => {
+  return (
+    <div className="row">
+      <label className="label bold">{props.text}</label>
+      <div className="input-ro">{props.value || ""}</div>
+    </div>
+  );
+};

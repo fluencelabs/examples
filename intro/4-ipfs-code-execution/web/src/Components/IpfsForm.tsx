@@ -9,17 +9,19 @@ export const IpfsForm = () => {
 
   return (
     <>
-      <h2>Ipfs</h2>
-      <p>
-        process_files.wasm will be downloaded via IPFS to the Fluence node, and
-        then a service will be dynamically created from it! After that, you will
-        be able to use that service to get sizes of IPFS files!
-        <br />
-        To do so, please specify IPFS RPC address to download process_files.wasm
-        from
-        <br />
-        And specify CID of WebAssembly module.
-      </p>
+      <h2>Deploy service from IPFS</h2>
+      <div className="article">
+        <p>Now we can deploy service from IPFS into Fluence network</p>
+        <p>
+          process_files.wasm will be downloaded via IPFS to the Fluence node,
+          and then a service will be dynamically created from it! After that,
+          you will be able to use that service to get sizes of IPFS files!
+        </p>
+        <p>
+          To do so, please specify IPFS RPC address of process_files.wasm from,
+          and the CIP of WebAssembly module to use (process_files.wasm)
+        </p>
+      </div>
 
       <TextInput
         text={"IPFS RPC address"}
@@ -33,7 +35,7 @@ export const IpfsForm = () => {
         setValue={setWasm}
       />
       <div className="row">
-        <button className="btn btn-hello" onClick={deployService}>
+        <button className="btn btn-right" onClick={deployService}>
           deploy service
         </button>
       </div>
