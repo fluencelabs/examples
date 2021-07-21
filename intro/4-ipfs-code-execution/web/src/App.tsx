@@ -159,18 +159,22 @@ function App() {
           />
         )}
         {deployed && (
-          <Deployed
-            setRpcAddr={setRpcAddr}
-            rpcAddr={rpcAddr}
-            setFileCID={setFileCID}
-            fileCID={fileCID}
-            fileSize={fileSize}
-            fileSizeCID={fileSizeCID}
-            getFileSize={getFileSize}
-            wasm={wasm}
-            serviceId={serviceId}
-            removeService={removeService}
-          />
+          <>
+            <IfsDeployed
+              wasm={wasm}
+              serviceId={serviceId}
+              removeService={removeService}
+            />
+            <Deployed
+              setRpcAddr={setRpcAddr}
+              rpcAddr={rpcAddr}
+              setFileCID={setFileCID}
+              fileCID={fileCID}
+              fileSize={fileSize}
+              fileSizeCID={fileSizeCID}
+              getFileSize={getFileSize}
+            />
+          </>
         )}
       </div>
     </div>
@@ -185,52 +189,10 @@ const Deployed = (props: {
   fileSize: string;
   fileSizeCID: string;
   getFileSize: () => Promise<void>;
-  wasm: string;
-  serviceId: string | null;
-  removeService: () => {};
 }) => {
   return (
     <>
-      <h2>Deployed</h2>
-      <table>
-        <tr>
-          <td className="bold">process_files.wasm CID:</td>
-          <td className="mono">{props.wasm}</td>
-          <td>
-            <button
-              className="btn-clipboard"
-              onClick={() => copyToClipboard(props.wasm)}
-            >
-              <i className="gg-clipboard"></i>
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td className="bold">ProcessFiles service ID:</td>
-          <td className="mono">{props.serviceId}</td>
-          <button
-            className="btn-clipboard"
-            onClick={() => props.removeService()}
-          >
-            <i className="gg-trash"></i>
-          </button>
-        </tr>
-        <tr>
-          <td className="bold">File Size:</td>
-          <td className="mono">{props.fileSize}</td>
-        </tr>
-      </table>
       <div>
-        <div className="row">
-          <h2>Set IPFS RPC address:</h2>
-          <p className="p">Specify IPFS to download file from</p>
-          <input
-            className="input"
-            type="text"
-            onChange={(e) => props.setRpcAddr(e.target.value)}
-            value={props.rpcAddr}
-          />
-        </div>
         <h2>Get file size</h2>
         <p className="p">
           Upload any file to IPFS node
@@ -278,43 +240,70 @@ const IpfsForm = (props: {
 }) => {
   return (
     <>
-      <div>
-        <div className="row">
-          <h2>Set IPFS RPC address:</h2>
-          <p className="p">Specify IPFS to download process_files.wasm from</p>
-          <input
-            className="input"
-            type="text"
-            onChange={(e) => props.setRpcAddr(e.target.value)}
-            value={props.rpcAddr}
-          />
-        </div>
-        <div className="row">
-          <h2>Set process_files.wasm module CID</h2>
-          <p className="p">
-            To deploy a service, specify CID of WebAssembly module.
-          </p>
-          <input
-            className="input"
-            type="text"
-            onChange={(e) => props.setWasm(e.target.value)}
-            value={props.wasm}
-          />
-        </div>
+      <h2>Ipfs</h2>
+      <p>
+        process_files.wasm will be downloaded via IPFS to the Fluence node, and
+        then a service will be dynamically created from it! After that, you will
+        be able to use that service to get sizes of IPFS files!
+        <br />
+        To do so, please specify IPFS RPC address to download process_files.wasm
+        from
+        <br />
+        And specify CID of WebAssembly module.
+      </p>
+
+      <TextInput
+        text={"IPFS RPC address"}
+        value={props.rpcAddr}
+        setValue={props.setRpcAddr}
+      />
+
+      <TextInput
+        text={"process_files.wasm module CID"}
+        value={props.wasm}
+        setValue={props.setWasm}
+      />
+      <div className="row">
+        <button className="btn btn-hello" onClick={props.deployService}>
+          deploy service
+        </button>
       </div>
-      <div>
-        <h2>Deploy ProcessFiles service</h2>
-        <p className="p">
-          process_files.wasm will be downloaded via IPFS to the Fluence node,
-          and then a service will be dynamically created from it! After that,
-          you will be able to use that service to get sizes of IPFS files!
-        </p>
-        <div className="row">
-          <button className="btn btn-hello" onClick={props.deployService}>
-            deploy service
+    </>
+  );
+};
+
+const IfsDeployed = (props: {
+  wasm: string;
+  serviceId: string | null;
+  removeService: () => {};
+}) => {
+  return (
+    <>
+      <h2>Deployed</h2>
+      <table>
+        <tr>
+          <td className="bold">process_files.wasm CID:</td>
+          <td className="mono">{props.wasm}</td>
+          <td>
+            <button
+              className="btn-clipboard"
+              onClick={() => copyToClipboard(props.wasm)}
+            >
+              <i className="gg-clipboard"></i>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td className="bold">ProcessFiles service ID:</td>
+          <td className="mono">{props.serviceId}</td>
+          <button
+            className="btn-clipboard"
+            onClick={() => props.removeService()}
+          >
+            <i className="gg-trash"></i>
           </button>
-        </div>
-      </div>
+        </tr>
+      </table>
     </>
   );
 };
@@ -373,6 +362,25 @@ const Connected = (props: { client: FluenceClient }) => {
         </tr>
       </table>
     </>
+  );
+};
+
+const TextInput = (props: {
+  text: string;
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+  return (
+    <div className="row">
+      <label className="label bold">{props.text}</label>
+      <input
+        className="input"
+        type="text"
+        onChange={(e) => props.setValue(e.target.value)}
+        value={props.value}
+        required={true}
+      />
+    </div>
   );
 };
 
