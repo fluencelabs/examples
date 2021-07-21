@@ -1,0 +1,85 @@
+# management secret key is NAB5rGwT4qOEB+6nLQawkTfCOV2eiFSjgQK8bfEdZXY=
+services:
+  fluence-0: # /ip4/127.0.0.1/tcp/9990/ws/p2p/12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK
+    command: -f ed25519 -k 29Apzfedhw2Jxh94Jj4rNSmavQ1TkNe8ALYRA7bMegobwp423aLrURxLk32WtXgXHDqoSz7GAT9fQfoMhVd1e5Ww -m 12D3KooWFRgVmb1uWcmCbmJqLr8tBQghL6ysSpK2VyE2VZbaQ6wy -t 7770 -w 9990 --bootstraps /ip4/127.0.0.1/tcp/7771 /ip4/127.0.0.1/tcp/7772
+    container_name: fluence-0
+    environment:
+      RUST_BACKTRACE: full
+      RUST_LOG: info,network=trace,aquamarine=info,aquamarine::actor=info,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,async_io=info,polling=info,wasmer_interface_types_fl=info,cranelift_codegen=info,wasmer_wasi=info,async_io=info,polling=info,wasmer_interface_types_fl=info,particle_server::behaviour::identify=info,libp2p_mplex=info,libp2p_identify=info,walrus=info,particle_protocol::libp2p_protocol::upgrade=info,kademlia::behaviour=info
+      WASM_LOG: info
+      IPFS_API_PORT: 5000
+      IPFS_SWARM_PORT: 4000
+      FLUENCE_ENV_IPFS_ADAPTER_EXTERNAL_API_MULTIADDR: '/ip4/127.0.0.1/tcp/5000'
+      FLUENCE_ENV_IPFS_ADAPTER_EXTERNAL_SWARM_MULTIADDR: '/ip4/127.0.0.1/tcp/4000'
+    image: fluencelabs/node:latest
+    ports:
+      - 7770:7770 # tcp
+      - 9990:9990 # ws
+      - 5000:5001 # ipfs
+      - 18080:18080 # /metrics
+    restart: always
+    volumes:
+      - fluence-0:/.fluence
+      - data-0:/config
+    networks:
+      - fluence
+
+  fluence-1: # /ip4/127.0.0.1/tcp/9991/ws/p2p/12D3KooWRABanQHUn28dxavN9ZS1zZghqoZVAYtFpoN7FdtoGTFv
+    command: -f ed25519 -k 5fNENMwkUT4dW3hPs9ZwqV4qA5pdTtUChTazAx9Awe2Vpz1yaJu3VCmcEZow6YgdFBGoZoFAZUZBbF3c2Ebd2iL -m 12D3KooWFRgVmb1uWcmCbmJqLr8tBQghL6ysSpK2VyE2VZbaQ6wy -t 7771 -w 9991 --bootstraps /ip4/127.0.0.1/tcp/7770 /ip4/127.0.0.1/tcp/7772 #/dns4/kras-00.fluence.dev/tcp/7770
+    container_name: fluence-1
+    environment:
+      RUST_BACKTRACE: full
+      RUST_LOG: info,network=trace,aquamarine=info,aquamarine::actor=info,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,async_io=info,polling=info,wasmer_interface_types_fl=info,cranelift_codegen=info,wasmer_wasi=info,async_io=info,polling=info,wasmer_interface_types_fl=info,particle_server::behaviour::identify=info,libp2p_mplex=info,libp2p_identify=info,walrus=info,particle_protocol::libp2p_protocol::upgrade=info,kademlia::behaviour=info
+      WASM_LOG: info
+      IPFS_API_PORT: 5001
+      IPFS_SWARM_PORT: 4001
+      FLUENCE_ENV_IPFS_ADAPTER_EXTERNAL_API_MULTIADDR: '/ip4/127.0.0.1/tcp/5001'
+      FLUENCE_ENV_IPFS_ADAPTER_EXTERNAL_SWARM_MULTIADDR: '/ip4/127.0.0.1/tcp/4001'
+    image: fluencelabs/node:latest
+    ports:
+      - 7771:7771 # tcp
+      - 9991:9991 # ws
+      - 5001:5001 # ipfs
+      - 18081:18080 # /metrics
+    restart: always
+    volumes:
+      - fluence-1:/.fluence
+      - data-1:/config
+    networks:
+      - fluence
+
+  fluence-2: # /ip4/127.0.0.1/tcp/9992/ws/p2p/12D3KooWFpQ7LHxcC9FEBUh3k4nSCC12jBhijJv3gJbi7wsNYzJ5
+    command: -f ed25519 -k 5DTs9LQS8Ay2dM8xBcikDRwYLMcanhsC6tynSSgpLyBZEv5Ey34LVw1fYcCuUj9A9EfvQJB2bsaGhSRoHQ7D6UE5 -m 12D3KooWFRgVmb1uWcmCbmJqLr8tBQghL6ysSpK2VyE2VZbaQ6wy -t 7772 -w 9992 --bootstraps /ip4/127.0.0.1/tcp/7770 /ip4/127.0.0.1/tcp/7771 #/dns4/kras-00.fluence.dev/tcp/7770
+    container_name: fluence-2
+    environment:
+      RUST_BACKTRACE: full
+      RUST_LOG: info,network=trace,aquamarine=info,aquamarine::actor=info,tokio_threadpool=info,tokio_reactor=info,mio=info,tokio_io=info,soketto=info,yamux=info,multistream_select=info,libp2p_secio=info,libp2p_websocket::framed=info,libp2p_ping=info,libp2p_core::upgrade::apply=info,libp2p_kad::kbucket=info,cranelift_codegen=info,wasmer_wasi=info,async_io=info,polling=info,wasmer_interface_types_fl=info,cranelift_codegen=info,wasmer_wasi=info,async_io=info,polling=info,wasmer_interface_types_fl=info,particle_server::behaviour::identify=info,libp2p_mplex=info,libp2p_identify=info,walrus=info,particle_protocol::libp2p_protocol::upgrade=info,kademlia::behaviour=info
+      WASM_LOG: info
+      IPFS_API_PORT: 5002
+      IPFS_SWARM_PORT: 4002
+      FLUENCE_ENV_IPFS_ADAPTER_EXTERNAL_API_MULTIADDR: '/ip4/127.0.0.1/tcp/5002'
+      FLUENCE_ENV_IPFS_ADAPTER_EXTERNAL_SWARM_MULTIADDR: '/ip4/127.0.0.1/tcp/4002'
+    image: fluencelabs/node:latest
+    ports:
+      - 7772:7772 # tcp
+      - 9992:9992 # ws
+      - 5002:5001 # ipfs
+      - 18082:18080 # /metrics
+    restart: always
+    volumes:
+      - fluence-2:/.fluence
+      - data-2:/config
+    networks:
+      - fluence
+
+version: "3.5"
+volumes:
+  fluence-0:
+  fluence-1:
+  fluence-2:
+  data-0:
+  data-1:
+  data-2:
+
+networks:
+  fluence: 

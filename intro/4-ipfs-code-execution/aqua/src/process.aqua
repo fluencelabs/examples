@@ -1,0 +1,45 @@
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/aqua-ipfs/ipfs.aqua"
+import "process_files.aqua"
+
+alias PeerId : string
+alias CID : string
+alias Multiaddr : string
+alias Hash : string
+alias ServiceID : string
+
+service NewDist("dist"):
+    default_module_config(name: string) -> ModuleConfig
+    add_module_from_vault(path: string, config: ModuleConfig) -> Hash
+
+service NewOp("op"):
+    concat_strings(a: string, b: string) -> string
+    array(s: string) -> []string
+
+func deploy_service(relay: PeerId, cid: CID, provider_ipfs: Multiaddr, log: string, u32 -> ()) -> ServiceID:
+    on relay:
+        get_result <- Ipfs.get_from(cid, provider_ipfs)
+        config <- NewDist.default_module_config("process_files")
+        module_hash <- NewDist.add_module_from_vault(get_result.path, config)
+        prefixed_hash <- NewOp.concat_strings("hash:", module_hash)
+        dependencies <- NewOp.array(prefixed_hash)
+        blueprint <- Dist.make_blueprint("process_files", dependencies)
+        blueprint_id <- Dist.add_blueprint(blueprint)
+        service_id <- Srv.create(blueprint_id)
+
+        ProcessFiles service_id
+        size <- ProcessFiles.file_size(get_result.path)
+        log("Size of the .wasm module is", size.size)
+    <- service_id
+
+func get_file_size(relay: PeerId, cid: CID, provider_ipfs: Multiaddr, service_id: ServiceID) -> SizeResult:
+    ProcessFiles service_id
+    on relay:
+        get_result <- Ipfs.get_from(cid, provider_ipfs)
+        size <- ProcessFiles.file_size(get_result.path)
+    <- size
+
+func remove_service(relay: PeerId, service_id: ServiceID) -> bool:
+    on relay:
+        Srv.remove(service_id)
+    <- true

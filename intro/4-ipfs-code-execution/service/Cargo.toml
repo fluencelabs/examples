@@ -1,0 +1,21 @@
+[package]
+name = "process_files"
+version = "0.1.0"
+authors = ["Fluence Labs"]
+edition = "2018"
+description = "Marine service that processes files in various ways"
+license = "Apache-2.0"
+
+[[bin]]
+name = "process_files"
+path = "src/main.rs"
+
+[dependencies]
+marine-rs-sdk = { version="0.6.11", features=["logger"] }
+log = "0.4.14"
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.1.11"
+
+[profile.release]
+opt-level = "s"
