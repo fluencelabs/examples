@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-use marine_rs_sdk::{marine, module_manifest};
+use marine_rs_sdk::{marine, module_manifest, get_call_parameters};
+use std::path::{PathBuf, Path};
+use rand::Rng;
+use rand::distributions::Alphanumeric;
 
 module_manifest!();
 
@@ -35,3 +38,32 @@ pub fn file_size(file_path: String) -> SizeResult {
     }
 }
 
+#[marine]
+pub struct WriteResult {
+    pub path: String,
+    pub success: bool,
+    pub error: String,
+}
+
+#[marine]
+pub fn write_file_size(size: u32) -> WriteResult {
+    let name: String = rand::thread_rng()
+        .sample_iter(Alphanumeric)
+        .take(16)
+        .map(char::from)
+        .collect();
+
+    let file = vault_dir().join(&name);
+    let file_str = file.to_string_lossy().to_string();
+    match std::fs::write(&file, size.to_string()) {
+        Ok(_) => WriteResult { path: file_str, success: true, error: String::new() },
+        Err(err) => WriteResult { path: String::new(), success: false, error: err.to_string() }
+    }
+}
+
+fn vault_dir() -> PathBuf {
+    let particle_id = get_call_parameters().particle_id;
+    let vault = Path::new("/tmp").join("vault").join(particle_id);
+
+    vault
+}

@@ -8,9 +8,9 @@
     "prebuild": "npm run compile-aqua",
     "build": "tsc",
     "prestart:local": "npm run build",
-    "start:local": "node dist/index.js local",
+    "start:local": "node dist/demo.js local",
     "prestart:remote": "npm run build",
-    "start:remote": "node dist/index.js stage",
+    "start:remote": "node dist/demo.js stage",
     "start": "npm run start:remote"
   },
   "keywords": [

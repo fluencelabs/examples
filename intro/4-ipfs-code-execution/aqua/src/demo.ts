@@ -19,7 +19,7 @@ import { set_timeout } from "@fluencelabs/aqua-ipfs";
 import {createClient, FluenceClient, setLogLevel} from "@fluencelabs/fluence";
 import {stage, krasnodar, Node, testNet} from "@fluencelabs/fluence-network-environment";
 import { provideFile, globSource, urlSource } from "./provider";
-import { deploy_service, get_file_size, remove_service } from "./process";
+import { deploy_service, put_file_size, remove_service } from "./process";
 
 async function main(environment: Node[]) {
     // setLogLevel('DEBUG');
@@ -38,26 +38,47 @@ async function main(environment: Node[]) {
     await set_timeout(fluence, environment[2].peerId, 10);
 
     console.log("\n\n📘 Will deploy ProcessFiles service");
-    let service_id = await deploy_service(
+    var service_id = await deploy_service(
         fluence, 
-        environment[2].peerId, file.cid.toString(), rpcAddr, 
-        (msg, value) => console.log(msg, value),
+        environment[2].peerId, file.cid.toString(), rpcAddr,
+        (label, error) => { console.error("📕 deploy_service failed: ", label, error) },
         { ttl: 10000 }
     )
+    service_id = from_option(service_id);
+    if (service_id === null) { 
+        return; 
+    }
+
     console.log("📗 ProcessFiles service is now deployed and available as", service_id);
 
     console.log("\n\n📘 Will upload file & calculate its size");
     let { file: newFile } = await provideFile(urlSource("https://i.imgur.com/NZgK6DB.png"), providerClient);
-    let fileSize = await get_file_size(
+    var putResult = await put_file_size(
         fluence, 
         environment[2].peerId, newFile.cid.toString(), rpcAddr, service_id,
+        fileSize => console.log("📗 Calculated file size:", fileSize),
+        (label, error) => { console.error("📕 put_file_size failed: ", label, error) },
         { ttl: 10000 }
     )
-    console.log("📗 Calculated file size:", fileSize)
+    putResult = from_option(putResult);
+    if (putResult !== null) {
+        console.log("📗 File size is saved to IPFS:", putResult);
+    }
 
     let result = await remove_service(fluence, environment[2].peerId, service_id);
-    console.log("📕 ProcessFiles service removed", result);
+    console.log("📗 ProcessFiles service removed", result);
     return;
+}
+
+function from_option<T>(opt: T | T[] | null): T | null {
+    if (Array.isArray(opt)) {
+        if (opt.length === 0) { return null; }
+        
+        opt = opt[0];
+    }
+    if (opt === null) { return null; }
+    
+    return opt;
 }
 
 let args = process.argv.slice(2);

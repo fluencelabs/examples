@@ -18,8 +18,6 @@ function App() {
   const [client, setClient] = useState<FluenceClient | null>(null);
   const [serviceId, setServiceId] = useState<string | null>(null);
 
-  const [peerIdInput, setPeerIdInput] = useState<string>("");
-  const [relayPeerIdInput, setRelayPeerIdInput] = useState<string>("");
   const [wasm, setWasm] = useState<string | null>("QmVg9EnanAbwTuEqjjuc1R2uf3AdtEkrNagSifQMkHfyNU");
   const [rpcAddr, setRpcAddr] = useState<string | null>("");
   const [fileCID, setFileCID] = useState<string>("");
@@ -70,7 +68,15 @@ function App() {
       return;
     }
 
-    let size = await get_file_size(client, client.relayPeerId!, fileCID, rpcAddr, serviceId, { ttl: 10000 });
+    let size = await get_file_size(
+      client, 
+      client.relayPeerId!, fileCID, rpcAddr, serviceId, 
+      (label, error) => setFileSize("Error: " + label + ": " + error),
+      { ttl: 10000 }
+    );
+    if (size === null) {
+      return;
+    }
     if (size.success) {
       setFileSize(size.size.toString());
     } else {
