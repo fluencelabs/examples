@@ -44,7 +44,7 @@ async function main(environment: Node[]) {
         (label, error) => { console.error("📕 deploy_service failed: ", label, error) },
         { ttl: 10000 }
     )
-    service_id = from_option(service_id);
+    service_id = fromOption(service_id);
     if (service_id === null) { 
         return; 
     }
@@ -60,7 +60,7 @@ async function main(environment: Node[]) {
         (label, error) => { console.error("📕 put_file_size failed: ", label, error) },
         { ttl: 10000 }
     )
-    putResult = from_option(putResult);
+    putResult = fromOption(putResult);
     if (putResult !== null) {
         console.log("📗 File size is saved to IPFS:", putResult);
     }
@@ -70,7 +70,7 @@ async function main(environment: Node[]) {
     return;
 }
 
-function from_option<T>(opt: T | T[] | null): T | null {
+function fromOption<T>(opt: T | T[] | null): T | null {
     if (Array.isArray(opt)) {
         if (opt.length === 0) { return null; }
         

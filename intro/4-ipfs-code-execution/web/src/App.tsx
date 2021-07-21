@@ -5,7 +5,8 @@ import "./App.scss";
 import { createClient, FluenceClient } from "@fluencelabs/fluence";
 import { get_external_api_multiaddr } from "@fluencelabs/aqua-ipfs";
 import { stage } from "@fluencelabs/fluence-network-environment";
-import { deploy_service, get_file_size, remove_service, provideFile } from "@fluencelabs/ipfs-execution";
+import { deploy_service, put_file_size, remove_service, provideFile } from "@fluencelabs/ipfs-execution";
+import { Multiaddr, protocols } from 'multiaddr';
 const { create, globSource, urlSource, CID } = require('ipfs-http-client');
 
 const relayNodes = [stage[0], stage[1], stage[2]];
@@ -14,14 +15,30 @@ const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text);
 };
 
+function fromOption<T>(opt: T | T[] | null): T | null {
+    if (Array.isArray(opt)) {
+        if (opt.length === 0) { return null; }
+        
+        opt = opt[0];
+    }
+    if (opt === null) { return null; }
+    
+    return opt;
+}
+
+function decapsulateP2P(rpcAddr: string): string {
+  return new Multiaddr(rpcAddr).decapsulateCode(protocols.names.p2p.code).toString();
+}
+
 function App() {
   const [client, setClient] = useState<FluenceClient | null>(null);
   const [serviceId, setServiceId] = useState<string | null>(null);
 
-  const [wasm, setWasm] = useState<string | null>("QmVg9EnanAbwTuEqjjuc1R2uf3AdtEkrNagSifQMkHfyNU");
+  const [wasm, setWasm] = useState<string | null>("Qmf8fH2cDZXGKS9uDGBcHxv5uQ51ChrigdZKe3QxS2C1AF");
   const [rpcAddr, setRpcAddr] = useState<string | null>("");
   const [fileCID, setFileCID] = useState<string>("");
   const [fileSize, setFileSize] = useState<string | null>(null);
+  const [fileSizeCID, setFileSizeCID] = useState<string | null>(null);
 
   const isConnected = client !== null;
   const gotRpcAddr = rpcAddr !== null;
@@ -46,7 +63,7 @@ function App() {
     let result = await get_external_api_multiaddr(client, client.relayPeerId!);
     console.log("getRpcAddr result", result);
     let rpcAddr = result.multiaddr;
-    setRpcAddr(rpcAddr);
+    setRpcAddr(decapsulateP2P(rpcAddr));
   }
 
   const deployService = async () => {
@@ -54,12 +71,13 @@ function App() {
     if (client === null || wasm === null || rpcAddr === null) {
       return;
     }
-    let service_id = await deploy_service(
+    var service_id = await deploy_service(
         client, 
         client.relayPeerId!, wasm, rpcAddr, 
         (msg, value) => console.log(msg, value),
         { ttl: 10000 }
     );
+    service_id = fromOption(service_id);
     setServiceId(service_id);
   };
 
@@ -68,19 +86,21 @@ function App() {
       return;
     }
 
-    let size = await get_file_size(
+    var putResult = await put_file_size(
       client, 
       client.relayPeerId!, fileCID, rpcAddr, serviceId, 
+      size => setFileSize(size.toString()),
       (label, error) => setFileSize("Error: " + label + ": " + error),
       { ttl: 10000 }
     );
-    if (size === null) {
+    putResult = fromOption(putResult);
+    if (putResult === null) {
       return;
     }
-    if (size.success) {
-      setFileSize(size.size.toString());
+    if (putResult.success) {
+      setFileSizeCID(putResult.hash);
     } else {
-      setFileSize("Error: " + size.error);
+      setFileSizeCID("Error: " + putResult.error);
     }
   };
 
@@ -153,20 +173,20 @@ function App() {
                   </button>
                 </td>
               </tr>
-              <tr>
-                <td className="bold">IPFS RPC:</td>
-                <td className="mono">{rpcAddr?.substring(0, 49) + "..."}</td>
-                <td>
-                  <button
-                    className="btn-clipboard"
-                    onClick={() => copyToClipboard(rpcAddr!)}
-                  >
-                    <i className="gg-clipboard"></i>
-                  </button>
-                </td>
-              </tr>
             </table>
             <div>
+              <div className="row">
+                <h2>Set IPFS RPC address:</h2>
+                <p className="p">
+                  Specify IPFS to download process_files.wasm from
+                </p>
+                <input
+                  className="input"
+                  type="text"
+                  onChange={(e) => setRpcAddr(e.target.value)}
+                  value={rpcAddr!}
+                />
+              </div>
               <div className="row">
                 <h2>Set process_files.wasm module CID</h2>
                 <p className="p">
@@ -183,7 +203,7 @@ function App() {
             <div>
               <h2>Deploy ProcessFiles service</h2>
               <p className="p">
-                process_files.wasm will be downloaded to the Fluence node,
+                process_files.wasm will be downloaded via IPFS to the Fluence node,
                 and then a service will be dynamically created from it! 
                 
                 After that, you will be able to use that service to get sizes of IPFS files!
@@ -261,6 +281,18 @@ function App() {
               </tr>
             </table>
             <div>
+              <div className="row">
+                <h2>Set IPFS RPC address:</h2>
+                <p className="p">
+                  Specify IPFS to download file from
+                </p>
+                <input
+                  className="input"
+                  type="text"
+                  onChange={(e) => setRpcAddr(e.target.value)}
+                  value={rpcAddr!}
+                />
+              </div>
               <h2>Get file size</h2>
               <p className="p">
                 Upload any file to IPFS node 
@@ -281,10 +313,14 @@ function App() {
                   get size
                 </button>
               </div>
-              <div className="row">
-                <label className="label bold">File Size:</label>
-                <label className="mono"> {fileSize}</label>
-              </div>
+            </div>
+            <div className="row">
+              <label className="label bold">File Size:</label>
+              <label className="mono">{fileSize}</label>
+            </div>
+            <div className="row">
+              <label className="label bold">File size is uploaded to IPFS as CID:</label>
+              <label className="mono">{fileSizeCID}</label>
             </div>
           </>
         </div>
