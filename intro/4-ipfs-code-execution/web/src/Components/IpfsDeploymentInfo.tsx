@@ -16,7 +16,7 @@ export const IpfsDeploymentInfo = () => {
           remove
         </button>
       </h2>
-      <TextWithLabel text={"wasm CID:"} value={wasm} />
+      <TextWithLabel text={"process_files.wasm CID:"} value={wasm} />
       <TextWithLabel text={"Service ID:"} value={serviceId} />
     </>
   );
