@@ -92,6 +92,9 @@ if (args.length >= 1 && args[0] == "testnet") {
 } else if (args[0] == "krasnodar") {
     environment = krasnodar;
     console.log("📘 Will connect to krasnodar");
+} else if (args[0] == "testnet") {
+    environment = testNet;
+    console.log("📘 Will connect to testNet");
 } else {
     throw "Specify environment";
 }
