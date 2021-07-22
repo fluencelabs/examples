@@ -117,7 +117,7 @@ function App() {
           </>
         ) : (
           <>
-            <h1>Intro 3: Delegate computing to the network</h1>
+            <h1>Intro 3: Computing on the network</h1>
             <h2>Pick a relay</h2>
             <ul>
               {relayNodes.map((x) => (
