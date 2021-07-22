@@ -14,10 +14,10 @@ export const SizeCalcForm = () => {
       <div className="article">
         <p>
           Upload any file to IPFS node <b>{rpcAddr}</b>
-          <br></br>
-          <br></br>
-          And paste CID here and get the size of that file via ProcessFiles service
-          you have just deployed
+        </p>
+        <p>
+          And paste CID here and get the size of that file via ProcessFiles
+          service you have just deployed
         </p>
       </div>
       <TextInput

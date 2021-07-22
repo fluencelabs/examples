@@ -25,11 +25,7 @@ export const IpfsForm = () => {
         setValue={setRpcAddr}
       />
 
-      <TextInput
-        text={"process_files.wasm CID"}
-        value={wasm}
-        setValue={setWasm}
-      />
+      <TextInput text={"wasm CID"} value={wasm} setValue={setWasm} />
       <div className="row">
         <button className="btn btn-right" onClick={deployService}>
           deploy service
