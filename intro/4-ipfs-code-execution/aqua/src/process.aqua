@@ -8,24 +8,20 @@ alias Multiaddr : string
 alias Hash : string
 alias ServiceID : string
 
-service NewDist("dist"):
-    default_module_config(name: string) -> ModuleConfig
-    add_module_from_vault(path: string, config: ModuleConfig) -> Hash
-
-service NewOp("op"):
-    concat_strings(a: string, b: string) -> string
+service StringOp("op"):
+    -- function that wraps string in array
     array(s: string) -> []string
 
 -- Add module to node
 func add_module(name: string, path: string) -> Hash:
-    config <- NewDist.default_module_config(name)
-    module_hash <- NewDist.add_module_from_vault(path, config)
+    config <- Dist.default_module_config(name)
+    module_hash <- Dist.add_module_from_vault(path, config)
     <- module_hash
 
 -- Add service blueprint to node
 func add_blueprint(module_hash: Hash) -> string:
-    prefixed_hash <- NewOp.concat_strings("hash:", module_hash)
-    dependencies <- NewOp.array(prefixed_hash)
+    prefixed_hash <- Op.concat_strings("hash:", module_hash)
+    dependencies <- StringOp.array(prefixed_hash)
     blueprint <- Dist.make_blueprint("process_files", dependencies)
     blueprint_id <- Dist.add_blueprint(blueprint)
     <- blueprint_id
