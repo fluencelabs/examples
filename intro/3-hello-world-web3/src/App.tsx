@@ -117,7 +117,8 @@ function App() {
           </>
         ) : (
           <>
-            <h1>Pick a relay</h1>
+            <h1>Intro 3: Delegate computing to the network</h1>
+            <h2>Pick a relay</h2>
             <ul>
               {relayNodes.map((x) => (
                 <li key={x.peerId}>
