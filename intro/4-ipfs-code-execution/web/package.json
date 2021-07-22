@@ -24,7 +24,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "_prestart": "(cd ../aqua; npm run build)",
+    "prestart": "(cd ../aqua; npm run build)",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

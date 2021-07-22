@@ -24,7 +24,7 @@ export const rpcAddrState = atom<string | null>({
 
 export const fileCIDState = atom<string | null>({
   key: "fileCIDState",
-  default: null,
+  default: "Qmf8fH2cDZXGKS9uDGBcHxv5uQ51ChrigdZKe3QxS2C1AF",
 });
 
 export const fileSizeState = atom<string | null>({

@@ -16,13 +16,7 @@ export const IpfsDeploymentInfo = () => {
           remove
         </button>
       </h2>
-      <div className="article">
-        <p>
-          Service deployed into Fluence network. You can observe it's service ID
-          as well as the CID of the wasm file used to create the service
-        </p>
-      </div>
-      <TextWithLabel text={"CID:"} value={wasm} />
+      <TextWithLabel text={"process_files.wasm CID:"} value={wasm} />
       <TextWithLabel text={"Service ID:"} value={serviceId} />
     </>
   );
