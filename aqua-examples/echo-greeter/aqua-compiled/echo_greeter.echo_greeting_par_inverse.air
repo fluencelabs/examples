@@ -30,37 +30,37 @@
      )
      (call -relay- ("op" "noop") [])
     )
-    (fold echo_results result
+    (fold greeting_services greeting_service
      (seq
-      (fold greeting_services greeting_service
-       (seq
+      (seq
+       (par
         (seq
-         (par
-          (seq
-           (seq
-            (xor
+         (seq
+          (xor
+           (fold echo_results result
+            (seq
              (call greeting_service.$.node! (greeting_service.$.service_id! "greeting") [result.$.echo! greet] $res)
-             (seq
-              (call -relay- ("op" "noop") [])
-              (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
-             )
+             (next result)
             )
-            (call -relay- ("op" "noop") [])
            )
-           (call %init_peer_id% ("op" "noop") [])
+           (seq
+            (call -relay- ("op" "noop") [])
+            (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+           )
           )
-          (null)
+          (call -relay- ("op" "noop") [])
          )
-         (call -relay- ("op" "noop") [])
+         (call %init_peer_id% ("op" "noop") [])
         )
-        (next greeting_service)
+        (null)
        )
+       (call -relay- ("op" "noop") [])
       )
-      (next result)
+      (next greeting_service)
      )
     )
    )
-   (call %init_peer_id% ("op" "identity") [$res.$.[5]!])
+   (call %init_peer_id% ("op" "identity") [$res.$.[3]!])
   )
   (xor
    (call %init_peer_id% ("callbackSrv" "response") [$res])

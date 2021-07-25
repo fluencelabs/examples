@@ -1,0 +1,112 @@
+Echo-Service
+peer            service-id          client-seed    name 
+12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt
+fb5f7126-e1ee-4ecf-81e7-20804cb7203b
+CXFpzXPC2WUpoME3jBX7F53dorK15bcux9Wmt52Geprn
+
+12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE
+893a6fb8-43b9-4b11-8786-93300bd68bc8
+CUwsEyKop4rR8mwfGiu8qPZHCzAjKnA7LQGd1VFHAVgM
+
+
+Greeting-Service
+peer            service-id          client-seed  name 
+12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE
+5a03906b-3217-40a2-93fb-7e83be735408
+4X9p5vRWqS9rxgPop9C3p6fn1TpHGxRxTe9dga1NN77R
+
+
+12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt
+5cf520ff-dd65-47d7-a51a-2bf08dfe2ede
+2nypBDAGsxgft4TrQgBupJ3smoaRbkiYjC2MqTzSBRw1
+
+
+
+Utilities-Service
+peer            service-id          client-seed  name 
+12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt
+abeaf9ef-c5c0-46ef-92eb-de605eb86ffd
+BvVwn1X36j5UGttGRdxQfJ1zFqMsAivLzXY6sdkbv2mx
+
+12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE
+e23c2a8b-c3f2-4067-8e92-803691fdf5b7
+7SDxZerQxQCFjivromanTurV3UNj7Up4cdh9ZxXWwX5e
+
+
+
+fldist run_air -p aqua-compiled/echo_greeter.echo_greeting_seq.air -d '{"names":["1", "2", "3"],"echo_service_id":"893a6fb8-43b9-4b11-8786-93300bd68bc8", "greeting_service_id":"5a03906b-3217-40a2-93fb-7e83be735408", "greet": false, "node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE"}' --generated
+[
+  [
+    "Bye, 1",
+    "Bye, 2",
+    "Bye, 3"
+  ]
+]
+
+
+fldist run_air -p aqua-compiled/echo_greeter.echo_greeting_par.air -d '{"names": ["n1", "n2", "n3"], "greet": true, "echo_service":{"node":"12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt", "service_id":"fb5f7126-e1ee-4ecf-81e7-20804cb7203b"}, "greeting_services":[{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE", "service_id":"5a03906b-3217-40a2-93fb-7e83be735408"},{"node":"12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt", "service_id":"5cf520ff-dd65-47d7-a51a-2bf08dfe2ede"}]}' --generated
+[
+  []
+]
+
+fldist run_air -p aqua-compiled/echo_greeter.greeting.air -d '{"name":"boo", "node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE", "greeting_service_id":"5a03906b-3217-40a2-93fb-7e83be735408", "greet":true}' --generated
+[
+  "Hi, boo"
+]
+
+func echo_greeting_seq(names: []string, greet: bool, node: string, echo_service_id: string,greeting_service_id: string) -> []string:
+fldist run_air -p aqua-compiled/echo_greeter.greeting_seq.air -d '{"names":["jim", "john", "james"],"greet": "true",  "node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE", "greeting_service_id":"5a03906b-3217-40a2-93fb-7e83be735408"}' --generated
+
+
+
+
+
+fldist run_air -p aqua-compiled/echo_greeter.echo_greeting_par.air -d '{"names": ["n1", "n2", "n3"], "greet": true, "echo_service":{"node":"12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt", "service_id":"fb5f7126-e1ee-4ecf-81e7-20804cb7203b"}, "greeting_services":[{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE", "service_id":"5a03906b-3217-40a2-93fb-7e83be735408"},{"node":"12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt", "service_id":"5cf520ff-dd65-47d7-a51a-2bf08dfe2ede"}]}' --generated
+[
+  [
+    "Hi, n1",
+    "Hi, n2",
+    "Hi, n3",
+    "Hi, n3"
+  ]
+]
+
+
+
+
+fldist --node-id 12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE run_air -p aqua-compiled/utilities.splitter.air -d '{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE", "service_id":"e23c2a8b-c3f2-4067-8e92-803691fdf5b7", "array":[1,2,3,4,5,6,7,8,9], "chunk_size": 3 }'  --generated
+[
+  [
+    [
+      1,
+      2,
+      3
+    ],
+    [
+      4,
+      5,
+      6
+    ],
+    [
+      7,
+      8,
+      9
+    ]
+  ]
+]
+
+
+ldist --node-id 12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE run_air -p aqua-compiled/utilities.increment_u64.air -d '{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE", "service_id":"e23c2a8b-c3f2-4067-8e92-803691fdf5b7", "value":10, "step":3, "incr": true}'  --generated
+[
+  {
+    "err_msg": "",
+    "value": 13
+  }
+]
+mbp16~/localdev/examples-fork/echo-greeter/utilities(main↑1|✚3…) % fldist --node-id 12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE run_air -p aqua-compiled/utilities.increment_u64.air -d '{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE", "service_id":"e23c2a8b-c3f2-4067-8e92-803691fdf5b7", "value":10, "step":3, "incr": false}'  --generated
+[
+  {
+    "err_msg": "",
+    "value": 7
+  }
+]
