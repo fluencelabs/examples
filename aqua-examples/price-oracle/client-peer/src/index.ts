@@ -31,7 +31,7 @@ getter_topo = Array({ "node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h
 mean_topo = { "node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS", "service_id": "dd47389f-25d9-4870-a2a9-909359e73580" };
 
 async function main() {
-    console.log("hello");
+    console.log("hello crypto investors");
     // setLogLevel('DEBUG');
     const fluence = await createClient(krasnodar[2]);
     console.log("created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);

@@ -64,7 +64,7 @@ function main() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("hello");
+                    console.log("hello crypto investors");
                     return [4 /*yield*/, fluence_1.createClient(fluence_network_environment_1.krasnodar[2])];
                 case 1:
                     fluence = _a.sent();
