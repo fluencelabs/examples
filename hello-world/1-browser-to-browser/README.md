@@ -1,6 +1,6 @@
 # Getting Started with Fluence
 
-This sample project demonstrates how fluence network can be accessed from the browser. As an example it retrieves the timestamp of the current time from the relay node. The project is based on an create-react-app template with slight modifications to integrate Fluence. The primary focus is the integration itself, i.e React could be swapped with a framework of your choice.
+This sample project demonstrates how Fluence network can be accessed from the browser. As an example it retrieves the timestamp of the current time from the relay node. The project is based on an create-react-app template with slight modifications to integrate Fluence. The primary focus is the integration itself, i.e React could be swapped with a framework of your choice.
 
 ## Getting started
 
