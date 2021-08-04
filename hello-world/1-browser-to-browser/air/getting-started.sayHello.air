@@ -1,0 +1,43 @@
+(xor
+ (seq
+  (seq
+   (seq
+    (seq
+     (seq
+      (seq
+       (seq
+        (seq
+         (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+         (call %init_peer_id% ("getDataSrv" "targetPeerId") [] targetPeerId)
+        )
+        (call %init_peer_id% ("getDataSrv" "targetRelayPeerId") [] targetRelayPeerId)
+       )
+       (call -relay- ("op" "noop") [])
+      )
+      (call targetRelayPeerId ("op" "noop") [])
+     )
+     (xor
+      (call targetPeerId ("HelloPeer" "hello") [%init_peer_id%] res)
+      (seq
+       (seq
+        (seq
+         (call targetRelayPeerId ("op" "noop") [])
+         (call -relay- ("op" "noop") [])
+        )
+        (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+       )
+       (call -relay- ("op" "noop") [])
+      )
+     )
+    )
+    (call targetRelayPeerId ("op" "noop") [])
+   )
+   (call -relay- ("op" "noop") [])
+  )
+  (xor
+   (call %init_peer_id% ("callbackSrv" "response") [res])
+   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+  )
+ )
+ (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+)
