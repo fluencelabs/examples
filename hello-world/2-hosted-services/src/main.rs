@@ -19,19 +19,19 @@ use marine_rs_sdk::module_manifest;
 
 module_manifest!();
 
+pub fn main() {}
+
 #[marine]
-pub struct HelloComputation {
+pub struct HelloPeer {
     pub msg: String,
     pub reply: String,
 }
 
-pub fn main() {}
-
 #[marine]
-pub fn hello_world(from: String) -> HelloComputation {
-    HelloComputation {
+pub fn hello(from: String) -> HelloPeer {
+    HelloPeer {
         msg: format!("Hello from: \n{}", from),
-        reply: format!("Hello back to you, \n{}", from)
+        reply: format!("Hello back to you, \n{}", from),
     }
 }
 
@@ -41,13 +41,13 @@ mod tests {
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
     fn empty_string() {
-        let actual = greeting.greeting(String::new());
+        let actual = greeting.hello(String::new());
         assert_eq!(actual, "Hi, ");
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
     fn non_empty_string() {
-        let actual = greeting.greeting("name".to_string());
+        let actual = greeting.hello("name".to_string());
         assert_eq!(actual, "Hi, name");
     }
 }
