@@ -12,7 +12,7 @@ import { RequestFlow } from '@fluencelabs/fluence/dist/internal/RequestFlow';
 
 
 
-export async function sayHello(client: FluenceClient, peerId: string, relayPeerId: string, config?: {ttl?: number}): Promise<string> {
+export async function sayHello(client: FluenceClient, targetPeerId: string, targetRelayPeerId: string, config?: {ttl?: number}): Promise<string> {
     let request: RequestFlow;
     const promise = new Promise<string>((resolve, reject) => {
         const r = new RequestFlowBuilder()
@@ -28,16 +28,16 @@ export async function sayHello(client: FluenceClient, peerId: string, relayPeerI
       (seq
        (seq
         (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-        (call %init_peer_id% ("getDataSrv" "peerId") [] peerId)
+        (call %init_peer_id% ("getDataSrv" "targetPeerId") [] targetPeerId)
        )
-       (call %init_peer_id% ("getDataSrv" "relayPeerId") [] relayPeerId)
+       (call %init_peer_id% ("getDataSrv" "targetRelayPeerId") [] targetRelayPeerId)
       )
       (call -relay- ("op" "noop") [])
      )
      (xor
       (seq
        (call -relay- ("op" "noop") [])
-       (call "12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf" ("ba24be5b-9789-48ac-b38a-82c9d3eb0d34" "hello_world") [%init_peer_id%] comp)
+       (call "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi" ("1e740ce4-81f6-4dd4-9bed-8d86e9c2fa50" "hello") [%init_peer_id%] comp)
       )
       (seq
        (call -relay- ("op" "noop") [])
@@ -49,12 +49,12 @@ export async function sayHello(client: FluenceClient, peerId: string, relayPeerI
    )
    (par
     (seq
-     (call relayPeerId ("op" "noop") [])
+     (call targetRelayPeerId ("op" "noop") [])
      (xor
-      (call peerId ("HelloWorld" "recieveHello") [comp.$.msg!])
+      (call targetPeerId ("HelloPeer" "hello") [%init_peer_id%] res)
       (seq
        (seq
-        (call relayPeerId ("op" "noop") [])
+        (call targetRelayPeerId ("op" "noop") [])
         (call -relay- ("op" "noop") [])
        )
        (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
@@ -78,8 +78,8 @@ export async function sayHello(client: FluenceClient, peerId: string, relayPeerI
                 h.on('getDataSrv', '-relay-', () => {
                     return client.relayPeerId!;
                 });
-                h.on('getDataSrv', 'peerId', () => {return peerId;});
-h.on('getDataSrv', 'relayPeerId', () => {return relayPeerId;});
+                h.on('getDataSrv', 'targetPeerId', () => {return targetPeerId;});
+h.on('getDataSrv', 'targetRelayPeerId', () => {return targetRelayPeerId;});
                 h.onEvent('callbackSrv', 'response', (args) => {
   const [res] = args;
   resolve(res);

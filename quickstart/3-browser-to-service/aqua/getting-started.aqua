@@ -3,13 +3,13 @@ import "@fluencelabs/aqua-lib/builtin.aqua"
 const helloWorldNodePeerId ?= "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi"
 const helloWorldServiceId ?= "1e740ce4-81f6-4dd4-9bed-8d86e9c2fa50"
 
-data HelloResponse:
-    msg: string
-    reply: string
+data HelloWorld:
+  msg: string
+  reply: string
 
 -- The service runs on a Fluence node
 service HelloWorld:
-    hello_world(from: PeerId) -> HelloResponse
+    hello(from: PeerId) -> HelloWorld
 
 -- The service runs inside browser
 service HelloPeer("HelloPeer"):
@@ -19,7 +19,7 @@ func sayHello(targetPeerId: PeerId, targetRelayPeerId: PeerId) -> string:
     -- execute computation on a Peer in the network
     on helloWorldNodePeerId:
         HelloWorld helloWorldServiceId
-        comp <- HelloWorld.hello_world(%init_peer_id%)
+        comp <- HelloWorld.hello(%init_peer_id%)
 
     -- send the result to target browser in the background
     co on targetPeerId via targetRelayPeerId:
