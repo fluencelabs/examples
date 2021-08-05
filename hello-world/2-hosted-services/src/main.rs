@@ -22,14 +22,14 @@ module_manifest!();
 pub fn main() {}
 
 #[marine]
-pub struct HelloPeer {
+pub struct HelloWorld {
     pub msg: String,
     pub reply: String,
 }
 
 #[marine]
-pub fn hello(from: String) -> HelloPeer {
-    HelloPeer {
+pub fn hello(from: String) -> HelloWorld {
+    HelloWorld {
         msg: format!("Hello from: \n{}", from),
         reply: format!("Hello back to you, \n{}", from),
     }
@@ -41,13 +41,13 @@ mod tests {
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
     fn empty_string() {
-        let actual = greeting.hello(String::new());
+        let actual = hello_world.hello(String::new());
         assert_eq!(actual, "Hi, ");
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
     fn non_empty_string() {
-        let actual = greeting.hello("name".to_string());
+        let actual = hello_world.hello("name".to_string());
         assert_eq!(actual, "Hi, name");
     }
 }

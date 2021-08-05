@@ -1,6 +1,6 @@
 {
     "services": {
-        "hello_world_compute": {
+        "hello_world": {
             "dependencies": [
                 "hello_world_compute"
             ],
@@ -14,7 +14,7 @@
     },
     "modules": {
         "hello_world_compute": {
-            "file": "artifacts/hello_world_compute.wasm",
+            "file": "artifacts/hello_world.wasm",
             "config": {
                 "preopened_files": []
             },

@@ -7,4 +7,4 @@ marine build --release
 
 mkdir -p artifacts
 rm -f artifacts/*.wasm
-cp target/wasm32-wasi/release/hello_peer.wasm artifacts/
+cp target/wasm32-wasi/release/hello_world.wasm artifacts/

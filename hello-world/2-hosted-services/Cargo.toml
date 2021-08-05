@@ -1,5 +1,5 @@
 [package]
-name = "hello_peer"
+name = "hello-world"
 version = "0.1.0"
 authors = ["Fluence Labs"]
 description = "Hello world string computation"
@@ -7,7 +7,7 @@ edition = "2018"
 publish = false
 
 [[bin]]
-name = "hello_peer"
+name = "hello_world"
 path = "src/main.rs"
 
 [dependencies]
