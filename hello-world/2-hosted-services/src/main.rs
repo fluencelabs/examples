@@ -40,14 +40,14 @@ mod tests {
     use marine_rs_sdk_test::marine_test;
 
     #[marine_test(config_path = "../configs/Config.toml", modules_dir = "../artifacts")]
-    fn empty_string() {
-        let actual = hello_world.hello(String::new());
-        assert_eq!(actual, "Hi, ");
+    fn non_empty_string() {
+        let actual = hello_world.hello("SuperNode".to_string());
+        assert_eq!(actual.msg, "Hello from: \nSuperNode".to_string());
     }
 
     #[marine_test(config_path = "../configs/Config.toml", modules_dir = "../artifacts")]
-    fn non_empty_string() {
-        let actual = hello_world.hello("name".to_string());
-        assert_eq!(actual, "Hi, name");
+    fn empty_string() {
+        let actual = hello_world.hello("".to_string());
+        assert_eq!(actual.msg, "Hello from: \n");
     }
 }
