@@ -20,15 +20,11 @@ function App() {
       .then((client) => {
         // Register handler for this call in aqua:
         // HelloWorld.recieveHello(%init_peer_id%)
-        client.callServiceHandler.onEvent(
-          "HelloWorld",
-          "recieveHello",
-          (args) => {
-            // no computation is done inside the browser
-            const [msg] = args;
-            setHelloMessage(msg);
-          }
-        );
+        client.callServiceHandler.onEvent("HelloPeer", "hello", (args) => {
+          // no computation is done inside the browser
+          const [msg] = args;
+          setHelloMessage(msg);
+        });
         setClient(client);
       })
       .catch((err) => console.log("Client initialization failed", err));
