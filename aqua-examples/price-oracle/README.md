@@ -242,6 +242,4 @@ or to a ready-made typescript stub:
 
 ## Summary
 
-We illustrated different ways to create decentralized price oracle applications on the Fluence stack by reusing existing services hosted on network peers. While the implementations for both price getter and oracle, i.e., mean, services are stylized, it should be quite apparent that the Fluence stack is well suited for a broad range of Web3 off-chain applications including price (feed) oracles.
-
-If you are interested in implementing service adapters to various DEX's at the smart contract level or oracle algortihms, please contact us and we can allocate some Gitcoin bounty to your efforts.
+We illustrated different ways to create decentralized price oracle applications with Aqua and the Fluence stack by reusing existing services hosted on network peers. While the implementations for both price getter and oracle, i.e., mean, services are stylized, it should be quite apparent that the Fluence stack is well suited for a broad range of Web3 off-chain applications including price (feed) oracles.
