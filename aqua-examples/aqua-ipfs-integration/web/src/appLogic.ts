@@ -1,6 +1,6 @@
 import { get_external_api_multiaddr } from "@fluencelabs/aqua-ipfs-ts";
 import { FluenceClient, createClient } from "@fluencelabs/fluence";
-import { stage } from "@fluencelabs/fluence-network-environment";
+import { krasnodar } from "@fluencelabs/fluence-network-environment";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
 import {
   deploy_service,
@@ -18,7 +18,7 @@ import {
 } from "./appState";
 import { decapsulateP2P, fromOption } from "./util";
 
-export const relayNodes = [stage[0], stage[1], stage[2]];
+export const relayNodes = [krasnodar[0], krasnodar[1], krasnodar[2]];
 
 const getRpcAddr = async (client: FluenceClient) => {
   if (client === null) {
