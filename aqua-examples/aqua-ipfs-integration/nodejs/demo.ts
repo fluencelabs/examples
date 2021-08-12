@@ -15,11 +15,13 @@
  */
 
 
-import { set_timeout } from "@fluencelabs/aqua-ipfs";
-import {createClient, FluenceClient, setLogLevel} from "@fluencelabs/fluence";
-import {stage, krasnodar, Node, testNet} from "@fluencelabs/fluence-network-environment";
-import { provideFile, globSource, urlSource } from "./provider";
-import { deploy_service, put_file_size, remove_service } from "./process";
+import { provideFile } from "./provider";
+
+import { set_timeout } from "@fluencelabs/aqua-ipfs-ts";
+import { createClient, setLogLevel } from "@fluencelabs/fluence";
+import { stage, krasnodar, Node, testNet } from "@fluencelabs/fluence-network-environment";
+import { deploy_service, put_file_size, remove_service } from "@fluencelabs/ipfs-execution-aqua";
+import { globSource, urlSource }from 'ipfs-http-client';
 
 async function main(environment: Node[]) {
     // setLogLevel('DEBUG');

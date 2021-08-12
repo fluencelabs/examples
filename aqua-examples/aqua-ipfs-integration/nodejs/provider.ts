@@ -1,11 +1,12 @@
-export const { create, globSource, urlSource, CID } = require('ipfs-http-client');
+import { create, CID }from 'ipfs-http-client';
+import { AddResult } from 'ipfs-core-types/src/root';
 import { Multiaddr, protocols } from 'multiaddr';
-import { get_external_swarm_multiaddr, get_external_api_multiaddr } from "@fluencelabs/aqua-ipfs";
+import { get_external_swarm_multiaddr, get_external_api_multiaddr } from "@fluencelabs/aqua-ipfs-ts";
 import { FluenceClient } from "@fluencelabs/fluence";
 
-export async function provideFile(source: any, provider: FluenceClient): Promise<{ file: typeof CID, swarmAddr: string, rpcAddr: string }> {
+export async function provideFile(source: any, provider: FluenceClient): Promise<{ file: AddResult, swarmAddr: string, rpcAddr: string }> {
     var swarmAddr;
-    var result = await get_external_swarm_multiaddr(provider, provider.relayPeerId!);
+    var result = await get_external_swarm_multiaddr(provider, provider.relayPeerId!, { ttl: 20000 });
     if (result.success) {
         swarmAddr = result.multiaddr;
     } else {
@@ -23,7 +24,8 @@ export async function provideFile(source: any, provider: FluenceClient): Promise
     }
 
     var rpcMaddr = new Multiaddr(rpcAddr).decapsulateCode(protocols.names.p2p.code);
-    const ipfs = create(rpcMaddr);
+    // HACK: `as any` is needed because ipfs-http-client forgot to add `| Multiaddr` to the `create` types
+    const ipfs = create(rpcMaddr as any);
     console.log("📗 created ipfs client to %s", rpcMaddr);
 
     await ipfs.id();

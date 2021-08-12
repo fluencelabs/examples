@@ -1,5 +1,8 @@
-#!/usr/bin/env bash -o errexit -o nounset -o pipefail
-cargo update --aggressive
+#!/usr/bin/env bash
+set -o errexit -o nounset -o pipefail
+
+# set current working directory to script parent directory to run script from everywhere
+cd "$(dirname "$0")"/..
 
 mkdir -p artifacts
 rm -f artifacts/*.wasm

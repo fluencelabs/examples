@@ -1,12 +1,15 @@
 {
-  "name": "@fluencelabs/ipfs-execution-aqua",
+  "name": "@fluencelabs/ipfs-execution",
   "version": "0.1.0",
   "description": "An example of executing WASM code from IPFS over IPFS files",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "../service/scripts/build.sh && npm run build",
-    "compile-aqua": "aqua-cli -i . -o .",
-    "build": "npm run compile-aqua && tsc"
+    "build": "tsc",
+    "prestart:local": "npm run build",
+    "start:local": "node dist/demo.js local",
+    "prestart:remote": "npm run build",
+    "start:remote": "node dist/demo.js krasnodar",
+    "start": "npm run start:remote"
   },
   "keywords": [
     "fluence",
@@ -21,10 +24,11 @@
   "author": "Fluence Labs",
   "license": "MIT",
   "dependencies": {
-    "@fluencelabs/aqua-ipfs": "^0.1.8",
+    "@fluencelabs/ipfs-execution-aqua": "file:../aqua",
+    "@fluencelabs/aqua-ipfs-ts": "0.3.4",
     "@fluencelabs/fluence": "0.9.53",
     "@fluencelabs/fluence-network-environment": "1.0.10",
-    "@fluencelabs/aqua-lib": "0.1.10",
+    "@fluencelabs/aqua-lib": "0.1.14",
     "ipfs-http-client": "^50.1.2",
     "it-all": "^1.0.5",
     "uint8arrays": "^2.1.5",

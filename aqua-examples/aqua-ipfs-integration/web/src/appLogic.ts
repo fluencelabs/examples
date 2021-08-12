@@ -1,4 +1,4 @@
-import { get_external_api_multiaddr } from "@fluencelabs/aqua-ipfs";
+import { get_external_api_multiaddr } from "@fluencelabs/aqua-ipfs-ts";
 import { FluenceClient, createClient } from "@fluencelabs/fluence";
 import { stage } from "@fluencelabs/fluence-network-environment";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
@@ -6,7 +6,7 @@ import {
   deploy_service,
   put_file_size,
   remove_service,
-} from "@fluencelabs/ipfs-execution";
+} from "@fluencelabs/ipfs-execution-aqua";
 import {
   clientState,
   rpcAddrState,
