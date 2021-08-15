@@ -14,7 +14,7 @@
       (seq
        (seq
         (call node ("op" "string_to_b58") [node] k)
-        (call node ("kad" "neighborhood") [k false] nodes)
+        (call node ("kad" "neighborhood") [k $nil $nil] nodes)
        )
        (fold nodes n
         (par

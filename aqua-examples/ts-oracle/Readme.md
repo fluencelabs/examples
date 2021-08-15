@@ -33,7 +33,7 @@ cargo install mrepl
 cargo install marine
 
 npm -g install @fluencelabs/aqua-cli
-npm -g install @fluencelabs/flidst
+npm -g install @fluencelabs/fldist
 ```
 
 To compile the code to the wasi target:
@@ -114,7 +114,7 @@ func ts_getter(node: string) -> []u64:
   res: *u64
   on node:
     k <- Op.string_to_b58(node)
-    nodes <- Kademlia.neighborhood(k, false)
+    nodes <- Kademlia.neighborhood(k, nil, nil)
     for n <- nodes par:
       on n:
         try:
