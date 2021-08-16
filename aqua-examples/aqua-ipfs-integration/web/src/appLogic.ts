@@ -6,7 +6,7 @@ import {
   deploy_service,
   put_file_size,
   remove_service,
-} from "@fluencelabs/ipfs-execution-aqua";
+} from "../../aqua-ts/process";
 import {
   clientState,
   rpcAddrState,

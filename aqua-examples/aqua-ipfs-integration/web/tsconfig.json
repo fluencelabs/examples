@@ -18,9 +18,14 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
   },
   "include": [
-    "src"
-  ]
+    "src",
+    "../aqua-ts/"
+  ],
+  "filesGlob": [
+    "**/*.ts", //Local source, this is the default
+    "../../aqua-ts/**/*.ts" //generated source
+  ], 
 }

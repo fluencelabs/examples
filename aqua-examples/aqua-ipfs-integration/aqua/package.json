@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "postinstall": "../service/scripts/build.sh && npm run build",
-    "compile-aqua": "aqua-cli -i . -o .",
-    "build": "npm run compile-aqua && tsc"
+    "compile-aqua": "aqua-cli -i src -o ../aqua-ts",
+    "build": "npm run compile-aqua"
   },
   "keywords": [
     "fluence",
@@ -22,16 +22,9 @@
   "license": "MIT",
   "dependencies": {
     "@fluencelabs/aqua-ipfs": "^0.1.8",
-    "@fluencelabs/fluence": "0.9.53",
-    "@fluencelabs/fluence-network-environment": "1.0.10",
-    "@fluencelabs/aqua-lib": "0.1.10",
-    "ipfs-http-client": "^50.1.2",
-    "it-all": "^1.0.5",
-    "uint8arrays": "^2.1.5",
-    "multiaddr": "^10.0.0"
+    "@fluencelabs/aqua-lib": "0.1.10"
   },
   "devDependencies": {
-    "typescript": "^3.9.5",
     "@fluencelabs/aqua-cli": "0.1.9-164"
   }
 }

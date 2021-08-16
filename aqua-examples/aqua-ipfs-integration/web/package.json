@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@fluencelabs/ipfs-execution-aqua": "file:../aqua",
     "@fluencelabs/aqua-ipfs-ts": "0.3.4",
     "@fluencelabs/fluence": "0.9.53",
     "@fluencelabs/fluence-network-environment": "1.0.10",
