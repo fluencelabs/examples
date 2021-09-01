@@ -98,17 +98,12 @@ pub fn crement_u64(value: u64, step: u64, increment: bool) -> U64Result {
     }
 }
 
-#[marine]
-pub fn greeting(name: String) -> String {
-    format!("Hi, {}", name)
-}
-
 #[cfg(test)]
 mod tests {
     use marine_rs_sdk_test::marine_test;
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
-    fn crement_u32_good() {
+    fn crement_u32_good(utilities: marine_test_env::utilities::ModuleInterface) {
         let value = 10u32;
         let step = 2u32;
         let res = utilities.crement_u32(value, step, false);
@@ -121,7 +116,7 @@ mod tests {
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
-    fn crement_u32_fail() {
+    fn crement_u32_fail(utilities: marine_test_env::utilities::ModuleInterface) {
         let value = 0u32;
         let step = 2u32;
         let res = utilities.crement_u32(value, step, false);
@@ -129,7 +124,7 @@ mod tests {
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
-    fn crement_u64_good() {
+    fn crement_u64_good(utilities: marine_test_env::utilities::ModuleInterface) {
         let value = 10u64;
         let step = 2u64;
         let res = utilities.crement_u64(value, step, false);
@@ -142,7 +137,7 @@ mod tests {
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
-    fn crement_u64_fail() {
+    fn crement_u64_fail(utilities: marine_test_env::utilities::ModuleInterface) {
         let value = 0u64;
         let step = 2u64;
         let res = utilities.crement_u64(value, step, false);
@@ -150,7 +145,7 @@ mod tests {
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
-    fn array_splitter_u64() {
+    fn array_splitter_u64(utilities: marine_test_env::utilities::ModuleInterface) {
         let test_vec: Vec<u64> = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
         let res = utilities.array_splitter_u64(test_vec, 3);
         assert_eq!(res.len(), 3);
