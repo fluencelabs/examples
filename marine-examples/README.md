@@ -54,20 +54,20 @@ mod tests {
     use marine_rs_sdk_test::marine_test;
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")] // <- 2
-    fn empty_string() {
-        let actual = greeting.greeting(String::new());   // <- 3 
+    fn empty_string(greeting: marine_test_env::greeting::ModuleInterface) {  // <- 3
+        let actual = greeting.greeting(String::new());   // <- 4 
         assert_eq!(actual, "Hi, ");
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
-    fn non_empty_string() {
+    fn non_empty_string(greeting: marine_test_env::greeting::ModuleInterface) {
         let actual = greeting.greeting("name".to_string());
         assert_eq!(actual, "Hi, name");
     }
 }
 ```
 
-The test section is also pretty standard except for the macro (2). But looks can be deceiving. While the tests are run with the familiar `cargo test`, the actual code tested is **not** the Rust code from the body but from the Wasm module. The macro facilitates the import and execution of the Wasm module in the artifacts directory and the Config.toml file and then accesses the test function through the module namespace (3). Hence, the code needs to be compiled to the Wasm module before running the test.
+The test section is also pretty standard except for the macro (2). But looks can be deceiving. While the tests are run with the familiar `cargo test`, the actual code tested is **not** the Rust code from the body but from the Wasm module. The macro facilitates the import and execution of the Wasm module in the artifacts directory and the Config.toml file and then accesses the test function through the module namespace (3), which allows the prefixing of the Wasm function with the namespace (4). Hence, the code needs to be compiled to the Wasm module **before** running the test.
 
 Let's have a look at the Config.toml file, which describes that only one module is linked by specifying the location of the module (1), the name (2), the desired memory allocation (#) and the logging (4) preference.
 
@@ -117,7 +117,7 @@ result: String("Hi, Mundo")
 Of course, we can also run `cargo test`:
 
 ```bash
-cargo +nightly test
+cargo +nightly test --release
    Compiling proc-macro2 v1.0.27
    <snip>
     Finished test [unoptimized + debuginfo] target(s) in 48.67s
@@ -130,11 +130,7 @@ test tests::empty_string ... ok
 test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.89
 ```
 
-Now that we have a function service, we can deploy it to the network. 
-
-```bash
-fldist --node-id ?? new_service --ms artifacts:
-```
+Now that we have a function service, we can deploy it to the network.
 
 For a detailed introduction to and review of Fluence, see the [documentation](https://doc.fluence.dev/docs/).
 
