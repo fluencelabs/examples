@@ -145,7 +145,7 @@ mod tests {
     use marine_rs_sdk_test::SecurityTetraplet;
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
-    fn test() {
+    fn test(sqlite_test: marine_test_env::sqlite_test::ModuleInterface) {
         assert!(sqlite_test.test_last_rowid() > 0);
     }
 }
