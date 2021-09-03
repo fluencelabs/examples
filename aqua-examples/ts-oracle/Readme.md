@@ -32,7 +32,7 @@ Install the following tools:
 cargo install mrepl 
 cargo install marine
 
-npm -g install @fluencelabs/aqua-cli
+npm -g install @fluencelabs/aqua
 npm -g install @fluencelabs/fldist
 ```
 
@@ -64,7 +64,7 @@ and to compile the Aqua scripts:
 
 ```bash
 # results in air-scripts ts_getter.ts
-aqua-cli -i aqua-scripts -o air-scripts 
+aqua -i aqua-scripts -o air-scripts 
 ```
 
 which generates Typescript code wrapping the compiled Aqua intermediary representation (AIR) or 
@@ -72,7 +72,7 @@ which generates Typescript code wrapping the compiled Aqua intermediary represen
 ```bash
 # results in air-scripts 
 # ts_getter.ts_getter.air and ts_getter.ts_oracle.air
-aqua-cli -i aqua-scripts -o air-scripts -a
+aqua -i aqua-scripts -o air-scripts -a
 ```
 
 which generates raw AIR files.
@@ -168,4 +168,4 @@ fldist run_air -p air-scripts/ts_getter.ts_getter.air  -d '{"node":"12D3KooWHLxV
 ]
 ```
 
-Instead of the `fldist`  cli, you can use the Typescript stub and integrate it into a TS client. See [Aqua Playground](https://github.com/fluencelabs/aqua-playground) for more information.
+Instead of `fldist`, you can use the Typescript stub and integrate it into a TS client. See [Aqua Playground](https://github.com/fluencelabs/aqua-playground) for more information.
