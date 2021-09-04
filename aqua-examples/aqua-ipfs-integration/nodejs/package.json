@@ -25,8 +25,8 @@
   "license": "MIT",
   "dependencies": {
     "@fluencelabs/ipfs-execution-aqua": "file:../aqua",
-    "@fluencelabs/aqua-ipfs-ts": "0.3.4",
-    "@fluencelabs/fluence": "0.9.53",
+    "@fluencelabs/aqua-ipfs-ts": "0.4.2",
+    "@fluencelabs/fluence": "0.10.1",
     "@fluencelabs/fluence-network-environment": "1.0.10",
     "@fluencelabs/aqua-lib": "0.1.14",
     "ipfs-http-client": "^50.1.2",
@@ -36,6 +36,6 @@
   },
   "devDependencies": {
     "typescript": "^3.9.5",
-    "@fluencelabs/aqua-cli": "0.1.9-164"
+    "@fluencelabs/aqua": "0.2.2-221"
   }
 }
