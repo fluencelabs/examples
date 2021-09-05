@@ -17,13 +17,12 @@ func echo(names: []string, node: string, echo_service: string) -> []EchoResult:
     res <- EchoService.echo(names)
   <- res
 
+
 func greeting(name:string, greet:bool, node:string, greeting_service_id: string) -> string:
   on node:
     GreetingService greeting_service_id
     res <- GreetingService.greeting(name, greet)
   <- res
-
-
 
 -- call echo service and and sequentailly call greeting service on each name
 -- one service, on one node for all processing needs
@@ -43,25 +42,72 @@ data NodeServicePair:
   node: string
   service_id: string
 
+-- revised Aqua function to accommodate (node, service) separation 
+func echo_greeting_seq_2(names: []string, greet: bool, echo_topo: NodeServicePair, greeting_topo: NodeServicePair) -> []string:
+  res: *string
+  on echo_topo.node:
+    EchoService echo_topo.service_id
+    echo_names <- EchoService.echo(names)
+  
+  on greeting_topo.node:
+    GreetingService greeting_topo.service_id    
+    for result <- echo_names:
+      res <- GreetingService.greeting(result.echo, greet)
+  <- res
+
 
 data EchoServiceInput:
   node: string
   service_id: string
   names: []string
 
-
--- call echo service
-func echo_greeting_par(names: []string, greet: bool, echo_service: EchoServiceInput, greeting_services: []NodeServicePair) -> []string:
+-- call parallel with echo service
+func echo_greeting_par(greet: bool, echo_service: EchoServiceInput, greeting_services: []NodeServicePair) -> []string:
     res: *string
     on echo_service.node:
         EchoService echo_service.service_id
-        echo_results <- EchoService.echo(names)
-
-    for result <- echo_results par:
-      for greeting_service <- greeting_services:
+        echo_results <- EchoService.echo(echo_service.names)
+    
+    for result <- echo_results:
+      par for greeting_service <- greeting_services:
         GreetingService greeting_service.service_id
         on greeting_service.node:
-          res_2 <- GreetingService.greeting(result.echo, greet)
-          -- this is super annoying
-        OpString.identity(res_2!2)
+          res <- GreetingService.greeting(result.echo, greet)
+    OpString.identity(res!5)
+    <- res
+  
+-- call parallel with echo service, alternate version
+func echo_greeting_par_alternative(greet: bool, echo_service: EchoServiceInput, greeting_services: []NodeServicePair) -> []string:
+    res: *string
+    on echo_service.node:
+        EchoService echo_service.service_id
+        echo_results <- EchoService.echo(echo_service.names)
+    
+    for result <- echo_results:
+      for greeting_service <- greeting_services:
+        GreetingService greeting_service.service_id
+        par on greeting_service.node:
+          res <- GreetingService.greeting(result.echo, greet)
+    OpString.identity(res!5)
+    <- res
+  
+
+-- updated input struct
+data GreetingServiceInput:
+  node: string
+  service_id: string
+  greet: bool
+
+func echo_greeting_par_improved(echo_service: EchoServiceInput, greeting_services: []GreetingServiceInput) -> []string:
+    res: *string
+    on echo_service.node:
+        EchoService echo_service.service_id
+        echo_results <- EchoService.echo(echo_service.names)
+    
+    for result <- echo_results:
+      par for greeting_service <- greeting_services:
+        GreetingService greeting_service.service_id
+        on greeting_service.node:
+          res <- GreetingService.greeting(result.echo, greeting_service.greet)
+    OpString.identity(res!5)
     <- res

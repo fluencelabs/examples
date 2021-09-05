@@ -36,9 +36,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.echo_greeting_par_inverse_greet = exports.echo_greeting_seq_2 = exports.echo_greeting_seq = exports.echo_greeting_par_inverse = exports.echo_greeting_par = exports.echo_greeting_par_greet = void 0;
+exports.echo_greeting_par_alternative = exports.echo_greeting_seq = exports.greeting = exports.echo = exports.echo_greeting_par = exports.echo_greeting_par_improved = exports.echo_greeting_seq_2 = void 0;
 var api_unstable_1 = require("@fluencelabs/fluence/dist/api.unstable");
-function echo_greeting_par_greet(client, echo_service, greeting_services, config) {
+// Services
+//OpString
+//defaultId = "op"
+//identity: (s: string) => void
+//END OpString
+//EchoService
+//defaultId = undefined
+//echo: (arg0: string[]) => {echo:string}[]
+//END EchoService
+//GreetingService
+//defaultId = "service-id"
+//greeting: (arg0: string, arg1: boolean) => string
+//END GreetingService
+// Functions
+function echo_greeting_seq_2(client, names, greet, echo_topo, greeting_topo, config) {
     return __awaiter(this, void 0, void 0, function () {
         var request, promise;
         return __generator(this, function (_a) {
@@ -47,7 +61,53 @@ function echo_greeting_par_greet(client, echo_service, greeting_services, config
                     promise = new Promise(function (resolve, reject) {
                         var r = new api_unstable_1.RequestFlowBuilder()
                             .disableInjections()
-                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (seq\n       (seq\n        (seq\n         (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n         (call %init_peer_id% (\"getDataSrv\" \"echo_service\") [] echo_service)\n        )\n        (call %init_peer_id% (\"getDataSrv\" \"greeting_services\") [] greeting_services)\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n      (xor\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call echo_service.$.node! (echo_service.$.service_id! \"echo\") [echo_service.$.names!] echo_results)\n       )\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n       )\n      )\n     )\n     (call -relay- (\"op\" \"noop\") [])\n    )\n    (fold echo_results result\n     (seq\n      (fold greeting_services greeting_service\n       (seq\n        (seq\n         (par\n          (seq\n           (seq\n            (xor\n             (call greeting_service.$.node! (greeting_service.$.service_id! \"greeting\") [result.$.echo! greeting_service.$.greet!] $res)\n             (seq\n              (call -relay- (\"op\" \"noop\") [])\n              (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n             )\n            )\n            (call -relay- (\"op\" \"noop\") [])\n           )\n           (call %init_peer_id% (\"op\" \"noop\") [])\n          )\n          (null)\n         )\n         (call -relay- (\"op\" \"noop\") [])\n        )\n        (next greeting_service)\n       )\n      )\n      (next result)\n     )\n    )\n   )\n   (call %init_peer_id% (\"op\" \"identity\") [$res.$.[5]!])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [$res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 4])\n)\n\n            ")
+                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (seq\n       (seq\n        (seq\n         (seq\n          (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n          (call %init_peer_id% (\"getDataSrv\" \"names\") [] names)\n         )\n         (call %init_peer_id% (\"getDataSrv\" \"greet\") [] greet)\n        )\n        (call %init_peer_id% (\"getDataSrv\" \"echo_topo\") [] echo_topo)\n       )\n       (call %init_peer_id% (\"getDataSrv\" \"greeting_topo\") [] greeting_topo)\n      )\n      (call -relay- (\"op\" \"noop\") [])\n     )\n     (xor\n      (seq\n       (call -relay- (\"op\" \"noop\") [])\n       (call echo_topo.$.node! (echo_topo.$.service_id! \"echo\") [names] echo_names)\n      )\n      (seq\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n     )\n    )\n    (xor\n     (fold echo_names result\n      (seq\n       (call greeting_topo.$.node! (greeting_topo.$.service_id! \"greeting\") [result.$.echo! greet] $res)\n       (next result)\n      )\n     )\n     (seq\n      (call -relay- (\"op\" \"noop\") [])\n      (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n     )\n    )\n   )\n   (call -relay- (\"op\" \"noop\") [])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [$res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 4])\n)\n\n            ")
+                            .configHandler(function (h) {
+                            h.on('getDataSrv', '-relay-', function () {
+                                return client.relayPeerId;
+                            });
+                            h.on('getDataSrv', 'names', function () { return names; });
+                            h.on('getDataSrv', 'greet', function () { return greet; });
+                            h.on('getDataSrv', 'echo_topo', function () { return echo_topo; });
+                            h.on('getDataSrv', 'greeting_topo', function () { return greeting_topo; });
+                            h.onEvent('callbackSrv', 'response', function (args) {
+                                var res = args[0];
+                                resolve(res);
+                            });
+                            h.onEvent('errorHandlingSrv', 'error', function (args) {
+                                // assuming error is the single argument
+                                var err = args[0];
+                                reject(err);
+                            });
+                        })
+                            .handleScriptError(reject)
+                            .handleTimeout(function () {
+                            reject('Request timed out for echo_greeting_seq_2');
+                        });
+                        if (config && config.ttl) {
+                            r.withTTL(config.ttl);
+                        }
+                        request = r.build();
+                    });
+                    return [4 /*yield*/, client.initiateFlow(request)];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/, promise];
+            }
+        });
+    });
+}
+exports.echo_greeting_seq_2 = echo_greeting_seq_2;
+function echo_greeting_par_improved(client, echo_service, greeting_services, config) {
+    return __awaiter(this, void 0, void 0, function () {
+        var request, promise;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    promise = new Promise(function (resolve, reject) {
+                        var r = new api_unstable_1.RequestFlowBuilder()
+                            .disableInjections()
+                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (seq\n       (seq\n        (seq\n         (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n         (call %init_peer_id% (\"getDataSrv\" \"echo_service\") [] echo_service)\n        )\n        (call %init_peer_id% (\"getDataSrv\" \"greeting_services\") [] greeting_services)\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n      (xor\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call echo_service.$.node! (echo_service.$.service_id! \"echo\") [echo_service.$.names!] echo_results)\n       )\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n       )\n      )\n     )\n     (call -relay- (\"op\" \"noop\") [])\n    )\n    (fold echo_results result\n     (seq\n      (seq\n       (par\n        (seq\n         (seq\n          (call -relay- (\"op\" \"noop\") [])\n          (fold greeting_services greeting_service\n           (seq\n            (seq\n             (xor\n              (call greeting_service.$.node! (greeting_service.$.service_id! \"greeting\") [result.$.echo! greeting_service.$.greet!] $res)\n              (seq\n               (call -relay- (\"op\" \"noop\") [])\n               (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n              )\n             )\n             (call -relay- (\"op\" \"noop\") [])\n            )\n            (next greeting_service)\n           )\n          )\n         )\n         (call %init_peer_id% (\"op\" \"noop\") [])\n        )\n        (null)\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n      (next result)\n     )\n    )\n   )\n   (call %init_peer_id% (\"op\" \"identity\") [$res.$.[5]!])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [$res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 4])\n)\n\n            ")
                             .configHandler(function (h) {
                             h.on('getDataSrv', '-relay-', function () {
                                 return client.relayPeerId;
@@ -66,9 +126,9 @@ function echo_greeting_par_greet(client, echo_service, greeting_services, config
                         })
                             .handleScriptError(reject)
                             .handleTimeout(function () {
-                            reject('Request timed out for echo_greeting_par_greet');
+                            reject('Request timed out for echo_greeting_par_improved');
                         });
-                        if (config === null || config === void 0 ? void 0 : config.ttl) {
+                        if (config && config.ttl) {
                             r.withTTL(config.ttl);
                         }
                         request = r.build();
@@ -81,7 +141,7 @@ function echo_greeting_par_greet(client, echo_service, greeting_services, config
         });
     });
 }
-exports.echo_greeting_par_greet = echo_greeting_par_greet;
+exports.echo_greeting_par_improved = echo_greeting_par_improved;
 function echo_greeting_par(client, greet, echo_service, greeting_services, config) {
     return __awaiter(this, void 0, void 0, function () {
         var request, promise;
@@ -91,7 +151,7 @@ function echo_greeting_par(client, greet, echo_service, greeting_services, confi
                     promise = new Promise(function (resolve, reject) {
                         var r = new api_unstable_1.RequestFlowBuilder()
                             .disableInjections()
-                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (seq\n       (seq\n        (seq\n         (seq\n          (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n          (call %init_peer_id% (\"getDataSrv\" \"greet\") [] greet)\n         )\n         (call %init_peer_id% (\"getDataSrv\" \"echo_service\") [] echo_service)\n        )\n        (call %init_peer_id% (\"getDataSrv\" \"greeting_services\") [] greeting_services)\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n      (xor\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call echo_service.$.node! (echo_service.$.service_id! \"echo\") [echo_service.$.names!] echo_results)\n       )\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n       )\n      )\n     )\n     (call -relay- (\"op\" \"noop\") [])\n    )\n    (fold echo_results result\n     (seq\n      (fold greeting_services greeting_service\n       (seq\n        (seq\n         (par\n          (seq\n           (seq\n            (xor\n             (call greeting_service.$.node! (greeting_service.$.service_id! \"greeting\") [result.$.echo! greet] $res)\n             (seq\n              (call -relay- (\"op\" \"noop\") [])\n              (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n             )\n            )\n            (call -relay- (\"op\" \"noop\") [])\n           )\n           (call %init_peer_id% (\"op\" \"noop\") [])\n          )\n          (null)\n         )\n         (call -relay- (\"op\" \"noop\") [])\n        )\n        (next greeting_service)\n       )\n      )\n      (next result)\n     )\n    )\n   )\n   (call %init_peer_id% (\"op\" \"identity\") [$res.$.[5]!])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [$res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 4])\n)\n\n            ")
+                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (seq\n       (seq\n        (seq\n         (seq\n          (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n          (call %init_peer_id% (\"getDataSrv\" \"greet\") [] greet)\n         )\n         (call %init_peer_id% (\"getDataSrv\" \"echo_service\") [] echo_service)\n        )\n        (call %init_peer_id% (\"getDataSrv\" \"greeting_services\") [] greeting_services)\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n      (xor\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call echo_service.$.node! (echo_service.$.service_id! \"echo\") [echo_service.$.names!] echo_results)\n       )\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n       )\n      )\n     )\n     (call -relay- (\"op\" \"noop\") [])\n    )\n    (fold echo_results result\n     (seq\n      (seq\n       (par\n        (seq\n         (seq\n          (call -relay- (\"op\" \"noop\") [])\n          (fold greeting_services greeting_service\n           (seq\n            (seq\n             (xor\n              (call greeting_service.$.node! (greeting_service.$.service_id! \"greeting\") [result.$.echo! greet] $res)\n              (seq\n               (call -relay- (\"op\" \"noop\") [])\n               (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n              )\n             )\n             (call -relay- (\"op\" \"noop\") [])\n            )\n            (next greeting_service)\n           )\n          )\n         )\n         (call %init_peer_id% (\"op\" \"noop\") [])\n        )\n        (null)\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n      (next result)\n     )\n    )\n   )\n   (call %init_peer_id% (\"op\" \"identity\") [$res.$.[5]!])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [$res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 4])\n)\n\n            ")
                             .configHandler(function (h) {
                             h.on('getDataSrv', '-relay-', function () {
                                 return client.relayPeerId;
@@ -113,7 +173,7 @@ function echo_greeting_par(client, greet, echo_service, greeting_services, confi
                             .handleTimeout(function () {
                             reject('Request timed out for echo_greeting_par');
                         });
-                        if (config === null || config === void 0 ? void 0 : config.ttl) {
+                        if (config && config.ttl) {
                             r.withTTL(config.ttl);
                         }
                         request = r.build();
@@ -127,7 +187,7 @@ function echo_greeting_par(client, greet, echo_service, greeting_services, confi
     });
 }
 exports.echo_greeting_par = echo_greeting_par;
-function echo_greeting_par_inverse(client, greet, echo_service, greeting_services, config) {
+function echo(client, names, node, echo_service, config) {
     return __awaiter(this, void 0, void 0, function () {
         var request, promise;
         return __generator(this, function (_a) {
@@ -136,14 +196,14 @@ function echo_greeting_par_inverse(client, greet, echo_service, greeting_service
                     promise = new Promise(function (resolve, reject) {
                         var r = new api_unstable_1.RequestFlowBuilder()
                             .disableInjections()
-                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (seq\n       (seq\n        (seq\n         (seq\n          (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n          (call %init_peer_id% (\"getDataSrv\" \"greet\") [] greet)\n         )\n         (call %init_peer_id% (\"getDataSrv\" \"echo_service\") [] echo_service)\n        )\n        (call %init_peer_id% (\"getDataSrv\" \"greeting_services\") [] greeting_services)\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n      (xor\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call echo_service.$.node! (echo_service.$.service_id! \"echo\") [echo_service.$.names!] echo_results)\n       )\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n       )\n      )\n     )\n     (call -relay- (\"op\" \"noop\") [])\n    )\n    (fold greeting_services greeting_service\n     (seq\n      (seq\n       (par\n        (seq\n         (seq\n          (xor\n           (fold echo_results result\n            (seq\n             (call greeting_service.$.node! (greeting_service.$.service_id! \"greeting\") [result.$.echo! greet] $res)\n             (next result)\n            )\n           )\n           (seq\n            (call -relay- (\"op\" \"noop\") [])\n            (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n           )\n          )\n          (call -relay- (\"op\" \"noop\") [])\n         )\n         (call %init_peer_id% (\"op\" \"noop\") [])\n        )\n        (null)\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n      (next greeting_service)\n     )\n    )\n   )\n   (call %init_peer_id% (\"op\" \"identity\") [$res.$.[3]!])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [$res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 4])\n)\n\n            ")
+                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (seq\n       (seq\n        (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n        (call %init_peer_id% (\"getDataSrv\" \"names\") [] names)\n       )\n       (call %init_peer_id% (\"getDataSrv\" \"node\") [] node)\n      )\n      (call %init_peer_id% (\"getDataSrv\" \"echo_service\") [] echo_service)\n     )\n     (call -relay- (\"op\" \"noop\") [])\n    )\n    (xor\n     (seq\n      (call -relay- (\"op\" \"noop\") [])\n      (call node (echo_service \"echo\") [names] res)\n     )\n     (seq\n      (call -relay- (\"op\" \"noop\") [])\n      (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n     )\n    )\n   )\n   (call -relay- (\"op\" \"noop\") [])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n)\n\n            ")
                             .configHandler(function (h) {
                             h.on('getDataSrv', '-relay-', function () {
                                 return client.relayPeerId;
                             });
-                            h.on('getDataSrv', 'greet', function () { return greet; });
+                            h.on('getDataSrv', 'names', function () { return names; });
+                            h.on('getDataSrv', 'node', function () { return node; });
                             h.on('getDataSrv', 'echo_service', function () { return echo_service; });
-                            h.on('getDataSrv', 'greeting_services', function () { return greeting_services; });
                             h.onEvent('callbackSrv', 'response', function (args) {
                                 var res = args[0];
                                 resolve(res);
@@ -156,9 +216,9 @@ function echo_greeting_par_inverse(client, greet, echo_service, greeting_service
                         })
                             .handleScriptError(reject)
                             .handleTimeout(function () {
-                            reject('Request timed out for echo_greeting_par_inverse');
+                            reject('Request timed out for echo');
                         });
-                        if (config === null || config === void 0 ? void 0 : config.ttl) {
+                        if (config && config.ttl) {
                             r.withTTL(config.ttl);
                         }
                         request = r.build();
@@ -171,7 +231,53 @@ function echo_greeting_par_inverse(client, greet, echo_service, greeting_service
         });
     });
 }
-exports.echo_greeting_par_inverse = echo_greeting_par_inverse;
+exports.echo = echo;
+function greeting(client, name, greet, node, greeting_service_id, config) {
+    return __awaiter(this, void 0, void 0, function () {
+        var request, promise;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    promise = new Promise(function (resolve, reject) {
+                        var r = new api_unstable_1.RequestFlowBuilder()
+                            .disableInjections()
+                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (seq\n       (seq\n        (seq\n         (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n         (call %init_peer_id% (\"getDataSrv\" \"name\") [] name)\n        )\n        (call %init_peer_id% (\"getDataSrv\" \"greet\") [] greet)\n       )\n       (call %init_peer_id% (\"getDataSrv\" \"node\") [] node)\n      )\n      (call %init_peer_id% (\"getDataSrv\" \"greeting_service_id\") [] greeting_service_id)\n     )\n     (call -relay- (\"op\" \"noop\") [])\n    )\n    (xor\n     (seq\n      (call -relay- (\"op\" \"noop\") [])\n      (call node (greeting_service_id \"greeting\") [name greet] res)\n     )\n     (seq\n      (call -relay- (\"op\" \"noop\") [])\n      (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n     )\n    )\n   )\n   (call -relay- (\"op\" \"noop\") [])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n)\n\n            ")
+                            .configHandler(function (h) {
+                            h.on('getDataSrv', '-relay-', function () {
+                                return client.relayPeerId;
+                            });
+                            h.on('getDataSrv', 'name', function () { return name; });
+                            h.on('getDataSrv', 'greet', function () { return greet; });
+                            h.on('getDataSrv', 'node', function () { return node; });
+                            h.on('getDataSrv', 'greeting_service_id', function () { return greeting_service_id; });
+                            h.onEvent('callbackSrv', 'response', function (args) {
+                                var res = args[0];
+                                resolve(res);
+                            });
+                            h.onEvent('errorHandlingSrv', 'error', function (args) {
+                                // assuming error is the single argument
+                                var err = args[0];
+                                reject(err);
+                            });
+                        })
+                            .handleScriptError(reject)
+                            .handleTimeout(function () {
+                            reject('Request timed out for greeting');
+                        });
+                        if (config && config.ttl) {
+                            r.withTTL(config.ttl);
+                        }
+                        request = r.build();
+                    });
+                    return [4 /*yield*/, client.initiateFlow(request)];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/, promise];
+            }
+        });
+    });
+}
+exports.greeting = greeting;
 function echo_greeting_seq(client, names, greet, node, echo_service_id, greeting_service_id, config) {
     return __awaiter(this, void 0, void 0, function () {
         var request, promise;
@@ -205,7 +311,7 @@ function echo_greeting_seq(client, names, greet, node, echo_service_id, greeting
                             .handleTimeout(function () {
                             reject('Request timed out for echo_greeting_seq');
                         });
-                        if (config === null || config === void 0 ? void 0 : config.ttl) {
+                        if (config && config.ttl) {
                             r.withTTL(config.ttl);
                         }
                         request = r.build();
@@ -219,7 +325,7 @@ function echo_greeting_seq(client, names, greet, node, echo_service_id, greeting
     });
 }
 exports.echo_greeting_seq = echo_greeting_seq;
-function echo_greeting_seq_2(client, names, greet, echo_topo, greeting_topo, config) {
+function echo_greeting_par_alternative(client, greet, echo_service, greeting_services, config) {
     return __awaiter(this, void 0, void 0, function () {
         var request, promise;
         return __generator(this, function (_a) {
@@ -228,57 +334,12 @@ function echo_greeting_seq_2(client, names, greet, echo_topo, greeting_topo, con
                     promise = new Promise(function (resolve, reject) {
                         var r = new api_unstable_1.RequestFlowBuilder()
                             .disableInjections()
-                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (seq\n       (seq\n        (seq\n         (seq\n          (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n          (call %init_peer_id% (\"getDataSrv\" \"names\") [] names)\n         )\n         (call %init_peer_id% (\"getDataSrv\" \"greet\") [] greet)\n        )\n        (call %init_peer_id% (\"getDataSrv\" \"echo_topo\") [] echo_topo)\n       )\n       (call %init_peer_id% (\"getDataSrv\" \"greeting_topo\") [] greeting_topo)\n      )\n      (call -relay- (\"op\" \"noop\") [])\n     )\n     (xor\n      (seq\n       (call -relay- (\"op\" \"noop\") [])\n       (call echo_topo.$.node! (echo_topo.$.service_id! \"echo\") [names] echo_names)\n      )\n      (seq\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n     )\n    )\n    (xor\n     (fold echo_names result\n      (seq\n       (call greeting_topo.$.node! (greeting_topo.$.service_id! \"greeting\") [result.$.echo! greet] $res)\n       (next result)\n      )\n     )\n     (seq\n      (call -relay- (\"op\" \"noop\") [])\n      (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n     )\n    )\n   )\n   (call -relay- (\"op\" \"noop\") [])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [$res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 4])\n)\n\n            ")
+                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (seq\n       (seq\n        (seq\n         (seq\n          (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n          (call %init_peer_id% (\"getDataSrv\" \"greet\") [] greet)\n         )\n         (call %init_peer_id% (\"getDataSrv\" \"echo_service\") [] echo_service)\n        )\n        (call %init_peer_id% (\"getDataSrv\" \"greeting_services\") [] greeting_services)\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n      (xor\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call echo_service.$.node! (echo_service.$.service_id! \"echo\") [echo_service.$.names!] echo_results)\n       )\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n       )\n      )\n     )\n     (call -relay- (\"op\" \"noop\") [])\n    )\n    (fold echo_results result\n     (seq\n      (fold greeting_services greeting_service\n       (seq\n        (seq\n         (par\n          (seq\n           (seq\n            (xor\n             (call greeting_service.$.node! (greeting_service.$.service_id! \"greeting\") [result.$.echo! greet] $res)\n             (seq\n              (call -relay- (\"op\" \"noop\") [])\n              (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n             )\n            )\n            (call -relay- (\"op\" \"noop\") [])\n           )\n           (call %init_peer_id% (\"op\" \"noop\") [])\n          )\n          (null)\n         )\n         (call -relay- (\"op\" \"noop\") [])\n        )\n        (next greeting_service)\n       )\n      )\n      (next result)\n     )\n    )\n   )\n   (call %init_peer_id% (\"op\" \"identity\") [$res.$.[5]!])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [$res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 4])\n)\n\n            ")
                             .configHandler(function (h) {
                             h.on('getDataSrv', '-relay-', function () {
                                 return client.relayPeerId;
                             });
-                            h.on('getDataSrv', 'names', function () { return names; });
                             h.on('getDataSrv', 'greet', function () { return greet; });
-                            h.on('getDataSrv', 'echo_topo', function () { return echo_topo; });
-                            h.on('getDataSrv', 'greeting_topo', function () { return greeting_topo; });
-                            h.onEvent('callbackSrv', 'response', function (args) {
-                                var res = args[0];
-                                resolve(res);
-                            });
-                            h.onEvent('errorHandlingSrv', 'error', function (args) {
-                                // assuming error is the single argument
-                                var err = args[0];
-                                reject(err);
-                            });
-                        })
-                            .handleScriptError(reject)
-                            .handleTimeout(function () {
-                            reject('Request timed out for echo_greeting_seq_2');
-                        });
-                        if (config === null || config === void 0 ? void 0 : config.ttl) {
-                            r.withTTL(config.ttl);
-                        }
-                        request = r.build();
-                    });
-                    return [4 /*yield*/, client.initiateFlow(request)];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/, promise];
-            }
-        });
-    });
-}
-exports.echo_greeting_seq_2 = echo_greeting_seq_2;
-function echo_greeting_par_inverse_greet(client, echo_service, greeting_services, config) {
-    return __awaiter(this, void 0, void 0, function () {
-        var request, promise;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    promise = new Promise(function (resolve, reject) {
-                        var r = new api_unstable_1.RequestFlowBuilder()
-                            .disableInjections()
-                            .withRawScript("\n(xor\n (seq\n  (seq\n   (seq\n    (seq\n     (seq\n      (seq\n       (seq\n        (seq\n         (call %init_peer_id% (\"getDataSrv\" \"-relay-\") [] -relay-)\n         (call %init_peer_id% (\"getDataSrv\" \"echo_service\") [] echo_service)\n        )\n        (call %init_peer_id% (\"getDataSrv\" \"greeting_services\") [] greeting_services)\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n      (xor\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call echo_service.$.node! (echo_service.$.service_id! \"echo\") [echo_service.$.names!] echo_results)\n       )\n       (seq\n        (call -relay- (\"op\" \"noop\") [])\n        (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 1])\n       )\n      )\n     )\n     (call -relay- (\"op\" \"noop\") [])\n    )\n    (fold greeting_services greeting_service\n     (seq\n      (seq\n       (par\n        (seq\n         (seq\n          (xor\n           (fold echo_results result\n            (seq\n             (call greeting_service.$.node! (greeting_service.$.service_id! \"greeting\") [result.$.echo! greeting_service.$.greet!] $res)\n             (next result)\n            )\n           )\n           (seq\n            (call -relay- (\"op\" \"noop\") [])\n            (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 2])\n           )\n          )\n          (call -relay- (\"op\" \"noop\") [])\n         )\n         (call %init_peer_id% (\"op\" \"noop\") [])\n        )\n        (null)\n       )\n       (call -relay- (\"op\" \"noop\") [])\n      )\n      (next greeting_service)\n     )\n    )\n   )\n   (call %init_peer_id% (\"op\" \"identity\") [$res.$.[3]!])\n  )\n  (xor\n   (call %init_peer_id% (\"callbackSrv\" \"response\") [$res])\n   (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 3])\n  )\n )\n (call %init_peer_id% (\"errorHandlingSrv\" \"error\") [%last_error% 4])\n)\n\n            ")
-                            .configHandler(function (h) {
-                            h.on('getDataSrv', '-relay-', function () {
-                                return client.relayPeerId;
-                            });
                             h.on('getDataSrv', 'echo_service', function () { return echo_service; });
                             h.on('getDataSrv', 'greeting_services', function () { return greeting_services; });
                             h.onEvent('callbackSrv', 'response', function (args) {
@@ -293,9 +354,9 @@ function echo_greeting_par_inverse_greet(client, echo_service, greeting_services
                         })
                             .handleScriptError(reject)
                             .handleTimeout(function () {
-                            reject('Request timed out for echo_greeting_par_inverse_greet');
+                            reject('Request timed out for echo_greeting_par_alternative');
                         });
-                        if (config === null || config === void 0 ? void 0 : config.ttl) {
+                        if (config && config.ttl) {
                             r.withTTL(config.ttl);
                         }
                         request = r.build();
@@ -308,4 +369,4 @@ function echo_greeting_par_inverse_greet(client, echo_service, greeting_services
         });
     });
 }
-exports.echo_greeting_par_inverse_greet = echo_greeting_par_inverse_greet;
+exports.echo_greeting_par_alternative = echo_greeting_par_alternative;
