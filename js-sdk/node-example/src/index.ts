@@ -1,30 +1,30 @@
 import { FluencePeer } from "@fluencelabs/fluence";
-import { registerCalc, demoCalculation } from "./_aqua/calc";
+import { registerCalc, CalcDef, demoCalculation } from "./_aqua/calc";
 
-class Calc {
+class Calc implements CalcDef {
   private _state: number = 0;
 
-  async add(n: number) {
+  add(n: number) {
     this._state += n;
   }
 
-  async subtract(n: number) {
+  subtract(n: number) {
     this._state -= n;
   }
 
-  async multiply(n: number) {
+  multiply(n: number) {
     this._state *= n;
   }
 
-  async divide(n: number) {
+  divide(n: number) {
     this._state /= n;
   }
 
-  async reset() {
+  reset() {
     this._state = 0;
   }
 
-  async getResult() {
+  getResult() {
     return this._state;
   }
 }
