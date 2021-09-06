@@ -1,0 +1,5 @@
+service HelloWorld("hello-world"):
+    hello(str: string)
+
+func sayHello():
+    HelloWorld.hello("Hello, world!")
