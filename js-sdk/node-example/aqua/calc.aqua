@@ -6,10 +6,3 @@ service Calc("calc"):
     reset()
     getResult() -> f32
 
-func demoCalculation() -> f32:
-    Calc.add(10)
-    Calc.multiply(5)
-    Calc.subtract(8)
-    Calc.divide(6)
-    res <- Calc.getResult()
-    <- res

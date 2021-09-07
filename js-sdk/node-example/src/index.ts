@@ -1,5 +1,6 @@
 import { FluencePeer } from "@fluencelabs/fluence";
-import { registerCalc, CalcDef, demoCalculation } from "./_aqua/calc";
+import { krasnodar } from "@fluencelabs/fluence-network-environment";
+import { registerCalc, CalcDef } from "./_aqua/calc";
 
 class Calc implements CalcDef {
   private _state: number = 0;
@@ -29,14 +30,31 @@ class Calc implements CalcDef {
   }
 }
 
+const keypress = async () => {
+  process.stdin.setRawMode(true);
+  return new Promise<void>((resolve) =>
+    process.stdin.once("data", () => {
+      process.stdin.setRawMode(false);
+      resolve();
+    })
+  );
+};
+
 async function main() {
-  await FluencePeer.default.init();
+  await FluencePeer.default.init({
+    connectTo: krasnodar[0],
+  });
 
   registerCalc(new Calc());
 
-  const res = await demoCalculation();
-
-  console.log("Calculation result is: ", res);
+  console.log("application started");
+  console.log("peer id is: ", FluencePeer.default.connectionInfo.selfPeerId);
+  console.log(
+    "relay is: ",
+    FluencePeer.default.connectionInfo.connectedRelays[0]
+  );
+  console.log("press any key to continue");
+  await keypress();
 
   await FluencePeer.default.uninit();
 }
