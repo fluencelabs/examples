@@ -2,32 +2,33 @@ import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.scss";
 
-import { createClient, FluenceClient } from "@fluencelabs/fluence";
+import { FluencePeer } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 import { getRelayTime } from "./_aqua/getting-started";
 
 const relayNode = krasnodar[0];
 
 function App() {
-  const [client, setClient] = useState<FluenceClient | null>(null);
+  const [peer, setPeer] = useState<FluencePeer | null>(null);
   const [relayTime, setRelayTime] = useState<Date | null>(null);
 
   useEffect(() => {
-    createClient(relayNode)
-      .then((client) => setClient(client))
+    const peer = new FluencePeer();
+    peer.init({ connectTo: relayNode })
+      .then((client) => setPeer(peer))
       .catch((err) => console.log("Client initialization failed", err));
-  }, [client]);
+  }, [peer]);
 
   const doGetRelayTime = async () => {
-    if (!client) {
+    if (!peer) {
       return;
     }
 
-    const time = await getRelayTime(client, relayNode.peerId);
+    const time = await getRelayTime(peer, relayNode.peerId);
     setRelayTime(new Date(time));
   };
 
-  const isConnected = client !== null;
+  const isConnected = peer !== null;
 
   return (
     <div className="App">
