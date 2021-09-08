@@ -1,10 +1,18 @@
-import { FluenceClient } from "@fluencelabs/fluence";
 import { atom, selector } from "recoil";
 
-export const clientState = atom<FluenceClient | null>({
-  key: "clientState",
+export const isConnectedState = atom<boolean>({
+  key: "isConnectedState",
+  default: false,
+});
+
+export const selfPeerIdState = atom<string | null>({
+  key: "selfPeerIdState",
   default: null,
-  dangerouslyAllowMutability: true,
+});
+
+export const relayState = atom<string | null>({
+  key: "relayState",
+  default: null,
 });
 
 export const serviceIdState = atom<string | null>({
@@ -35,16 +43,6 @@ export const fileSizeState = atom<string | null>({
 export const fileSizeCIDState = atom<string | null>({
   key: "fileSizeCIDState",
   default: null,
-});
-
-export const isConnectedState = selector({
-  key: "isConnectedState",
-  get: ({ get }) => {
-    const client = get(clientState);
-
-    return client !== null && client.isConnected;
-  },
-  dangerouslyAllowMutability: true,
 });
 
 export const gotRpcAddrState = selector({

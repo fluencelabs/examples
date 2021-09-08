@@ -4,8 +4,7 @@
   "private": true,
   "dependencies": {
     "@fluencelabs/ipfs-execution-aqua": "file:../aqua",
-    "@fluencelabs/aqua-ipfs-ts": "0.4.2",
-    "@fluencelabs/fluence": "0.10.1",
+    "@fluencelabs/fluence": "0.11.0",
     "@fluencelabs/fluence-network-environment": "1.0.10",
     "@fluencelabs/aqua-lib": "0.1.14",
     "@testing-library/jest-dom": "^5.14.1",
@@ -49,7 +48,6 @@
     ]
   },
   "devDependencies": {
-    "chokidar-cli": "^2.1.0",
     "node-sass": "^6.0.1"
   }
 }

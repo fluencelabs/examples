@@ -1,9 +1,10 @@
 import { useRecoilValue } from "recoil";
-import { clientState } from "../appState";
+import { isConnectedState, selfPeerIdState } from "../appState";
 import { TextWithLabel } from "./TextInput";
 
 export const ConnectedInfo = () => {
-  const client = useRecoilValue(clientState);
+  const selfPeerId = useRecoilValue(selfPeerIdState);
+  const client = useRecoilValue(isConnectedState);
   if (client === null) {
     return <></>;
   }
@@ -11,8 +12,8 @@ export const ConnectedInfo = () => {
   return (
     <>
       <h1>Connected</h1>
-      <TextWithLabel text={"Peer id:"} value={client.selfPeerId} />
-      <TextWithLabel text={"Relay peer id:"} value={client.selfPeerId} />
+      <TextWithLabel text={"Peer id:"} value={selfPeerId} />
+      <TextWithLabel text={"Relay peer id:"} value={selfPeerId} />
     </>
   );
 };

@@ -1,47 +1,50 @@
-import { get_external_api_multiaddr } from "@fluencelabs/aqua-ipfs-ts";
-import { FluenceClient, createClient } from "@fluencelabs/fluence";
+import { FluencePeer } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
 import {
   deploy_service,
   put_file_size,
   remove_service,
+  get_external_api_multiaddr,
 } from "@fluencelabs/ipfs-execution-aqua";
 import {
-  clientState,
+  isConnectedState,
   rpcAddrState,
   wasmState,
   serviceIdState,
   fileCIDState,
   fileSizeState,
   fileSizeCIDState,
+  relayState,
+  selfPeerIdState,
 } from "./appState";
 import { decapsulateP2P, fromOption } from "./util";
 
 export const relayNodes = [krasnodar[0], krasnodar[1], krasnodar[2]];
 
-const getRpcAddr = async (client: FluenceClient) => {
-  if (client === null) {
-    console.log("getRpcAddr client is null");
-    return;
-  }
-
-  let result = await get_external_api_multiaddr(client, client.relayPeerId!);
+const requestRpcAddr = async () => {
+  let result = await get_external_api_multiaddr(
+    FluencePeer.default.connectionInfo.connectedRelay!
+  );
   console.log("getRpcAddr result", result);
   let rpcAddr = result.multiaddr;
   return decapsulateP2P(rpcAddr);
 };
 
 export const useClientConnect = () => {
-  const setClient = useSetRecoilState(clientState);
+  const setIsConnected = useSetRecoilState(isConnectedState);
+  const setRelay = useSetRecoilState(relayState);
+  const setSelfPeerId = useSetRecoilState(selfPeerIdState);
   const setRpcAddr = useSetRecoilState(rpcAddrState);
 
   const connect = async (relayPeerId: string) => {
     try {
-      const client = await createClient(relayPeerId);
-      const addr = await getRpcAddr(client);
+      await FluencePeer.default.init({ connectTo: relayPeerId });
+      setIsConnected(true);
+      setRelay(FluencePeer.default.connectionInfo.connectedRelay);
+      setSelfPeerId(FluencePeer.default.connectionInfo.selfPeerId);
+      const addr = await requestRpcAddr();
       setRpcAddr(addr!);
-      setClient(client);
     } catch (err) {
       console.log("Client initialization failed", err);
     }
@@ -51,9 +54,10 @@ export const useClientConnect = () => {
 };
 
 export const useDeployService = () => {
+  const relay = useRecoilValue(relayState);
   const wasm = useRecoilValue(wasmState);
   const rpcAddr = useRecoilValue(rpcAddrState);
-  const client = useRecoilValue(clientState);
+  const client = useRecoilValue(isConnectedState);
   const setServiceId = useSetRecoilState(serviceIdState);
 
   return async () => {
@@ -63,8 +67,7 @@ export const useDeployService = () => {
     }
 
     var service_id = await deploy_service(
-      client,
-      client.relayPeerId!,
+      relay!,
       wasm,
       rpcAddr,
       (msg, value) => console.log(msg, value),
@@ -76,21 +79,21 @@ export const useDeployService = () => {
 };
 
 export const useGetFileSize = () => {
+  const relay = useRecoilValue(relayState);
   const rpcAddr = useRecoilValue(rpcAddrState);
-  const client = useRecoilValue(clientState);
+  const isConnected = useRecoilValue(isConnectedState);
   const serviceId = useRecoilValue(serviceIdState);
   const fileCID = useRecoilValue(fileCIDState);
   const setFileSize = useSetRecoilState(fileSizeState);
   const setFileSizeCID = useSetRecoilState(fileSizeCIDState);
 
   return async () => {
-    if (client === null || serviceId === null || rpcAddr === null) {
+    if (!isConnected || serviceId === null || rpcAddr === null) {
       return;
     }
 
     var putResult = await put_file_size(
-      client,
-      client.relayPeerId!,
+      relay!,
       fileCID!,
       rpcAddr,
       serviceId,
@@ -111,18 +114,19 @@ export const useGetFileSize = () => {
 };
 
 export const useRemoveService = () => {
-  const client = useRecoilValue(clientState);
+  const relay = useRecoilValue(relayState);
+  const isConnected = useRecoilValue(isConnectedState);
   const [serviceId, setServiceId] = useRecoilState(serviceIdState);
   const setFileCID = useSetRecoilState(fileCIDState);
   const setFileSize = useSetRecoilState(fileSizeState);
   const setFileSizeCID = useSetRecoilState(fileSizeCIDState);
 
   return async () => {
-    if (client === null || serviceId === null) {
+    if (isConnected || serviceId === null) {
       return;
     }
 
-    await remove_service(client, client.relayPeerId!, serviceId, {
+    await remove_service(relay!, serviceId, {
       ttl: 10000,
     });
     setServiceId(null);
