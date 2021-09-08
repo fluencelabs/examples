@@ -1,45 +1,65 @@
-import { create, CID }from 'ipfs-http-client';
-import { AddResult } from 'ipfs-core-types/src/root';
-import { Multiaddr, protocols } from 'multiaddr';
-import { get_external_swarm_multiaddr, get_external_api_multiaddr } from "@fluencelabs/aqua-ipfs-ts";
-import { FluenceClient } from "@fluencelabs/fluence";
+import { create, CID } from "ipfs-http-client";
+import { AddResult } from "ipfs-core-types/src/root";
+import { Multiaddr, protocols } from "multiaddr";
 
-export async function provideFile(source: any, provider: FluenceClient): Promise<{ file: AddResult, swarmAddr: string, rpcAddr: string }> {
-    var swarmAddr;
-    var result = await get_external_swarm_multiaddr(provider, provider.relayPeerId!, { ttl: 20000 });
-    if (result.success) {
-        swarmAddr = result.multiaddr;
-    } else {
-        console.error("Failed to retrieve external swarm multiaddr from %s: ", provider.relayPeerId);
-        throw result.error;
-    }
+import { FluencePeer } from "@fluencelabs/fluence";
+import {
+  get_external_api_multiaddr,
+  get_external_swarm_multiaddr,
+} from "@fluencelabs/ipfs-execution-aqua";
 
-    var rpcAddr;
-    var result = await get_external_api_multiaddr(provider, provider.relayPeerId!);
-    if (result.success) {
-        rpcAddr = result.multiaddr;
-    } else {
-        console.error("Failed to retrieve external api multiaddr from %s: ", provider.relayPeerId);
-        throw result.error;
-    }
+export async function provideFile(
+  source: any,
+  provider: FluencePeer
+): Promise<{ file: AddResult; swarmAddr: string; rpcAddr: string }> {
+  const relayPeerId = provider.connectionInfo.connectedRelay!;
+  let swarmAddr;
+  let result = await get_external_swarm_multiaddr(
+    provider,
+    provider.connectionInfo.connectedRelay!,
+    { ttl: 20000 }
+  );
+  if (result.success) {
+    swarmAddr = result.multiaddr;
+  } else {
+    console.error(
+      "Failed to retrieve external swarm multiaddr from %s: ",
+      provider.connectionInfo.connectedRelay!
+    );
+    throw result.error;
+  }
 
-    var rpcMaddr = new Multiaddr(rpcAddr).decapsulateCode(protocols.names.p2p.code);
-    // HACK: `as any` is needed because ipfs-http-client forgot to add `| Multiaddr` to the `create` types
-    const ipfs = create(rpcMaddr as any);
-    console.log("📗 created ipfs client to %s", rpcMaddr);
+  let rpcAddr;
+  result = await get_external_api_multiaddr(provider, relayPeerId);
+  if (result.success) {
+    rpcAddr = result.multiaddr;
+  } else {
+    console.error(
+      "Failed to retrieve external api multiaddr from %s: ",
+      relayPeerId
+    );
+    throw result.error;
+  }
 
-    await ipfs.id();
-    console.log("📗 connected to ipfs");
+  let rpcMaddr = new Multiaddr(rpcAddr).decapsulateCode(
+    protocols.names.p2p.code
+  );
+  // HACK: `as any` is needed because ipfs-http-client forgot to add `| Multiaddr` to the `create` types
+  const ipfs = create(rpcMaddr as any);
+  console.log("📗 created ipfs client to %s", rpcMaddr);
 
-    const file = await ipfs.add(source);
-    console.log("📗 uploaded file:", file);
+  await ipfs.id();
+  console.log("📗 connected to ipfs");
 
-    // To download the file, uncomment the following code:
-    //    let files = await ipfs.get(file.cid);
-    //    for await (const file of files) {
-    //        const content = uint8ArrayConcat(await all(file.content));
-    //        console.log("📗 downloaded file of length ", content.length);
-    //    }
+  const file = await ipfs.add(source);
+  console.log("📗 uploaded file:", file);
 
-    return { file, swarmAddr, rpcAddr };
+  // To download the file, uncomment the following code:
+  //    let files = await ipfs.get(file.cid);
+  //    for await (const file of files) {
+  //        const content = uint8ArrayConcat(await all(file.content));
+  //        console.log("📗 downloaded file of length ", content.length);
+  //    }
+
+  return { file, swarmAddr, rpcAddr };
 }

@@ -1,3 +1,5 @@
+module ProcessFiles declares *
+
 data SizeResult:
   size: u32
   success: bool
