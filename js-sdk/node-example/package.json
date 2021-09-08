@@ -5,20 +5,19 @@
   "main": "index.js",
   "scripts": {
     "exec": "node -r ts-node/register src/index.ts",
-    "compile-aqua": "aqua-cli --import . -i ./aqua/ -o ./src/_aqua",
-    "watch-aqua": "chokidar \"**/*.aqua\" -c \"npm run compile-aqua\"",
-    "tmp": "java -jar ~/work/fluence/aqua-cli.jar -m node_modules --import . -i ./aqua/ -o ./src/_aqua"
+    "compile-aqua": "aqua --import . -i ./aqua/ -o ./src/_aqua",
+    "watch-aqua": "chokidar \"**/*.aqua\" -c \"npm run compile-aqua\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@fluencelabs/aqua-cli": "^0.2.1-219",
+    "@fluencelabs/aqua": "^0.3.0-222",
     "chokidar-cli": "^3.0.0",
     "ts-node": "^10.2.1",
     "typescript": "^4.4.2"
   },
   "dependencies": {
-    "@fluencelabs/fluence": "0.10.0-new-js-sdk-api.15",
+    "@fluencelabs/fluence": "0.11.0",
     "@fluencelabs/fluence-network-environment": "1.0.10"
   }
 }

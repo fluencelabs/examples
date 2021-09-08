@@ -1,5 +1,4 @@
-import { FluencePeer, randomPeerId } from "@fluencelabs/fluence";
-import { krasnodar } from "@fluencelabs/fluence-network-environment";
+import { FluencePeer } from "@fluencelabs/fluence";
 import { registerHelloWorld, sayHello } from "./_aqua/hello-world";
 
 async function main() {

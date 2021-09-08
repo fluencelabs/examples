@@ -49,10 +49,7 @@ async function main() {
 
   console.log("application started");
   console.log("peer id is: ", FluencePeer.default.connectionInfo.selfPeerId);
-  console.log(
-    "relay is: ",
-    FluencePeer.default.connectionInfo.connectedRelays[0]
-  );
+  console.log("relay is: ", FluencePeer.default.connectionInfo.connectedRelay);
   console.log("press any key to continue");
   await keypress();
 
