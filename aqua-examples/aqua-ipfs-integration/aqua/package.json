@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "postinstall": "../service/scripts/build.sh && npm run build",
-    "compile-aqua": "aqua-cli -i aqua -o src",
+    "compile-aqua": "aqua -i aqua -o src",
     "build": "npm run compile-aqua && tsc"
   },
   "keywords": [
@@ -32,6 +32,6 @@
   },
   "devDependencies": {
     "typescript": "^3.9.5",
-    "@fluencelabs/aqua-cli": "0.1.13-206"
+    "@fluencelabs/aqua": "0.1.13-206"
   }
 }

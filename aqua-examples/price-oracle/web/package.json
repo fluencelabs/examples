@@ -22,7 +22,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "compile-aqua": "aqua-cli -i ../aqua-scripts/ -o ./src/_aqua",
+    "compile-aqua": "aqua -i ../aqua-scripts/ -o ./src/_aqua",
     "watch-aqua": "chokidar \"../aqua-scripts/**/*.aqua\" -c \"npm run compile-aqua\""
   },
   "eslintConfig": {
@@ -44,7 +44,7 @@
     ]
   },
   "devDependencies": {
-    "@fluencelabs/aqua-cli": "0.1.9-162",
+    "@fluencelabs/aqua": "0.1.14-207",
     "@fluencelabs/fluence-network-environment": "^1.0.10",
     "chokidar-cli": "^2.1.0",
     "node-sass": "^6.0.1"

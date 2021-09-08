@@ -58,7 +58,7 @@ The following npm packages are used:
 
 * `@fluencelabs/fluence` - is the client for Fluence Network running inside the browser. See https://github.com/fluencelabs/fluence-js for additional information
 * `@fluencelabs/fluence-network-environment` - is the maintained list of Fluence networks and nodes to connect to.
-* `@fluencelabs/aqua-cli` - is the command line interface for Aqua compiler. See https://github.com/fluencelabs/aqua for more information
+* `@fluencelabs/aqua` - is the command line interface for Aqua compiler. See https://github.com/fluencelabs/aqua for more information
 * `@fluencelabs/aqua-lib` - Aqua language standard library
 * `chokidar-cli` - A tool to watch for aqua file changes and compile them on the fly
 
@@ -67,7 +67,7 @@ The compilation of aqua code is implemented with these scripts:
 ```
 scripts: {
 ...
-    "compile-aqua": "aqua-cli -i ./aqua/ -o ./src/_aqua",
+    "compile-aqua": "aqua -i ./aqua/ -o ./src/_aqua",
     "watch-aqua": "chokidar \"**/*.aqua\" -c \"npm run compile-aqua\""
 }
 ...

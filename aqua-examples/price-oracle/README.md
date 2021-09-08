@@ -228,16 +228,16 @@ func get_price_par(coin: string, currency: string, getter_topo: []NodeServicePai
 
 In this invocation of our application workflow, we process price quote acquisition in parallel over price_getter services deployed to many nodes. This allows us to scale our workflow and take sull advantage of the network size and service deployment commitments.
 
-To compile our Aqua script, we use the `aqua-cli` tool and either compile our code to raw Air:
+To compile our Aqua script, we use the `aqua` tool and either compile our code to raw Air:
 
 ```text
-% aqua-cli -i aqua-scripts -o air-scripts -a
+% aqua -i aqua-scripts -o air-scripts -a
 ```
 
 or to a ready-made typescript stub:
 
 ```text
-% aqua-cli -i aqua-scripts -o air-scripts
+% aqua -i aqua-scripts -o air-scripts
 ```
 
 ## Summary

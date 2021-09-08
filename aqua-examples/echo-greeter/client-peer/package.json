@@ -19,7 +19,7 @@
     "it-all": "^1.0.5"
   },
   "scripts": {
-    "compile-aqua": "aqua-cli -i ../aqua-scripts -o src/",
+    "compile-aqua": "aqua -i ../aqua-scripts -o src/",
     "prebuild": "npm run compile-aqua",
     "build": "tsc",
     "prestart:local": "npm run build",
@@ -43,7 +43,7 @@
   },
   "homepage": "git+https://github.com/fluencelabs/examples/aqua-examples/echo-greeter#readme",
   "devDependencies": {
-    "@fluencelabs/aqua-cli": "0.1.9-163",
+    "@fluencelabs/aqua": "0.1.14-207",
     "typescript": "^3.9.5"
   }
 }
