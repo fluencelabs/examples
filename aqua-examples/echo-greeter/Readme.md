@@ -505,8 +505,7 @@ npm run compile-aqua
 > echo-greeter-example@0.1.0 compile-aqua /Users/bebo/localdev/examples-rework/aqua-examples/echo-greeter/client-peer
 > aqua -i ../aqua-scripts -o src/
 
-java -jar /Users/bebo/localdev/examples-rework/aqua-examples/echo-greeter/client-peer/node_modules/@fluencelabs/aqua-cli/aqua-cli.jar -m node_modules -i ../aqua-scripts -o src/
-[info] Aqua Compiler 0.1.9-163
+[info] Aqua Compiler 0.1.14-207
 [info] Result /Users/bebo/localdev/examples-rework/aqua-examples/echo-greeter/client-peer/src/echo_greeter.ts: compilation OK (6 functions)
 ```
 
