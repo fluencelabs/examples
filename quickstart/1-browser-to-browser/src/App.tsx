@@ -38,7 +38,7 @@ function App() {
     }
     
     // Using aqua is as easy as calling a javascript funсtion
-    const res = await sayHello( peerIdInput, relayPeerIdInput);
+    const res = await sayHello(peerIdInput, relayPeerIdInput);
     setHelloMessage(res);
   };
 
