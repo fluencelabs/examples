@@ -57,26 +57,26 @@ cargo +nightly test --release
 and deploy the service to a peer of your choice with the `fldist` tool:
 
 ```bash
-fldist new_service --ms artifacts/ts_oracle.wasm:artifacts/ts_oracle_cfg.json --name ts-consensus --verbose
+fldist new_service \
+       --ms artifacts/ts_oracle.wasm:artifacts/ts_oracle_cfg.json \
+       --name ts-consensus \
+       --verbose
 ```
 
-and to compile the Aqua scripts:
+As always, take note of the service id and let's compile our Aqua scripts:
 
 ```bash
 # results in air-scripts ts_getter.ts
 aqua -i aqua-scripts -o air-scripts 
 ```
 
-which generates Typescript code wrapping the compiled Aqua intermediary representation (AIR) or 
+which generates Typescript code wrapping of the compiled Aqua intermediary representation (AIR) or we can use the `-a` flag to compile Aqua to AIR files:
 
 ```bash
 # results in air-scripts 
 # ts_getter.ts_getter.air and ts_getter.ts_oracle.air
 aqua -i aqua-scripts -o air-scripts -a
 ```
-
-which generates raw AIR files.
-
 ### Approach
 
 We implemented a custom service that returns the mode and frequency for an array of timestamps, see `src/` that can be deployed on to any node of the peer-to-peer network and, once deployed, used to in an Aqua script. Moreover, network peers have builtin services including Kademlia and timestamp services. Both custom and bultin services are accessible by Aqua and ready for composition into an application.
@@ -134,10 +134,20 @@ func ts_oracle(node: string, oracle_service_id: string, min_points:u32) -> Oracl
   <- oracle                                             -- and return to initiating peer
 ```
 
-We can run our Aqua `ts_oracle` script against the deployed processing service to get our oracle point estimate:
+We can run our Aqua `ts_oracle` script against the deployed processing service to get our oracle point estimate (Note that you can replace the service id with the one you obtained from your deployment):
 
 ```bash
-fldist run_air -p air-scripts/ts_getter.ts_oracle.air  -d '{"node":"12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf", "oracle_service_id":"ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9", "min_points":5}' --generated
+fldist run_air \
+      -p air-scripts/ts_getter.ts_oracle.air  \
+      -d '{"node":"12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf",
+           "oracle_service_id":"ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9", 
+           "min_points":5}' \
+      --generated
+```
+
+Which results in:
+
+```text
 [
   {
     "err_str": "",
@@ -148,13 +158,23 @@ fldist run_air -p air-scripts/ts_getter.ts_oracle.air  -d '{"node":"12D3KooWHLxV
 ]
 ```
 
-or run the `ts_getter` functions just for the timestamps:
+Alternatively, we can run the `ts_getter` functions just for the timestamps:
 
-```aqua
-fldist run_air -p air-scripts/ts_getter.ts_getter.air  -d '{"node":"12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf", "oracle_service_id":"ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9", "min_points":5, "n_ts": 10}' --generated
+```bash
+fldist run_air \
+       -p air-scripts/ts_getter.ts_getter.air  \
+       -d '{"node":"12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf",
+            "oracle_service_id":"ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9",
+            "min_points":5, "n_ts": 10}' \
+      --generated
+```
+
+Which gives us just the timestamps:
+
+```text
 [
   [
-    1624834792801,
+    1624834792801,   # Note: your timestamps will have different values
     1624834792791,
     1624834792796,
     1624834792797,
@@ -168,4 +188,4 @@ fldist run_air -p air-scripts/ts_getter.ts_getter.air  -d '{"node":"12D3KooWHLxV
 ]
 ```
 
-Instead of the `fldist`  cli, you can use the Typescript stub and integrate it into a TS client. See [Aqua Playground](https://github.com/fluencelabs/aqua-playground) for more information.
+Instead of `fldist`, you can use the Typescript stub and integrate it into a TS client. See [Aqua Playground](https://github.com/fluencelabs/aqua-playground) for more information.

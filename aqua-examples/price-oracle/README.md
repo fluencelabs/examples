@@ -15,7 +15,7 @@ Aqua Developer Resources:
 * [Aqua Playground](https://github.com/fluencelabs/aqua-playground)
 * [Aqua repo](https://github.com/fluencelabs/aqua)
 
- Marine Developer Resouces:
+ Marine Developer Resources:
 
 * [Marine repo](https://github.com/fluencelabs/marine)
 * [Marine SDK](https://github.com/fluencelabs/marine-rs-sdk)

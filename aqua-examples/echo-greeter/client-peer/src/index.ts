@@ -17,14 +17,18 @@
 import { createClient, setLogLevel, FluenceClient } from "@fluencelabs/fluence";
 import { krasnodar, Node } from "@fluencelabs/fluence-network-environment";
 import {
+    echo,
+    greeting,
     echo_greeting_seq,
-    echo_greeting_seq_2,
     echo_greeting_par,
-    echo_greeting_par_inverse,
-    echo_greeting_par_greet,
-    echo_greeting_par_inverse_greet,
+    echo_greeting_par_alternative,
+    echo_greeting_par_improved
 } from "./echo_greeter";
 
+
+interface EchoResult {
+    echo: string;
+}
 interface NodeServicePair {
     node: string;
     service_id: string;
@@ -95,7 +99,31 @@ async function main() {
         fluence.relayPeerId
     );
 
-    let network_result = await echo_greeting_seq(
+    let echo_result = await echo(
+        fluence,
+        names,
+        echo_topos[0].node,
+        echo_topos[0].service_id
+    );
+
+    let result = "";
+
+    for (let item of echo_result) {
+        result += item.echo + ","
+    }
+    console.log("echo result                       : ", result);
+
+    let greeting_result = await greeting(
+        fluence,
+        names[0],
+        true,
+        greeting_topos[0].node,
+        greeting_topos[0].service_id
+    );
+    console.log("greeting result                   : ", greeting_result);
+
+    // echo_greeting_par(greet: bool, echo_service: EchoServiceInput, greeting_services: []NodeServicePair) -> []string:
+    let seq_result = await echo_greeting_seq(
         fluence,
         names,
         true,
@@ -103,48 +131,32 @@ async function main() {
         echo_topos[0].service_id,
         greeting_topos[0].service_id
     );
-    console.log("seq result                         : ", network_result);
+    console.log("seq result                         : ", seq_result);
 
 
-    network_result = await echo_greeting_seq_2(
-        fluence,
-        names,
-        true,
-        echo_topos[0],
-        greeting_topos[0]
-    );
-    console.log("seq result with improved signature : ", network_result);
-
-    // echo_greeting_par(greet: bool, echo_service: EchoServiceInput, greeting_services: []NodeServicePair) -> []string:
-    network_result = await echo_greeting_par(
-        fluence,
-        true,
-        echo_service,
-        greeting_topos
-    );
-    console.log("par result                         : ", network_result);
-
-    network_result = await echo_greeting_par_inverse(
+    let par_result = await echo_greeting_par(
         fluence,
         true,
         echo_service,
         greeting_services
     );
-    console.log("par inverse result                  : ", network_result);
+    console.log("par result                          : ", par_result);
 
-    network_result = await echo_greeting_par_greet(
+
+    par_result = await echo_greeting_par_alternative(
+        fluence,
+        true,
+        echo_service,
+        greeting_services
+    );
+    console.log("par alternative result              : ", par_result);
+
+    par_result = await echo_greeting_par_improved(
         fluence,
         echo_service,
         greeting_services
     );
-    console.log("par result with greet variation    : ", network_result);
-
-    network_result = await echo_greeting_par_inverse_greet(
-        fluence,
-        echo_service,
-        greeting_services
-    );
-    console.log("par inverse result with greet variation    : ", network_result);
+    console.log("par improved signature result        : ", par_result);
 
 
     return;

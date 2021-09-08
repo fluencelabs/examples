@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-use fluence::{marine, module_manifest, WasmLoggerBuilder};
 
+use marine_rs_sdk::marine;
+use marine_rs_sdk::module_manifest;
+use marine_rs_sdk::WasmLoggerBuilder;
 mod stats;
 
 module_manifest!();
@@ -66,7 +68,7 @@ pub fn point_estimate(tstamps: Vec<u64>, min_points: u32) -> Oracle {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use fluence_test::marine_test;
+    use marine_rs_sdk_test::marine_test;
 
     #[test]
     fn test_mean_good() {
@@ -92,7 +94,7 @@ mod tests {
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
-    fn test_point_estimate_good() {
+    fn test_point_estimate_good(ts_oracle: marine_test_env::ts_oracle::ModuleInterface) {
         let data = vec![1u64, 1u64, 3u64, 3u64, 3u64, 5u64];
         let min_points = 2u32;
         let res = ts_oracle.point_estimate(data, min_points);
@@ -101,7 +103,7 @@ mod tests {
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
-    fn test_point_estimate_bad() {
+    fn test_point_estimate_bad(ts_oracle: marine_test_env::ts_oracle::ModuleInterface) {
         let data = vec![1u64, 1u64, 3u64, 3u64, 3u64, 5u64];
         let n = data.len();
         let min_points = 20u32;
@@ -116,7 +118,7 @@ mod tests {
     }
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
-    fn test_point_estimate_bad_2() {
+    fn test_point_estimate_bad_2(ts_oracle: marine_test_env::ts_oracle::ModuleInterface) {
         let data = vec![];
         let n = data.len();
         let min_points = 0u32;

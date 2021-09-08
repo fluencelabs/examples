@@ -11,12 +11,11 @@ name = "ts_oracle"
 path = "src/main.rs"
 
 [dependencies]
-fluence = { version="0.6.9", features=["logger"]}
+marine-rs-sdk = { version = "0.6.11", features = ["logger"] }
 log = "0.4.14"
 
-
 [dev-dependencies]
-fluence-test = "0.1.9"
+marine-rs-sdk-test = "0.2.0"
 
 [dev]
 [profile.release]

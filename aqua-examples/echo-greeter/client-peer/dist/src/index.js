@@ -95,38 +95,42 @@ var names = ["Jim", "John", "Jake"];
 // let greeting_service =
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var fluence, network_result;
+        var fluence, echo_result, result, _i, echo_result_1, item, greeting_result, seq_result, par_result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, fluence_1.createClient(fluence_network_environment_1.krasnodar[2])];
                 case 1:
                     fluence = _a.sent();
                     console.log("created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
-                    return [4 /*yield*/, echo_greeter_1.echo_greeting_seq(fluence, names, true, echo_topos[0].node, echo_topos[0].service_id, greeting_topos[0].service_id)];
+                    return [4 /*yield*/, echo_greeter_1.echo(fluence, names, echo_topos[0].node, echo_topos[0].service_id)];
                 case 2:
-                    network_result = _a.sent();
-                    console.log("seq result                         : ", network_result);
-                    return [4 /*yield*/, echo_greeter_1.echo_greeting_seq_2(fluence, names, true, echo_topos[0], greeting_topos[0])];
+                    echo_result = _a.sent();
+                    result = "";
+                    for (_i = 0, echo_result_1 = echo_result; _i < echo_result_1.length; _i++) {
+                        item = echo_result_1[_i];
+                        result += item.echo + ",";
+                    }
+                    console.log("echo result                       : ", result);
+                    return [4 /*yield*/, echo_greeter_1.greeting(fluence, names[0], true, greeting_topos[0].node, greeting_topos[0].service_id)];
                 case 3:
-                    network_result = _a.sent();
-                    console.log("seq result with improved signature : ", network_result);
-                    return [4 /*yield*/, echo_greeter_1.echo_greeting_par(fluence, true, echo_service, greeting_topos)];
+                    greeting_result = _a.sent();
+                    console.log("greeting result                   : ", greeting_result);
+                    return [4 /*yield*/, echo_greeter_1.echo_greeting_seq(fluence, names, true, echo_topos[0].node, echo_topos[0].service_id, greeting_topos[0].service_id)];
                 case 4:
-                    // echo_greeting_par(greet: bool, echo_service: EchoServiceInput, greeting_services: []NodeServicePair) -> []string:
-                    network_result = _a.sent();
-                    console.log("par result                         : ", network_result);
-                    return [4 /*yield*/, echo_greeter_1.echo_greeting_par_inverse(fluence, true, echo_service, greeting_services)];
+                    seq_result = _a.sent();
+                    console.log("seq result                         : ", seq_result);
+                    return [4 /*yield*/, echo_greeter_1.echo_greeting_par(fluence, true, echo_service, greeting_services)];
                 case 5:
-                    network_result = _a.sent();
-                    console.log("par inverse result                  : ", network_result);
-                    return [4 /*yield*/, echo_greeter_1.echo_greeting_par_greet(fluence, echo_service, greeting_services)];
+                    par_result = _a.sent();
+                    console.log("par result                          : ", par_result);
+                    return [4 /*yield*/, echo_greeter_1.echo_greeting_par_alternative(fluence, true, echo_service, greeting_services)];
                 case 6:
-                    network_result = _a.sent();
-                    console.log("par result with greet variation    : ", network_result);
-                    return [4 /*yield*/, echo_greeter_1.echo_greeting_par_inverse_greet(fluence, echo_service, greeting_services)];
+                    par_result = _a.sent();
+                    console.log("par alternative result              : ", par_result);
+                    return [4 /*yield*/, echo_greeter_1.echo_greeting_par_improved(fluence, echo_service, greeting_services)];
                 case 7:
-                    network_result = _a.sent();
-                    console.log("par inverse result with greet variation    : ", network_result);
+                    par_result = _a.sent();
+                    console.log("par improved signature result        : ", par_result);
                     return [2 /*return*/];
             }
         });

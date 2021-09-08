@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-use marine_rs_sdk::{marine, module_manifest, get_call_parameters};
-use std::path::{PathBuf, Path};
-use rand::Rng;
+use marine_rs_sdk::{get_call_parameters, marine, module_manifest};
 use rand::distributions::Alphanumeric;
+use rand::Rng;
+use std::path::{Path, PathBuf};
 
 module_manifest!();
 
-pub fn main() { }
+pub fn main() {}
 
 #[marine]
 pub struct SizeResult {
@@ -33,8 +33,16 @@ pub struct SizeResult {
 #[marine]
 pub fn file_size(file_path: String) -> SizeResult {
     match std::fs::read(file_path) {
-        Ok(bytes) => SizeResult { size: bytes.len() as _, success: true, error: String::new() },
-        Err(err) => SizeResult { size: 0, success: false, error: err.to_string() },
+        Ok(bytes) => SizeResult {
+            size: bytes.len() as _,
+            success: true,
+            error: String::new(),
+        },
+        Err(err) => SizeResult {
+            size: 0,
+            success: false,
+            error: err.to_string(),
+        },
     }
 }
 
@@ -56,8 +64,16 @@ pub fn write_file_size(size: u32) -> WriteResult {
     let file = vault_dir().join(&name);
     let file_str = file.to_string_lossy().to_string();
     match std::fs::write(&file, size.to_string()) {
-        Ok(_) => WriteResult { path: file_str, success: true, error: String::new() },
-        Err(err) => WriteResult { path: String::new(), success: false, error: err.to_string() }
+        Ok(_) => WriteResult {
+            path: file_str,
+            success: true,
+            error: String::new(),
+        },
+        Err(err) => WriteResult {
+            path: String::new(),
+            success: false,
+            error: err.to_string(),
+        },
     }
 }
 

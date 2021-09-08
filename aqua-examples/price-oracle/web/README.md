@@ -1,6 +1,6 @@
 # Price oracle
 
-Web interface for the price oracle applicaion
+Web interface for the price oracle application
 
 ## Getting started
 
