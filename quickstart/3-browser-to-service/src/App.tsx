@@ -2,44 +2,45 @@ import React, { useState } from "react";
 import logo from "./logo.svg";
 import "./App.scss";
 
-import { createClient, FluenceClient } from "@fluencelabs/fluence";
+import { FluencePeer } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
-import { sayHello } from "./_aqua/getting-started";
+import { registerHelloPeer, sayHello } from "./_aqua/getting-started";
 
 const relayNodes = [krasnodar[0], krasnodar[1], krasnodar[2]];
 
 function App() {
-  const [client, setClient] = useState<FluenceClient | null>(null);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
   const [helloMessage, setHelloMessage] = useState<string | null>(null);
 
   const [peerIdInput, setPeerIdInput] = useState<string>("");
   const [relayPeerIdInput, setRelayPeerIdInput] = useState<string>("");
 
-  const connect = (relayPeerId: string) => {
-    createClient(relayPeerId)
-      .then((client) => {
-        // Register handler for this call in aqua:
-        // HelloWorld.recieveHello(%init_peer_id%)
-        client.callServiceHandler.onEvent("HelloPeer", "hello", (args) => {
-          // no computation is done inside the browser
-          const [msg] = args;
-          setHelloMessage(msg);
-        });
-        setClient(client);
-      })
-      .catch((err) => console.log("Client initialization failed", err));
+  const connect = async (relayPeerId: string) => {
+    try {
+      await FluencePeer.default.init({ connectTo: relayPeerId });
+      setIsConnected(true);
+      // Register handler for this call in aqua:
+      // HelloPeer.hello(%init_peer_id%)
+      registerHelloPeer({
+        hello: (from) => {
+          setHelloMessage("Hello from: \n" + from);
+          return "Hello back to you, \n" + from;
+        }
+      });
+    } catch (err) {
+       console.log("Peer initialization failed", err);
+    }
   };
 
   const helloBtnOnClick = async () => {
-    if (client === null) {
+    if (!isConnected) {
       return;
     }
+    
     // Using aqua is as easy as calling a javascript funсtion
-    const res = await sayHello(client!, peerIdInput, relayPeerIdInput);
+    const res = await sayHello(peerIdInput, relayPeerIdInput);
     setHelloMessage(res);
   };
-
-  const isConnected = client !== null;
 
   return (
     <div className="App">
@@ -55,11 +56,11 @@ function App() {
               <tbody>
                 <tr>
                   <td className="bold">Peer id:</td>
-                  <td className="mono">{client!.selfPeerId}</td>
+                  <td className="mono">{FluencePeer.default.connectionInfo.selfPeerId}</td>
                   <td>
                     <button
                       className="btn-clipboard"
-                      onClick={() => copyToClipboard(client!.selfPeerId)}
+                      onClick={() => copyToClipboard(FluencePeer.default.connectionInfo.selfPeerId)}
                     >
                       <i className="gg-clipboard"></i>
                     </button>
@@ -67,11 +68,11 @@ function App() {
                 </tr>
                 <tr>
                   <td className="bold">Relay peer id:</td>
-                  <td className="mono">{client!.relayPeerId}</td>
+                  <td className="mono">{FluencePeer.default.connectionInfo.connectedRelay}</td>
                   <td>
                     <button
                       className="btn-clipboard"
-                      onClick={() => copyToClipboard(client!.relayPeerId!)}
+                      onClick={() => copyToClipboard(FluencePeer.default.connectionInfo.connectedRelay!)}
                     >
                       <i className="gg-clipboard"></i>
                     </button>

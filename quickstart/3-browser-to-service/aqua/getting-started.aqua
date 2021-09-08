@@ -1,7 +1,7 @@
 import "@fluencelabs/aqua-lib/builtin.aqua"
 
-const helloWorldNodePeerId ?= "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi"
-const helloWorldServiceId ?= "1e740ce4-81f6-4dd4-9bed-8d86e9c2fa50"
+const HELLO_WORLD_NODE_PEER_ID ?= "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi"
+const HELLO_WORLD_SERVICE_ID ?= "1e740ce4-81f6-4dd4-9bed-8d86e9c2fa50"
 
 data HelloWorld:
   msg: string
@@ -17,8 +17,8 @@ service HelloPeer("HelloPeer"):
 
 func sayHello(targetPeerId: PeerId, targetRelayPeerId: PeerId) -> string:
     -- execute computation on a Peer in the network
-    on helloWorldNodePeerId:
-        HelloWorld helloWorldServiceId
+    on HELLO_WORLD_NODE_PEER_ID:
+        HelloWorld HELLO_WORLD_SERVICE_ID
         comp <- HelloWorld.hello(%init_peer_id%)
 
     -- send the result to target browser in the background
