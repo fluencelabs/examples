@@ -53,27 +53,38 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var fluence_1 = require("@fluencelabs/fluence");
 var fluence_network_environment_1 = require("@fluencelabs/fluence-network-environment");
-var get_crypto_prices_1 = require("./get_crypto_prices");
+var get_crypto_prices_1 = require("./_aqua/get_crypto_prices");
 var getter_topo;
 var mean_topo;
-getter_topo = Array({ "node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS", "service_id": "c315073d-4311-4db3-be57-8f154f032d28" }, { "node": "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi", "service_id": "25f9123a-f386-4cb2-9c1e-bb7c247c9c09" });
-mean_topo = { "node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS", "service_id": "dd47389f-25d9-4870-a2a9-909359e73580" };
+getter_topo = Array({
+    node: "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+    service_id: "c315073d-4311-4db3-be57-8f154f032d28",
+}, {
+    node: "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi",
+    service_id: "25f9123a-f386-4cb2-9c1e-bb7c247c9c09",
+});
+mean_topo = {
+    node: "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+    service_id: "dd47389f-25d9-4870-a2a9-909359e73580",
+};
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var fluence, network_result, network_result_par;
+        var network_result, network_result_par;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     console.log("hello crypto investors");
-                    return [4 /*yield*/, fluence_1.createClient(fluence_network_environment_1.krasnodar[2])];
+                    // setLogLevel('DEBUG');
+                    return [4 /*yield*/, fluence_1.FluencePeer.default.init({ connectTo: fluence_network_environment_1.krasnodar[2] })];
                 case 1:
-                    fluence = _a.sent();
-                    console.log("created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
-                    return [4 /*yield*/, get_crypto_prices_1.get_price(fluence, "ethereum", "usd", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi", "25f9123a-f386-4cb2-9c1e-bb7c247c9c09", "b2790307-055e-41ca-9640-3c41856d464b")];
+                    // setLogLevel('DEBUG');
+                    _a.sent();
+                    console.log("created a fluence client %s with relay %s", fluence_1.FluencePeer.default.connectionInfo.selfPeerId, fluence_1.FluencePeer.default.connectionInfo.connectedRelay);
+                    return [4 /*yield*/, get_crypto_prices_1.get_price("ethereum", "usd", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi", "25f9123a-f386-4cb2-9c1e-bb7c247c9c09", "b2790307-055e-41ca-9640-3c41856d464b")];
                 case 2:
                     network_result = _a.sent();
                     console.log("seq result: ", network_result);
-                    return [4 /*yield*/, get_crypto_prices_1.get_price_par(fluence, "ethereum", "usd", getter_topo, mean_topo)];
+                    return [4 /*yield*/, get_crypto_prices_1.get_price_par("ethereum", "usd", getter_topo, mean_topo)];
                 case 3:
                     network_result_par = _a.sent();
                     console.log("par result: ", network_result_par);

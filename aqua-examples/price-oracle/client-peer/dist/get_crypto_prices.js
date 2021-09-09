@@ -38,6 +38,72 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.get_price_par = exports.get_price = void 0;
 var api_unstable_1 = require("@fluencelabs/fluence/dist/api.unstable");
+// Services
+//Srv
+//defaultId = "srv"
+//add_alias: (alias: string, service_id: string) => void
+//create: (blueprint_id: string) => string
+//get_interface: (service_id: string) => {function_signatures:{arguments:string[][];name:string;output_types:string[]}[];record_types:{fields:string[][];id:number;name:string}[]}
+//list: () => {blueprint_id:string;id:string;owner_id:string}[]
+//remove: (service_id: string) => void
+//resolve_alias: (alias: string) => string
+//END Srv
+//Peer
+//defaultId = "peer"
+//connect: (id: string, multiaddrs: string[] | null) => boolean
+//get_contact: (peer: string) => {addresses:string[];peer_id:string}
+//identify: () => {external_addresses:string[]}
+//is_connected: (peer: string) => boolean
+//timestamp_ms: () => number
+//timestamp_sec: () => number
+//END Peer
+//Op
+//defaultId = "op"
+//array: (a: string, b: string | null, c: string | null, d: string | null) => string[]
+//array_length: (array: string[]) => number
+//bytes_from_b58: (b: string) => number[]
+//bytes_to_b58: (bs: number[]) => string
+//concat: (a: string[], b: string[] | null, c: string[] | null, d: string[] | null) => string[]
+//identity: (s: string | null) => string | null
+//noop: () => void
+//sha256_string: (s: string) => string
+//string_from_b58: (b: string) => string
+//string_to_b58: (s: string) => string
+//END Op
+//Kademlia
+//defaultId = "kad"
+//merge: (target: string, left: string[], right: string[], count: number | null) => string[]
+//neighborhood: (key: string, already_hashed: boolean | null, count: number | null) => string[]
+//END Kademlia
+//MeanService
+//defaultId = undefined
+//mean: (data: number[]) => {error_msg:string;result:number;success:boolean}
+//END MeanService
+//Script
+//defaultId = "script"
+//add: (air_script: string, interval: string | null) => string
+//list: () => {failures:number;id:string;interval:string;owner:string;src:string}
+//remove: (script_id: string) => boolean
+//END Script
+//Dist
+//defaultId = "dist"
+//add_blueprint: (blueprint: {dependencies:string[];name:string}) => string
+//add_module: (wasm_b56_content: number[], conf: {name:string}) => string
+//get_interface: (module_id: string) => {function_signatures:{arguments:string[][];name:string;output_types:string[]}[];record_types:{fields:string[][];id:number;name:string}[]}
+//list_blueprints: () => {dependencies:string[];id:string;name:string}[]
+//list_modules: () => {config:{name:string};hash:string;name:string}[]
+//make_blueprint: (name: string, dependencies: string[]) => {dependencies:string[];name:string}
+//make_module_config: (name: string, mem_pages_count: number | null, logger_enabled: boolean | null, preopened_files: string[] | null, envs: string[][] | null, mapped_dirs: string[][] | null, mounted_binaries: string[][] | null, logging_mask: number | null) => {name:string}
+//END Dist
+//F64Op
+//defaultId = "op"
+//identity: (x: number) => number
+//END F64Op
+//PriceGetterService
+//defaultId = undefined
+//price_getter: (coin: string, currency: string, timestamp_ms: number) => {error_msg:string;result:number;success:boolean}
+//END PriceGetterService
+// Functions
 function get_price(client, coin, currency, node, pg_sid, mean_sid, config) {
     return __awaiter(this, void 0, void 0, function () {
         var request, promise;
@@ -71,7 +137,7 @@ function get_price(client, coin, currency, node, pg_sid, mean_sid, config) {
                             .handleTimeout(function () {
                             reject('Request timed out for get_price');
                         });
-                        if (config === null || config === void 0 ? void 0 : config.ttl) {
+                        if (config && config.ttl) {
                             r.withTTL(config.ttl);
                         }
                         request = r.build();
@@ -117,7 +183,7 @@ function get_price_par(client, coin, currency, getter_topo, mean_topo, config) {
                             .handleTimeout(function () {
                             reject('Request timed out for get_price_par');
                         });
-                        if (config === null || config === void 0 ? void 0 : config.ttl) {
+                        if (config && config.ttl) {
                             r.withTTL(config.ttl);
                         }
                         request = r.build();
