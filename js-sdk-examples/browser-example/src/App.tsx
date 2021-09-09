@@ -9,26 +9,27 @@ import { getRelayTime } from "./_aqua/getting-started";
 const relayNode = krasnodar[0];
 
 function App() {
-  const [peer, setPeer] = useState<FluencePeer | null>(null);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
   const [relayTime, setRelayTime] = useState<Date | null>(null);
 
-  useEffect(() => {
-    const peer = new FluencePeer();
-    peer.init({ connectTo: relayNode })
-      .then((client) => setPeer(peer))
-      .catch((err) => console.log("Client initialization failed", err));
-  }, [peer]);
 
-  const doGetRelayTime = async () => {
-    if (!peer) {
+  useEffect(() => {
+    FluencePeer.default.init({ connectTo: relayNode })
+      .then(() => {
+        setIsConnected(true);
+      })
+      .catch((err) => console.log("Client initialization failed", err));
+  }, [isConnected]);
+
+  const onGetRelayTimeBtnClick = async () => {
+    if (!isConnected) {
       return;
     }
 
-    const time = await getRelayTime(peer, relayNode.peerId);
+    const time = await getRelayTime(relayNode.peerId);
     setRelayTime(new Date(time));
   };
 
-  const isConnected = peer !== null;
 
   return (
     <div className="App">
@@ -38,7 +39,7 @@ function App() {
 
       <div className="content">
         <h1>Status: {isConnected ? "Connected" : "Disconnected"}</h1>
-        <button className="btn" onClick={doGetRelayTime}>
+        <button className="btn" onClick={onGetRelayTimeBtnClick}>
           Get relay time
         </button>
         {relayTime && (
