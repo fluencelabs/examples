@@ -1,12 +1,9 @@
 import { FluencePeer } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
-import {
-  deploy_service,
-  put_file_size,
-  remove_service,
-  get_external_api_multiaddr,
-} from "@fluencelabs/ipfs-execution-aqua";
+import { deploy_service, put_file_size, remove_service } from "./_aqua/process";
+import { get_external_api_multiaddr } from "./_aqua/exports";
+
 import {
   isConnectedState,
   rpcAddrState,
