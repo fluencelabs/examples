@@ -9,7 +9,8 @@
     "start:local": "node dist/demo.js local",
     "prestart:remote": "npm run build",
     "start:remote": "node dist/demo.js krasnodar",
-    "start": "npm run start:remote"
+    "start": "npm run start:remote",
+    "run": "node -r ts-node/register demo.ts"
   },
   "keywords": [
     "fluence",
@@ -34,6 +35,7 @@
     "multiaddr": "^10.0.0"
   },
   "devDependencies": {
+    "ts-node": "^10.2.1",
     "typescript": "^3.9.5"
   }
 }

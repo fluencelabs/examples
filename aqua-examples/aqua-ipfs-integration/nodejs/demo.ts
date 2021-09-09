@@ -32,9 +32,10 @@ import {
 import { globSource, urlSource } from "ipfs-http-client";
 
 async function main(environment: Node[]) {
-  // setLogLevel('DEBUG');
+  setLogLevel('DEBUG');
   let providerHost = environment[0];
-  let providerClient = new FluencePeer();
+  console.dir(providerHost);
+  let providerClient = FluencePeer.default;
   await providerClient.init({ connectTo: providerHost });
   console.log("📘 uploading .wasm to node %s", providerHost.multiaddr);
   let path = globSource("../service/artifacts/process_files.wasm");

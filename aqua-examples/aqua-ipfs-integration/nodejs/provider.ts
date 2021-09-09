@@ -14,6 +14,8 @@ export async function provideFile(
 ): Promise<{ file: AddResult; swarmAddr: string; rpcAddr: string }> {
   const relayPeerId = provider.connectionInfo.connectedRelay!;
   let swarmAddr;
+  console.log("provider:");
+  console.dir(provider);
   let result = await get_external_swarm_multiaddr(
     provider,
     provider.connectionInfo.connectedRelay!,
