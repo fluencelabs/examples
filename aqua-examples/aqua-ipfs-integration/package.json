@@ -2,7 +2,10 @@
   "name": "aqua-ipfs-integration",
   "workspaces": [
     "aqua",
-    "nodjes",
+    "nodejs",
     "web"
-  ]
+  ],
+  "scripts": {
+    "build": "npm run build -w aqua -w nodejs -w web"
+  }
 }

@@ -4,8 +4,8 @@
   "description": "An example of executing WASM code from IPFS over IPFS files",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "../service/scripts/build.sh && npm run build",
-    "compile-aqua": "aqua -i aqua -o src",
+    "postinstall": "../service/scripts/build.sh",
+    "compile-aqua": "aqua -m ../node_modules -i aqua -o src",
     "build": "npm run compile-aqua && tsc"
   },
   "keywords": [
