@@ -19,7 +19,7 @@
     "it-all": "^1.0.5"
   },
   "scripts": {
-    "compile-aqua": "aqua -i ../aqua-scripts -o src/",
+    "compile-aqua": "aqua -i ../aqua-scripts -o src/_aqua",
     "prebuild": "npm run compile-aqua",
     "build": "tsc",
     "prestart:local": "npm run build",
