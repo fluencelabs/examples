@@ -4,8 +4,8 @@ import { TextWithLabel } from "./TextInput";
 
 export const ConnectedInfo = () => {
   const selfPeerId = useRecoilValue(selfPeerIdState);
-  const client = useRecoilValue(isConnectedState);
-  if (client === null) {
+  const isConnected = useRecoilValue(isConnectedState);
+  if (!isConnected) {
     return <></>;
   }
 

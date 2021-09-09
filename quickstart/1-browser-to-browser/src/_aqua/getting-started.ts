@@ -38,7 +38,7 @@ export function registerHelloPeer(...args: any) {
   let peer: FluencePeer;
   let serviceId: any;
   let service: any;
-  if (args[0] instanceof FluencePeer) {
+  if (FluencePeer.isInstance(args[0])) {
     peer = args[0];
   } else {
     peer = FluencePeer.default;
@@ -52,7 +52,7 @@ export function registerHelloPeer(...args: any) {
     serviceId = "HelloPeer";
   }
 
-  if (!(args[0] instanceof FluencePeer) && typeof args[0] === "object") {
+  if (!FluencePeer.isInstance(args[0]) && typeof args[0] === "object") {
     service = args[0];
   } else if (typeof args[1] === "object") {
     service = args[1];
@@ -99,7 +99,7 @@ export function sayHello(...args: any) {
   let targetPeerId: any;
   let targetRelayPeerId: any;
   let config: any;
-  if (args[0] instanceof FluencePeer) {
+  if (FluencePeer.isInstance(args[0])) {
     peer = args[0];
     targetPeerId = args[1];
     targetRelayPeerId = args[2];

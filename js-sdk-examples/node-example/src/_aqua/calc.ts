@@ -37,7 +37,7 @@ export function registerCalc(...args) {
   let peer: FluencePeer;
   let serviceId;
   let service;
-  if (args[0] instanceof FluencePeer) {
+  if (FluencePeer.isInstance(args[0])) {
     peer = args[0];
   } else {
     peer = FluencePeer.default;
@@ -51,7 +51,7 @@ export function registerCalc(...args) {
     serviceId = "calc";
   }
 
-  if (!(args[0] instanceof FluencePeer) && typeof args[0] === "object") {
+  if (!FluencePeer.isInstance(args[0]) && typeof args[0] === "object") {
     service = args[0];
   } else if (typeof args[1] === "object") {
     service = args[1];

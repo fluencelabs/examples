@@ -6,7 +6,8 @@
   "scripts": {
     "postinstall": "../service/scripts/build.sh && npm run build",
     "compile-aqua": "aqua -i aqua -o src",
-    "build": "npm run compile-aqua && tsc"
+    "_build": "npm run compile-aqua && tsc",
+    "build": "tsc"
   },
   "keywords": [
     "fluence",
@@ -22,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "@fluencelabs/aqua-ipfs": "0.4.2",
-    "@fluencelabs/fluence": "0.11.0",
+    "@fluencelabs/fluence": "0.10.4-fix-null-check-416.0",
     "@fluencelabs/aqua-lib": "0.1.14",
     "@fluencelabs/fluence-network-environment": "1.0.10",
     "ipfs-http-client": "^50.1.2",

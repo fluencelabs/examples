@@ -40,7 +40,7 @@ export function registerProcessFiles(...args: any) {
   let peer: FluencePeer;
   let serviceId: any;
   let service: any;
-  if (args[0] instanceof FluencePeer) {
+  if (FluencePeer.isInstance(args[0])) {
     peer = args[0];
   } else {
     peer = FluencePeer.default;
@@ -52,7 +52,7 @@ export function registerProcessFiles(...args: any) {
     serviceId = args[1];
   }
 
-  if (!(args[0] instanceof FluencePeer) && typeof args[0] === "object") {
+  if (!FluencePeer.isInstance(args[0]) && typeof args[0] === "object") {
     service = args[0];
   } else if (typeof args[1] === "object") {
     service = args[1];

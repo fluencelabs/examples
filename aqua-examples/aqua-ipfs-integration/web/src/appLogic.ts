@@ -23,6 +23,8 @@ import { decapsulateP2P, fromOption } from "./util";
 export const relayNodes = [krasnodar[0], krasnodar[1], krasnodar[2]];
 
 const requestRpcAddr = async () => {
+  const tmp = FluencePeer.default as any;
+  console.dir(tmp);
   let result = await get_external_api_multiaddr(
     FluencePeer.default.connectionInfo.connectedRelay!
   );
@@ -40,9 +42,9 @@ export const useClientConnect = () => {
   const connect = async (relayPeerId: string) => {
     try {
       await FluencePeer.default.init({ connectTo: relayPeerId });
-      setIsConnected(true);
       setRelay(FluencePeer.default.connectionInfo.connectedRelay);
       setSelfPeerId(FluencePeer.default.connectionInfo.selfPeerId);
+      setIsConnected(true);
       const addr = await requestRpcAddr();
       setRpcAddr(addr!);
     } catch (err) {
