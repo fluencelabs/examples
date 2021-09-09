@@ -23,7 +23,7 @@ import {
   echo_greeting_par,
   echo_greeting_par_alternative,
   echo_greeting_par_improved,
-} from "./echo_greeter";
+} from "./_aqua/echo_greeter";
 
 interface EchoResult {
   echo: string;
