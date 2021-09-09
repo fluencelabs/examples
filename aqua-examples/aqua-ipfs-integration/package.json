@@ -1,0 +1,8 @@
+{
+  "name": "aqua-ipfs-integration",
+  "workspaces": [
+    "aqua",
+    "nodjes",
+    "web"
+  ]
+}
