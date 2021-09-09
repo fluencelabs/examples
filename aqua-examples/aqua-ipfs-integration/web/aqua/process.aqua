@@ -1,0 +1,78 @@
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/aqua-ipfs/ipfs.aqua"
+import "process_files.aqua"
+
+alias PeerId : string
+alias CID : string
+alias Multiaddr : string
+alias Hash : string
+alias ServiceID : string
+
+service StringOp("op"):
+    -- function that wraps string in array
+    array(s: string) -> []string
+
+-- Add module to node
+func add_module(name: string, path: string) -> Hash:
+    config <- Dist.default_module_config(name)
+    module_hash <- Dist.add_module_from_vault(path, config)
+    <- module_hash
+
+-- Add service blueprint to node
+func add_blueprint(module_hash: Hash) -> string:
+    prefixed_hash <- Op.concat_strings("hash:", module_hash)
+    dependencies <- StringOp.array(prefixed_hash)
+    blueprint <- Dist.make_blueprint("process_files", dependencies)
+    blueprint_id <- Dist.add_blueprint(blueprint)
+    <- blueprint_id
+
+-- Download single .wasm module from IPFS and create a service from it
+func deploy_service(relay: PeerId, cid: CID, ipfs: Multiaddr, error: string, string -> ()) -> ?ServiceID:
+    service_id: *ServiceID
+    on relay:
+        -- Download .wasm from IPFS to node
+        get_result <- Ipfs.get_from(cid, ipfs)        
+        if get_result.success:
+            module_hash <- add_module("process_files", get_result.path)
+            blueprint_id <- add_blueprint(module_hash)
+            service_id <- Srv.create(blueprint_id)
+        else:
+            co error("Ipfs.get_from failed", get_result.error)
+    
+    <- service_id
+
+-- Download file from IPFS, and write it's size to file in IPFS
+func put_file_size(
+    relay: PeerId, 
+    cid: CID, 
+    ipfs: Multiaddr, 
+    service_id: ServiceID, 
+    logSize: u32 -> (),
+    error: string, string -> ()
+) -> ?IpfsPutResult:
+    result: *IpfsPutResult
+    ProcessFiles service_id
+    on relay:
+        get <- Ipfs.get_from(cid, ipfs)
+        if get.success:
+            size <- ProcessFiles.file_size(get.path)
+            if size.success:
+                -- report file size in background
+                co logSize(size.size)
+                -- write file size to disk
+                write <- ProcessFiles.write_file_size(size.size)
+                if write.success:
+                    -- upload file to ipfs
+                    result <- Ipfs.put(write.path)
+                else:
+                    co error("ProcessFiles.write_file_size failed", write.error)
+            else:
+                co error("ProcessFiles.file_size failed", size.error)
+        else:
+            co error("Ipfs.get_from failed", get.error)
+    <- result
+
+func remove_service(relay: PeerId, service_id: ServiceID) -> bool:
+    on relay:
+        Srv.remove(service_id)
+    <- true

@@ -6,7 +6,7 @@ import { FluencePeer } from "@fluencelabs/fluence";
 import {
   get_external_api_multiaddr,
   get_external_swarm_multiaddr,
-} from "@fluencelabs/ipfs-execution-aqua";
+} from "./generated/exports";
 
 export async function provideFile(
   source: any,

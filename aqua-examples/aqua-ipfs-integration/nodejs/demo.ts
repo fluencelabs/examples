@@ -27,8 +27,8 @@ import {
   deploy_service,
   put_file_size,
   remove_service,
-  set_timeout,
-} from "@fluencelabs/ipfs-execution-aqua";
+} from "./generated/process";
+import { set_timeout } from "./generated/exports";
 import { globSource, urlSource } from "ipfs-http-client";
 
 async function main(environment: Node[]) {
