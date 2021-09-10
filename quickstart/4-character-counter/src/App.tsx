@@ -11,10 +11,11 @@ const relayNodes = [krasnodar[0], krasnodar[1], krasnodar[2]];
 function App() {
   const [client, setClient] = useState<FluenceClient | null>(null);
   const [helloMessage, setHelloMessage] = useState<string | null>(null);
+ 
 
   const [peerIdInput, setPeerIdInput] = useState<string>("");
   const [relayPeerIdInput, setRelayPeerIdInput] = useState<string>("");
-
+  
   const connect = (relayPeerId: string) => {
     createClient(relayPeerId)
       .then((client) => {
@@ -37,7 +38,12 @@ function App() {
     // Using aqua is as easy as calling a javascript funсtion
     const res = await sayHello(client!, peerIdInput, relayPeerIdInput);
     setHelloMessage(res);
+    
   };
+    
+ 
+    
+
 
   const isConnected = client !== null;
 
@@ -132,6 +138,11 @@ function App() {
           <>
             <h2>Message</h2>
             <div> {helloMessage} </div>
+            <h2>Character Counter With Spaces</h2>
+            <div> {helloMessage.length} </div>
+          
+            <h2>Character Counter No Spaces</h2>
+            <div> {(helloMessage.length)-(helloMessage.split(" ").length - 1)} </div>
           </>
         )}
       </div>
