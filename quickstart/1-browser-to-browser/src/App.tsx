@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.scss";
 
-import { FluencePeer } from "@fluencelabs/fluence";
+import { Fluence } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 import { sayHello, registerHelloPeer } from "./_aqua/getting-started";
 
@@ -33,7 +33,7 @@ function App() {
   };
 
   const helloBtnOnClick = async () => {
-    if (!isConnected) {
+    if (!Fluence.getStatus().isConnected) {
       return;
     }
     
@@ -56,11 +56,11 @@ function App() {
               <tbody>
                 <tr>
                   <td className="bold">Peer id:</td>
-                  <td className="mono">{FluencePeer.default.connectionInfo.selfPeerId}</td>
+                  <td className="mono">{Fluence.getStatus().peerId!}</td>
                   <td>
                     <button
                       className="btn-clipboard"
-                      onClick={() => copyToClipboard(FluencePeer.default.connectionInfo.selfPeerId!)}
+                      onClick={() => copyToClipboard(Fluence.getStatus().peerId!)}
                     >
                       <i className="gg-clipboard"></i>
                     </button>
@@ -68,11 +68,11 @@ function App() {
                 </tr>
                 <tr>
                   <td className="bold">Relay peer id:</td>
-                  <td className="mono">{FluencePeer.default.connectionInfo.connectedRelay}</td>
+                  <td className="mono">{Fluence.getStatus().relayPeerId}</td>
                   <td>
                     <button
                       className="btn-clipboard"
-                      onClick={() => copyToClipboard(FluencePeer.default.connectionInfo.connectedRelay!)}
+                      onClick={() => copyToClipboard(Fluence.getStatus().relayPeerId!)}
                     >
                       <i className="gg-clipboard"></i>
                     </button>

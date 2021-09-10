@@ -27,8 +27,6 @@ function App() {
   };
 
 
-  const isConnected = Fluence.getStatus().isConnected
-
   return (
     <div className="App">
       <header>
@@ -36,7 +34,7 @@ function App() {
       </header>
 
       <div className="content">
-        <h1>Status: {isConnected ? "Connected" : "Disconnected"}</h1>
+        <h1>Status: {Fluence.getStatus().isConnected ? "Connected" : "Disconnected"}</h1>
         <button className="btn" onClick={onGetRelayTimeBtnClick}>
           Get relay time
         </button>
