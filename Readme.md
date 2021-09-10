@@ -1,3 +1,12 @@
+# Grants Round 11 Hackathon - Fluence
+## Follow The Fluence Quickstart Guide (Beginner)
+
+- [x] *Extend the Fluence Quickstart, https://github.com/fluencelabs/examples/tree/main/quickstart/3-browser-to-service, with a distributed character count service deployed to at least one Fluence peer. Display a message's character count at the end of the message, e.g., (char count: 123 chars). You should accurately count characters.* 
+**[ 4-char-count-service quickstart was created and browser updated]**
+
+- [x] *Document your solution and submit it via a Github or GitLab repo with MIT or Apache 2.0 license.* **[ documented in 4-char-count-service README.md]**
+
+
 # Examples
 
 This repo holds a collection of examples on how to build distributed applications with the Fluence stack.
