@@ -239,4 +239,5 @@ npm start
 Which will open a new browser tab at `http://localhost:3000` . Following the instructions, we connect to any one of the displayed relay ids, open another browser tab also at  `http://localhost:3000`, select a relay and copy and  paste the client peer id and relay id into corresponding fields in the first tab and press the `say hello` button.
 
 You will see the message and char count for this message
-
+![Screenshot from 2021-09-10 02-00-17](https://user-images.githubusercontent.com/5402004/132807524-d612a7fb-439d-4c13-b53e-6dc845b161b9.png)
+![Screenshot from 2021-09-10 02-00-08](https://user-images.githubusercontent.com/5402004/132807537-a2cb664b-a236-42a6-8f47-fc1ef18f9db0.png)
