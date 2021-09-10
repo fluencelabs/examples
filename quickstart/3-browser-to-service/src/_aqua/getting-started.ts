@@ -71,7 +71,7 @@ export async function sayHello(client: FluenceClient, targetPeerId: string, targ
     (seq
      (call targetRelayPeerId ("op" "noop") [])
      (xor
-      (call targetPeerId ("HelloPeer" "hello") [%init_peer_id%] res)
+      (call targetPeerId ("HelloPeer" "hello") [comp.$.msg!] res)
       (seq
        (seq
         (call targetRelayPeerId ("op" "noop") [])
