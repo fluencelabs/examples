@@ -4,13 +4,14 @@ import "./App.scss";
 
 import { createClient, FluenceClient } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
-import { sayHello } from "./_aqua/getting-started";
+import { sayHello, charCount } from "./_aqua/getting-started";
 
 const relayNodes = [krasnodar[0], krasnodar[1], krasnodar[2]];
 
 function App() {
   const [client, setClient] = useState<FluenceClient | null>(null);
   const [helloMessage, setHelloMessage] = useState<string | null>(null);
+  const [charCountMessage, setCharCountMessage] = useState<string | null>(null);
 
   const [peerIdInput, setPeerIdInput] = useState<string>("");
   const [relayPeerIdInput, setRelayPeerIdInput] = useState<string>("");
@@ -25,6 +26,13 @@ function App() {
           const [msg] = args;
           setHelloMessage(msg);
         });
+
+        client.callServiceHandler.onEvent("CharCountPeer", "char_count", (args) => {
+          // no computation is done inside the browser
+          const [msg] = args;
+          setCharCountMessage(msg);
+        });
+        
         setClient(client);
       })
       .catch((err) => console.log("Client initialization failed", err));
@@ -37,6 +45,11 @@ function App() {
     // Using aqua is as easy as calling a javascript funсtion
     const res = await sayHello(client!, peerIdInput, relayPeerIdInput);
     setHelloMessage(res);
+
+    const resCount = await charCount(client!, peerIdInput, relayPeerIdInput,res);
+    setCharCountMessage(resCount);;
+
+
   };
 
   const isConnected = client !== null;
@@ -132,6 +145,7 @@ function App() {
           <>
             <h2>Message</h2>
             <div> {helloMessage} </div>
+            <div>char count: {charCountMessage} </div>
           </>
         )}
       </div>

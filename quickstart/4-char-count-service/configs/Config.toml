@@ -1,0 +1,6 @@
+modules_dir = "artifacts/"
+
+[[module]]
+    name = "char_count"
+    mem_pages_count = 1
+    logger_enabled = false
