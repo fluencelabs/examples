@@ -3,10 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@fluencelabs/ipfs-execution-aqua": "file:../aqua",
     "@fluencelabs/fluence": "0.11.0",
     "@fluencelabs/fluence-network-environment": "1.0.10",
-    "@fluencelabs/aqua-lib": "0.1.14",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -24,6 +22,8 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
+    "compile-aqua": "aqua -i ./aqua -o ./src/generated",
+    "prebuild": "npm run compile-aqua",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -48,6 +48,9 @@
     ]
   },
   "devDependencies": {
-    "node-sass": "^6.0.1"
+    "node-sass": "^6.0.1",
+    "@fluencelabs/aqua": "0.3.0-225",
+    "@fluencelabs/aqua-ipfs": "0.4.2",
+    "@fluencelabs/aqua-lib": "0.1.14"
   }
 }

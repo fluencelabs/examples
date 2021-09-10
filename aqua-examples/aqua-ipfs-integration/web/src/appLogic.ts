@@ -5,8 +5,8 @@ import {
   deploy_service,
   put_file_size,
   remove_service,
-  get_external_api_multiaddr,
-} from "@fluencelabs/ipfs-execution-aqua";
+} from "./generated/process";
+import { get_external_api_multiaddr } from "./generated/exports";
 import {
   isConnectedState,
   rpcAddrState,
