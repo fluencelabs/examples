@@ -17,7 +17,7 @@ function App() {
 
   const connect = async (relayPeerId: string) => {
     try {
-      await FluencePeer.default.init({ connectTo: relayPeerId });
+      await Fluence.start({ connectTo: relayPeerId });
       setIsConnected(true);
       // Register handler for this call in aqua:
       // HelloPeer.hello(%init_peer_id%)

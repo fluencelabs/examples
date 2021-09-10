@@ -39,7 +39,7 @@ export const useClientConnect = () => {
 
   const connect = async (relayPeerId: string) => {
     try {
-      await FluencePeer.default.init({ connectTo: relayPeerId });
+      await Fluence.start({ connectTo: relayPeerId });
       setIsConnected(true);
       setRelay(FluencePeer.default.connectionInfo.connectedRelay);
       setSelfPeerId(FluencePeer.default.connectionInfo.selfPeerId);

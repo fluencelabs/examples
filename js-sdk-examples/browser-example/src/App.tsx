@@ -2,27 +2,23 @@ import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.scss";
 
-import { FluencePeer } from "@fluencelabs/fluence";
+import { Fluence } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 import { getRelayTime } from "./_aqua/getting-started";
 
 const relayNode = krasnodar[0];
 
 function App() {
-  const [isConnected, setIsConnected] = useState<boolean>(false);
   const [relayTime, setRelayTime] = useState<Date | null>(null);
 
 
   useEffect(() => {
-    FluencePeer.default.init({ connectTo: relayNode })
-      .then(() => {
-        setIsConnected(true);
-      })
+    Fluence.start({ connectTo: relayNode })
       .catch((err) => console.log("Client initialization failed", err));
-  }, [isConnected]);
+  }, []);
 
   const onGetRelayTimeBtnClick = async () => {
-    if (!isConnected) {
+    if (!Fluence.getStatus().isConnected) {
       return;
     }
 
@@ -30,6 +26,8 @@ function App() {
     setRelayTime(new Date(time));
   };
 
+
+  const isConnected = Fluence.getStatus().isConnected
 
   return (
     <div className="App">

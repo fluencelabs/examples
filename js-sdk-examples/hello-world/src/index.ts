@@ -1,8 +1,8 @@
-import { FluencePeer } from "@fluencelabs/fluence";
+import { Fluence } from "@fluencelabs/fluence";
 import { registerHelloWorld, sayHello } from "./_aqua/hello-world";
 
 async function main() {
-  await FluencePeer.default.init();
+  await Fluence.start();
 
   registerHelloWorld({
     hello: async (str) => {
@@ -12,7 +12,7 @@ async function main() {
 
   await sayHello();
 
-  await FluencePeer.default.uninit();
+  await Fluence.stop();
 }
 
 main();

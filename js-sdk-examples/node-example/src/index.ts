@@ -1,4 +1,4 @@
-import { FluencePeer } from "@fluencelabs/fluence";
+import { Fluence } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 import { registerCalc, CalcDef } from "./_aqua/calc";
 
@@ -41,19 +41,19 @@ const keypress = async () => {
 };
 
 async function main() {
-  await FluencePeer.default.init({
+  await Fluence.start({
     connectTo: krasnodar[0],
   });
 
   registerCalc(new Calc());
 
   console.log("application started");
-  console.log("peer id is: ", FluencePeer.default.connectionInfo.selfPeerId);
-  console.log("relay is: ", FluencePeer.default.connectionInfo.connectedRelay);
+  console.log("peer id is: ", Fluence.getStatus().peerId);
+  console.log("relay is: ", Fluence.getStatus().relayPeerId);
   console.log("press any key to continue");
   await keypress();
 
-  await FluencePeer.default.uninit();
+  await Fluence.stop();
 }
 
 main();

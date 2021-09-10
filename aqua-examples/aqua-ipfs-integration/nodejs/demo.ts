@@ -42,7 +42,7 @@ async function main(environment: Node[]) {
   console.log("📗 swarmAddr", swarmAddr);
   console.log("📗 rpcAddr", rpcAddr);
 
-  await FluencePeer.default.init({ connectTo: environment[1] });
+  await Fluence.start({ connectTo: environment[1] });
   console.log(
     "📗 created a fluence client %s with relay %s",
     FluencePeer.default.connectionInfo.selfPeerId,

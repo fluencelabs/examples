@@ -44,7 +44,7 @@ mean_topo = {
 async function main() {
   console.log("hello crypto investors");
   // setLogLevel('DEBUG');
-  await FluencePeer.default.init({ connectTo: krasnodar[2] });
+  await Fluence.start({ connectTo: krasnodar[2] });
   console.log(
     "created a fluence client %s with relay %s",
     FluencePeer.default.connectionInfo.selfPeerId,
