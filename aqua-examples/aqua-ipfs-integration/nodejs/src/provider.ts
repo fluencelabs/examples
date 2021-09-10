@@ -6,17 +6,17 @@ import { FluencePeer } from "@fluencelabs/fluence";
 import {
   get_external_api_multiaddr,
   get_external_swarm_multiaddr,
-} from "./generated/exports";
+} from "@fluencelabs/ipfs-execution-aqua";
 
 export async function provideFile(
   source: any,
   provider: FluencePeer
 ): Promise<{ file: AddResult; swarmAddr: string; rpcAddr: string }> {
-  const relayPeerId = provider.connectionInfo.connectedRelay!;
+  const relayPeerId = provider.getStatus().relayPeerId!;
   let swarmAddr;
   let result = await get_external_swarm_multiaddr(
     provider,
-    provider.connectionInfo.connectedRelay!,
+    provider.getStatus().relayPeerId!,
     { ttl: 20000 }
   );
   if (result.success) {
@@ -24,7 +24,7 @@ export async function provideFile(
   } else {
     console.error(
       "Failed to retrieve external swarm multiaddr from %s: ",
-      provider.connectionInfo.connectedRelay!
+      provider.getStatus().relayPeerId!
     );
     throw result.error;
   }

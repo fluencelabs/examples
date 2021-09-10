@@ -1,4 +1,4 @@
-import { FluencePeer } from "@fluencelabs/fluence";
+import { Fluence } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
 import {
@@ -24,7 +24,7 @@ export const relayNodes = [krasnodar[0], krasnodar[1], krasnodar[2]];
 
 const requestRpcAddr = async () => {
   let result = await get_external_api_multiaddr(
-    FluencePeer.default.connectionInfo.connectedRelay!
+    Fluence.getStatus().relayPeerId!
   );
   console.log("getRpcAddr result", result);
   let rpcAddr = result.multiaddr;
@@ -41,8 +41,8 @@ export const useClientConnect = () => {
     try {
       await Fluence.start({ connectTo: relayPeerId });
       setIsConnected(true);
-      setRelay(FluencePeer.default.connectionInfo.connectedRelay);
-      setSelfPeerId(FluencePeer.default.connectionInfo.selfPeerId);
+      setRelay(Fluence.getStatus().relayPeerId!);
+      setSelfPeerId(Fluence.getStatus().peerId!);
       const addr = await requestRpcAddr();
       setRpcAddr(addr!);
     } catch (err) {

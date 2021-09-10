@@ -16,7 +16,7 @@
 
 import { provideFile } from "./provider";
 
-import { FluencePeer, setLogLevel } from "@fluencelabs/fluence";
+import { Fluence, FluencePeer, setLogLevel } from "@fluencelabs/fluence";
 import {
   stage,
   krasnodar,
@@ -27,15 +27,16 @@ import {
   deploy_service,
   put_file_size,
   remove_service,
-} from "./generated/process";
-import { set_timeout } from "./generated/exports";
+  set_timeout,
+} from "@fluencelabs/ipfs-execution-aqua";
+
 import { globSource, urlSource } from "ipfs-http-client";
 
 async function main(environment: Node[]) {
   // setLogLevel('DEBUG');
   let providerHost = environment[0];
   let providerClient = new FluencePeer();
-  await providerClient.init({ connectTo: providerHost });
+  await providerClient.start({ connectTo: providerHost });
   console.log("📘 uploading .wasm to node %s", providerHost.multiaddr);
   let path = globSource("../service/artifacts/process_files.wasm");
   let { file, swarmAddr, rpcAddr } = await provideFile(path, providerClient);
@@ -45,8 +46,8 @@ async function main(environment: Node[]) {
   await Fluence.start({ connectTo: environment[1] });
   console.log(
     "📗 created a fluence client %s with relay %s",
-    FluencePeer.default.connectionInfo.selfPeerId,
-    FluencePeer.default.connectionInfo.connectedRelay
+    Fluence.getStatus().peerId,
+    Fluence.getStatus().relayPeerId
   );
 
   // default IPFS timeout is 1 sec, set to 10 secs to retrieve file from remote node
