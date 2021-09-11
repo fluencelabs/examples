@@ -22,13 +22,6 @@ function App() {
   const isDeployed = useRecoilValue(isDeployedState);
   const hasResult = useRecoilValue(hasResultState);
 
-  console.log(
-    "isConnected gotRpcAddr deployed\n",
-    isConnected,
-    gotRpcAddr,
-    isDeployed
-  );
-
   return (
     <div className="App">
       <header>

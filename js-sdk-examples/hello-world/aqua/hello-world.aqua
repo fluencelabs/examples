@@ -1,0 +1,12 @@
+import Peer from "@fluencelabs/aqua-lib/builtin.aqua"
+
+service HelloWorld("hello-world"):
+    hello(str: string)
+
+func sayHello():
+    HelloWorld.hello("Hello, world!")
+
+func getRelayTime() -> u64:
+    on HOST_PEER_ID:
+        ts <- Peer.timestamp_ms()
+    <- ts

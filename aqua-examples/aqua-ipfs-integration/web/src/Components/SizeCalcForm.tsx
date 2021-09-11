@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { useGetFileSize } from "../appLogic";
 import { fileCIDState, rpcAddrState } from "../appState";
 import { TextInput } from "./TextInput";

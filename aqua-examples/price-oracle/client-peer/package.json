@@ -14,12 +14,12 @@
   ],
   "dependencies": {
     "@fluencelabs/aqua-lib": "^0.1.9",
-    "@fluencelabs/fluence": "^0.9.53",
+    "@fluencelabs/fluence": "^0.11.0",
     "@fluencelabs/fluence-network-environment": "^1.0.10",
     "it-all": "^1.0.5"
   },
   "scripts": {
-    "compile-aqua": "aqua -i ../aqua-scripts -o .",
+    "compile-aqua": "aqua -i ../aqua-scripts -o src/_aqua",
     "prebuild": "npm run compile-aqua",
     "build": "tsc",
     "prestart:local": "npm run build",
@@ -43,7 +43,7 @@
   },
   "homepage": "git+https://github.com/fluencelabs/examples/aqua-examples/price-oracle#readme",
   "devDependencies": {
-    "@fluencelabs/aqua": "0.1.14-207",
+    "@fluencelabs/aqua": "^0.3.0-226",
     "typescript": "^3.9.5"
   }
 }

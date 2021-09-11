@@ -1,0 +1,8 @@
+service Calc("calc"):
+    add(n: f32)
+    subtract(n: f32)
+    multiply(n: f32)
+    divide(n: f32)
+    reset()
+    getResult() -> f32
+

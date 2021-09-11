@@ -1,0 +1,13 @@
+import "./calc.aqua"
+
+const PEER ?= "12D3KooWLBkw4Tz8bRoSriy5WEpHyWfU11jEK3b5yCa7FBRDRWH3"
+const RELAY ?= "12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e"
+
+func demoCalculation() -> f32:
+    on PEER via RELAY:
+        Calc.add(10)
+        Calc.multiply(5)
+        Calc.subtract(8)
+        Calc.divide(6)
+        res <- Calc.getResult()
+    <- res
