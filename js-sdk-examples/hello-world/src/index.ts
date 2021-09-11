@@ -1,8 +1,13 @@
 import { Fluence } from "@fluencelabs/fluence";
-import { registerHelloWorld, sayHello } from "./_aqua/hello-world";
+import { krasnodar } from "@fluencelabs/fluence-network-environment";
+import {
+  registerHelloWorld,
+  sayHello,
+  getRelayTime,
+} from "./_aqua/hello-world";
 
 async function main() {
-  await Fluence.start();
+  await Fluence.start({ connectTo: krasnodar[0] });
 
   registerHelloWorld({
     hello: async (str) => {
@@ -11,6 +16,10 @@ async function main() {
   });
 
   await sayHello();
+
+  const relayTime = await getRelayTime();
+
+  console.log("The relay time is: ", new Date(relayTime).toLocaleString());
 
   await Fluence.stop();
 }

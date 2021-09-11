@@ -142,3 +142,72 @@ export function registerHelloWorld(peer: FluencePeer, serviceId: string, service
     return Promise.race([promise, Promise.resolve()]);
 }
       
+
+
+ export function getRelayTime(config?: {ttl?: number}) : Promise<number>;
+ export function getRelayTime(peer: FluencePeer, config?: {ttl?: number}) : Promise<number>;
+ export function getRelayTime(...args: any) {
+     let peer: FluencePeer;
+     
+     let config: any;
+     if (FluencePeer.isInstance(args[0])) {
+         peer = args[0];
+         config = args[1];
+     } else {
+         peer = Fluence.getPeer();
+         config = args[0];
+     }
+    
+     let request: RequestFlow;
+     const promise = new Promise<number>((resolve, reject) => {
+         const r = new RequestFlowBuilder()
+                 .disableInjections()
+                 .withRawScript(
+                     `
+     (xor
+ (seq
+  (seq
+   (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+   (xor
+    (call -relay- ("peer" "timestamp_ms") [] ts)
+    (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+   )
+  )
+  (xor
+   (call %init_peer_id% ("callbackSrv" "response") [ts])
+   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+  )
+ )
+ (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+)
+
+                 `,
+                 )
+                 .configHandler((h) => {
+                     h.on('getDataSrv', '-relay-', () => {
+                    return peer.getStatus().relayPeerId;
+                });
+                
+                h.onEvent('callbackSrv', 'response', (args) => {
+    const [res] = args;
+  resolve(res);
+});
+
+                h.onEvent('errorHandlingSrv', 'error', (args) => {
+                    const [err] = args;
+                    reject(err);
+                });
+            })
+            .handleScriptError(reject)
+            .handleTimeout(() => {
+                reject('Request timed out for getRelayTime');
+            })
+        if(config && config.ttl) {
+            r.withTTL(config.ttl)
+        }
+        request = r.build();
+    });
+    peer.internals.initiateFlow(request!);
+    return promise;
+}
+      
