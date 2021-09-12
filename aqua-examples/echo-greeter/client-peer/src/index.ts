@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { setLogLevel, FluencePeer } from "@fluencelabs/fluence";
+import { setLogLevel, Fluence, FluencePeer } from "@fluencelabs/fluence";
 import { krasnodar, Node } from "@fluencelabs/fluence-network-environment";
 import {
   echo,
@@ -94,8 +94,8 @@ async function main() {
   await Fluence.start({ connectTo: krasnodar[2] });
   console.log(
     "created a fluence client %s with relay %s",
-    FluencePeer.default.connectionInfo.selfPeerId,
-    FluencePeer.default.connectionInfo.connectedRelay
+    Fluence.getStatus().peerId,
+    Fluence.getStatus().relayPeerId
   );
 
   let echo_result = await echo(
