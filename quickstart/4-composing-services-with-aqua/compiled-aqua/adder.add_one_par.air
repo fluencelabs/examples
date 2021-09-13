@@ -1,0 +1,45 @@
+(xor
+ (seq
+  (seq
+   (seq
+    (seq
+     (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+     (call %init_peer_id% ("getDataSrv" "value") [] value)
+    )
+    (call %init_peer_id% ("getDataSrv" "ns_tuples") [] ns_tuples)
+   )
+   (fold ns_tuples ns
+    (par
+     (seq
+      (seq
+       (seq
+        (seq
+         (call -relay- ("op" "noop") [])
+         (xor
+          (seq
+           (call -relay- ("op" "noop") [])
+           (call ns.$.node_id! (ns.$.service_id! "add_one") [value] $res)
+          )
+          (seq
+           (call -relay- ("op" "noop") [])
+           (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+          )
+         )
+        )
+        (call -relay- ("op" "noop") [])
+       )
+       (call %init_peer_id% ("op" "identity") [$res.$.[2]!])
+      )
+      (call %init_peer_id% ("op" "noop") [])
+     )
+     (next ns)
+    )
+   )
+  )
+  (xor
+   (call %init_peer_id% ("callbackSrv" "response") [$res])
+   (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+  )
+ )
+ (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+)
