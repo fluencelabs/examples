@@ -394,14 +394,14 @@ config = args[2];
   (seq
    (seq
     (seq
-     (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-     (call %init_peer_id% ("getDataSrv" "value") [] value)
-    )
-    (call %init_peer_id% ("getDataSrv" "ns_tuples") [] ns_tuples)
-   )
-   (fold ns_tuples ns
-    (par
      (seq
+      (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+      (call %init_peer_id% ("getDataSrv" "value") [] value)
+     )
+     (call %init_peer_id% ("getDataSrv" "ns_tuples") [] ns_tuples)
+    )
+    (fold ns_tuples ns
+     (par
       (seq
        (seq
         (seq
@@ -419,13 +419,13 @@ config = args[2];
         )
         (call -relay- ("op" "noop") [])
        )
-       (call %init_peer_id% ("op" "identity") [$res.$.[2]!])
+       (call %init_peer_id% ("op" "noop") [])
       )
-      (call %init_peer_id% ("op" "noop") [])
+      (next ns)
      )
-     (next ns)
     )
    )
+   (call %init_peer_id% ("op" "identity") [$res.$.[2]!])
   )
   (xor
    (call %init_peer_id% ("callbackSrv" "response") [$res])
@@ -494,12 +494,12 @@ config = args[1];
  (seq
   (seq
    (seq
-    (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-    (call %init_peer_id% ("getDataSrv" "payload") [] payload)
-   )
-   (fold payload vns
-    (par
-     (seq
+    (seq
+     (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+     (call %init_peer_id% ("getDataSrv" "payload") [] payload)
+    )
+    (fold payload vns
+     (par
       (seq
        (seq
         (seq
@@ -517,13 +517,13 @@ config = args[1];
         )
         (call -relay- ("op" "noop") [])
        )
-       (call %init_peer_id% ("op" "identity") [$res.$.[2]!])
+       (call %init_peer_id% ("op" "noop") [])
       )
-      (call %init_peer_id% ("op" "noop") [])
+      (next vns)
      )
-     (next vns)
     )
    )
+   (call %init_peer_id% ("op" "identity") [$res.$.[2]!])
   )
   (xor
    (call %init_peer_id% ("callbackSrv" "response") [$res])

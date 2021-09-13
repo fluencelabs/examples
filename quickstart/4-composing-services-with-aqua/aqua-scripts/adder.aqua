@@ -39,7 +39,7 @@ func add_one_par(value: u64, ns_tuples: []NodeServiceTuple) -> []u64:
         on ns.node_id:
             AddOne ns.service_id
             res <- AddOne.add_one(value)
-        MyOp.identity(res!2)
+    MyOp.identity(res!2)
     <- res
 
 data ValueNodeService:
@@ -53,5 +53,5 @@ func add_one_par_alt(payload: []ValueNodeService) -> []u64:
         on vns.node_id:
             AddOne vns.service_id
             res <- AddOne.add_one(vns.value)
-        MyOp.identity(res!2)
+    MyOp.identity(res!2)
     <- res
