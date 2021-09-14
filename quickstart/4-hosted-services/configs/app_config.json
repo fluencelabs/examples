@@ -1,0 +1,18 @@
+{
+	"services": {
+		"character_count_compute": {
+			"dependencies": ["character_count"],
+			"node": "12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf"
+		}
+	},
+	"modules": {
+		"character_count_compute": {
+			"file": "artifacts/character_count.wasm",
+            "config": {
+				"preopened_files": []
+			}
+		}
+	},
+	"scripts": {},
+	"script_storage": {}
+}

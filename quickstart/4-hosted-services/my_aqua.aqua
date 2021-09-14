@@ -1,0 +1,8 @@
+module CharacterCount declares *
+
+data CharacterCount:
+  message: string
+  character_count: string
+
+service CharacterCount:
+  count(message: string) -> CharacterCount 
