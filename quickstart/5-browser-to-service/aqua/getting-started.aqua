@@ -1,0 +1,29 @@
+import "@fluencelabs/aqua-lib/builtin.aqua"
+
+const characterCountNodePeerId ?= "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi"
+const characterCountServiceId ?= "25ffcd85-d73d-4a39-91a4-a8ed9e0a6483"
+
+data CharacterCount:
+  message: string
+  character_count: string
+
+-- The service runs on a Fluence node
+service CharacterCount:
+    count(message: string) -> CharacterCount
+
+-- The service runs inside browser
+service CountPeer("CountPeer"):
+    count(message: string) -> string
+
+func countCharacter(targetPeerId: PeerId, targetRelayPeerId: PeerId, message: string) -> string:
+    -- execute computation on a Peer in the network
+    on characterCountNodePeerId:
+        CharacterCount characterCountServiceId
+        comp <- CharacterCount.count(message)
+
+    -- send the result to target browser in the background
+    co on targetPeerId via targetRelayPeerId:
+        res <- CountPeer.count(message)
+
+    -- send the result to the initiator
+    <- comp.character_count
