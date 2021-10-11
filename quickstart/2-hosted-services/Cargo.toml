@@ -11,7 +11,7 @@ name = "hello_world"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = "0.6.11"
+marine-rs-sdk = "0.6.14"
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.2.0"
+marine-rs-sdk-test = "0.3.0"
