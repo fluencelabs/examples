@@ -499,9 +499,10 @@ result: String("Ok")
 You can build, inspect and test the project as outlined in the [Greeting Example](#Greeting-Example).
 
 ## Multiservice Marine Test example
-In the examples above we used the `marine_test` macro to test a service. This example illustrates another ability of the `marine_test` macro: it allows testing several services at once. To show that we will create couple of services:
-a producer service which will create some data, and consumer service which will process the data. Then write a test that ensures that if we pass data through this pipeline it will correcty processed.
-We created two services: the producer, which generates some data, and a consumer, which processes data from the producer and returns a result. Let's look at the code now:
+In the examples above we used the `marine_test` macro to test a service. This example illustrates another ability of the `marine_test` macro: testing several services at once. To show that we will create couple of services:
+a producer service which will create some data, and a consumer service which will process the data. Then write a test that ensures that the consumer properly processed data from the producer.
+
+Let's look at the services and test now:
 
 Producer:
 ```rust
@@ -553,7 +554,9 @@ pub fn consume(data: Data) -> String {
 }
 ```
 
-Both define some interface structures and functions that use them. The test will show what we can to with them:
+There is nothing special.
+
+The test will show what we can do with them:
 ```rust
 fn main() {}
 
@@ -583,7 +586,9 @@ mod tests {
     }
 }
 ```
-We describe the services as named pairs of config file and directory with .wasm files(1), then in test function we create services(2). Please note, that each service creates its own `marine` runtime. Then, we create a structure(3) to pass it to a function from interface of `producer` service(4) and finally pass its result to the `consumer` service. The `ServiceInterface` and interface structures are accessed through `marine_test_env` — the module defined by the `marine_test` macro. The functions in turn are accessed through the `ServiceInterace` instance.
+As the `marine_test` needs only compiled .wasm files and not the code, the test can be in any project. In this case the test is in a separate crate.
+
+We describe the services as named pairs of config file and directory with .wasm files(1), then in test function we create services(2). Please note, that each service creates its own `marine` runtime. Then, we create a structure(3) to pass it to a function from interface of producer service(4) and finally pass its result to the consumer service. The `ServiceInterface` and interface structures are accessed through `marine_test_env` — the module defined by the `marine_test` macro. The functions in turn are accessed through the `ServiceInterace` instance.
 
 Now we can build services:
 ```shell
