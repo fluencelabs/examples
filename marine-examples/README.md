@@ -583,7 +583,7 @@ mod tests {
     }
 }
 ```
-We describe the services as named pairs for config file and directory with .wasm files(1), then in test function we create services(2). Then, we create a structure(3) to pass it to a function from interface of `producer` service(4) and finally pass its result to the `consumer` service. The `ServiceInterface` and interface structures are accessed through `marine_test_env` — the module defined by the `marine_test` macro. The functions in turn are accessed through the `ServiceInterace` instance.
+We describe the services as named pairs of config file and directory with .wasm files(1), then in test function we create services(2). Please note, that each service creates its own `marine` runtime. Then, we create a structure(3) to pass it to a function from interface of `producer` service(4) and finally pass its result to the `consumer` service. The `ServiceInterface` and interface structures are accessed through `marine_test_env` — the module defined by the `marine_test` macro. The functions in turn are accessed through the `ServiceInterace` instance.
 
 Now we can build services:
 ```shell
@@ -602,8 +602,45 @@ test tests::test ... ok
 
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.59s
 
-
 ```
+
+We can do the same in the `mrepl`. But doing it to test services during the development will be a huge pain.
+First, pass data to the producer:
+```shell
+$ cd producer
+$ mrepl Config.toml
+Welcome to the Marine REPL (version 0.9.1)
+Minimal supported versions
+  sdk: 0.6.0
+  interface-types: 0.20.0
+
+app service was created with service id = 8032487e-3348-406d-8fc7-02b927acb932
+elapsed time 85.863792ms
+
+
+1> call producer produce [{"first_name": "John", "last_name": "Doe"}]
+result: Object({"name": String("John Doe")})
+ elapsed time: 16.718ms
+```
+
+Second, pass the result to the consumer:
+```shell
+$ cd ../consumer
+$ mrepl Config.toml
+Welcome to the Marine REPL (version 0.9.1)
+Minimal supported versions
+  sdk: 0.6.0
+  interface-types: 0.20.0
+
+app service was created with service id = f4a1e021-07e3-42e0-8dcb-66cfc69e3ee7
+elapsed time 78.382834ms
+
+1> call consumer consume [{"name": "John Doe"}]
+result: String("John Doe")
+ elapsed time: 4.946209ms
+```
+
+S
 
 ## Deploying Services
 
