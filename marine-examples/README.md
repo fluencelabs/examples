@@ -498,6 +498,112 @@ result: String("Ok")
 
 You can build, inspect and test the project as outlined in the [Greeting Example](#Greeting-Example).
 
+## Multiservice Marine Test example
+In the examples above we used the `marine_test` macro to test a service. This example illustrates another ability of the `marine_test` macro: it allows testing several services at once. To show that we will create couple of services:
+a producer service which will create some data, and consumer service which will process the data. Then write a test that ensures that if we pass data through this pipeline it will correcty processed.
+We created two services: the producer, which generates some data, and a consumer, which processes data from the producer and returns a result. Let's look at the code now:
+
+Producer:
+```rust
+use marine_rs_sdk::marine;
+use marine_rs_sdk::module_manifest;
+
+module_manifest!();
+
+pub fn main() {}
+
+#[marine]
+pub struct Data {
+    pub name: String,
+}
+
+#[marine]
+pub struct Input {
+    pub first_name: String,
+    pub last_name: String,
+}
+
+#[marine]
+pub fn produce(data: Input) -> Data {
+    Data {
+        name: format!("{} {}", data.first_name, data.last_name),
+    }
+}
+```
+
+The only new thing here is `#[marine]` on a struct. This adds the structure into module interface and requires all the fields to be supported by default or be another `#[marine]` structure. There is more information about it in [docs](https://doc.fluence.dev/docs/knowledge_aquamarine/marine/marine-rs-sdk#function-export). 
+
+Consumer:
+```rust
+use marine_rs_sdk::marine;
+use marine_rs_sdk::module_manifest;
+
+module_manifest!();
+
+pub fn main() {}
+
+#[marine]
+pub struct Data {
+    pub name: String,
+}
+
+#[marine]
+pub fn consume(data: Data) -> String {
+    data.name
+}
+```
+
+Both define some interface structures and functions that use them. The test will show what we can to with them:
+```rust
+fn main() {}
+
+#[cfg(test)]
+mod tests {
+    use marine_rs_sdk_test::marine_test;
+    #[marine_test(
+        producer(
+            config_path = "../producer/Config.toml",                           // <- 1
+            modules_dir = "../producer/artifacts"
+        ),
+        consumer(
+            config_path = "../consumer/Config.toml",
+            modules_dir = "../consumer/artifacts"
+        )
+    )]
+    fn test() {
+        let mut producer = marine_test_env::producer::ServiceInterface::new(); // <- 2
+        let mut consumer = marine_test_env::consumer::ServiceInterface::new();
+        let input = marine_test_env::producer::Input {                         // <- 3
+            first_name: String::from("John"),
+            last_name: String::from("Doe"),
+        };
+        let data = producer.produce(input);                                    // <- 4
+        let result = consumer.consume(data);                                   // <- 5
+        assert_eq!(result, "John Doe")
+    }
+}
+```
+We describe the services as named pairs for config file and directory with .wasm files(1), then in test function we create services(2). Then, we create a structure(3) to pass it to a function from interface of `producer` service(4) and finally pass its result to the `consumer` service. The `ServiceInterface` and interface structures are accessed through `marine_test_env` — the module defined by the `marine_test` macro. The functions in turn are accessed through the `ServiceInterace` instance.
+
+Now we can build services:
+```shell
+cd multiservice_marine_test
+./build.sh
+```
+
+And run the test:
+```shell
+$ cargo test
+    Finished test [unoptimized + debuginfo] target(s) in 0.25s
+     Running unittests (target/debug/deps/multiservice_marine_test-533b3dcdcf22d98d)
+
+running 1 test
+test tests::test ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.59s
+
+
+```
 
 ## Deploying Services
 
