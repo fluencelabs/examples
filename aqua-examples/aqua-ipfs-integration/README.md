@@ -19,7 +19,7 @@ You need npm v7 or later to run the examples
 
 ```
 npm i
-npm build -w aqua
+npm run build -w aqua
 npm start -w web
 ```
 
@@ -30,7 +30,7 @@ npm start -w web
 
 ```
 npm i
-npm build -w aqua
+npm run build -w aqua
 npm start -w nodejs
 ```
 
