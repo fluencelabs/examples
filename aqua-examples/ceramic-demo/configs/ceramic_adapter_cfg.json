@@ -1,7 +1,7 @@
 {
   "name": "ceramic_adapter",
   "mountedBinaries": {
-    "ceramic": "root/.nvm/versions/node/v14.17.0/bin/ceramic"
+    "ceramic": "/usr/bin/ceramic""
   },
   "mem_page_count": 100,
   "logger_enabled": false
