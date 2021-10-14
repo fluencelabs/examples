@@ -1,0 +1,85 @@
+kjzl6cwe1jw14b4395tqak897qks1f87ljtkkoaop4133wdsire65g0tzol8zaa
+eraStreamID(kjzl6cwe1jw14b4395tqak897qks1f87ljtkkoaop4133wdsire65g0tzol8zaa)
+
+
+commit:
+
+ceramic commits%                                                                mbp16~/localdev(:|✔) % ceramic commits kjzl6cwe1jw14b4395tqak897qks1f87ljtkkoaop4133wdsire65g0tzol8zaa
+[
+  "k3y52l7qbv1fryn1355fez3upj0zre4ae18yab0rzmknq3qa2tesrqpxx9qv3ux34",
+  "k6zn3rc3v8qin273e8dy6fftce0s2pe6w9yo2o2ebaz3i0r1onkflgr2wvycxpja9ov4dsqgx4zpw0shihnafw3dlq5lv2qs0q1mpoqfrj996ooh3q0utj7"
+]
+
+
+
+
+StreamID(kjzl6cwe1jw14b9zk6i99zoupa7odnn3r9ftwfh7iocgrgvep6jfbhe3ko8a7jf)
+{
+  "proposal": "https://ipfs.fleek.co/ipfs/Qmd6o2bFhuN2pkXa3qTW32zAcKHwhvz5pcj5rs1NzPcJcx"
+}
+
+
+
+ceramic create tile --content '{"proposal":"https://ipfs.fleek.co/ipfs/Qmd6o2bFhuN2pkXa3qTW32zAcKHwhvz5pcj5rs1NzPcJcx"}' --schema k3y52l7qbv1fryn1355fez3upj0zre4ae18yab0rzmknq3qa2tesrqpxx9qv3ux34
+StreamID(kjzl6cwe1jw14b9zk6i99zoupa7odnn3r9ftwfh7iocgrgvep6jfbhe3ko8a7jf)
+{
+  "proposal": "https://ipfs.fleek.co/ipfs/Qmd6o2bFhuN2pkXa3qTW32zAcKHwhvz5pcj5rs1NzPcJcx"
+}
+
+
+
+ceramic create tile --content '{"proposal":"https://ipfs.fleek.co/ipfs/Qmd6o2bFhuN2pkXa3qTW32zAcKHwhvz5pcj5rs1NzPcJcx"}' --schema k3y52l7qbv1fryn1355fez3upj0zre4ae18yab0rzmknq3qa2tesrqpxx9qv3ux34
+StreamID(kjzl6cwe1jw14b9zk6i99zoupa7odnn3r9ftwfh7iocgrgvep6jfbhe3ko8a7jf)
+{
+  "proposal": "https://ipfs.fleek.co/ipfs/Qmd6o2bFhuN2pkXa3qTW32zAcKHwhvz5pcj5rs1NzPcJcx"
+
+
+
+
+
+
+
+ceramic create tile --content '{"proposal":"https://ipfs.fleek.co/ipfs/Qmd6o2bFhuN2pkXa3qTW32zAcKHwhvz5pcj5rs1NzPcJcx"}' --schema k3y52l7qbv1fryn1355fez3upj0zre4ae18yab0rzmknq3qa2tesrqpxx9qv3ux34
+StreamID(kjzl6cwe1jw14946s42j0ew60kmmw5g0tzc28ceat2algr49l7bb8shv30zd2h3)
+{
+  "proposal": "https://ipfs.fleek.co/ipfs/Qmd6o2bFhuN2pkXa3qTW32zAcKHwhvz5pcj5rs1NzPcJcx"
+}
+
+
+
+ceramic state kjzl6cwe1jw14946s42j0ew60kmmw5g0tzc28ceat2algr49l7bb8shv30zd2h3
+{
+  "type": 0,
+  "content": {
+    "proposal": "https://ipfs.fleek.co/ipfs/Qmd6o2bFhuN2pkXa3qTW32zAcKHwhvz5pcj5rs1NzPcJcx"
+  },
+  "metadata": {
+    "schema": "k3y52l7qbv1fryn1355fez3upj0zre4ae18yab0rzmknq3qa2tesrqpxx9qv3ux34",
+    "unique": "USgiCW4TyR3dax1w",
+    "controllers": [
+      "did:key:z6Mkupzc4V3f7RiQCzjxVqqqRXbkmuAdN38oPqATcyWq2HaN"
+    ]
+  },
+  "signature": 2,
+  "anchorStatus": "ANCHORED",
+  "log": [
+    {
+      "cid": "bagcqceratishgp6t3ffgdxhwxqj6cnglwrc7ukg64jqdtybpawpgzrjsiddq",
+      "type": 0
+    },
+    {
+      "cid": "bafyreidncrcks36g6yctlr743ouygvtdg7657xe4gf2brmmx4etjysrhxi",
+      "type": 2,
+      "timestamp": 1629951384
+    }
+  ],
+  "anchorProof": {
+    "root": "bafyreidpqmfi2enod635viwxmixzfe2qdoon5hdlkowdot6r5bhwovaamy",
+    "txHash": "bagjqcgzaplsuv3z3nuqw3n6mai4cjvujczgqjjfetqnh3nczjav2gsaurjmq",
+    "chainId": "eip155:3",
+    "blockNumber": 10910933,
+    "blockTimestamp": 1629951384
+  },
+  "doctype": "tile"
+}
+mbp16~/localdev(:|✔) %
