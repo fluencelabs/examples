@@ -19,7 +19,7 @@ use marine_rs_sdk::{module_manifest, WasmLoggerBuilder};
 module_manifest!();
 
 pub mod ceramic_cli;
-// pub mod ceramic_http;
+pub mod ceramic_http;
 
 pub fn main() {
     // WasmLoggerBuilder::new().build().ok();
