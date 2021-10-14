@@ -1,0 +1,18 @@
+modules_dir = "artifacts/"
+
+[[module]]
+name = "ceramic_adapter"
+mem_pages_count = 100
+logger_enabled = false
+
+[module.mounted_binaries]
+ceramic = "~/.nvm/versions/node/v14.16.0/bin/ceramic"
+
+
+[[module]]
+name = "curl_adpater"
+mem_pages_count = 100
+logger_enabled = false
+
+[module.mounted_binaries]
+curl = "/usr/bin/curl"

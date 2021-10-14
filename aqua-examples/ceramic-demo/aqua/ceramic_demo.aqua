@@ -1,0 +1,22 @@
+data CeramicResult:
+  ret_code: i32
+  stderr: string
+  stdout: string
+
+service CeramicAdapter("service-id"):
+  ceramic_request(args: []string) -> CeramicResult
+  create_schema(schema: string) -> CeramicResult
+  create_stream(payload: string) -> CeramicResult
+  show(stream_id: string) -> CeramicResult
+  state(stream_id: string) -> CeramicResult
+  update(stream_id: string, payload: string) -> CeramicResult
+
+
+func roundtrip(payload:string, payload_two: string, node:string, service_id:string) -> string, string:
+    on node:
+        CeramicAdapter service_id
+        create_res <- CeramicAdapter.create_stream(payload)
+        show_res <- CeramicAdapter.show(create_res.stdout)
+        update_res <- CeramicAdapter.update(create_res.stdout, payload_two)
+    <- create_res.stdout, update_res.stdout
+

@@ -1,0 +1,14 @@
+fldist --node-addr /ip4/127.0.0.1/tcp/9999/ws/p2p/12D3KooWArTLVH21SCfuiBxjmzgBupZLJFQpNVRNy6QRB78pAtMJ new_service --ms artifacts/curl_adapter.wasm:configs/curl_adapter_cfg.json --name curl-adapter --verbose
+client seed: HMjARnz5t3iET1dUQxWQjFM6JYhk5DGTiYU6ysUdMNg7
+client peerId: 12D3KooWDPduM82G3UXqv6eRmBkCRhuPsByahHwL7xEJ7GyuUNx1
+relay peerId: 12D3KooWArTLVH21SCfuiBxjmzgBupZLJFQpNVRNy6QRB78pAtMJ
+service id: 7ce71638-ae50-4d51-9523-89a432cc656b
+service created successfully
+
+
+fldist --node-addr /ip4/127.0.0.1/tcp/9999/ws/p2p/12D3KooWArTLVH21SCfuiBxjmzgBupZLJFQpNVRNy6QRB78pAtMJ new_service --ms artifacts/ceramic_adapter.wasm:configs/ceramic_adapter_cfg.json --name curl-adapter --verbose
+client seed: H8darUSvjod5whtZbx83ySK8yfrzexxgw5XFj5bh2nhq
+client peerId: 12D3KooWKD2RHXtFNBqaXfXehoUXtvvxDXXSDs65hhAXYaowRQYv
+relay peerId: 12D3KooWArTLVH21SCfuiBxjmzgBupZLJFQpNVRNy6QRB78pAtMJ
+service id: 805a3619-61fc-449b-bad2-233c83362369
+service created successfully

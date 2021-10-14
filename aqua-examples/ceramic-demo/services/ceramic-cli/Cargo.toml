@@ -1,0 +1,22 @@
+[package]
+name = "ceramic"
+version = "0.1.0"
+authors = ["boneyard93501 <4523011+boneyard93501@users.noreply.github.com>"]
+edition = "2018"
+description = "ceramic-adapter"
+license = "Apache-2.0"
+
+[[bin]]
+name = "ceramic_adapter"
+path = "src/main.rs"
+
+[dependencies]
+marine-rs-sdk = { version = "0.6.11", features = ["logger"] }
+log = "0.4.14"
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.1.11"
+
+[dev]
+[profile.release]
+opt-level = "s"
