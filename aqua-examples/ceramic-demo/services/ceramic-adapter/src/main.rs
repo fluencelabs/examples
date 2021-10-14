@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use marine_rs_sdk::{marine, module_manifest, MountedBinaryResult, WasmLoggerBuilder};
+use marine_rs_sdk::{module_manifest, WasmLoggerBuilder};
 
 module_manifest!();
 
@@ -24,20 +24,3 @@ pub mod ceramic_cli;
 pub fn main() {
     // WasmLoggerBuilder::new().build().ok();
 }
-/*
-#[marine]
-pub fn http_state(host: String, port: u32, payload: String) {
-    let url = format!("https://{}:{}/state");
-    let cmd = vec![url, "GET".to_string()];
-    let response = curl_request(cmd);
-}
-
-#[marine]
-pub fn http_show(url: String, stream_id: String) {}
-
-#[marine]
-#[link(wasm_import_module = "curl_adapter")]
-extern "C" {
-    pub fn curl_request(cmd: Vec<String>) -> MountedBinaryResult;
-}
-*/

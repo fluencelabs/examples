@@ -9,7 +9,7 @@ fn url_maker(host: String, port: u32) -> String {
 }
 
 #[marine]
-pub fn state(url: String, port: u32, payload: String) {
+pub fn http_state(url: String, port: u32, payload: String) {
     let url = url_maker(url, port);
     let cmd = vec![url, "GET".to_string()];
     let response = curl_request(cmd);
