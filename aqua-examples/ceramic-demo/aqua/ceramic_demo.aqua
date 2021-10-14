@@ -18,5 +18,11 @@ func roundtrip(payload:string, payload_two: string, node:string, service_id:stri
         create_res <- CeramicAdapter.create_stream(payload)
         show_res <- CeramicAdapter.show(create_res.stdout)
         update_res <- CeramicAdapter.update(create_res.stdout, payload_two)
-    <- create_res.stdout, update_res.stdout
+    -- <- create_res.stdout, update_res.stdout
+    <- create_res.stderr, update_res.stderr
 
+func create(payload:string, node:string, service_id:string) -> string:
+    on node:
+        CeramicAdapter service_id
+        create_res <- CeramicAdapter.create_stream(payload)
+    <- create_res.stderr
