@@ -590,6 +590,36 @@ As the `marine_test` needs only compiled .wasm files and not the code, the test 
 
 We describe the services as named pairs of config file and directory with .wasm files(1), then in test function we create services(2). Please note, that each service creates its own `marine` runtime. Then, we create a structure(3) to pass it to a function from interface of producer service(4) and finally pass its result to the consumer service. The `ServiceInterface` and interface structures are accessed through `marine_test_env` — the module defined by the `marine_test` macro. The functions in turn are accessed through the `ServiceInterace` instance.
 
+Also we can rewrite tests by applying `marine_test` to a `mod`:
+```rust
+#[cfg(test)]
+#[marine_rs_sdk_test::marine_test(
+    producer(
+        config_path = "../producer/Config.toml",
+        modules_dir = "../producer/artifacts"
+    ),
+    consumer(
+        config_path = "../consumer/Config.toml",
+        modules_dir = "../consumer/artifacts"
+    )
+)]
+mod tests_on_mod {
+    #[test]
+    fn test() {
+        let mut producer = marine_test_env::producer::ServiceInterface::new();
+        let mut consumer = marine_test_env::consumer::ServiceInterface::new();
+        let input = marine_test_env::producer::Input {
+            first_name: String::from("John"),
+            last_name: String::from("Doe"),
+        };
+        let data = producer.produce(input);
+        let result = consumer.consume(data);
+        assert_eq!(result, "John Doe")
+    }
+}
+```
+It defines one `marine_test_env` for the whole `mod`, so we can write utility functions that use types from `marine_test_env`, and we do not have to wrap each function in the macro.
+
 Now we can build services:
 ```shell
 cd multiservice_marine_test
@@ -645,7 +675,68 @@ result: String("John Doe")
  elapsed time: 4.946209ms
 ```
 
-S
+## build.rs test example
+There is another way to generate `marine_test_env` and use in tests: [cargo build scripts](https://doc.rust-lang.org/cargo/reference/build-scripts.html). In this example we will show how to use `marine-rs-sdk-test` to generate test environment and how to enable IDE support for generated files.
+
+Assume that we have Greeting example compiled, and we want to write tests for it using build.rs. Firstly, we need to write a build.rs file:
+```rust
+use marine_rs_sdk_test::generate_marine_test_env;
+use marine_rs_sdk_test::ServiceDescription;
+fn main() {
+    let services = vec![ // <- 1
+                         ("greeting".to_string(), ServiceDescription {
+                             config_path: "Config.toml".to_string(),
+                             modules_dir: Some("artifacts".to_string()),
+                         })
+    ];
+
+    let target = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+    if target != "wasm32" { // <- 2
+        generate_marine_test_env(services, "marine_test_env.rs", file!()); // <- 3
+    }
+
+    println!("cargo:rerun-if-changed=src/main.rs"); // <- 4
+}
+```
+and add `marine-rs-sdk-test` to build-dependencies section of `Cargo.toml`:
+```toml
+[build-dependencies]
+marine-rs-sdk-test = "0.4.0"
+```
+So, what do we see here:
+1. We created pairs (name, description) for services
+2. We checked if we are compiling to wasm32 target. It is needed when service and tests are in one crate: `build.rs` runs before the crate compilation, and it depends on compilation result. So, we work around this issue using that service is compiled to wasm32 and tests are compiled to the native target: we generate `marine_test_env` only when we are compiling to non-wasm target. This will not work great if you need to compile service to non-wasm target not only for tests. Another option is to use a separate crate for tests.
+3. We pass services, generated file name, and path to the build.rs file to the generator. The last argument will always be `file!()`.
+4. We signal when to re-run `build.rs`. This part must be customized for every project: for the projects where tests are in a separate crate, `build.rs` must be re-run when wasm files or `Config.toml` are changed.
+
+Then we need to actually write a test in the `src/main.rs`:
+```rust
+#[cfg(test)]
+mod built_tests {
+    marine_rs_sdk_test::include_test_env!("/marine_test_env.rs"); // <- 1
+    #[test]
+    fn non_empty_string() {
+        let mut greeting = marine_test_env::greeting::ServiceInterface::new(); // <- 2
+        let actual = greeting.greeting("name".to_string());
+        assert_eq!(actual, "Hi, name");
+    }
+}
+```
+
+1. We include generated file to out module with tests. `include_test_env!` is just a wrapper over `include!(concat!(env!("OUT_DIR"), $filename))`.
+2. We use `marine_test_env` as usual.
+
+And the last thing to do: setting up IDE, as the main advantage of `build.rs` approach is the IDE support.
+
+### CLion:
+* in the `Help -> Actions -> Experimental Futures` enable `org.rust.cargo.evaluate.build.scripts`
+* refresh cargo project in order to update generated code: change `Cargo.toml` and build from IDE or press `Refresh Cargo Project` in `Cargo` tab.
+
+### VS Code:
+* install `rust-analyzer` plugin
+* change `Cargo.toml` to let plugin update code from generated files
+
+After that IDEs will provide code completion for `marine_test_env`. In order to update the env you should build service to wasm, then build tests (with `build.rs` re-run).
 
 ## Deploying Services
 
