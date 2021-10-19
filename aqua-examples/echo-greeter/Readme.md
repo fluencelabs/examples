@@ -292,21 +292,21 @@ Since we want to compose services deployed on different nodes, we express this r
 
 Again, we can execute our workflow with the `fldist` tool:
 
-```text
- fldist run_air \ 
+```shell
+fldist run_air \
         -p aqua-compiled/echo_greeter.echo_greeting_seq_2.air \
         -d '{"names":["jim", "john", "james"],
              "greet": true,
              "greeting_topo":{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE",
                              "service_id":"5a03906b-3217-40a2-93fb-7e83be735408"},
             "echo_topo": {"node": "12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
-                          "service_id": "fb5f7126-e1ee-4ecf-81e7-20804cb7203b"}}'
+                          "service_id": "fb5f7126-e1ee-4ecf-81e7-20804cb7203b"}}' \
         --generated
 ```
 
 Regardless of the difference in service hosts, we of course get the expected result:
 
-```text
+```json
 [
   [
     "Hi, jim",
@@ -346,23 +346,23 @@ In this implementation version, we call the echo-service, just as before, and in
 
 Our updated `fldist` reads:
 
-```text
+```bash
 fldist run_air \
        -p aqua-compiled/echo_greeter.echo_greeting_par.air  \
-       -d '{"echo_service":{"names":["jim", "john", "james"],\
-                            "node": "12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt", \
-                            "service_id": "fb5f7126-e1ee-4ecf-81e7-20804cb7203b"}, \
-            "greeting_services":[{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE", \
-                                  "service_id":"5a03906b-3217-40a2-93fb-7e83be735408"}, \
-                                 {"node":"12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt", \
-                                  "service_id":"5cf520ff-dd65-47d7-a51a-2bf08dfe2ede"}], \
+       -d '{"echo_service":{"names":["jim", "john", "james"],
+                            "node": "12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
+                            "service_id": "fb5f7126-e1ee-4ecf-81e7-20804cb7203b"},
+            "greeting_services":[{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE",
+                                  "service_id":"5a03906b-3217-40a2-93fb-7e83be735408"},
+                                 {"node":"12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
+                                  "service_id":"5cf520ff-dd65-47d7-a51a-2bf08dfe2ede"}],
             "greet": true}' \
             --generated
 ```
 
 And our result is:
 
-```text
+```json
 
   [
     "Hi, jim",
@@ -396,9 +396,9 @@ func echo_greeting_par_alternative(greet: bool, echo_service: EchoServiceInput, 
 
 And running the workflow with the updated data:
 
-```text
+```bash
 fldist run_air \
-       -p aqua-compiled/echo_greeter.echo_greeting_par_inverse.air \
+       -p aqua-compiled/echo_greeter.echo_greeting_par_alternative.air \
        -d '{"echo_service":{"names":["jim", "john", "james"],
                             "node": "12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
                             "service_id": "fb5f7126-e1ee-4ecf-81e7-20804cb7203b"},
@@ -412,7 +412,7 @@ fldist run_air \
 
 gives us the updated result:
 
-```text
+```json
 [
   [
     "Hi, jim",
@@ -452,8 +452,8 @@ func echo_greeting_par_improved(echo_service: EchoServiceInput, greeting_service
 Run the workflow with the updated json string:
 
 
-```test
-fldist run_air 
+```bash
+fldist run_air \
        -p aqua-compiled/echo_greeter.echo_greeting_par_improved.air \
        -d '{"echo_service":{"names":["jim", "john", "james"],
                             "node": "12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
@@ -469,7 +469,7 @@ fldist run_air
 
 Which gives us:
 
-```text
+```json
 [
   [
     "Hi, jim",
