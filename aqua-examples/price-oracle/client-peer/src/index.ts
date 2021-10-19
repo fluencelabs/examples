@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { setLogLevel, FluencePeer } from "@fluencelabs/fluence";
+import { setLogLevel, Fluence } from "@fluencelabs/fluence";
 import { krasnodar, Node } from "@fluencelabs/fluence-network-environment";
 import { get_price, get_price_par } from "./_aqua/get_crypto_prices";
 
@@ -47,8 +47,8 @@ async function main() {
   await Fluence.start({ connectTo: krasnodar[2] });
   console.log(
     "created a fluence client %s with relay %s",
-    FluencePeer.default.connectionInfo.selfPeerId,
-    FluencePeer.default.connectionInfo.connectedRelay
+    Fluence.getStatus().peerId,
+    Fluence.getStatus().relayPeerId
   );
 
   const network_result = await get_price(
@@ -67,6 +67,8 @@ async function main() {
     mean_topo
   );
   console.log("par result: ", network_result_par);
+
+  await Fluence.stop();
 
   return;
 }
