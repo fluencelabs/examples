@@ -22,7 +22,7 @@ export const serviceIdState = atom<string | null>({
 
 export const wasmState = atom<string>({
   key: "serviceState",
-  default: "Qmf8fH2cDZXGKS9uDGBcHxv5uQ51ChrigdZKe3QxS2C1AF",
+  default: "QmSvjkzXbXYwFXcWuFWqFdksvQDgpCeADNxkgkfzCLA4rk",
 });
 
 export const rpcAddrState = atom<string | null>({
@@ -32,7 +32,7 @@ export const rpcAddrState = atom<string | null>({
 
 export const fileCIDState = atom<string | null>({
   key: "fileCIDState",
-  default: "Qmf8fH2cDZXGKS9uDGBcHxv5uQ51ChrigdZKe3QxS2C1AF",
+  default: "QmSvjkzXbXYwFXcWuFWqFdksvQDgpCeADNxkgkfzCLA4rk",
 });
 
 export const fileSizeState = atom<string | null>({

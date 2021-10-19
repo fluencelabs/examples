@@ -34,7 +34,10 @@ import { globSource, urlSource } from "ipfs-http-client";
 
 async function main(environment: Node[]) {
   // setLogLevel('DEBUG');
-  let providerHost = environment[0];
+  let providerHost = environment[4];
+  let relay = environment[3];
+  let serviceHost = environment[2];
+
   let providerClient = new FluencePeer();
   await providerClient.start({ connectTo: providerHost });
   console.log("📘 uploading .wasm to node %s", providerHost.multiaddr);
@@ -43,7 +46,7 @@ async function main(environment: Node[]) {
   console.log("📗 swarmAddr", swarmAddr);
   console.log("📗 rpcAddr", rpcAddr);
 
-  await Fluence.start({ connectTo: environment[1] });
+  await Fluence.start({ connectTo: relay });
   console.log(
     "📗 created a fluence client %s with relay %s",
     Fluence.getStatus().peerId,
@@ -51,11 +54,11 @@ async function main(environment: Node[]) {
   );
 
   // default IPFS timeout is 1 sec, set to 10 secs to retrieve file from remote node
-  await set_timeout(environment[2].peerId, 10);
+  await set_timeout(serviceHost.peerId, 10);
 
   console.log("\n\n📘 Will deploy ProcessFiles service");
   var service_id = await deploy_service(
-    environment[2].peerId,
+    serviceHost.peerId,
     file.cid.toString(),
     rpcAddr,
     (label, error) => {
@@ -79,7 +82,7 @@ async function main(environment: Node[]) {
     providerClient
   );
   var putResult = await put_file_size(
-    environment[2].peerId,
+    serviceHost.peerId,
     newFile.cid.toString(),
     rpcAddr,
     service_id,
@@ -94,7 +97,7 @@ async function main(environment: Node[]) {
     console.log("📗 File size is saved to IPFS:", putResult);
   }
 
-  let result = await remove_service(environment[2].peerId, service_id);
+  let result = await remove_service(serviceHost.peerId, service_id);
   console.log("📗 ProcessFiles service removed", result);
   return;
 }
