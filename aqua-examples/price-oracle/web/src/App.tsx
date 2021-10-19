@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.scss";
 
-import { createClient, FluenceClient } from "@fluencelabs/fluence";
+import { Fluence } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 import { get_price } from "./_aqua/get_crypto_prices";
 
@@ -32,7 +32,7 @@ const TextInput = (props: {
 };
 
 function App() {
-  const [client, setClient] = useState<FluenceClient | null>(null);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
   const [coin, setCoin] = useState<string>("dogecoin");
   const [currency, setCurrency] = useState<string>("usd");
   const [node, setNode] = useState<string>(
@@ -47,20 +47,18 @@ function App() {
   const [result, setResult] = useState<Result | null>(null);
 
   useEffect(() => {
-    createClient(relayNode.multiaddr)
-      .then(setClient)
+    Fluence.start({ connectTo: relayNode.multiaddr })
+      .then(() => setIsConnected(true))
       .catch((err) => console.log("Client initialization failed", err));
-  }, [client]);
+  }, [isConnected]);
 
-  const isConnected = client !== null;
 
   const doGetPrice = async () => {
-    if (client === null) {
+    if (!isConnected) {
       return;
     }
     try {
       const res = await get_price(
-        client!,
         coin,
         currency,
         node,
@@ -69,7 +67,7 @@ function App() {
       );
       console.log("Retrieved result: ", res);
       setResult(res);
-    } catch (err) {
+    } catch (err: any) {
       setResult({ error_msg: err.toString(), success: false, result: 0 });
     }
   };
