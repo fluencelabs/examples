@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Fluence Labs Limited
+* Copyright 2021 Fluence Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,53 +24,60 @@ interface NodeServicePair {
 }
 
 let getter_topo: Array<NodeServicePair>;
-let mean_topo: NodeServicePair;
+let mean_topo: Array<NodeServicePair>;
 
-getter_topo = Array(
+// description of the services' locations, copypaste from data/deployed_services.json
+getter_topo = [
   {
     node: "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
-    service_id: "c315073d-4311-4db3-be57-8f154f032d28",
+    service_id: "b67586f7-e96f-49ee-914e-9eabe1a0b83d",
   },
   {
     node: "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi",
-    service_id: "25f9123a-f386-4cb2-9c1e-bb7c247c9c09",
+    service_id: "f5b456fa-ee18-4df1-b18b-84fe7ebc7ad0",
   }
-);
-mean_topo = {
-  node: "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
-  service_id: "dd47389f-25d9-4870-a2a9-909359e73580",
-};
+];
+mean_topo = [
+  {
+    node: "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+    service_id: "79b8ddb9-e2e6-4924-9293-c5d55c94af6b",
+  },
+  {
+    node: "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi",
+    service_id: "debecd02-ba7d-40a2-92ab-08a9321da2cf"
+  }
+];
 
 async function main() {
   console.log("hello crypto investors");
+
+  // Uncomment to enable debug logs:
   // setLogLevel('DEBUG');
-  await Fluence.start({ connectTo: krasnodar[2] });
+
+  // create the Fluence client for the Krasnodar testnet
+  await Fluence.start({ connectTo: krasnodar[5] });
   console.log(
     "created a fluence client %s with relay %s",
     Fluence.getStatus().peerId,
     Fluence.getStatus().relayPeerId
   );
 
+  // call the get_price function -- sequential processing
   const network_result = await get_price(
     "ethereum",
     "usd",
-    "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi",
-    "25f9123a-f386-4cb2-9c1e-bb7c247c9c09",
-    "b2790307-055e-41ca-9640-3c41856d464b"
+    getter_topo[1].node,
+    getter_topo[1].service_id,
+    mean_topo[1].service_id
   );
   console.log("seq result: ", network_result);
 
-  const network_result_par = await get_price_par(
-    "ethereum",
-    "usd",
-    getter_topo,
-    mean_topo
+  // call the get_price_par function -- parallel processing
+  const network_result_par = await get_price_par("ethereum", "usd", getter_topo, mean_topo[0]
   );
   console.log("par result: ", network_result_par);
 
   await Fluence.stop();
-
-  return;
 }
 
 main()

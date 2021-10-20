@@ -20,7 +20,7 @@ import {
 } from "./appState";
 import { decapsulateP2P, fromOption } from "./util";
 
-export const relayNodes = [krasnodar[0], krasnodar[1], krasnodar[2]];
+export const relayNodes = [krasnodar[2], krasnodar[3], krasnodar[4]];
 
 const requestRpcAddr = async () => {
   let result = await get_external_api_multiaddr(
@@ -122,13 +122,15 @@ export const useRemoveService = () => {
   const setFileSizeCID = useSetRecoilState(fileSizeCIDState);
 
   return async () => {
-    if (isConnected || serviceId === null) {
+    console.dir(isConnected, serviceId);
+    if (!isConnected || serviceId === null) {
       return;
     }
-
+    
     await remove_service(relay!, serviceId, {
       ttl: 10000,
     });
+    console.log(`Service ${serviceId} was removed`);
     setServiceId(null);
     setFileCID(null);
     setFileSize(null);

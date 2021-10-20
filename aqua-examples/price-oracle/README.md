@@ -36,7 +36,7 @@ As outlined in Figure 1, we use one or more services distributed across the Flue
 
 Let's get right to it:
 
-```text
+```bash
 % cd web
 % npm install
 % npm start
@@ -52,7 +52,7 @@ Please note that the coin name must the full name, e.g., ethereum or bitcoin ins
 
 If you like things a little closer to metal, see the [client-peer](./client-peer) directory for a peer-client based on the Fluence JS-SDK. To run the headless client:
 
-```text
+```bash
 % cd client-peer
 % npm instal
 % npm start run 
@@ -71,9 +71,9 @@ As evident from our results, we are executing two different workflows to get our
 
 ```typescript
 // client-peer/index.ts
-import { createClient, setLogLevel, FluenceClient } from "@fluencelabs/fluence";
+import { Fluence } from "@fluencelabs/fluence";
 import { krasnodar, Node } from "@fluencelabs/fluence-network-environment";
-import { get_price, get_price_par } from "./get_crypto_prices";
+import { get_price, get_price_par } from "./_aqua/get_crypto_prices";
 
 interface NodeServicePair {
     node: string;
@@ -82,37 +82,47 @@ interface NodeServicePair {
 
 // (node, service) tuples, json-style, for price getter services
 let getter_topo: Array<NodeServicePair>;
-
-// and a mean service
 let mean_topo: NodeServicePair;
 
-getter_topo = Array({ "node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS", "service_id": "c315073d-4311-4db3-be57-8f154f032d28" }, { "node": "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi", "service_id": "25f9123a-f386-4cb2-9c1e-bb7c247c9c09" });
-mean_topo = { "node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS", "service_id": "dd47389f-25d9-4870-a2a9-909359e73580" };
+// description of the services' locations, copypaste from data/deployed_services.json
+getter_topo = [
+  {
+    node: "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+    service_id: "b67586f7-e96f-49ee-914e-9eabe1a0b83d",
+  },
+  {
+    node: "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi",
+    service_id: "f5b456fa-ee18-4df1-b18b-84fe7ebc7ad0",
+  }
+];
+mean_topo = [
+  {
+    node: "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+    service_id: "79b8ddb9-e2e6-4924-9293-c5d55c94af6b",
+  },
+  {
+    node: "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi",
+    service_id: "debecd02-ba7d-40a2-92ab-08a9321da2cf"
+  }
+];
 
 async function main() {
+  // create the Fluence client for the Krasnodar testnet
+  await Fluence.start({ connectTo: krasnodar[5] });
 
-    // create the Fluence client for the Krasnodar testnet
-    const fluence = await createClient(krasnodar[2]);
-    console.log("created a fluence client %s with relay %s", fluence.selfPeerId, fluence.relayPeerId);
+  // call the get_price function -- sequential processing
+  const network_result = await get_price(
+    "ethereum", "usd",
+    getter_topo[1].node, getter_topo[1].service_id, mean_topo[1].service_id
+  );
+  console.log("seq result: ", network_result);
 
-    // call the get_price function -- sequential processing
-    const network_result = await get_price(fluence, "ethereum", "usd", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi", "25f9123a-f386-4cb2-9c1e-bb7c247c9c09", "b2790307-055e-41ca-9640-3c41856d464b");
-    console.log("seq result: ", network_result);
+  // call the get_price_par function -- parallel processing
+  const network_result_par = await get_price_par("ethereum", "usd", getter_topo, mean_topo[0]);
+  console.log("par result: ", network_result_par);
 
-    // call the get_price_par function -- parallel processing
-    const network_result_par = await get_price_par(fluence, "ethereum", "usd", getter_topo, mean_topo);
-    console.log("par result: ", network_result_par);
-
-    return;
+  await Fluence.stop();
 }
-
-main()
-    .then(() => process.exit(0))
-    .catch(error => {
-        console.error(error);
-        process.exit(1);
-    });
-
 ```
 
 where the Aqua script can be found in the `aqua-scripts` dirctory and the compiled Aqua code is found in the `get_crypto_prices.ts` file. For more on the Aqua script, see below.
@@ -134,7 +144,7 @@ As seen in Figure 3, we link the price_getter module and curl adapter module int
 
 We now have our code in place and area ready to compile and our compilation instructions are contain in the `scripts/build.sh` script, which basically instructs the the code is compiled with `marine` and that the resulting Wasm modules are copied to the `artifacts` directory. In the project directory:
 
-```text
+```bash
 ./scripts/build.sh
 ```
 
@@ -142,7 +152,7 @@ which gives you the updated Wasm modules in the `artifacts` directory.
 
 The next step is to deploy the two services to one or more peers and we use the `fldist` tool to get this done. First, we need to now what peers are available and we can get an enumeration from:
 
-```text
+```bash
 fldist env
 ```
 
@@ -150,23 +160,21 @@ fldist env
 
 Pick any of the peer ids from the listed peers to deploy your services. Let's say we use peer id `12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi`:
 
-```text
-fldist --node-id 12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi new_service --ms artifacts/curl_adapter.wasm:configs/curl_adapter_cfg.json artifacts/price_getter_service.wasm:configs/price_getter_service_cfg.json --name price-getter-service-0
+```bash
+$ fldist --node-id 12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi new_service --ms artifacts/curl_adapter.wasm:configs/curl_adapter_cfg.json artifacts/price_getter_service.wasm:configs/price_getter_service_cfg.json --name price-getter-service-0
+service id: f5b456fa-ee18-4df1-b18b-84fe7ebc7ad0    # <--- REMEMBER service id !!
+service created successfully
 ```
 
 to deploy a price-getter service and
 
-```text
-fldist --node-id 12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi  new_service --ms artifacts/mean_service.wasm:configs/mean_service_cfg.json  --name mean-service-0
-```
-
-to deploy a mean service. Please take note of the service-id you get back for each fo the deployments, which are needed to locate the service in the future. For example
-
-```text
-fldist --node-id 12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi  new_service --ms artifacts/mean_service.wasm:configs/mean_service_cfg.json  --name mean-service-0
-service id: b2790307-055e-41ca-9640-3c41856d464b    <-- REMEMBER ME !!
+```bash
+$ fldist --node-id 12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi  new_service --ms artifacts/mean_service.wasm:configs/mean_service_cfg.json  --name mean-service-0
+service id: debecd02-ba7d-40a2-92ab-08a9321da2cf    # <--- REMEMBER service id !!
 service created successfully
 ```
+
+to deploy a mean service. Please take note of the service-id you get back for each fo the deployments, which are needed to locate the service in the future.
 
 That's it for service development and deployment!
 

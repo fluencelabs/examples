@@ -50,16 +50,14 @@ func get_price(coin: string, currency: string, node: string, pg_sid: string, mea
 func get_price_par(coin: string, currency: string, getter_topo: []NodeServicePair, mean_topo: NodeServicePair) -> Result:
   prices: *f64
   for topo <- getter_topo par:
-    on topo.node:
-      k <- Op.string_to_b58(topo.node)
-        
+    on topo.node:        
       PriceGetterService topo.service_id
       ts_ms <- Peer.timestamp_ms()
       res <- PriceGetterService.price_getter(coin, currency, ts_ms)
       prices <- F64Op.identity(res.result)
-  F64Op.identity(prices!2)
 
   on mean_topo.node:
+    F64Op.identity(prices!1)
     MeanService mean_topo.service_id
     result <- MeanService.mean(prices)
   <- result
