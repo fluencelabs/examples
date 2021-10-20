@@ -24,7 +24,7 @@ use marine_rs_sdk::WasmLoggerBuilder;
 module_manifest!();
 
 pub fn main() {
-    // WasmLoggerBuilder::new().build().ok();
+    WasmLoggerBuilder::new().build().ok();
 }
 
 #[marine]

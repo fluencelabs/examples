@@ -1,7 +1,7 @@
 {
   "name": "ceramic_adapter",
   "mountedBinaries": {
-    "ceramic": "/usr/bin/ceramic""
+    "ceramic": "/usr/bin/ceramic"
   },
   "mem_page_count": 100,
   "logger_enabled": false
