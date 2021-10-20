@@ -389,54 +389,51 @@ export function get_price_par(...args: any) {
                            (seq
                             (seq
                              (seq
-                              (seq
-                               (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-                               (call %init_peer_id% ("getDataSrv" "coin") [] coin)
-                              )
-                              (call %init_peer_id% ("getDataSrv" "currency") [] currency)
+                              (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                              (call %init_peer_id% ("getDataSrv" "coin") [] coin)
                              )
-                             (call %init_peer_id% ("getDataSrv" "getter_topo") [] getter_topo)
+                             (call %init_peer_id% ("getDataSrv" "currency") [] currency)
                             )
-                            (call %init_peer_id% ("getDataSrv" "mean_topo") [] mean_topo)
+                            (call %init_peer_id% ("getDataSrv" "getter_topo") [] getter_topo)
                            )
-                           (fold getter_topo topo
-                            (par
+                           (call %init_peer_id% ("getDataSrv" "mean_topo") [] mean_topo)
+                          )
+                          (fold getter_topo topo
+                           (par
+                            (seq
                              (seq
-                              (seq
+                              (call -relay- ("op" "noop") [])
+                              (xor
                                (seq
-                                (call -relay- ("op" "noop") [])
-                                (xor
-                                 (seq
-                                  (seq
-                                   (seq
-                                    (call topo.$.node! ("op" "string_to_b58") [topo.$.node!] k)
-                                    (call topo.$.node! ("peer" "timestamp_ms") [] ts_ms)
-                                   )
-                                   (call topo.$.node! (topo.$.service_id! "price_getter") [coin currency ts_ms] res)
-                                  )
-                                  (call topo.$.node! ("op" "identity") [res.$.result!] $prices)
-                                 )
+                                (seq
                                  (seq
                                   (call -relay- ("op" "noop") [])
-                                  (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+                                  (call topo.$.node! ("peer" "timestamp_ms") [] ts_ms)
                                  )
+                                 (call topo.$.node! (topo.$.service_id! "price_getter") [coin currency ts_ms] res)
                                 )
+                                (call topo.$.node! ("op" "identity") [res.$.result!] $prices)
                                )
-                               (call -relay- ("op" "noop") [])
+                               (seq
+                                (seq
+                                 (call -relay- ("op" "noop") [])
+                                 (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+                                )
+                                (call -relay- ("op" "noop") [])
+                               )
                               )
-                              (call %init_peer_id% ("op" "noop") [])
                              )
-                             (next topo)
+                             (call mean_topo.$.node! ("op" "noop") [])
                             )
+                            (next topo)
                            )
                           )
-                          (call %init_peer_id% ("op" "identity") [$prices.$.[2]!])
                          )
                          (call -relay- ("op" "noop") [])
                         )
                         (xor
                          (seq
-                          (call -relay- ("op" "noop") [])
+                          (call mean_topo.$.node! ("op" "identity") [$prices.$.[1]!])
                           (call mean_topo.$.node! (mean_topo.$.service_id! "mean") [$prices] result)
                          )
                          (seq
