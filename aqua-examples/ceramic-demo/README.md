@@ -37,6 +37,7 @@ ToDos:
 - [ ] Separate HTTP from CLI code
 - [ ] Add multimodule tests
 - [ ] Add use of Aqua demo
+- [ ] Change fldist to aqua cli
 
 For another, comprehensive, end-to-end implementation of an adapter, see [Aqua IPFS Library](https://doc.fluence.dev/aqua-book/libraries/aqua-ipfs) and [Aqua IPFS demo](https://github.com/fluencelabs/examples/tree/main/aqua-examples/aqua-ipfs-integration).
 
@@ -108,7 +109,8 @@ pub fn create_stream(payload: String) -> CeramicResult {
         return CeramicResult::new(response);
     }
     let stdout_str: String = String::from_utf8(response.stdout).unwrap();
-
+    
+    // extract StreamId from formatted response code
     if stdout_str.contains("StreamID") {
         let res: Vec<&str> = stdout_str.split("\n").collect();
         let stream_id = res[0].replace("StreamID(", "").replace(")", "");
@@ -134,7 +136,7 @@ StreamID(kjzl6cwe1jw147ww5d8pswh1hjh686mut8v1br10dar8l9a3n1wf8z38l0bg8qa)
 }
 ```
 
-If we just want to return the StreamId as our `CeramicResult.stdout` value so we can easily access and use it in Aqua, we can clean up the raw response string and extract just the StreamId, which we are doing in the code example above. A more generalized solution would use another service to do that extraction as part of the Aqua workflow. Regardless, in this example, the `create_stream` function returns a `CeramicResult` where `stdout` is the StreamId string, if available. See `ceramic_cli.rs` for the remaining cli wrappers *show*, *state*, *update*, and *create_schema*.
+If we just want to return the StreamId as our `CeramicResult.stdout` value so we can easily access and use it in Aqua, we can clean up the raw response string and extract just the StreamId, which we are doing in the code example above. A more generalized solution would use another service to do that extraction as part of the Aqua workflow. Regardless, in this example, the `create_stream` function returns a `CeramicResult` where `stdout` is the StreamId string, if available. See `ceramic_cli.rs` for the remaining [cli wrappers](https://developers.ceramic.network/build/cli/quick-start/) *show*, *state*, *update*, and *create_schema*.
 
 To build the adapter, run:
 
@@ -142,15 +144,136 @@ To build the adapter, run:
 ./scripts/build.sh
 ```
 
-Once the Wasm modules are compiled, we can inspect them with `mrepl`. Make sure you have a local version of Ceramic installed and running:
-
-```bash
-mrepl Config.toml
-```
+Once the Wasm modules are compiled, we can inspect them with `mrepl`. Make sure you have a local version of [Ceramic CLI](https://developers.ceramic.network/build/cli/installation/#1-install-the-cli) installed and running.
 
 ## Interacting With Adapter Locally
 
+With the ceramic daemon running, let's start the REPL:
 
+```bash
+mrepl configs/Config.toml
+```
+
+Before we checkout our handiwork, let's have a look at the `Config.toml` file:
+
+```toml
+modules_dir = "artifacts"   # <-- that's where our Wasm modules are 
+
+
+[[module]]
+name = "curl_adapter"       # <-- for the curl adapter which we need for the http adapter
+mem_pages_count = 100
+logger_enabled = true
+
+[module.mounted_binaries]
+curl = "/usr/bin/curl"      # <-- path to curl on LOCAL machine
+
+
+[[module]]
+name = "ceramic_adapter_custom"    <-- for the ceramic adapter we are creating
+mem_pages_count = 50
+logger_enabled = true
+
+[module.mounted_binaries]
+ceramic = "/xxx/yyy/.nvm/versions/node/v14.16.0/bin/ceramic"   # <--replace with your path to curl on LOCAL machine
+```
+
+In our case, we are using two local binaries, `curl` and `ceramic` and we need the local path for each binary, which you get with `which curl` and `which ceramic`, respectively. **Make sure you update the binary paths with your paths**.
+
+In the REPL, we can now interact with our adapter functions:
+
+```rust
+Welcome to the Marine REPL (version 0.9.1)
+Minimal supported versions
+  sdk: 0.6.0
+  interface-types: 0.20.0
+
+app service was created with service id = 06431523-4a89-4ea3-bf4b-2e5a5e6b9a78
+elapsed time 100.0461ms
+
+1> i
+Loaded modules interface:
+data CeramicResult:
+  ret_code: i32
+  stderr: string
+  stdout: string
+data MountedBinaryResult:
+  ret_code: i32
+  error: string
+  stdout: []u8
+  stderr: []u8
+
+ceramic_adapter_custom:
+  fn update(stream_id: string, payload: string) -> CeramicResult
+  fn state(stream_id: string) -> CeramicResult
+  fn create_stream(payload: string) -> CeramicResult
+  fn http_pins(url: string, port: u32) -> string
+  fn http_streams(url: string, port: u32, stream_id: string) -> string
+  fn http_chain_id(url: string, port: u32) -> string
+  fn http_rm_pin(url: string, port: u32, stream_id: string) -> string
+  fn http_health(url: string, port: u32) -> string
+  fn create_schema(schema: string) -> CeramicResult
+  fn show(stream_id: string) -> CeramicResult
+  fn http_pin(url: string, port: u32, stream_id: string) -> string
+  fn ceramic_request(args: []string) -> CeramicResult
+curl_adapter:
+  fn curl_request(cmd: []string) -> MountedBinaryResult
+```
+
+The `interface` command lists all exposed interfaces and functions corresponding to what we marked public in our Rust code and includes the `http` functions we briefly discussed above. Let's test some functions!
+
+```rust
+2> call ceramic_adapter_custom create_stream ["{\"foo\":\"bar\"}"]
+result: Object({"ret_code": Number(0), "stderr": String(""), "stdout": String("kjzl6cwe1jw147gy6h9ygbtzzs0pjg4qyhp4bhx69k88h25e95ads7ybc0aa8sx")})
+ elapsed time: 1.510019477s
+
+3> call ceramic_adapter_custom update  ["kjzl6cwe1jw147gy6h9ygbtzzs0pjg4qyhp4bhx69k88h25e95ads7ybc0aa8sx","{\"foo\":\"bar closed\"}"]
+result: Object({"ret_code": Number(0), "stderr": String(""), "stdout": String("{\n  \"foo\": \"bar closed\"\n}\n")})
+ elapsed time: 1.503898936s
+
+4> call ceramic_adapter_custom show  ["kjzl6cwe1jw147gy6h9ygbtzzs0pjg4qyhp4bhx69k88h25e95ads7ybc0aa8sx"]
+result: Object({"ret_code": Number(0), "stderr": String(""), "stdout": String("{\n  \"foo\": \"bar closed\"\n}\n")})
+ elapsed time: 1.37588522s
+
+5> call ceramic_adapter_custom http_streams  ["127.0.0.1", 7007, "kjzl6cwe1jw147gy6h9ygbtzzs0pjg4qyhp4bhx69k88h25e95ads7ybc0aa8sx"]
+result: String("{\"streamId\":\"kjzl6cwe1jw147gy6h9ygbtzzs0pjg4qyhp4bhx69k88h25e95ads7ybc0aa8sx\",\"state\":{\"type\":0,\"content\":{\"foo\":\"bar\"},\"metadata\":{\"unique\":\"53BLyT4m2wXSim4y\",\"controllers\":[\"did:key:z6Mkupzc4V3f7RiQCzjxVqqqRXbkmuAdN38oPqATcyWq2HaN\"]},\"signature\":2,\"anchorStatus\":\"PENDING\",\"log\":[{\"cid\":\"bagcqceralapnmkp2h5ok5mdzg6sbusonrpkuo6r2jg67ga5vd3jbzyjhcuiq\",\"type\":0},{\"cid\":\"bagcqceratnh7647bpprjja6pmn6eaeapi2agqxyzdp2lvu2stradj5u7sima\",\"type\":1},{\"cid\":\"bagcqceratxvtlnupnt3cjsr7eob6osksdoatkmlzoyvs3plpitvza2vp244a\",\"type\":1}],\"anchorScheduledFor\":\"2021-10-20T18:00:00.000Z\",\"next\":{\"content\":{\"foo\":\"bar closed\"},\"metadata\":{\"unique\":\"53BLyT4m2wXSim4y\",\"controllers\":[\"did:key:z6Mkupzc4V3f7RiQCzjxVqqqRXbkmuAdN38oPqATcyWq2HaN\"]}},\"doctype\":\"tile\"}}")
+ elapsed time: 280.67577ms
+
+6>
+```
+
+In (2) we call the create stream function and get back the StreamId in the `stdout` key. Copy the SteamId and past it into the `update` command along with new content (3) and then in the `show` command in (4) to verify that our update was successful. In (5) we use one fo the http calls to `show`, also with the above StreamId and the *localhost* and *7007* host and port params, respectively. Notice the much more verbose output. Since we are using the (default) Ceramic testnet, you can see that the anchoring of our stream `"anchorStatus\":\"PENDING\"` is still pending. Give it a few shakes, re-run the command and you should see a block confirmation instead:
+
+```rust
+6> call ceramic_adapter_custom http_streams  ["127.0.0.1", 7007, "kjzl6cwe1jw147gy6h9ygbtzzs0pjg4qyhp4bhx69k88h25e95ads7ybc0aa8sx"]
+result: String("{\"streamId\":\"kjzl6cwe1jw147gy6h9ygbtzzs0pjg4qyhp4bhx69k88h25e95ads7ybc0aa8sx\",\"state\":{\"type\":0,\"content\":{\"foo\":\"bar closed\"},\"metadata\":{\"unique\":\"53BLyT4m2wXSim4y\",\"controllers\":[\"did:key:z6Mkupzc4V3f7RiQCzjxVqqqRXbkmuAdN38oPqATcyWq2HaN\"]},\"signature\":2,\"anchorStatus\":\"ANCHORED\",\"log\":[{\"cid\":\"bagcqceralapnmkp2h5ok5mdzg6sbusonrpkuo6r2jg67ga5vd3jbzyjhcuiq\",\"type\":0},{\"cid\":\"bagcqceratnh7647bpprjja6pmn6eaeapi2agqxyzdp2lvu2stradj5u7sima\",\"type\":1},{\"cid\":\"bagcqceratxvtlnupnt3cjsr7eob6osksdoatkmlzoyvs3plpitvza2vp244a\",\"type\":1},{\"cid\":\"bafyreifqb3qxuc7pgb7yi67z2b7v5tq62a3nwtr2em5bwl4dmw6yprdnbu\",\"type\":2,\"timestamp\":1634752889}],\"anchorProof\":{\"root\":\"bafyreie3a5rnztmxxjpwpxhatvlfgkv3mp3hdyrfpdwhwzfgwff6snwofi\",\"txHash\":\"bagjqcgzam3yccif57fc6otuo7qtda6d5hkm3wig5ghdjbwjosvogyher5q3q\",\"chainId\":\"eip155:3\",\"blockNumber\":11266361,\"blockTimestamp\":1634752889},\"doctype\":\"tile\"}}")
+ elapsed time: 20.946101ms
+```
+
+That is, `...\"chainId\":\"eip155:3\",\"blockNumber\":11266361,\"blockTimestamp\":1634752889}, ...` contains the chain confirmation reference and is readily viewable on [etherscan](https://ropsten.etherscan.io/block/11266361).
+
+Looks like our services are working and ready for deployment to the `stage` network. We use [`fldist`] command line tool to do so:
+
+```bash
+fldist new_service \
+        --ms artifacts/curl_adapter.wasm:configs/curl_adapter_cfg.json \
+             artifacts/ceramic_adapter_custom.wasm:configs/ceramic_adapter_cfg.json \
+        --name ceramic-adapter \
+        --verbose \
+        --env stage
+```
+
+Which gives us our service id:
+
+```bash
+client seed: GaVNhWaCzVc943kcxXhPbnbEmHFg1uUNNLHEKHVg6aTc
+client peerId: 12D3KooWS7mqgD5QUutPVuU4WoXdPUL8zzJpdPM44PzSYSTXYhcX
+relay peerId: 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE
+service id: 86314188-0571-4f42-8873-0cb07ffdcdcf  # <-- this is different for you
+service created successfully
+```
+
+With our modules deployed and linked into service `86314188-0571-4f42-8873-0cb07ffdcdcf`, we are now ready to utilize Ceramic streams from the Fluence network with Aqua.
 
 ## Using the Adapter With Aqua
 
