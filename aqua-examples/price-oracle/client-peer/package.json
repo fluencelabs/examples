@@ -43,7 +43,7 @@
   },
   "homepage": "git+https://github.com/fluencelabs/examples/aqua-examples/price-oracle#readme",
   "devDependencies": {
-    "@fluencelabs/aqua": "^0.3.0-226",
+    "@fluencelabs/aqua": "^0.3.2-233",
     "typescript": "^3.9.5"
   }
 }
