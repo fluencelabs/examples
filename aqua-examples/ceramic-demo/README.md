@@ -362,7 +362,7 @@ Yields:
 ]
 ```
 
-Now, we run the same functionality but with the `CeramicResult` as the return value:
+Please note that we need to escape the Ceramic payload(s)! Now, we run the same functionality but with the `CeramicResult` as the return value:
 
 ```bash
 fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
@@ -375,7 +375,7 @@ fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
        --generated
 ```
 
-Which results in:
+Which returns the `CeramicResult` object:
 
 ```bash
 [
@@ -387,7 +387,7 @@ Which results in:
 ]
 ```
 
-Finally, we run our roundtrip function where we create, update and show:
+This allows us to access members with the dot notation, e.g, CeramicResultObj.stderr. Finally, we run our roundtrip function where we create, update and show:
 
 ```bash
 fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE 
@@ -411,4 +411,8 @@ Which returns the triple:
   "{\n  \"foo\": \"bar open\"\n}\n"
 ]
 ```
+
+## Summary
+
+We created a distributed adapter service allowing us not only to bring decentralized store to Fluence's decentralized compute but also to seamlessly integrate that functionality into any composition with Aqua. We further demonstrated the use of Ceramic with Aqua. While the project is still work in progress, feel free to use and share any issues or improvement requests in *Issues*.
 
