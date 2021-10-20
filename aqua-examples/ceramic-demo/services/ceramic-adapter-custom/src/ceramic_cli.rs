@@ -42,6 +42,7 @@ pub fn create_stream(payload: String) -> CeramicResult {
         "--content".to_string(),
         payload,
     ];
+
     let response: MountedBinaryResult = ceramic(args);
     if response.stderr.len() > 0 {
         return CeramicResult::new(response);
@@ -55,8 +56,8 @@ pub fn create_stream(payload: String) -> CeramicResult {
     } else {
         return CeramicResult::create(
             response.ret_code,
-            "Missing StreamId".to_string(),
             "".to_string(),
+            "Missing StreamId".to_string(),
         );
     }
 }

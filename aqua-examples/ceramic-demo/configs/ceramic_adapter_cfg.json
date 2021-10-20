@@ -1,5 +1,5 @@
 {
-  "name": "ceramic_adapter",
+  "name": "ceramic_adapter_custom",
   "mountedBinaries": {
     "ceramic": "/usr/bin/ceramic"
   },

@@ -1,13 +1,13 @@
 [package]
-name = "ceramic"
+name = "ceramic-adapter-custom"
 version = "0.1.0"
 authors = ["boneyard93501 <4523011+boneyard93501@users.noreply.github.com>"]
 edition = "2018"
-description = "ceramic-adapter"
+description = "ceramic-adapter-custom"
 license = "Apache-2.0"
 
 [[bin]]
-name = "ceramic_adapter"
+name = "ceramic_adapter_custom"
 path = "src/main.rs"
 
 [dependencies]
@@ -15,7 +15,7 @@ marine-rs-sdk = { version = "0.6.11", features = ["logger"] }
 log = "0.4.14"
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.1.11"
+marine-rs-sdk-test = "0.4.0"
 
 [dev]
 [profile.release]
