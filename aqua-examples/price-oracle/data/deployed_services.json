@@ -2,21 +2,21 @@
     "price_getter": [
         {
             "node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
-            "service_id": "c315073d-4311-4db3-be57-8f154f032d28"
+            "service_id": "b67586f7-e96f-49ee-914e-9eabe1a0b83d"
         },
         {
             "node": "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi",
-            "service_id": "25f9123a-f386-4cb2-9c1e-bb7c247c9c09"
+            "service_id": "f5b456fa-ee18-4df1-b18b-84fe7ebc7ad0"
         }
     ],
     "mean": [
         {
             "node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
-            "service_id": "dd47389f-25d9-4870-a2a9-909359e73580"
+            "service_id": "79b8ddb9-e2e6-4924-9293-c5d55c94af6b"
         },
         {
             "node": "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi",
-            "service_id": "b2790307-055e-41ca-9640-3c41856d464b"
+            "service_id": "debecd02-ba7d-40a2-92ab-08a9321da2cf"
         }
     ]
 }
