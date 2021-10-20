@@ -11,27 +11,27 @@ service CeramicAdapter("service-id"):
   state(stream_id: string) -> CeramicResult
   update(stream_id: string, payload: string) -> CeramicResult
 
--- aqua fuction to create stream and return stream id
+-- aqua function to create stream and return stream id
 func create(payload:string, node:string, service_id:string) -> string:
     on node:
         CeramicAdapter service_id
         create_res <- CeramicAdapter.create_stream(payload)
     <- create_res.stdout
 
--- aqua fuction to create stream and return CeramicResult
+-- aqua function to create stream and return CeramicResult
 func create_obj(payload:string, node:string, service_id:string) -> CeramicResult:
     on node:
         CeramicAdapter service_id
         create_res <- CeramicAdapter.create_stream(payload)
     <- create_res
 
--- aqua fuction to create stream, show, update and return stream id, show and update as stdout strings
+-- aqua function to create stream, show, update and return stream id, show and update as stdout strings
 func roundtrip(payload:string, payload_two: string, node:string, service_id:string) -> string, string, string:
     on node:
         CeramicAdapter service_id
-        create_res <- CeramicAdapter.create_stream(payload)                      --< return the sream_id in stdout
-        show_res <- CeramicAdapter.show(create_res.stdout)                       --< 
-        update_res <- CeramicAdapter.update(create_res.stdout, payload_two)
-    <- create_res.stdout, show_res.stdout, update_res.stdout
+        create_res <- CeramicAdapter.create_stream(payload)                      --< return the stream_id in stdout
+        show_res <- CeramicAdapter.show(create_res.stdout)                       --< use the stream_id
+        update_res <- CeramicAdapter.update(create_res.stdout, payload_two)     --< update the stream
+    <- create_res.stdout, show_res.stdout, update_res.stdout                    --< return the stream id, the show result, show result afer update
 
 

@@ -275,7 +275,140 @@ service created successfully
 
 With our modules deployed and linked into service `86314188-0571-4f42-8873-0cb07ffdcdcf`, we are now ready to utilize Ceramic streams from the Fluence network with Aqua.
 
-## Using the Adapter With Aqua
+## Using the Ceramic Adapter With Aqua
 
-...
+Now that we have our Ceramic adapter serivce deployed to the Fluence `stage` network, we can use Aqua to make the Ceramic streams functionality available by composition. Let's create a demo Aqua script to illustrate the use. See the `ceramic_demo.aqua` file in the `aqua` directory:
+
+```aqua
+data CeramicResult:
+  ret_code: i32
+  stderr: string
+  stdout: string
+
+service CeramicAdapter("service-id"):
+  ceramic_request(args: []string) -> CeramicResult
+  create_schema(schema: string) -> CeramicResult
+  create_stream(payload: string) -> CeramicResult
+  show(stream_id: string) -> CeramicResult
+  state(stream_id: string) -> CeramicResult
+  update(stream_id: string, payload: string) -> CeramicResult
+
+-- aqua function to create stream and return stream id
+func create(payload:string, node:string, service_id:string) -> string:
+    on node:
+        CeramicAdapter service_id
+        create_res <- CeramicAdapter.create_stream(payload)
+    <- create_res.stdout
+
+-- aqua function to create stream and return CeramicResult
+func create_obj(payload:string, node:string, service_id:string) -> CeramicResult:
+    on node:
+        CeramicAdapter service_id
+        create_res <- CeramicAdapter.create_stream(payload)
+    <- create_res
+
+-- aqua function to create stream, show, update and return stream id, show and update as stdout strings
+func roundtrip(payload:string, payload_two: string, node:string, service_id:string) -> string, string, string:
+    on node:
+        CeramicAdapter service_id
+        create_res <- CeramicAdapter.create_stream(payload)                      --< return the stream_id in stdout
+        show_res <- CeramicAdapter.show(create_res.stdout)                       --< 
+        update_res <- CeramicAdapter.update(create_res.stdout, payload_two)
+    <- create_res.stdout, show_res.stdout, update_res.stdout
+```
+
+We created three Aqua demo functions and used marine to export all interfaces to our aqua file before we added our code with  `marine aqua artifacts/ceramic_adapter_custom.wasm >> aqua/ceramic_demo.aqua`.:
+
+- `func create(payload:string, node:string, service_id:string) -> string:` shows how to create a stream and return only the StreamId as a string
+- `func create_obj(payload:string, node:string, service_id:string) -> CeramicResult:` shows how to create a stream and return the `CeramicResult` struct
+- `func roundtrip(payload:string, payload_two: string, node:string, service_id:string) -> string, string, string:
+    on node:` show how to create and update a stream, save intermittent results and return the triple (stream_id, show result before update, show result after update) 
+
+
+
+For the purposes of this demo, we continue to use `fldist` to run our Aqua scripts and therefore compile `ceramic_demo.aqua` to (raw) AIR:
+
+```bash
+aqua -i aqua  -o compiled-aqua -a
+```
+
+which gives us an AIR file for each functions:
+
+```bash
+2021.10.20 14:43:50 [INFO] Aqua Compiler 0.3.2-233
+2021.10.20 14:43:51 [INFO] Result /Users/bebo/localdev/examples/aqua-examples/ceramic-demo/compiled-aqua/ceramic_demo.create.air: compilation OK (3 functions, 1 services)
+2021.10.20 14:43:51 [INFO] Result /Users/bebo/localdev/examples/aqua-examples/ceramic-demo/compiled-aqua/ceramic_demo.create_obj.air: compilation OK (3 functions, 1 services)
+2021.10.20 14:43:51 [INFO] Result /Users/bebo/localdev/examples/aqua-examples/ceramic-demo/compiled-aqua/ceramic_demo.roundtrip.air: compilation OK (3 functions, 1 services)
+```
+
+Let's run through our Aqua functions. First, we run our simple `create` which returns the StreamId as a string:
+
+```bash
+fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
+       run_air 
+       -p compiled-aqua/ceramic_demo.create.air 
+       -d '{"node":"12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",
+            "service_id":"86314188-0571-4f42-8873-0cb07ffdcdcf",
+            "payload": "{\"foo\":\"bar\"}",
+       --env stage 
+       --generated
+```
+
+Yields:
+
+```bash
+[
+  "kjzl6cwe1jw14b840zszph98opnp0mlt2ca2y77ln2crxtljmnknsomfx036q4u"
+]
+```
+
+Now, we run the same functionality but with the `CeramicResult` as the return value:
+
+```bash
+fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
+       run_air 
+       -p compiled-aqua/ceramic_demo.create_obj.air 
+       -d '{"node":"12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",
+            "service_id":"86314188-0571-4f42-8873-0cb07ffdcdcf",
+            "payload": "{\"foo\":\"bar\"}",
+       --env stage 
+       --generated
+```
+
+Which results in:
+
+```bash
+[
+  {
+    "ret_code": 0,
+    "stderr": "",
+    "stdout": "kjzl6cwe1jw14atuounxr2gi9ddc5i8ale3rgti7qetao8j81v6ea00ek8b7cdb"
+  }
+]
+```
+
+Finally, we run our roundtrip function where we create, update and show:
+
+```bash
+fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE 
+       run_air 
+       -p compiled-aqua/ceramic_demo.roundtrip.air 
+       -d '{"node":"12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",
+            "service_id":"86314188-0571-4f42-8873-0cb07ffdcdcf",
+            "payload": "{\"foo\":\"bar\"}", 
+            "payload_two":"{\"foo\":\"bar open\"}"
+           }'
+       --env stage 
+       --generated
+```
+
+Which returns the triple:
+
+```bash
+[
+  "kjzl6cwe1jw145gqlqwk0vv4bktbtn654fur4o9dyqdo797bkbohfa0wuip7b9l",
+  "{\n  \"foo\": \"bar\"\n}\n",
+  "{\n  \"foo\": \"bar open\"\n}\n"
+]
+```
 

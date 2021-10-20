@@ -4,5 +4,5 @@
     "ceramic": "/usr/bin/ceramic"
   },
   "mem_page_count": 100,
-  "logger_enabled": false
+  "logger_enabled": true
 }
