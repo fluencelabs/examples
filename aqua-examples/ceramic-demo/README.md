@@ -6,24 +6,7 @@
 
 In order to use services available outside the Fluence network, such as [IPFS](https://ipfs.io/) or [Ceramic](https://ceramic.network/), we need to create adapters, which are generally implemented with Wasm modules, that allow us to bridge the Fluence network with many other networks and protocols. Once our adapter services are in place, we can use Aqua to seamlessly integrate such resources into our distributed, peer-to-peer application composition.
 
-```mermaid
-    sequenceDiagram
-    title: Figure 1: Stylized Use of Adapters
-
-    participant C as Fluence Client Peer
-    participant F as Relay Node
-    participant S as Peer(s) hosting adapter(s)
-    participant O as Exogenous API/Runtime
-
-    C ->> F: Launch Aqua script to compose adapter services + other services
-    F ->> S: Call adapter service(s)
-    S ->> S: Call host binary
-    S ->> O: Request to exogenous resource
-    O ->> S: Response from exogenous service(s)
-    S ->> S: Update Aqua workflow (Particle)
-    S ->> F: Return result
-    F ->> C: Return result
-```
+![image](assets/figure_1.jpg)
 
 In this example, we develop an adapter for the Ceramic [CLI API](https://developers.ceramic.network/build/cli/api/) with the goal of seamlessly integrating Ceramic services into Fluence peer-to-peer applications composed with Aqua. See Figure 1.
 
