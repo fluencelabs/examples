@@ -15,10 +15,11 @@ async function main() {
       console.log(str);
     },
     getFortune: async () => {
-      await new Promise(resolve => {
-        setTimeout(resolve, 1000)
-      })
-      return "Wealth awaits you very soon."
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1000);
+      });
+      return "Wealth awaits you very soon.";
+    },
   });
 
   await sayHello();
