@@ -45,7 +45,7 @@
     ]
   },
   "devDependencies": {
-    "@fluencelabs/aqua": "^0.4.0-234",
+    "@fluencelabs/aqua": "^0.4.0-235",
     "@fluencelabs/aqua-lib": "0.1.14",
     "chokidar-cli": "^2.1.0",
     "node-sass": "^6.0.1"
