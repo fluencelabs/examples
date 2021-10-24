@@ -1,0 +1,11 @@
+fldist --verbose new_service --ms artifacts/curl_adapter.wasm:configs/curl_adapter_cfg.json artifacts/ceramic_adapter.wasm:configs/ceramic_adapter_cfg.json --name ceramic-adapter --env stage
+client seed: 7APvd44uLAiKya9MUoPqu6wtrRnLgUbG814pfMbS3yXH
+client peerId: 12D3KooWS5rn3Vz9t5Swfdj7Y8sM4j8ApLpYUMfp2rxHEhyU9uZe
+relay peerId: 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE
+service id: 58c05beb-4979-482b-bb48-3b4475d2ba08
+service created successfully
+
+
+
+
+fldist --env stage --node 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE run_air --generated --wait -p air/ceramic_demo.roundtrip.air -d '{"payload": "one", "payload_two": "two", "node": "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "service_id": "2a36d436-83b8-42e4-a541-1ddf867e4714"}'
