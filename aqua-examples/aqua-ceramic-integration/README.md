@@ -328,12 +328,12 @@ Let's run through our Aqua functions. First, we run our simple `create` which re
 
 ```bash
 fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
-       run_air 
-       -p compiled-aqua/ceramic_demo.create.air 
+       run_air \
+       -p compiled-aqua/ceramic_demo.create.air \
        -d '{"node":"12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",
             "service_id":"86314188-0571-4f42-8873-0cb07ffdcdcf",
-            "payload": "{\"foo\":\"bar\"}",
-       --env stage 
+            "payload": "{\"foo\":\"bar\"}"}'\
+        --env stage \
        --generated
 ```
 
@@ -349,12 +349,12 @@ Please note that we need to escape the Ceramic payload(s)! Now, we run the same 
 
 ```bash
 fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
-       run_air 
-       -p compiled-aqua/ceramic_demo.create_obj.air 
+       run_air \
+       -p compiled-aqua/ceramic_demo.create_obj.air \
        -d '{"node":"12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",
             "service_id":"86314188-0571-4f42-8873-0cb07ffdcdcf",
-            "payload": "{\"foo\":\"bar\"}",
-       --env stage 
+            "payload": "{\"foo\":\"bar\"}"}' \
+       --env stage \
        --generated
 ```
 
@@ -373,15 +373,14 @@ Which returns the `CeramicResult` object:
 This allows us to access members with the dot notation, e.g, CeramicResultObj.stderr. Finally, we run our roundtrip function where we create, update and show:
 
 ```bash
-fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE 
-       run_air 
-       -p compiled-aqua/ceramic_demo.roundtrip.air 
+fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
+       run_air \
+       -p compiled-aqua/ceramic_demo.roundtrip.air \
        -d '{"node":"12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",
             "service_id":"86314188-0571-4f42-8873-0cb07ffdcdcf",
-            "payload": "{\"foo\":\"bar\"}", 
-            "payload_two":"{\"foo\":\"bar open\"}"
-           }'
-       --env stage 
+            "payload": "{\"foo\":\"bar\"}",
+            "payload_two":"{\"foo\":\"bar open\"}"}' \
+       --env stage  \
        --generated
 ```
 
