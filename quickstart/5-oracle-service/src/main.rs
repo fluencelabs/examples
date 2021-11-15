@@ -75,7 +75,7 @@ pub fn ts_avg(timestamps: Vec<u64>, min_points: u32) -> Oracle {
 }
 
 #[marine]
-fn ts_frequency(timestamps: Vec<u64>, tolerance: u32) -> Consensus {
+fn ts_frequency(mut timestamps: Vec<u64>, tolerance: u32) -> Consensus {
     if timestamps.len() == 0 {
         return Consensus {
             // n: 0,
@@ -97,7 +97,7 @@ fn ts_frequency(timestamps: Vec<u64>, tolerance: u32) -> Consensus {
     let mut rng = WyRand::new_seed(rnd_seed);
     let rnd_idx = rng.generate_range(0..=timestamps.len());
 
-    let reference_ts = timestamps[rnd_idx];
+    let reference_ts = timestamps.swap_remove(rnd_idx);
     let mut support: u32 = 0;
     for ts in timestamps.iter() {
         if ts <= &(reference_ts + tolerance as u64) && ts >= &(reference_ts - tolerance as u64) {
@@ -108,7 +108,7 @@ fn ts_frequency(timestamps: Vec<u64>, tolerance: u32) -> Consensus {
     // let prop = (support / timestamps.len() as u32) as f64;
 
     Consensus {
-        n: (timestamps.len() - 1) as u32,
+        n: timestamps.len() as u32,
         reference_ts,
         support,
         err_str: "".to_string(),
@@ -145,7 +145,7 @@ mod tests {
     }
 
     #[marine_test(config_path = "../configs/Config.toml", modules_dir = "../artifacts")]
-    fn ts_validation_good(ts_consensus: marine_test_env::ts_oracle::ModuleInterface) {
+    fn ts_validation_good_consensus(ts_consensus: marine_test_env::ts_oracle::ModuleInterface) {
         let data = vec![
             1636961969u64,
             1636961970u64,
@@ -155,11 +155,24 @@ mod tests {
             1636961971u64,
         ];
         let tolerance = 3u32;
-        let res = ts_consensus.ts_frequency(data, tolerance);
-        println!("reference ts: {:?}", res);
-        //assert_eq!(res.avg, 2f64);
-        // assert_eq!(res.err_str.len(), 0)
+        let res = ts_consensus.ts_frequency(data.clone(), tolerance);
+        assert_eq!(res.n, (data.len() - 1) as u32);
+        assert_eq!(res.support, (data.len() - 1) as u32);
+        assert_eq!(res.err_str.len(), 0);
+        assert!(data.contains(&res.reference_ts));
     }
+
+    #[marine_test(config_path = "../configs/Config.toml", modules_dir = "../artifacts")]
+    fn ts_validation_good_no_consensus(ts_consensus: marine_test_env::ts_oracle::ModuleInterface) {
+        let data = vec![1636961965u64, 1636961969u64, 1636961972u64];
+        let tolerance = 1u32;
+        let res = ts_consensus.ts_frequency(data.clone(), tolerance);
+        assert_eq!(res.n, (data.len() - 1) as u32);
+        assert_eq!(res.support, 0 as u32);
+        assert_eq!(res.err_str.len(), 0);
+        assert!(data.contains(&res.reference_ts));
+    }
+
     #[marine_test(config_path = "../configs/Config.toml", modules_dir = "../artifacts")]
     fn ts_validation_good_one(ts_consensus: marine_test_env::ts_oracle::ModuleInterface) {
         let data = vec![1636961969u64];
