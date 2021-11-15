@@ -1,0 +1,24 @@
+module TsOracle declares *
+
+data Oracle:
+  n: u32
+  avg: f64
+  err_str: string
+
+service TsOracle:
+  ts_avg(timestamps: []u64, min_points: u32) -> Oracle
+
+
+func ts_oracle(min_points: u32, node:string, service_id:string)-> Oracle:
+  timestamps: *u64
+  on node:
+    k <- Op.string_to_b58(node)
+    nodes <- Kademlia.neighborhood(k, nil, nil)
+    for n <- nodes par:
+      on n:
+          timestamps <- Peer.timestamp_ms()
+    
+    on node:
+        TSOracle oracle_service_id
+         oracle <- TSOracle.ts_avg(timestamps, min_points)
+  <- oracle
