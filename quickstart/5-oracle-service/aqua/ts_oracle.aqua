@@ -1,15 +1,47 @@
-module TsOracle declares *
+alias PeerId : string
+alias Base58String : string
+alias Hash : string
+
+data Contact:
+    peer_id: string
+    addresses: []string
+
+data Info:
+    external_addresses: []string
+
+service Op("op"):
+    string_to_b58(s: string) -> Base58String
+
+service MyOp("op"):
+    identity(s: u64)
+
+service Kademlia("kad"):
+    neighborhood(key: Base58String, already_hashed: ?bool, count: ?u32) -> []PeerId
+    merge(target: Base58String, left: []string, right: []string, count: ?u32) -> []string
+
+service Peer("peer"):
+    is_connected(peer: PeerId) -> bool
+    connect(id: PeerId, multiaddrs: ?[]string) -> bool
+    get_contact(peer: PeerId) -> Contact
+    identify() -> Info
+    timestamp_ms() -> u64
+    timestamp_sec() -> u64
+
+data Consensus:
+  n: u32
+  reference_ts: u64
+  support: u32
+  err_str: string
 
 data Oracle:
   n: u32
   avg: f64
   err_str: string
 
-service TsOracle:
-  ts_avg(timestamps: []u64, min_points: u32) -> Oracle
+service TSOracle("service-id"):
+  ts_frequency(timestamps: []u64, tolerance: u32) -> Consensus
 
-
-func ts_oracle(min_points: u32, node:string, service_id:string)-> Oracle:
+func ts_oracle(tolerance: u32, node:string, oracle_service_id:string)-> Consensus:
   timestamps: *u64
   on node:
     k <- Op.string_to_b58(node)
@@ -17,8 +49,7 @@ func ts_oracle(min_points: u32, node:string, service_id:string)-> Oracle:
     for n <- nodes par:
       on n:
           timestamps <- Peer.timestamp_ms()
-    
-    on node:
-        TSOracle oracle_service_id
-         oracle <- TSOracle.ts_avg(timestamps, min_points)
-  <- oracle
+
+    TSOracle oracle_service_id
+    consensus <- TSOracle.ts_frequency(timestamps, tolerance)
+  <- consensus

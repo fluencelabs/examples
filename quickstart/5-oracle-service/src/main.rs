@@ -33,7 +33,6 @@ pub struct Oracle {
     pub avg: f64,
     pub err_str: String,
 }
-
 #[marine]
 #[derive(Default, Debug)]
 pub struct Consensus {
@@ -65,7 +64,6 @@ pub fn ts_avg(timestamps: Vec<u64>, min_points: u32) -> Oracle {
             ..<_>::default()
         };
     }
-
     let avg = timestamps.iter().sum::<u64>() as f64 / timestamps.len() as f64;
     Oracle {
         n: timestamps.len() as u32,
@@ -158,6 +156,23 @@ mod tests {
         let res = ts_consensus.ts_frequency(data.clone(), tolerance);
         assert_eq!(res.n, (data.len() - 1) as u32);
         assert_eq!(res.support, (data.len() - 1) as u32);
+        assert_eq!(res.err_str.len(), 0);
+        assert!(data.contains(&res.reference_ts));
+    }
+    #[marine_test(config_path = "../configs/Config.toml", modules_dir = "../artifacts")]
+    fn ts_validation_good_no_support(ts_consensus: marine_test_env::ts_oracle::ModuleInterface) {
+        let data = vec![
+            1636961969u64,
+            1636961970u64,
+            1636961969u64,
+            1636961968u64,
+            1636961969u64,
+            1636961971u64,
+        ];
+        let tolerance = 0u32;
+        let res = ts_consensus.ts_frequency(data.clone(), tolerance);
+        assert_eq!(res.n, (data.len() - 1) as u32);
+        assert_eq!(res.support, 0u32);
         assert_eq!(res.err_str.len(), 0);
         assert!(data.contains(&res.reference_ts));
     }
