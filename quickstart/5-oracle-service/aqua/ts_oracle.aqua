@@ -47,7 +47,19 @@ func ts_oracle(tolerance: u32, threshold: f64, node:string, oracle_service_id:st
   on node:
     k <- Op.string_to_b58(node)
     nodes <- Kademlia.neighborhood(k, nil, nil)
-    -- for n <- nodes par:
+    for n <- nodes par:
+      on n:
+          timestamps <- Peer.timestamp_ms()
+
+    TSOracle oracle_service_id
+    consensus <- TSOracle.ts_frequency(timestamps, tolerance, threshold)
+  <- consensus
+
+func ts_oracle_seq(tolerance: u32, threshold: f64, node:string, oracle_service_id:string)-> Consensus:
+  timestamps: *u64
+  on node:
+    k <- Op.string_to_b58(node)
+    nodes <- Kademlia.neighborhood(k, nil, nil)
     for n <- nodes:
       on n:
           timestamps <- Peer.timestamp_ms()

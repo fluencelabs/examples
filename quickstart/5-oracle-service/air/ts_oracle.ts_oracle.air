@@ -21,23 +21,32 @@
     (xor
      (seq
       (seq
-       (seq
-        (call node ("op" "string_to_b58") [node] k)
-        (call node ("kad" "neighborhood") [k [] []] nodes)
-       )
-       (fold nodes n
+       (call node ("op" "string_to_b58") [node] k)
+       (par
         (seq
-         (xor
-          (call n ("peer" "timestamp_ms") [] $timestamps)
-          (seq
+         (call node ("kad" "neighborhood") [k [] []] nodes)
+         (call node ("op" "noop") [])
+        )
+        (seq
+         (fold nodes n
+          (par
            (seq
-            (call -relay- ("op" "noop") [])
-            (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+            (xor
+             (call n ("peer" "timestamp_ms") [] $timestamps)
+             (seq
+              (seq
+               (call -relay- ("op" "noop") [])
+               (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+              )
+              (call -relay- ("op" "noop") [])
+             )
+            )
+            (call node ("op" "noop") [])
            )
-           (call -relay- ("op" "noop") [])
+           (next n)
           )
          )
-         (next n)
+         (call node ("op" "noop") [])
         )
        )
       )
