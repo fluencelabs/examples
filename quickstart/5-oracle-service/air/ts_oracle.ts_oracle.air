@@ -6,8 +6,11 @@
      (seq
       (seq
        (seq
-        (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-        (call %init_peer_id% ("getDataSrv" "tolerance") [] tolerance)
+        (seq
+         (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+         (call %init_peer_id% ("getDataSrv" "tolerance") [] tolerance)
+        )
+        (call %init_peer_id% ("getDataSrv" "threshold") [] threshold)
        )
        (call %init_peer_id% ("getDataSrv" "node") [] node)
       )
@@ -18,36 +21,27 @@
     (xor
      (seq
       (seq
-       (call node ("op" "string_to_b58") [node] k)
-       (par
+       (seq
+        (call node ("op" "string_to_b58") [node] k)
+        (call node ("kad" "neighborhood") [k [] []] nodes)
+       )
+       (fold nodes n
         (seq
-         (call node ("kad" "neighborhood") [k [] []] nodes)
-         (call node ("op" "noop") [])
-        )
-        (seq
-         (fold nodes n
-          (par
+         (xor
+          (call n ("peer" "timestamp_ms") [] $timestamps)
+          (seq
            (seq
-            (xor
-             (call n ("peer" "timestamp_ms") [] $timestamps)
-             (seq
-              (seq
-               (call -relay- ("op" "noop") [])
-               (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
-              )
-              (call -relay- ("op" "noop") [])
-             )
-            )
-            (call node ("op" "noop") [])
+            (call -relay- ("op" "noop") [])
+            (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
            )
-           (next n)
+           (call -relay- ("op" "noop") [])
           )
          )
-         (call node ("op" "noop") [])
+         (next n)
         )
        )
       )
-      (call node (oracle_service_id "ts_frequency") [$timestamps tolerance] consensus)
+      (call node (oracle_service_id "ts_frequency") [$timestamps tolerance threshold] consensus)
      )
      (seq
       (call -relay- ("op" "noop") [])

@@ -29,7 +29,8 @@ service Peer("peer"):
 
 data Consensus:
   n: u32
-  reference_ts: u64
+  consensus_ts: u64
+  consensus: bool
   support: u32
   err_str: string
 
@@ -39,17 +40,18 @@ data Oracle:
   err_str: string
 
 service TSOracle("service-id"):
-  ts_frequency(timestamps: []u64, tolerance: u32) -> Consensus
+  ts_frequency(timestamps: []u64, tolerance: u32, threshold: f64) -> Consensus
 
-func ts_oracle(tolerance: u32, node:string, oracle_service_id:string)-> Consensus:
+func ts_oracle(tolerance: u32, threshold: f64, node:string, oracle_service_id:string)-> Consensus:
   timestamps: *u64
   on node:
     k <- Op.string_to_b58(node)
     nodes <- Kademlia.neighborhood(k, nil, nil)
-    for n <- nodes par:
+    -- for n <- nodes par:
+    for n <- nodes:
       on n:
           timestamps <- Peer.timestamp_ms()
 
     TSOracle oracle_service_id
-    consensus <- TSOracle.ts_frequency(timestamps, tolerance)
+    consensus <- TSOracle.ts_frequency(timestamps, tolerance, threshold)
   <- consensus
