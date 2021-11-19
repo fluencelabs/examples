@@ -42,28 +42,45 @@ data Oracle:
 service TSOracle("service-id"):
   ts_frequency(timestamps: []u64, tolerance: u32, threshold: f64) -> Consensus
 
-func ts_oracle(tolerance: u32, threshold: f64, node:string, oracle_service_id:string)-> Consensus:
-  timestamps: *u64
+func ts_oracle_no_fold(tolerance: u32, threshold: f64, node:string, oracle_service_id:string)-> Consensus:
+  ts_array: *u64
   on node:
     k <- Op.string_to_b58(node)
     nodes <- Kademlia.neighborhood(k, nil, nil)
     for n <- nodes par:
       on n:
-          timestamps <- Peer.timestamp_ms()
+          ts_array <- Peer.timestamp_ms()
+
+    -- MyOp.identity(ts_array!20)
 
     TSOracle oracle_service_id
-    consensus <- TSOracle.ts_frequency(timestamps, tolerance, threshold)
+    consensus <- TSOracle.ts_frequency(ts_array, tolerance, threshold)
+  <- consensus
+
+func ts_oracle_fold(tolerance: u32, threshold: f64, node:string, oracle_service_id:string)-> Consensus:
+  ts_array: *u64
+  on node:
+    k <- Op.string_to_b58(node)
+    nodes <- Kademlia.neighborhood(k, nil, nil)
+    for n <- nodes par:
+      on n:
+          ts_array <- Peer.timestamp_ms()
+
+    MyOp.identity(ts_array!20)
+
+    TSOracle oracle_service_id
+    consensus <- TSOracle.ts_frequency(ts_array, tolerance, threshold)
   <- consensus
 
 func ts_oracle_seq(tolerance: u32, threshold: f64, node:string, oracle_service_id:string)-> Consensus:
-  timestamps: *u64
+  ts_array: *u64
   on node:
     k <- Op.string_to_b58(node)
     nodes <- Kademlia.neighborhood(k, nil, nil)
     for n <- nodes:
       on n:
-          timestamps <- Peer.timestamp_ms()
+          ts_array <- Peer.timestamp_ms()
 
     TSOracle oracle_service_id
-    consensus <- TSOracle.ts_frequency(timestamps, tolerance, threshold)
+    consensus <- TSOracle.ts_frequency(ts_array, tolerance, threshold)
   <- consensus
