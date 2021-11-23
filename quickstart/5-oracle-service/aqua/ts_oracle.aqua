@@ -1,6 +1,9 @@
+
 alias PeerId : string
 alias Base58String : string
 alias Hash : string
+
+-- const N_KNEIGHBORS = 19
 
 data Contact:
     peer_id: string
@@ -26,6 +29,7 @@ service Peer("peer"):
     identify() -> Info
     timestamp_ms() -> u64
     timestamp_sec() -> u64
+    timeout(duration_ms: u64, message: ?string) -> ?string
 
 data Consensus:
   n: u32
@@ -40,43 +44,30 @@ data Oracle:
   err_str: string
 
 service TSOracle("service-id"):
-  ts_frequency(timestamps: []u64, tolerance: u32, threshold: f64) -> Consensus
+  ts_frequency(timestamps: []u64, tolerance: u32, threshold: f64, err_value:u64) -> Consensus
 
-func ts_getter_par(node: string) -> []u64:
+func ts_oracle_with_timeout(tolerance: u32, threshold: f64, err_value:u64, node:string, oracle_service_id:string)-> Consensus, []string:
+  rtt  = 1000 -- in ms
   res: *u64
+  msg: *string
+  msg <<- "timeout"
+  dead_peers: *string
   on node:
     k <- Op.string_to_b58(node)
     nodes <- Kademlia.neighborhood(k, nil, nil)
     for n <- nodes par:
-      on n:
-        res <- Peer.timestamp_ms()
-    MyOp.identity(res!14)
-  MyOp.identity(res!10)
-  <- res
-
-
-func ts_getter_seq(node: string) -> []u64:
-  res: *u64
-  on node:
-    k <- Op.string_to_b58(node)
-    nodes <- Kademlia.neighborhood(k, nil, nil)
-    for n <- nodes:
-      on n:
-        try:
-          res <- Peer.timestamp_ms()
-    -- MyOp.identity(res!19)
-  <- res
-
-func ts_oracle(tolerance: u32, threshold: f64, node:string, oracle_service_id:string)-> Consensus:
-  res <- ts_getter_par(node)
-  on node:
+        status: *?string
+        success: *string
+        success <<- "success"
+        on n:
+            res <- Peer.timestamp_ms()
+            status <<- success
+        par status <- Peer.timeout(rtt, msg)
+        if status! != success:
+          res <<- err_value
+          dead_peers <<- n
+        
+    MyOp.identity(res!19)
     TSOracle oracle_service_id
-    consensus <- TSOracle.ts_frequency(res, tolerance, threshold)
-  <- consensus
-
-func ts_oracle_seq(tolerance: u32, threshold: f64, node:string, oracle_service_id:string)-> Consensus:
-  res <- ts_getter_seq(node)
-  on node:
-    TSOracle oracle_service_id
-    consensus <- TSOracle.ts_frequency(res, tolerance, threshold)
-  <- consensus
+    consensus <- TSOracle.ts_frequency(res, tolerance, threshold, err_value)
+  <- consensus, dead_peers

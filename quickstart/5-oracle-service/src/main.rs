@@ -74,13 +74,20 @@ pub fn ts_avg(timestamps: Vec<u64>, min_points: u32) -> Oracle {
 }
 
 #[marine]
-fn ts_frequency(mut timestamps: Vec<u64>, tolerance: u32, threshold: f64) -> Consensus {
+fn ts_frequency(
+    mut timestamps: Vec<u64>,
+    tolerance: u32,
+    threshold: f64,
+    err_value: u64,
+) -> Consensus {
+    timestamps.retain(|&ts| ts != err_value);
     if timestamps.len() == 0 {
         return Consensus {
             err_str: "Array must have at least one element".to_string(),
             ..<_>::default()
         };
     }
+
     if timestamps.len() == 1 {
         return Consensus {
             n: 1,
