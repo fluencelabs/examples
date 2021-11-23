@@ -144,7 +144,7 @@ mod tests {
     }
 
     #[marine_test(config_path = "../configs/Config.toml", modules_dir = "../artifacts")]
-    fn test_mean_fails(ts_consensus: marine_test_env::ts_oracle::ModuleInterface) {
+    fn test_mean_fail(ts_consensus: marine_test_env::ts_oracle::ModuleInterface) {
         let data = vec![1u64, 2u64, 3u64];
         let n = 0;
         let res = ts_consensus.ts_avg(data, n);
@@ -160,6 +160,18 @@ mod tests {
     }
 
     #[marine_test(config_path = "../configs/Config.toml", modules_dir = "../artifacts")]
+    fn test_err_val(ts_consensus: marine_test_env::ts_oracle::ModuleInterface) {
+        let data = vec![0, 1, 1, 1];
+        let tolerance = 3u32;
+        let threshold: f64 = 0.66;
+        let err_val: u64 = 0;
+        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold, err_val);
+        assert_eq!(res.consensus_ts, 1);
+        assert_eq!(res.n, data.len() as u32 - 2);
+        assert_eq!(res.err_str.len(), 0);
+    }
+
+    #[marine_test(config_path = "../configs/Config.toml", modules_dir = "../artifacts")]
     fn ts_validation_good_consensus(ts_consensus: marine_test_env::ts_oracle::ModuleInterface) {
         let data = vec![
             1636961969u64,
@@ -171,7 +183,8 @@ mod tests {
         ];
         let tolerance = 3u32;
         let threshold: f64 = 0.66;
-        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold);
+        let err_val: u64 = 0;
+        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold, err_val);
         assert_eq!(res.n, (data.len() - 1) as u32);
         assert_eq!(res.support, (data.len() - 1) as u32);
         assert_eq!(res.err_str.len(), 0);
@@ -190,7 +203,8 @@ mod tests {
         ];
         let tolerance = 0u32;
         let threshold: f64 = 0.66;
-        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold);
+        let err_val: u64 = 0;
+        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold, err_val);
         assert_eq!(res.n, (data.len() - 1) as u32);
         assert_eq!(res.support, 0u32);
         assert_eq!(res.err_str.len(), 0);
@@ -212,7 +226,8 @@ mod tests {
         ];
         let tolerance = 3u32;
         let threshold: f64 = 0.66;
-        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold);
+        let err_val: u64 = 0;
+        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold, err_val);
         assert_eq!(res.n, (data.len() - 1) as u32);
         assert_eq!(res.support, (data.len() - 1) as u32);
         assert_eq!(res.err_str.len(), 0);
@@ -233,7 +248,8 @@ mod tests {
         ];
         let tolerance = 0u32;
         let threshold: f64 = 0.66;
-        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold);
+        let err_val: u64 = 0;
+        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold, err_val);
         assert_eq!(res.n, (data.len() - 1) as u32);
         assert_eq!(res.support, 0u32);
         assert_eq!(res.err_str.len(), 0);
@@ -246,7 +262,8 @@ mod tests {
         let data = vec![1636961965u64, 1636961969u64, 1636961972u64];
         let tolerance = 1u32;
         let threshold: f64 = 0.66;
-        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold);
+        let err_val: u64 = 0;
+        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold, err_val);
         assert_eq!(res.n, (data.len() - 1) as u32);
         assert_eq!(res.support, 0 as u32);
         assert_eq!(res.err_str.len(), 0);
@@ -258,7 +275,8 @@ mod tests {
         let data = vec![1636961969u64];
         let tolerance = 3u32;
         let threshold: f64 = 0.66;
-        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold);
+        let err_val: u64 = 0;
+        let res = ts_consensus.ts_frequency(data.clone(), tolerance, threshold, err_val);
         assert_eq!(res.consensus_ts, data[0]);
         assert_eq!(res.support, data.len() as u32);
         assert_eq!(res.n, data.len() as u32);
@@ -270,7 +288,8 @@ mod tests {
         let data = vec![];
         let tolerance = 3u32;
         let threshold: f64 = 0.66;
-        let res = ts_consensus.ts_frequency(data, tolerance, threshold);
+        let err_val: u64 = 0;
+        let res = ts_consensus.ts_frequency(data, tolerance, threshold, err_val);
         assert_eq!(res.n, 0);
         assert_eq!(res.support, 0);
         assert_eq!(res.consensus_ts, 0);
