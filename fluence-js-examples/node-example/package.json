@@ -11,13 +11,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@fluencelabs/aqua": "^0.4.0-234",
+    "@fluencelabs/aqua": "^0.5.0-246",
     "chokidar-cli": "^3.0.0",
-    "ts-node": "^10.2.1",
-    "typescript": "^4.4.2"
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
   },
   "dependencies": {
-    "@fluencelabs/fluence": "^0.14.3",
+    "@fluencelabs/fluence": "^0.15.1",
     "@fluencelabs/fluence-network-environment": "1.0.10"
   }
 }
