@@ -17,53 +17,74 @@ import {
 // Services
 
 export interface NearWalletApiDef {
+    account_state: (network_id: string, account_id: string, callParams: CallParams<'network_id' | 'account_id'>) => string | Promise<string>;
     sign_transaction: (network_id: string, tx_string: string, password: string, callParams: CallParams<'network_id' | 'tx_string' | 'password'>) => string | Promise<string>;
 }
 export function registerNearWalletApi(service: NearWalletApiDef): void;
 export function registerNearWalletApi(serviceId: string, service: NearWalletApiDef): void;
 export function registerNearWalletApi(peer: FluencePeer, service: NearWalletApiDef): void;
 export function registerNearWalletApi(peer: FluencePeer, serviceId: string, service: NearWalletApiDef): void;
-
+       
 
 export function registerNearWalletApi(...args: any) {
     registerService(
         args,
         {
-            "defaultServiceId": "near-api",
-            "functions": [
+    "defaultServiceId" : "NearWalletApi",
+    "functions" : [
+        {
+            "functionName" : "account_state",
+            "argDefs" : [
                 {
-                    "functionName": "sign_transaction",
-                    "argDefs": [
-                        {
-                            "name": "network_id",
-                            "argType": {
-                                "tag": "primitive"
-                            }
-                        },
-                        {
-                            "name": "tx_string",
-                            "argType": {
-                                "tag": "primitive"
-                            }
-                        },
-                        {
-                            "name": "password",
-                            "argType": {
-                                "tag": "primitive"
-                            }
-                        }
-                    ],
-                    "returnType": {
-                        "tag": "primitive"
+                    "name" : "network_id",
+                    "argType" : {
+                        "tag" : "primitive"
+                    }
+                },
+                {
+                    "name" : "account_id",
+                    "argType" : {
+                        "tag" : "primitive"
                     }
                 }
-            ]
+            ],
+            "returnType" : {
+                "tag" : "primitive"
+            }
+        },
+        {
+            "functionName" : "sign_transaction",
+            "argDefs" : [
+                {
+                    "name" : "network_id",
+                    "argType" : {
+                        "tag" : "primitive"
+                    }
+                },
+                {
+                    "name" : "tx_string",
+                    "argType" : {
+                        "tag" : "primitive"
+                    }
+                },
+                {
+                    "name" : "password",
+                    "argType" : {
+                        "tag" : "primitive"
+                    }
+                }
+            ],
+            "returnType" : {
+                "tag" : "primitive"
+            }
         }
+    ]
+}
     );
 }
-
+      
 // Functions
-
+ 
 
 export function sign_transaction(
     network_id: string,
@@ -71,7 +92,7 @@ export function sign_transaction(
     password: string,
     node: string,
     relay: string,
-    config?: { ttl?: number }
+    config?: {ttl?: number}
 ): Promise<string>;
 
 export function sign_transaction(
@@ -81,7 +102,7 @@ export function sign_transaction(
     password: string,
     node: string,
     relay: string,
-    config?: { ttl?: number }
+    config?: {ttl?: number}
 ): Promise<string>;
 
 export function sign_transaction(...args: any) {
@@ -115,7 +136,7 @@ export function sign_transaction(...args: any) {
                           (call relay ("op" "noop") [])
                          )
                          (xor
-                          (call node ("near-api" "sign_transaction") [network_id tx_string password] tx_id)
+                          (call node ("NearWalletApi" "sign_transaction") [network_id tx_string password] tx_id)
                           (seq
                            (seq
                             (seq
@@ -143,52 +164,171 @@ export function sign_transaction(...args: any) {
     return callFunction(
         args,
         {
-            "functionName": "sign_transaction",
-            "returnType": {
-                "tag": "primitive"
-            },
-            "argDefs": [
-                {
-                    "name": "network_id",
-                    "argType": {
-                        "tag": "primitive"
-                    }
-                },
-                {
-                    "name": "tx_string",
-                    "argType": {
-                        "tag": "primitive"
-                    }
-                },
-                {
-                    "name": "password",
-                    "argType": {
-                        "tag": "primitive"
-                    }
-                },
-                {
-                    "name": "node",
-                    "argType": {
-                        "tag": "primitive"
-                    }
-                },
-                {
-                    "name": "relay",
-                    "argType": {
-                        "tag": "primitive"
-                    }
-                }
-            ],
-            "names": {
-                "relay": "-relay-",
-                "getDataSrv": "getDataSrv",
-                "callbackSrv": "callbackSrv",
-                "responseSrv": "callbackSrv",
-                "responseFnName": "response",
-                "errorHandlingSrv": "errorHandlingSrv",
-                "errorFnName": "error"
+    "functionName" : "sign_transaction",
+    "returnType" : {
+        "tag" : "primitive"
+    },
+    "argDefs" : [
+        {
+            "name" : "network_id",
+            "argType" : {
+                "tag" : "primitive"
             }
         },
+        {
+            "name" : "tx_string",
+            "argType" : {
+                "tag" : "primitive"
+            }
+        },
+        {
+            "name" : "password",
+            "argType" : {
+                "tag" : "primitive"
+            }
+        },
+        {
+            "name" : "node",
+            "argType" : {
+                "tag" : "primitive"
+            }
+        },
+        {
+            "name" : "relay",
+            "argType" : {
+                "tag" : "primitive"
+            }
+        }
+    ],
+    "names" : {
+        "relay" : "-relay-",
+        "getDataSrv" : "getDataSrv",
+        "callbackSrv" : "callbackSrv",
+        "responseSrv" : "callbackSrv",
+        "responseFnName" : "response",
+        "errorHandlingSrv" : "errorHandlingSrv",
+        "errorFnName" : "error"
+    }
+},
+        script
+    )
+}
+
+ 
+
+export function account_state(
+    network_id: string,
+    account_id: string,
+    node: string,
+    relay: string,
+    config?: {ttl?: number}
+): Promise<string>;
+
+export function account_state(
+    peer: FluencePeer,
+    network_id: string,
+    account_id: string,
+    node: string,
+    relay: string,
+    config?: {ttl?: number}
+): Promise<string>;
+
+export function account_state(...args: any) {
+
+    let script = `
+                    (xor
+                     (seq
+                      (seq
+                       (seq
+                        (seq
+                         (seq
+                          (seq
+                           (seq
+                            (seq
+                             (seq
+                              (seq
+                               (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                               (call %init_peer_id% ("getDataSrv" "network_id") [] network_id)
+                              )
+                              (call %init_peer_id% ("getDataSrv" "account_id") [] account_id)
+                             )
+                             (call %init_peer_id% ("getDataSrv" "node") [] node)
+                            )
+                            (call %init_peer_id% ("getDataSrv" "relay") [] relay)
+                           )
+                           (call -relay- ("op" "noop") [])
+                          )
+                          (call relay ("op" "noop") [])
+                         )
+                         (xor
+                          (call node ("NearWalletApi" "account_state") [network_id account_id] res)
+                          (seq
+                           (seq
+                            (seq
+                             (call relay ("op" "noop") [])
+                             (call -relay- ("op" "noop") [])
+                            )
+                            (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+                           )
+                           (call -relay- ("op" "noop") [])
+                          )
+                         )
+                        )
+                        (call relay ("op" "noop") [])
+                       )
+                       (call -relay- ("op" "noop") [])
+                      )
+                      (xor
+                       (call %init_peer_id% ("callbackSrv" "response") [res])
+                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+                      )
+                     )
+                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+                    )
+    `
+    return callFunction(
+        args,
+        {
+    "functionName" : "account_state",
+    "returnType" : {
+        "tag" : "primitive"
+    },
+    "argDefs" : [
+        {
+            "name" : "network_id",
+            "argType" : {
+                "tag" : "primitive"
+            }
+        },
+        {
+            "name" : "account_id",
+            "argType" : {
+                "tag" : "primitive"
+            }
+        },
+        {
+            "name" : "node",
+            "argType" : {
+                "tag" : "primitive"
+            }
+        },
+        {
+            "name" : "relay",
+            "argType" : {
+                "tag" : "primitive"
+            }
+        }
+    ],
+    "names" : {
+        "relay" : "-relay-",
+        "getDataSrv" : "getDataSrv",
+        "callbackSrv" : "callbackSrv",
+        "responseSrv" : "callbackSrv",
+        "responseFnName" : "response",
+        "errorHandlingSrv" : "errorHandlingSrv",
+        "errorFnName" : "error"
+    }
+},
         script
     )
 }

@@ -10,33 +10,28 @@ const { connect, keyStores, KeyPair, WalletConnection, Account } = nearAPI;
 const KEY_PATH = "~./near-credentials/testnet/boneyard93501.testnet.json";
 const keyStore = new keyStores.UnencryptedFileSystemKeyStore(KEY_PATH);
 
+// temp fix replace with your key, e.g., account pk
 const SeedArray = new Uint8Array([10, 10, 20, 20, 100, 100]);
-
-enum NearNetwork {
-    mainnet = 0, // "https://rpc.mainnet.near.org",   // near cli: mainnet selection is 'production'
-    testnet,       // near cli: development or testnet
-    betanet,
-    localnet,      // bear-cli: local
-}
-
-// var NearUrl = `https://rpc.{}.near.org`;
-// var WalletUrl = `https://wallet.{}.near.org`;
-// var HelperUrl = `https://helper.{}.near.org`;
-// var ExplorerUrl = `https://explorer.{}.near.org`;
-
-
-
-
 class NearWalletApi implements NearWalletApiDef {
 
     async sign_transaction(network_id: string, tx_string: string, password: string): Promise<string> {
         const config = get_config(network_id);
         const near = await network_connect(config);
         const wallet = await wallet_connect(near, "signer-node");
-        console.log("wallet: ", wallet);
         await wallet_signout(wallet);
 
         return Promise.resolve("boo yah");
+    }
+
+    async account_state(network_id: string, account_id: string): Promise<any> {
+        const config = get_config(network_id);
+        const near = await network_connect(config);
+        console.log("calling acct state");
+        console.log("config: ", config);
+        const state = await account_state(near, account_id);
+        console.log("account state: ", state);
+
+        return Promise.resolve(state);
     }
 }
 
@@ -45,6 +40,7 @@ function get_config(networkId: string): any {
         networkId,
         keyStore,
         nodeUrl: `https://rpc.${networkId}.near.org`,
+        // nodeUrl: `https://rpc.testnet.near.org`,
         walletUrl: `https://wallet.${networkId}.near.org`,
         helperUrl: `https://helper.${networkId}.near.org`,
         explorerUrl: `https://explorer.${networkId}.near.org`,
@@ -56,7 +52,7 @@ function get_config(networkId: string): any {
 async function network_connect(network_id: string): Promise<nearAPI.Near> {
     const config = get_config(network_id);
     const near = await connect(config);
-    console.log("near: ", near);
+    // console.log("near: ", near);
     return Promise.resolve(near);
 }
 
@@ -111,6 +107,12 @@ async function deploy_contract_from_string(near: nearAPI.Near, account_id: strin
     return Promise.resolve(deployment);
 }
 
+async function send_amount(near: nearAPI.Near, account_id: string, receiver_id: string, amount: string): Promise<nearAPI.providers.FinalExecutionOutcome> {
+    const account = await near.account(account_id);
+    const result = await account.sendMoney(receiver_id, amount);
+    return Promise.resolve(result);
+}
+
 
 // state
 async function account_state(near: nearAPI.Near, account_id: string): Promise<any> {
@@ -119,9 +121,27 @@ async function account_state(near: nearAPI.Near, account_id: string): Promise<an
     return Promise.resolve(response);
 }
 
+interface AccountState {
+    amount: string,
+    block_hash: string,
+    block_height: number,
+    code_hash: string,
+    locked: string,
+    storage_paid_at: number,
+    storage_usage: number
+}
 
 async function main() {
-    /*
+
+    // const config = get_config("testnet");
+    // console.log("config: ", config);
+    // const near = await connect(config);
+    // console.log("near: ", near);
+    // const acct_state = await account_state(near, "boneyard93501.testnet");
+    // console.log("account state: ", acct_state);
+
+
+
     await Fluence.start({
         connectTo: krasnodar[5],
         KeyPair: await FluenceKeyPair.fromEd25519SK(SeedArray)
@@ -134,13 +154,7 @@ async function main() {
 
 
     console.log("crtl-c to exit");
-    */
-    const config = get_config("testnet");
-    console.log("config: ", config);
-    const near = await connect(config);
-    console.log("near: ", near);
-    const acct_state = await account_state(near, "boneyard93501.testnet");
-    console.log("account state: ", acct_state);
+
 
 }
 

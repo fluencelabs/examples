@@ -1,8 +1,22 @@
-service NearWalletApi("near-api"):
+data AccountState:
+    amount: string
+    block_hash: string
+    block_height: u64
+    code_hash: string
+    locked: string
+    storage_paid_at: u64
+    storage_usage: u64
+
+service NearWalletApi("NearWalletApi"):
     sign_transaction(network_id:string, tx_string:string, password:string) -> string
+    account_state(network_id: string, account_id: string) -> string
 
 func sign_transaction(network_id:string, tx_string:string, password:string, node:string, relay:string) -> string:
     on node via relay:
         tx_id <- NearWalletApi.sign_transaction(network_id, tx_string, password)
     <- tx_id
 
+func account_state(network_id:string, account_id:string, node:string, relay:string) -> string:
+    on node via relay:
+        res <- NearWalletApi.account_state(network_id, account_id)
+    <- res
