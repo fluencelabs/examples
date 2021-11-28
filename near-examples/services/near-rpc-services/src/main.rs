@@ -16,7 +16,8 @@
 
 use marine_rs_sdk::{marine, module_manifest, MountedBinaryResult, WasmLoggerBuilder};
 
-// mod utils;
+mod utils;
+use utils::{rpc_maker, url_maker};
 
 module_manifest!();
 
@@ -24,23 +25,10 @@ pub fn main() {
     WasmLoggerBuilder::new().build().unwrap();
 }
 
-pub fn rpc_maker(url: String, method: String, params: String) -> Vec<String> {
-    let data: String = format!(
-        "-d {{\"jsonrpc\":\"2.0\", \"id\":\"dontcare\", \"method\":{}, \"params\":{} }}'",
-        method, params
-    );
-    let curl_params = vec![
-        "-X".to_string(),
-        "POST".to_string(),
-        url,
-        data,
-        "-H 'Content-Type: application/json'".to_string(),
-    ];
-    curl_params
-}
-
-pub fn url_maker(network_id: String) -> String {
-    format!("https://rpc.{}.near.org", network_id)
+#[marine]
+pub struct Result {
+    pub stderr: String,
+    pub stdout: String,
 }
 
 #[marine]
@@ -50,11 +38,11 @@ pub fn tx_status(
     tx_id: String,
     account_id: String,
 ) -> MountedBinaryResult {
-    // url -X POST https://rpc.testnet.near.org -d '{"id":"dontcare","method":"tx", "params":["6zgh2u9DqHHiXzdy9ouTP7oGky2T4nugqzqt9wJZwNFm", "boneyard93501.testnet"], "jsonrpc":"2.0"}' -H 'Content-Type: application/json
     let url = url_maker(network_id);
-    let params = format!("[{}, {}]", tx_id, account_id);
+    let params = format!("[\"{}\", \"{}\"]", tx_id, account_id);
     let curl_params: Vec<String> = rpc_maker(url, method, params);
     let response = curl_request(curl_params);
+    println!("MountedBinaryResult: {:?}\n\n", response.clone());
     response
 }
 
@@ -63,17 +51,3 @@ pub fn tx_status(
 extern "C" {
     pub fn curl_request(cmd: Vec<String>) -> MountedBinaryResult;
 }
-
-/*
-#[cfg(test)]
-mod tests {
-    use marine_rs_sdk_test::marine_test;
-
-    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
-    fn test_greeting(greeting: marine_test_env::greeting::ModuleInterface) {
-        let name = "Marine";
-        let res = greeting.greeting(name.to_string());
-        assert_eq!(res, format!("Hi, {}", name));
-    }
-}
-*/
