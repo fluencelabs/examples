@@ -1,0 +1,7 @@
+service NearWalletApi("near-api"):
+    sign_transaction(network_id:string, tx_string:string, password:string) -> string
+
+func sign_transaction(network_id:string, tx_string:string, password:string, node:string, relay:string) -> string:
+    on node via relay:
+        tx_id <- NearWalletApi.sign_transaction(network_id, tx_string, password)
+    <- tx_id
