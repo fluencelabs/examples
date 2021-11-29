@@ -34,16 +34,61 @@ pub struct Result {
 #[marine]
 pub fn tx_status(
     network_id: String,
-    method: String,
     tx_id: String,
     account_id: String,
+    receipt: bool,
 ) -> MountedBinaryResult {
+    let mut method = "tx".to_string();
+    if receipt {
+        method = "EXPERIMENTAL_tx_status".to_string();
+    }
     let url = url_maker(network_id);
     let params = format!("[\"{}\", \"{}\"]", tx_id, account_id);
     let curl_params: Vec<String> = rpc_maker(url, method, params);
     let response = curl_request(curl_params);
     println!("MountedBinaryResult: {:?}\n\n", response.clone());
     response
+}
+
+#[marine]
+pub fn tx_by_receipt(network_id: String, receipt_id: String) -> MountedBinaryResult {
+    let method = "EXPERIMENTAL_receipt".to_string();
+    let url = url_maker(network_id);
+    let params = format!("[\"{}\"]", receipt_id);
+    let curl_params: Vec<String> = rpc_maker(url, method, params);
+    let response = curl_request(curl_params);
+    println!("MountedBinaryResult: {:?}\n\n", response.clone());
+    response
+}
+
+#[marine]
+pub fn gas_price(network_id: String, block_ref: String) -> Result {
+    // block-ref can be block height or block hash
+    let method = "gas_price".to_string();
+    let url = url_maker(network_id);
+    let params = format!("[\"{}\"]", block_ref);
+    let curl_params: Vec<String> = rpc_maker(url, method, params);
+    let response = curl_request(curl_params);
+    Result {
+        stderr: String::from_utf8(response.stderr).unwrap(),
+        stdout: String::from_utf8(response.stdout).unwrap(),
+    }
+}
+
+#[marine]
+pub fn node_status(network_id: String, block_ref: String) -> Result {
+    // block-ref can be block height or block hash
+    let method = "status".to_string();
+    let url = url_maker(network_id);
+    let params = "[]".to_string();
+    let curl_params: Vec<String> = rpc_maker(url, method, params);
+    println!("curl params: {:?}", curl_params);
+    let response = curl_request(curl_params);
+    println!("response: {:?}", response.clone());
+    Result {
+        stderr: String::from_utf8(response.stderr).unwrap(),
+        stdout: String::from_utf8(response.stdout).unwrap(),
+    }
 }
 
 #[marine]
