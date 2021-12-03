@@ -1,0 +1,88 @@
+
+alias PeerId : string
+alias Base58String : string
+alias Hash : string
+
+-- const N_KNEIGHBORS = 19
+
+data Contact:
+    peer_id: string
+    addresses: []string
+
+data Info:
+    external_addresses: []string
+
+service Op("op"):
+    string_to_b58(s: string) -> Base58String
+    concat_strings(a: string, b: string) -> string
+
+service MyOp("op"):
+    identity(u: u64)
+    identity_string(s:string)
+
+service MyOpBool("op"):
+    identity(b: bool)
+
+service Kademlia("kad"):
+    neighborhood(key: Base58String, already_hashed: ?bool, count: ?u32) -> []PeerId
+    merge(target: Base58String, left: []string, right: []string, count: ?u32) -> []string
+
+service Peer("peer"):
+    is_connected(peer: PeerId) -> bool
+    connect(id: PeerId, multiaddrs: ?[]string) -> bool
+    get_contact(peer: PeerId) -> Contact
+    identify() -> Info
+    timestamp_ms() -> u64
+    timestamp_sec() -> u64
+    timeout(duration_ms: u64, message: string) -> string
+
+data Consensus:
+  n: u32
+  consensus_ts: u64
+  consensus: bool
+  support: u32
+  err_str: string
+
+data Oracle:
+  n: u32
+  avg: f64
+  err_str: string
+
+service TSOracle("service-id"):
+  ts_frequency(timestamps: []u64, tolerance: u32, threshold: f64, err_value:u64) -> Consensus
+
+func ts_oracle_with_consensus(tolerance: u32, threshold: f64, err_value:u64, node:string, oracle_service_id:string)-> Consensus, []string:
+  rtt  = 1000 -- in ms
+  res: *u64
+  msg = "timeout"
+  dead_peers: *string
+  on node:
+    k <- Op.string_to_b58(node)
+    nodes <- Kademlia.neighborhood(k, nil, nil)
+    for n <- nodes par:
+        status: *string
+        on n:
+            res <- Peer.timestamp_ms()
+            status <<- "success"
+        par status <- Peer.timeout(rtt, msg)
+        if status! != "success":
+          res <<- err_value
+          dead_peers <<- n
+        
+    MyOp.identity(res!19)
+    TSOracle oracle_service_id
+    consensus <- TSOracle.ts_frequency(res, tolerance, threshold, err_value)
+  <- consensus, dead_peers
+
+func ts_oracle_with_bool(tolerance: u32, threshold: f64, err_value:u64, node:string, oracle_service_id:string)-> []bool, []string:
+  res: *bool
+  peers: *string
+  dead_peers: *string
+  on node:
+    k <- Op.string_to_b58(node)
+    nodes <- Kademlia.neighborhood(k, nil, nil)
+    for n <- nodes par:
+      res <- Peer.connect(n, nil)
+      peers <<- n
+    MyOpBool.identity(res!19)
+  <- res, peers
