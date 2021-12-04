@@ -134,26 +134,25 @@ func ts_oracle(node: string, oracle_service_id: string, min_points:u32) -> Oracl
   <- oracle                                             -- and return to initiating peer
 ```
 
-We can run our Aqua `ts_oracle` script against the deployed processing service to get our oracle point estimate (Note that you can replace the service id with the one you obtained from your deployment):
+We can run our Aqua `ts_oracle` script against the deployed processing service to get our oracle point estimate using `aqua run` (Note that you can replace the service id with the one you obtained from your deployment):
 
 ```bash
-fldist run_air \
-      -p air-scripts/ts_getter.ts_oracle.air  \
-      -d '{"node":"12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf",
-           "oracle_service_id":"ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9", 
-           "min_points":5}' \
-      --generated
+aqua run \ 
+    -i aqua-scripts \
+    -a /dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf \
+    -f 'ts_oracle("12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf", "ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9", 5)'
 ```
 
-Which results in:
+Which results in below but may be different for you:
 
 ```text
+Your peerId: 12D3KooWC6WzVSHaKxkedGcoHJgqj7pEaeXXWsiMtC8M7vjC1qTX
 [
   {
     "err_str": "",
-    "freq": 2,              -- this may change
-    "mode": 1623713287898,  -- this changes, of course
-    "n": 10
+    "freq": 4,
+    "mode": 1638595617657,
+    "n": 12
   }
 ]
 ```
@@ -161,31 +160,34 @@ Which results in:
 Alternatively, we can run the `ts_getter` functions just for the timestamps:
 
 ```bash
-fldist run_air \
-       -p air-scripts/ts_getter.ts_getter.air  \
-       -d '{"node":"12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf",
-            "oracle_service_id":"ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9",
-            "min_points":5, "n_ts": 10}' \
-      --generated
+aqua run \
+    -i aqua-scripts \
+    -a /dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf \
+    -f 'ts_getter("12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf", "ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9", 5, 10)'
 ```
 
-Which gives us just the timestamps:
+Which gives us just the timestamps, which wil be different for you:
 
 ```text
+Your peerId: 12D3KooWKeRZaNkubmibXhBGVHRC1WBn9h9j4Qao6s9xPdiJiHxu
 [
   [
-    1624834792801,   # Note: your timestamps will have different values
-    1624834792791,
-    1624834792796,
-    1624834792797,
-    1624834792795,
-    1624834792783,
-    1624834792800,
-    1624834792785,
-    1624834792806,
-    1624834792793
+    1638595815113,
+    1638595815112,
+    1638595815109,
+    1638595815112,
+    1638595815115,
+    1638595815114,
+    1638595815111,
+    1638595815110,
+    1638595815109,
+    1638595815111,
+    1638595815113,
+    1638595815112,
+    1638595815111,
+    1638595815111
   ]
 ]
 ```
 
-Instead of `fldist`, you can use the Typescript stub and integrate it into a TS client. See [Aqua Playground](https://github.com/fluencelabs/aqua-playground) for more information.
+Instead of `aqua run`, you can use the Typescript stub and integrate it into a TS client. See [Aqua Playground](https://github.com/fluencelabs/aqua-playground) for more information.
