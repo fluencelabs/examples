@@ -62,9 +62,10 @@ which gives us:
 
 ```text
 # <snip>
-created a fluence client 12D3KooWJr9dgmW7jRxRqzjugedGBCVXVxDHhNkyY88aZzN1rmgh with relay 12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA
-seq result:  { error_msg: '', result: 2005.65, success: true }
-par result:  { error_msg: '', result: 1867.33, success: true }
+hello crypto investors
+created a fluence client 12D3KooWEKui98wfChxaPou6qcNcH5zY3LzfXRwJbTViKUdY7aWi with relay 12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi
+seq result:  { error_msg: '', result: 3989.19, success: true }
+par result:  { error_msg: '', result: 3674.25, success: true }
 ```
 
 As evident from our results, we are executing two different workflows to get our price oracle: the first approach uses one price getter service twice in sequence and the second approach uses two price getter services deployed on different hosts in parallel. See the code example below.
