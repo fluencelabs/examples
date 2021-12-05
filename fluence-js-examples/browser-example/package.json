@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@fluencelabs/fluence": "^0.14.3",
+    "@fluencelabs/fluence": "^0.15.1",
     "@fluencelabs/fluence-network-environment": "1.0.10",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
@@ -15,7 +15,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
-    "typescript": "^4.3.5",
+    "typescript": "^4.5.2",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
@@ -45,8 +45,8 @@
     ]
   },
   "devDependencies": {
-    "@fluencelabs/aqua": "^0.4.0-234",
-    "@fluencelabs/aqua-lib": "0.1.9",
+    "@fluencelabs/aqua": "^0.5.0-248",
+    "@fluencelabs/aqua-lib": "0.2.1",
     "chokidar-cli": "^2.1.0",
     "node-sass": "^6.0.1"
   }

@@ -18,100 +18,100 @@ import {
 
 export interface CalcDef {
     add: (n: number, callParams: CallParams<'n'>) => void | Promise<void>;
-divide: (n: number, callParams: CallParams<'n'>) => void | Promise<void>;
-getResult: (callParams: CallParams<null>) => number | Promise<number>;
-multiply: (n: number, callParams: CallParams<'n'>) => void | Promise<void>;
-reset: (callParams: CallParams<null>) => void | Promise<void>;
-subtract: (n: number, callParams: CallParams<'n'>) => void | Promise<void>;
+    divide: (n: number, callParams: CallParams<'n'>) => void | Promise<void>;
+    getResult: (callParams: CallParams<null>) => number | Promise<number>;
+    multiply: (n: number, callParams: CallParams<'n'>) => void | Promise<void>;
+    reset: (callParams: CallParams<null>) => void | Promise<void>;
+    subtract: (n: number, callParams: CallParams<'n'>) => void | Promise<void>;
 }
 export function registerCalc(service: CalcDef): void;
 export function registerCalc(serviceId: string, service: CalcDef): void;
 export function registerCalc(peer: FluencePeer, service: CalcDef): void;
 export function registerCalc(peer: FluencePeer, serviceId: string, service: CalcDef): void;
-       
+
 
 export function registerCalc(...args: any) {
     registerService(
         args,
         {
-    "defaultServiceId" : "calc",
-    "functions" : [
-        {
-            "functionName" : "add",
-            "argDefs" : [
+            "defaultServiceId": "calc",
+            "functions": [
                 {
-                    "name" : "n",
-                    "argType" : {
-                        "tag" : "primitive"
+                    "functionName": "add",
+                    "argDefs": [
+                        {
+                            "name": "n",
+                            "argType": {
+                                "tag": "primitive"
+                            }
+                        }
+                    ],
+                    "returnType": {
+                        "tag": "void"
+                    }
+                },
+                {
+                    "functionName": "divide",
+                    "argDefs": [
+                        {
+                            "name": "n",
+                            "argType": {
+                                "tag": "primitive"
+                            }
+                        }
+                    ],
+                    "returnType": {
+                        "tag": "void"
+                    }
+                },
+                {
+                    "functionName": "getResult",
+                    "argDefs": [
+                    ],
+                    "returnType": {
+                        "tag": "primitive"
+                    }
+                },
+                {
+                    "functionName": "multiply",
+                    "argDefs": [
+                        {
+                            "name": "n",
+                            "argType": {
+                                "tag": "primitive"
+                            }
+                        }
+                    ],
+                    "returnType": {
+                        "tag": "void"
+                    }
+                },
+                {
+                    "functionName": "reset",
+                    "argDefs": [
+                    ],
+                    "returnType": {
+                        "tag": "void"
+                    }
+                },
+                {
+                    "functionName": "subtract",
+                    "argDefs": [
+                        {
+                            "name": "n",
+                            "argType": {
+                                "tag": "primitive"
+                            }
+                        }
+                    ],
+                    "returnType": {
+                        "tag": "void"
                     }
                 }
-            ],
-            "returnType" : {
-                "tag" : "void"
-            }
-        },
-        {
-            "functionName" : "divide",
-            "argDefs" : [
-                {
-                    "name" : "n",
-                    "argType" : {
-                        "tag" : "primitive"
-                    }
-                }
-            ],
-            "returnType" : {
-                "tag" : "void"
-            }
-        },
-        {
-            "functionName" : "getResult",
-            "argDefs" : [
-            ],
-            "returnType" : {
-                "tag" : "primitive"
-            }
-        },
-        {
-            "functionName" : "multiply",
-            "argDefs" : [
-                {
-                    "name" : "n",
-                    "argType" : {
-                        "tag" : "primitive"
-                    }
-                }
-            ],
-            "returnType" : {
-                "tag" : "void"
-            }
-        },
-        {
-            "functionName" : "reset",
-            "argDefs" : [
-            ],
-            "returnType" : {
-                "tag" : "void"
-            }
-        },
-        {
-            "functionName" : "subtract",
-            "argDefs" : [
-                {
-                    "name" : "n",
-                    "argType" : {
-                        "tag" : "primitive"
-                    }
-                }
-            ],
-            "returnType" : {
-                "tag" : "void"
-            }
+            ]
         }
-    ]
-}
     );
 }
-      
+
 // Functions
 
