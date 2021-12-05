@@ -3,7 +3,7 @@ pub const NONCE: &'static str = "dontcare";
 
 pub fn rpc_maker(url: String, method: String, params: String) -> Vec<String> {
     let data: String = format!(
-        "-d '{{\"jsonrpc\":\"{}\", \"id\":\"{}\", \"method\":\"{}\", \"params\":{} }}'",
+        "-d {{\"jsonrpc\":\"{}\", \"id\":\"{}\", \"method\":\"{}\", \"params\":{} }}",
         JSON_RPC, NONCE, method, params
     );
     let curl_params = vec![

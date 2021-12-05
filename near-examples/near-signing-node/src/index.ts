@@ -5,6 +5,7 @@ import * as nearAPI from "near-api-js";
 import { KeyStore } from "near-api-js/lib/key_stores";
 import * as fs from 'fs';
 import { Buffer } from 'buffer';
+import { Near } from "near-api-js";
 
 const { connect, keyStores, KeyPair, WalletConnection, Account } = nearAPI;
 const KEY_PATH = "~./near-credentials/testnet/boneyard93501.testnet.json";
@@ -33,6 +34,17 @@ class NearWalletApi implements NearWalletApiDef {
 
         return Promise.resolve(state);
     }
+
+    async send_tokens(network_id: string, account_id: string, receiver_id: string, amount: string): Promise<any> {
+        const config = get_config(network_id);
+        const near = await network_connect(config);
+        const result = await send_tokens(near, account_id, receiver_id, amount);
+
+        return Promise.resolve(result);
+    }
+
+    // async from_
+    // async to_
 }
 
 function get_config(networkId: string): any {
@@ -76,6 +88,20 @@ async function wallet_load(network_id: string, account_id: string) {
 }
 
 
+async function sign(network_id: string, payload: string, account_id: string): Promise<Uint8Array> {
+    const keyPair = await keyStore.getKey(network_id, account_id);
+    const msg = Buffer.from(payload);
+    const { signature } = keyPair.sign(msg);
+    return Promise.resolve(signature);
+}
+
+async function verify_signature(network_id: string, account_id: string, payload: string, signature: Uint8Array) {
+    const keyPair = await keyStore.getKey(network_id, account_id);
+    const msg = Buffer.from(payload);
+
+}
+
+
 // account
 async function get_balance(near: nearAPI.Near, account_id: string): Promise<any> {
     const account = await near.account(account_id);
@@ -99,6 +125,7 @@ async function deploy_contract(near: nearAPI.Near, account_id: string, wasm_raw:
     return Promise.resolve(deployment);
 }
 
+
 async function deploy_contract_from_string(near: nearAPI.Near, account_id: string, wasm_str: string): Promise<nearAPI.providers.FinalExecutionOutcome> {
 
     const account = await near.account(account_id);
@@ -107,7 +134,8 @@ async function deploy_contract_from_string(near: nearAPI.Near, account_id: strin
     return Promise.resolve(deployment);
 }
 
-async function send_amount(near: nearAPI.Near, account_id: string, receiver_id: string, amount: string): Promise<nearAPI.providers.FinalExecutionOutcome> {
+
+async function send_tokens(near: nearAPI.Near, account_id: string, receiver_id: string, amount: string): Promise<nearAPI.providers.FinalExecutionOutcome> {
     const account = await near.account(account_id);
     const result = await account.sendMoney(receiver_id, amount);
     return Promise.resolve(result);
@@ -133,13 +161,10 @@ interface AccountState {
 
 async function main() {
 
-    // const config = get_config("testnet");
-    // console.log("config: ", config);
-    // const near = await connect(config);
-    // console.log("near: ", near);
+    const config = get_config("testnet");
+    const near = await connect(config);
     // const acct_state = await account_state(near, "boneyard93501.testnet");
     // console.log("account state: ", acct_state);
-
 
 
     await Fluence.start({
