@@ -241,6 +241,8 @@ In the function body we:
 
 Let's run the compiled Aqua code with the `fldist` cli tool:
 
+**Please note that the `fldist run_air` examples below are NOT running. We are in the process of switching to `aqua run`, which should be ready shortly. Please proceed to `client-peer` example, which works as expected.**
+
 ```text
 fldist run_air \
        -p aqua-compiled/echo_greeter.echo_greeting_seq.air \
@@ -497,16 +499,20 @@ cd client-peer
 npm install
 ```
 
-And compile our Aqua file to a Typescript stub:
+And compile our Aqua file to a Typescript stub with:
 
 ```text
 npm run compile-aqua
+```
 
-> echo-greeter-example@0.1.0 compile-aqua /Users/bebo/localdev/examples-rework/aqua-examples/echo-greeter/client-peer
-> aqua -i ../aqua-scripts -o src/
+resulting in:
 
-[info] Aqua Compiler 0.1.14-207
-[info] Result /Users/bebo/localdev/examples-rework/aqua-examples/echo-greeter/client-peer/src/echo_greeter.ts: compilation OK (6 functions)
+```text
+> echo-greeter-example@0.1.0 compile-aqua
+> aqua -i ../aqua-scripts -o src/_aqua
+
+2021.12.04 00:21:51 [INFO] Aqua Compiler 0.5.0-248
+2021.12.04 00:21:51 [INFO] Result /Users/.../aqua-examples/echo-greeter/client-peer/src/_aqua/echo_greeter.ts: compilation OK (7 functions, 3 services)
 ```
 
 The ensuing, auto-generated file is called `echo_greeter.ts` and was copied to the `src` directory. The Aqua compiler auto-generated the Typescript functions corresponding to each of the Aqua functions we implemented. All we have to do is use them!

@@ -32,7 +32,7 @@ func echo_greeting_seq(names: []string, greet: bool, node: string, echo_service_
     EchoService echo_service_id
     GreetingService greeting_service_id
     echo_names <- EchoService.echo(names)
-    <- echo_names
+    -- <- echo_names
     for result <- echo_names:
       res <- GreetingService.greeting(result.echo, greet)
   <- res
