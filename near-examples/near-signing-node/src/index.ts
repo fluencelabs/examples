@@ -1,6 +1,6 @@
 import { Fluence, KeyPair as FluenceKeyPair } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
-import { sign_transaction, NearWalletApiDef, registerNearWalletApi } from "./_aqua/near_wallet";
+import { sign_transaction, NearSignerApiDef, registerNearSignerApi } from "./_aqua/near_signer";
 import * as nearAPI from "near-api-js";
 import { KeyStore } from "near-api-js/lib/key_stores";
 import * as fs from 'fs';
@@ -13,7 +13,7 @@ const keyStore = new keyStores.UnencryptedFileSystemKeyStore(KEY_PATH);
 
 // temp fix replace with your key, e.g., account pk
 const SeedArray = new Uint8Array([10, 10, 20, 20, 100, 100]);
-class NearWalletApi implements NearWalletApiDef {
+class NearSignerApi implements NearSignerApiDef {
 
     async sign_transaction(network_id: string, tx_string: string, password: string): Promise<string> {
         const config = get_config(network_id);
@@ -168,17 +168,29 @@ async function main() {
 
 
     await Fluence.start({
-        connectTo: krasnodar[5],
+        // connectTo: krasnodar[5],
+
+        connectTo: {
+            multiaddr: "/ip4/127.0.0.1/tcp/7770/p2p/12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK",
+            peerId: "12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK"
+        },
+
+        /*
+         connectTo: {
+             multiaddr: '/dns4/stage.fluence.dev/tcp/19001/wss/p2p/12D3KooWHCJbJKGDfCgHSoCuK9q4STyRnVveqLoXAPBbXHTZx9Cv',
+             peerId: '12D3KooWHCJbJKGDfCgHSoCuK9q4STyRnVveqLoXAPBbXHTZx9Cv'
+         },
+         */
         KeyPair: await FluenceKeyPair.fromEd25519SK(SeedArray)
     });
 
     console.log("PeerId: ", Fluence.getStatus().peerId);
     console.log("Relay id: ", Fluence.getStatus().relayPeerId);
 
-    registerNearWalletApi("NearWalletApi", new NearWalletApi);
+    // registerNearSignerApi("NearSigner", new registerNearSignerApi());
 
 
-    console.log("crtl-c to exit");
+    console.log("ctrl-c to exit");
 
 
 }
