@@ -13,7 +13,7 @@ const keyStore = new keyStores.UnencryptedFileSystemKeyStore(KEY_PATH);
 
 // temp fix replace with your key, e.g., account pk
 const SeedArray = new Uint8Array([10, 10, 20, 20, 100, 100]);
-class NearSignerApi implements NearSignerApiDef {
+class NearSigner implements NearSignerApiDef {
 
     async sign_transaction(network_id: string, tx_string: string, password: string): Promise<string> {
         const config = get_config(network_id);
@@ -187,7 +187,7 @@ async function main() {
     console.log("PeerId: ", Fluence.getStatus().peerId);
     console.log("Relay id: ", Fluence.getStatus().relayPeerId);
 
-    // registerNearSignerApi("NearSigner", new registerNearSignerApi());
+    registerNearSignerApi("near", new NearSigner());
 
 
     console.log("ctrl-c to exit");
