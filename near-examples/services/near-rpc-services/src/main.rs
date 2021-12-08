@@ -62,7 +62,7 @@ pub fn gas_price(network_id: String, block_ref: String) -> Result {
 }
 
 #[marine]
-pub fn node_status(network_id: String, block_ref: String) -> Result {
+pub fn node_status(network_id: String) -> Result {
     // block-ref can be block height or block hash
     let method = "status".to_string();
     let url = url_maker(network_id);

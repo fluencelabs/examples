@@ -4,12 +4,17 @@ import { sign_transaction, NearSignerApiDef, registerNearSignerApi } from "./_aq
 import * as nearAPI from "near-api-js";
 import { KeyStore } from "near-api-js/lib/key_stores";
 import * as fs from 'fs';
+import * as path from 'path';
 import { Buffer } from 'buffer';
 import { Near } from "near-api-js";
 
+
 const { connect, keyStores, KeyPair, WalletConnection, Account } = nearAPI;
-const KEY_PATH = "~./near-credentials/testnet/boneyard93501.testnet.json";
-const keyStore = new keyStores.UnencryptedFileSystemKeyStore(KEY_PATH);
+
+const homedir = require("os").homedir();
+const CREDENTIALS_DIR = ".near-credentials";
+const credentialsPath = path.join(homedir, CREDENTIALS_DIR);
+const keyStore = new keyStores.UnencryptedFileSystemKeyStore(credentialsPath);
 
 // temp fix replace with your key, e.g., account pk
 const SeedArray = new Uint8Array([10, 10, 20, 20, 100, 100]);
@@ -27,8 +32,6 @@ class NearSigner implements NearSignerApiDef {
     async account_state(network_id: string, account_id: string): Promise<any> {
         const config = get_config(network_id);
         const near = await network_connect(config);
-        console.log("calling acct state");
-        console.log("config: ", config);
         const state = await account_state(near, account_id);
         console.log("account state: ", state);
 
@@ -38,24 +41,27 @@ class NearSigner implements NearSignerApiDef {
     async send_tokens(network_id: string, account_id: string, receiver_id: string, amount: string): Promise<any> {
         const config = get_config(network_id);
         const near = await network_connect(config);
-        const result = await send_tokens(near, account_id, receiver_id, amount);
+        let account = await near.account(account_id);
+        console.log("account: ", account);
+        let tx_receipt = await account.sendMoney(receiver_id, amount);
+        console.log("receipt: ", tx_receipt);
 
-        return Promise.resolve(result);
+        return Promise.resolve(tx_receipt);
     }
-
-    // async from_
-    // async to_
 }
 
 function get_config(networkId: string): any {
     const config = {
         networkId,
         keyStore,
-        nodeUrl: `https://rpc.${networkId}.near.org`,
-        // nodeUrl: `https://rpc.testnet.near.org`,
-        walletUrl: `https://wallet.${networkId}.near.org`,
-        helperUrl: `https://helper.${networkId}.near.org`,
-        explorerUrl: `https://explorer.${networkId}.near.org`,
+        // nodeUrl: `https://rpc.${networkId}.near.org`,
+        nodeUrl: `https://rpc.testnet.near.org`,
+        // walletUrl: `https://wallet.${networkId}.near.org`,
+        walletUrl: `https://wallet.testnet.near.org`,
+        // helperUrl: `https://helper.${networkId}.near.org`,
+        helperUrl: `https://helper.testnet.near.org`,
+        // explorerUrl: `https://explorer.${networkId}.near.org`,
+        explorerUrl: `https://explorer.testnet.near.org`,
     };
 
     return config;
@@ -163,24 +169,15 @@ async function main() {
 
     const config = get_config("testnet");
     const near = await connect(config);
-    // const acct_state = await account_state(near, "boneyard93501.testnet");
-    // console.log("account state: ", acct_state);
+    console.log("near: ", near, "\n");
+
+    let account = await near.account("boneyard93501.testnet");
+    let res = await account.sendMoney("boneyard93502.testnet", "100000");
+    console.log("tx: ", res);
 
 
     await Fluence.start({
-        // connectTo: krasnodar[5],
-
-        connectTo: {
-            multiaddr: "/ip4/127.0.0.1/tcp/9990/ws/p2p/12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK",
-            peerId: "12D3KooWHBG9oaVx4i3vi6c1rSBUm7MLBmyGmmbHoZ23pmjDCnvK"
-        },
-
-        /*
-         connectTo: {
-             multiaddr: '/dns4/stage.fluence.dev/tcp/19001/wss/p2p/12D3KooWHCJbJKGDfCgHSoCuK9q4STyRnVveqLoXAPBbXHTZx9Cv',
-             peerId: '12D3KooWHCJbJKGDfCgHSoCuK9q4STyRnVveqLoXAPBbXHTZx9Cv'
-         },
-         */
+        connectTo: krasnodar[5],
         KeyPair: await FluenceKeyPair.fromEd25519SK(SeedArray)
     });
 
@@ -191,8 +188,6 @@ async function main() {
 
 
     console.log("ctrl-c to exit");
-
-
 }
 
 main();
