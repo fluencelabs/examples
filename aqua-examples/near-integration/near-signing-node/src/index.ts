@@ -66,7 +66,7 @@ class NearSigner implements NearSignerApiDef {
         return Promise.resolve(balance);
     }
 
-
+    /*
     async sign_tx(network_id: string, from: string, to: string): Promise<any> {
         // const config = get_config("testnet", this._keyStore);
         const near = await network_connect(config);
@@ -87,13 +87,12 @@ class NearSigner implements NearSignerApiDef {
 
     }
 
-
     async verify_signature(network_id: string, keyStore: nearAPI.keyStores.UnencryptedFileSystemKeyStore, account_id: string, payload: string, signature: Uint8Array) {
         const keyPair = await keyStore.getKey(network_id, account_id);
         const msg = Buffer.from(payload);
 
     }
-
+    */
 }
 
 
