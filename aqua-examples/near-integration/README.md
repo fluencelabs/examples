@@ -275,7 +275,13 @@ In the next section, we briefly discuss how a large number of NEAR methods can b
 
 ## Fluence Wasm NEAR Services
 
-In the `services` directory, you find a minimal Wasm adapter for [NEAR RPC API](https://docs.near.org/docs/api/rpc) to get you started. Since we are connecting to on-chain resources via JSON-RPC, we need our service module to have access to the [cUrl adapter](../near-examples/services/curl-adapter/), which we are enabling with `extern`:
+Operating your own node may not always be desireable for a variety of reasons ranging from costs to reuse to scalability and failover requirements. A core feature of the Fluence peer-to-peer network paradigm, of course, is the deployment of Wasm services to essentially any peer, given some hosting agreement, which allows for high portability as well as easy reuse and scalability as a "deploy and forget", low cost solution.  Even if the operation of a node is deemed necessary, as outlined in our Signing Node example above, it still may make sense to split services into a self-operated node and some hosted Wasm services. Of course, Aqua allows you to seamlessly compose any one of the (exposed) services regardless of the deployment approach.
+
+In order to create a NEAR Wasm adapter, we wrap whatever functionality we need from the [NEAR RPC API](https://docs.near.org/docs/api/rpc) in our Wasm module(s).
+
+### Creating And Deploying NEAR Wasm Services
+
+In the `services` directory, you find a minimal Wasm adapter for [NEAR RPC API](https://docs.near.org/docs/api/rpc) to get you started. Since we are connecting to on-chain resources via JSON-RPC, we need our service module to have access to [cUrl](https://doc.fluence.dev/docs/tutorials_tutorials/curl-as-a-service), which we provide with the [cUrl adapter](../near-examples/services/curl-adapter/):
 
 ```rust
 // src/main.rs
@@ -286,11 +292,7 @@ extern "C" {
 }
 ```
 
-Since we are implementing a dedicated [signing node](./near-signing-node), we limit our RPC implementation examples to read operations.
-
-### Node Status Wrapper
-
-This function wraps the RPC [`status`](https://docs.near.org/docs/api/rpc/network#node-status) endpoint and requires only one parameter: the `network_id`', e.g., `testnet`. The `node_status` function returns the `Result` type:
+Let's have a look at the implementation of the [`network status`](https://docs.near.org/docs/api/rpc/network#node-status) method, which provides a fairly extensive snapshot of the network at the time in inquiry. Our adapter, or wrapper, implementation needs to envelope the RPC [`status`](https://docs.near.org/docs/api/rpc/network#node-status) endpoint and requires only one parameter: the `network_id`', e.g., `testnet`:
 
 ```rust
 // src.main.rs
@@ -315,7 +317,9 @@ pub fn node_status(network_id: String) -> Result {
 }
 ```
 
-Assuming you compiled the code with `./scripts/build.sh`, We can interact with the `node_status` in `mrepl`. Open the REPL with `mrepl configs/Config.toml` and:
+Note that we use the `Result` struct to capture the curl response. 
+
+Assuming you compiled the code with `./scripts/build.sh`, we can interact with the `node_status` in `mrepl`. Open the REPL with `mrepl configs/Config.toml` and:
 
 ```bash
 mrepl configs/Config.toml
@@ -337,7 +341,7 @@ result: Object({"stderr": String("  % Total    % Received % Xferd  Average Speed
 ...
 ```
 
-As you can see, this is a straight mapping of the RPC response to the `Result` struct, which we can process in Aqua like so:
+As you can see, this is a straight mapping of the RPC response to the `Result` struct introduced above, which we can process in Aqua like so:
 
 ```aqua
 -- some example aqua file
@@ -359,40 +363,65 @@ func rpc_foo(network_id: string, block_ref:string, node_string, service_id: stri
         <- result
 ```
 
+Before we can use our NEAR adapter, we need to deploy our Wasm modules to one or more host peers. We can do that with Aqua or the [`fldist`](https://doc.fluence.dev/docs/knowledge_tools#fluence-proto-distributor-fldist) tool:
 
+```bash
+fldist new_service \
+    --ms artifacts/curl_adapter.wasm:configs/curl_adapter_cfg.json artifacts/near_rpc_services.wasm:configs/near_rpc_services_cfg.json \
+    --name near-adapter \
+    --verbose
 ```
 
-> near-wallet-node-poc@0.1.0 start
-> node -r ts-node/register src/index.ts
+Which gives us the deployment information:
 
-PeerId:  12D3KooWLCaFtoq9uu1jFg38uZXU4fNAkcL5X3xoQu6UqFxRFavU
-Relay id:  12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi
-ctrl-c to exit
+```bash
+client seed: HuunejtheCeJueet52wqHcSCQqzYjRD1G9hyT8RiZZZ7
+client peerId: 12D3KooWAAsBJkGzSQ56XZpTsi9pDCqHDjF88AnwNuNYhhtyJpPR
+relay peerId: 12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf
+service id: 23ba9159-388d-41b3-b15f-2a6d5013ed4d
+service created successfully
 ```
 
-
-
-
+Please note the node id, "12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf", and service id "23ba9159-388d-41b3-b15f-2a6d5013ed4d" for future use in our Aqua. Let's have a look at our aqua script in 'aqua/near_adapter_demo.aqua`:
 
 ```aqua
-aqua run -i aqua -a "/dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi"  -f 'account_state("testnet", "boneyard93501.testnet", "12D3KooWLCaFtoq9uu1jFg38uZXU4fNAkcL5X3xoQu6UqFxRFavU", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi")'
-
+-- aqua/near_adapter_demo_aqua
+func node_status(network_id: string, node: string, service_id: string) -> Result: 
+    on node:
+        NearRpcServices service_id
+        res <- NearRpcServices.node_status(network_id)
+    <- res
 ```
 
+Which we can run with the `aqua cli`:
 
-
-
+```bash
+aqua run \
+    -i aqua/near_adapter_demo.aqua \
+    -a /dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf \
+    -f 'node_status("testnet", "12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf", "23ba9159-388d-41b3-b15f-2a6d5013ed4d")'
 ```
-Your peerId: 12D3KooWFb7WYKtWAauDKConv3jJCbWhBZ5YepCSZbDGkzK8aEsJ
+
+Which results in the following output:
+
+```bash
+Your peerId: 12D3KooWQ9KDy48aFG3jcrAAofUdgGa3tEUxkdEjpKiwL7Tp7Uiv
 [
   {
-    "amount": "199999263602996286400000000",
-    "block_hash": "782aDyWvKZdj5Kq4YPZenDj1MZP7FHDLb15H2vqkKq1T",
-    "block_height": 74253866,
-    "code_hash": "11111111111111111111111111111111",
-    "locked": "0",
-    "storage_paid_at": 0,
-    "storage_usage": 674
+    "stderr": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100  7548  100  7480  100    68   192k   1789 --:--:-- --:--:-- --:--:--  193k\n",
+    "stdout": "{\"jsonrpc\":\"2.0\",\"result\":{\"version\":{\"version\":\"1.23.0-rc.1\",\"build\":\"crates-0.10.0-70-g93e8521c9\"},\"chain_id\":\"testnet\",\"protocol_version\":49,\"latest_protocol_version\":49,\"rpc_addr\":\"0.0.0.0:4040\",\"validators\":[{\"account_id\":\"node1\",\"is_slashed\":false},{\"account_id\":\"node0\",\"is_slashed\":false},{\"account_id\":\"node2\",
+    \"is_slashed\":false}],\"sync_info\":{\"latest_block_hash\":\"HBCEesmK5W1K8FtnasswhZAKQ1qWxARjhPcPEbc4EtQq\",
+    
+    <snip>
+    
+    \"latest_block_height\":74946255,\"latest_state_root\":\"21RTTc1u7Uvdw7KPWuSvKkEPxgBCBtj9ddhaW16HTHpD\",\"latest_block_time\":\"2021-12-14T08:26:00.797528669Z\",\"syncing\":false,\"earliest_block_hash\":\"Gtfa893yb1vmWJSPHYMmJ4JsGRjPr4JBEMLZ8CMyLMtK\",\"earliest_block_height\":74691571,\"earliest_block_time\":\"2021-12-12T07:04:26.150892426Z\"},\"validator_account_id\":null},\"id\":\"dontcare\"}"
   }
 ]
 ```
+
+Give the already implemented `gas_price` and `tx_status` functions a try or add more methods from the RPC API. We are looking forward to your pull requests.
+### Summary
+
+We created a framework to enable highly portable Wasm modules as an adapter of NEAR's JSON-RPC framework, which may be distributed as hosted services to Rust peer nodes of the Fluence's testnet. These services may be used on their own or in conjunction with a specialized peer node, see above, taking care of signing tasks while shielding the wallet keys from preying eyes. Regardless, Aqua allows us to seamlessly compose our services.
+
+
