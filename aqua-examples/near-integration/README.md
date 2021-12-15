@@ -13,41 +13,31 @@ Signing transactions and messages is a critical operation both on- and off-chain
 
 ### Implementing a Peer Node With Fluence JS and Aqua
 
-As discussed in the [documentation](https://doc.fluence.dev/docs/fluence-js/5_run_in_node), we can use [Fluence JS](https://github.com/fluencelabs/fluence-js) in a Node JS application resulting in a viable peer node of the Fluence p2p network. If you haven't have a look at the documentation before you continue.
+As discussed in the [documentation](https://doc.fluence.dev/docs/fluence-js/5_run_in_node), we can use [Fluence JS](https://github.com/fluencelabs/fluence-js) in a Node JS application resulting in a viable peer node of the Fluence p2p network. If you haven't, have a look at the documentation before you continue. To follow along the code below:
 
-In order to create our signing node, we wrap the [NEAR JS SDK](https://docs.near.org/docs/api/javascript-library) and, for a minimally viable experiment, expose the [sendMoney](https://near.github.io/near-api-js/classes/account.account-1.html#sendmoney) function.
+```bash
+cd near-signing-node
+```
 
-In order to be able to expose `sendMoney` as a composable service to Aqua, we need to implement the `sendMoney` interface and function in Aqua:
+In order to create our signing node, we wrap the [NEAR JS SDK](https://docs.near.org/docs/api/javascript-library) and, for a minimally viable experiment, expose the [sendMoney](https://near.github.io/near-api-js/classes/account.account-1.html#sendmoney) and a couple non-signing functions.
+
+In order to be able to expose `sendMoney` as an addressable service to Aqua, we need to implement the `sendMoney` interface and function in Aqua:
 
 ```aqua
 -- near_signing_node.aqua
-func send_money(network_id:string, account_id:string, receiver_id:string, amount:string, node:string, relay:string) -> string:
+func send_money(network_id:string, account_id:string, receiver_id:string, amount:string, password: string, node:string, relay:string) -> string:
     on node via relay:
         res <- NearSignerApi.send_money(network_id, account_id, receiver_id, amount)
     <- res
 ```
 
-Note that we added additional parameters to our `sendMoney` implementation. The *near-api-js* specifies the `sendMoney` function with two parameters: the receiver id and amount:
+Note that we added additional parameters to our `sendMoney` implementation: *near-api-js* specifies the `sendMoney` function with two parameters -- the receiver id and amount. Since `sendMoney` is associated with `Account`, we need to add the `from` wallet address as well as the `network_id` to be able to activate the appropriate account on the desired NEAR network. In addition, our exposed `sendMoney` service runs on a peer-to-peer node and in order to be able to locate and execute the service, we need to provide the node's `peer id` and `relay id`. Finally, we guard our service with stylized authentication for which we use the `password` parameter. That is, on the peer <peer_id>, which we reach via the relay <relay_id> and assuming the <password> checks out, we eventually execute:
 
 ```typescript
 sendMoney(receiverId: string, amount: BN)
 ```
 
-Since `sendMoney` is associated with `Account`, we need to add the `from` address to be able to activate the appropriate account on the desired `network`. In addition, our expose `sendMoney` service runs on a peer-ro-peer node and in order to be able to locate and execute the service, we need to provide the node's `peer di` and `relay id`. Finally, we guard our service with stylized authentication for which we use the `password` parameter. When all is said and done:
-
-```aqua
-func send_money(network_id:string, account_id:string, receiver_id:string, amount:string, node:string, relay:string)
-```
-
-executes:
-
-```typescript
-sendMoney(receiverId: string, amount: BN)
-```
-
-on the peer <peer_id>, which we reach via the relay <relay_id> and assuming the <password> checks out, on the specified NEAR *network*.
-
-Once we compile Aqua with the `npm run compile aqua` command, which writes the Typescript output into the `/src/_aqua` dir, we can then use the generated code, see `src/_aqua/near_signing_node.ts`, to implement our `sendMoney` service in Fluence JS, which essentially follows the [NEAR example](https://docs.near.org/docs/api/naj-quick-reference#send-tokens):  
+Once we compile Aqua with the `npm run compile aqua` command, which writes the Typescript output into the `/src/_aqua` dir, we can then use the generated code, see `src/_aqua/near_signing_node.ts`, to implement our `sendMoney` service and any of ther other interfaces specified in Fluence JS, which essentially follows the [NEAR example](https://docs.near.org/docs/api/naj-quick-reference#send-tokens):  
 
 ```typescript
 // index.ts
@@ -66,21 +56,23 @@ async send_money(network_id: string, account_id: string, receiver_id: string, am
 ```
 
 
-Just like in the **quickstart example**, we implement the `send_money` method for the `class NearSigner implements NearSignerApiDef` class, where `NearSignerApiDef` is generated code from the Aqua compilation, which we register (as an exposed service) in `async main` like so:
+Just like in the **quickstart example**, we implement the `send_money` method for the `class NearSigner implements NearSignerApiDef` class, where `NearSignerApiDef` is generated code from the Aqua compilation and which we register (as an exposed service) in `async main` like so:
 
 ```typescript
 // index.ts
-// async function main() {
+async function main() {
+    // ...
     registerNearSignerApi("near", new NearSigner());
+    // ...
 ```
 
-For the complete implementation details, see `src/index.ts`. Before we test our code, please note that in this implementation the wallet credentials are presumed to be in the `~/.near-credentials` directory of the machine/system that runs the Fluence Signing node. For *testnet* wallets, see https://wallet.testnet.near.org/ and https://docs.near.org/docs/develop/basics/create-account, to get you started.
+For the complete implementation details, see `src/index.ts`. Before we test our code, please note that in this implementation the wallet credentials are presumed to be in the `~/.near-credentials` directory of the machine/system that runs the Fluence Signing Node. For *testnet* wallets, see https://wallet.testnet.near.org/ and https://docs.near.org/docs/develop/basics/create-account, to get started.
 
-Note the implementations of `account_state` and `get_balance`, which follow the same implementation pattern discussed above.
+Note the implementations of `account_state` and `get_balance`, which follow the same implementation pattern discussed above but actually do not require account or wallet access.
 
 ### Running And Interacting With The Fluence Peer
 
-Open two terminal windows in the `~/near-examples/near-signing-node/` directories to launch the Signing node and a client peer, respectively. Please note that you can use the Signing node with a local Fluence node or the testnet. For our purposes, we will be using Fluence's `krasnodar` testnet.
+Open two terminal windows in the `~/near-examples/near-signing-node/` directory to launch the peer and a client peer, respectively. Please note that you can use the peer with a local Fluence node or the testnet. For our purposes, we will be using Fluence's `krasnodar` testnet.
 
 Install the dependencies with:
 
@@ -107,14 +99,14 @@ Which produces output similar to:
 2021.12.14 00:22:34 [INFO] Result /Users/bebo/localdev/examples/aqua-examples/near-integration/near-signing-node/src/_aqua/near_demo.ts: compilation OK (2 functions, 1 services)
 ```
 
-You can check the output in the `src/_aqua` directory. With our setup complete, let's start the peer:
+You can check the generated Typescript and AIR code in the `src/_aqua` directory. With our setup complete, let's start the peer:
 
 ```bash
 # start the node
 npm start
 ````
 
-Which produces out similar to:
+Which produces output similar to:
 
 ```bash
 > near-signing-node@0.1.0 start
@@ -125,7 +117,7 @@ Relay id:  12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi
 ctrl-c to exit
 ```
 
-Please take note of the **relay id** and **peer id** for use in your client calls. In order to call the `account_state` method, open a new terminal window and navigate to the `~/examples/aqua-examples/near-integration/near-signing-node` directory and execute:
+Please take note of the **relay id** and **peer id** for use in your client peer. In order to call the `account_state` method, open a new terminal window and navigate to the `~/examples/aqua-examples/near-integration/near-signing-node` directory and execute:
 
 ```bash
 aqua run \
@@ -133,7 +125,7 @@ aqua run \
     -f 'account_state("testnet", "<your account>", "lame_password", "<peer di>", "relay id")'
 ```
 
-Note to replace `<your account>` with your testnet account and `<peer id>` and `<relay id>` with the values provided by your node as discussed above. Once you've done that, the output should be similar to:
+*Replace* `<your account>` with your testnet account and `<peer id>` and `<relay id>` with the values provided by your peer output as discussed above. Once you've done that, the output should be similar to:
 
 ```bash
 Your peerId: 12D3KooWJYGtESBvtLiCyY1XUrXR5WYBtfAU697SqVnwi5XmqkqW
@@ -159,7 +151,7 @@ Similarly, we can call our `send_money` service with Aqua:
     -f 'send_money("testnet", "<from account>", "<to account>", "10000", "lame_password", "<peer id>", "<relay id>")'
 ```
 
-Replace the `to` and `from` account placeholders with your testnet wallets and the `peer id` and `relay id` with the values provided by your peer, execution above Aqua statement produces a transaction receipt similar to the one below:
+Replace the <`from`> and <`to`> account placeholders with your respective testnet wallets and the `peer id` and `relay id` with the values provided by your peer. Executing above Aqua statement produces a transaction receipt similar to the one below:
 
 ```bash
 
@@ -271,17 +263,17 @@ You can use the [Testnet Explorer](https://explorer.near.org/) to further invest
 
 In this section, we implemented a basic Fluence peer that outlines an approach to shield our NEAR wallet keys from other network participants and to implement singing related functionality, such as the `send_money` token transfer method. Additional methods, such as the more generic `sign transaction` and `deploy contract` can be easily implemented this way and we are looking forward to your pull requests. Also note, that our simple string return can be vastly improved by adding the appropriate *interfaces*.
 
-In the next section, we briefly discuss how a large number of NEAR methods can be implemented as distributed, hosted services for easy deployment, re-use and scalability.
+In the next section, we briefly discuss how a variety of NEAR methods can be implemented as distributed, hosted services for easy deployment, re-use and scalability.
 
 ## Fluence Wasm NEAR Services
 
-Operating your own node may not always be desireable for a variety of reasons ranging from costs to reuse to scalability and failover requirements. A core feature of the Fluence peer-to-peer network paradigm, of course, is the deployment of Wasm services to essentially any peer, given some hosting agreement, which allows for high portability as well as easy reuse and scalability as a "deploy and forget", low cost solution.  Even if the operation of a node is deemed necessary, as outlined in our Signing Node example above, it still may make sense to split services into a self-operated node and some hosted Wasm services. Of course, Aqua allows you to seamlessly compose any one of the (exposed) services regardless of the deployment approach.
+Operating your own node may not always be desireable for a variety of reasons ranging from costs to reuse to scalability and failover requirements. A core feature of the Fluence peer-to-peer network paradigm, of course, is the deployment of Wasm services to essentially any peer, given some hosting agreement, which allows for high portability as well as easy reuse and scalability as a "deploy and forget", low cost solution.  Even if the operation of a node is deemed necessary, as outlined in our Signing Node example above, it still may make sense to split services into a self-operated peer for signing-related activities and some hosted Wasm services otherwise. Of course, Aqua allows you to seamlessly compose any one of the (exposed) services regardless of the deployment approach.
 
 In order to create a NEAR Wasm adapter, we wrap whatever functionality we need from the [NEAR RPC API](https://docs.near.org/docs/api/rpc) in our Wasm module(s).
 
 ### Creating And Deploying NEAR Wasm Services
 
-In the `services` directory, you find a minimal Wasm adapter for [NEAR RPC API](https://docs.near.org/docs/api/rpc) to get you started. Since we are connecting to on-chain resources via JSON-RPC, we need our service module to have access to [cUrl](https://doc.fluence.dev/docs/tutorials_tutorials/curl-as-a-service), which we provide with the [cUrl adapter](../near-examples/services/curl-adapter/):
+In the `services` directory, you find a minimal Wasm adapter for [NEAR RPC API](https://docs.near.org/docs/api/rpc) to get you started. Since we are connecting to on-chain resources via JSON-RPC, we need our service module to have access to [cUrl](https://doc.fluence.dev/docs/tutorials_tutorials/curl-as-a-service), which we provide with the [cUrl adapter](../near-integration/services/curl-adapter/):
 
 ```rust
 // src/main.rs
@@ -363,7 +355,7 @@ func rpc_foo(network_id: string, block_ref:string, node_string, service_id: stri
         <- result
 ```
 
-Before we can use our NEAR adapter, we need to deploy our Wasm modules to one or more host peers. We can do that with Aqua or the [`fldist`](https://doc.fluence.dev/docs/knowledge_tools#fluence-proto-distributor-fldist) tool:
+Before we can use our Fluence NEAR adapter, we need to deploy our Wasm modules to one or more host peers. We can do that with Aqua or the [`fldist`](https://doc.fluence.dev/docs/knowledge_tools#fluence-proto-distributor-fldist) tool:
 
 ```bash
 fldist new_service \
@@ -420,8 +412,9 @@ Your peerId: 12D3KooWQ9KDy48aFG3jcrAAofUdgGa3tEUxkdEjpKiwL7Tp7Uiv
 ```
 
 Give the already implemented `gas_price` and `tx_status` functions a try or add more methods from the RPC API. We are looking forward to your pull requests.
+
 ### Summary
 
-We created a framework to enable highly portable Wasm modules as an adapter of NEAR's JSON-RPC framework, which may be distributed as hosted services to Rust peer nodes of the Fluence's testnet. These services may be used on their own or in conjunction with a specialized peer node, see above, taking care of signing tasks while shielding the wallet keys from preying eyes. Regardless, Aqua allows us to seamlessly compose our services.
+We created a framework to enable highly portable Wasm modules as an adapter to NEAR's JSON-RPC framework, which may be distributed as hosted services to Rust peer nodes. These services may be used on their own or in conjunction with a specialized peer node, see above, taking care of signing tasks while shielding the wallet keys from preying eyes. Regardless the implementation route taken, Aqua allows us to seamlessly compose and reuse our our services.
 
 
