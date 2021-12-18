@@ -15,6 +15,7 @@
  */
 
 use marine_rs_sdk::{marine, module_manifest, MountedBinaryResult, WasmLoggerBuilder};
+use serde_json;
 
 mod utils;
 use utils::{rpc_maker, url_maker};
@@ -42,7 +43,7 @@ pub fn tx_status(network_id: String, tx_id: String, account_id: String, receipt:
     let curl_params: Vec<String> = rpc_maker(url, method, params);
     let response = curl_request(curl_params);
     Result {
-        stderr: String::from_utf8(response.stderr).unwrap(),
+        stderr: response.error,
         stdout: String::from_utf8(response.stdout).unwrap(),
     }
 }
@@ -56,7 +57,7 @@ pub fn gas_price(network_id: String, block_ref: String) -> Result {
     let curl_params: Vec<String> = rpc_maker(url, method, params);
     let response = curl_request(curl_params);
     Result {
-        stderr: String::from_utf8(response.stderr).unwrap(),
+        stderr: response.error,
         stdout: String::from_utf8(response.stdout).unwrap(),
     }
 }
@@ -70,7 +71,23 @@ pub fn node_status(network_id: String) -> Result {
     let curl_params: Vec<String> = rpc_maker(url, method, params);
     let response = curl_request(curl_params);
     Result {
-        stderr: String::from_utf8(response.stderr).unwrap(),
+        stderr: response.error,
+        stdout: String::from_utf8(response.stdout).unwrap(),
+    }
+}
+
+#[marine]
+pub fn view_account(network_id: String, account_id: String) -> Result {
+    let method = "queryX".to_string();
+    let url = url_maker(network_id);
+    let params = format!(
+        "{{\"request_type\": \"view_account\", \"finality\": \"final\",\"account_id\": \"{}\"}}",
+        account_id
+    );
+    let curl_params: Vec<String> = rpc_maker(url, method, params);
+    let response = curl_request(curl_params);
+    Result {
+        stderr: response.error,
         stdout: String::from_utf8(response.stdout).unwrap(),
     }
 }
