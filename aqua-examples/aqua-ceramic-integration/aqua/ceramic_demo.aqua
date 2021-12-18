@@ -11,6 +11,8 @@ service CeramicAdapter("service-id"):
   state(stream_id: string) -> CeramicResult
   update(stream_id: string, payload: string) -> CeramicResult
 
+  http_streams(url:string, port: u32, stream_id:string) -> string
+
 -- aqua function to create stream and return stream id
 func create(payload:string, node:string, service_id:string) -> string:
     on node:
@@ -35,3 +37,8 @@ func roundtrip(payload:string, payload_two: string, node:string, service_id:stri
     <- create_res.stdout, show_res.stdout, update_res.stdout                    --< return the stream id, the show result, show result afer update
 
 
+func http_show_stream(stream_id: string, node: string, service_id:string) -> string:
+    on node:
+        CeramicAdapter service_id
+        res <- CeramicAdapter.http_streams("127.0.0.1", 7007, stream_id)
+    <- res
