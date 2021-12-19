@@ -1,0 +1,49 @@
+data Result:
+  stderr: string
+  stdout: string
+
+data VAResponse:
+    amount: string
+    locked: string
+    code_hash: string
+    storage_usage: u64
+    storage_paid_at: u64
+    block_height: u64
+    block_hash: string
+
+data VAResult:
+    stderr: string
+    stdout: VAResponse
+
+service NearRpcServices:
+  gas_price(network_id: string, block_ref: string) -> Result
+  node_status(network_id: string) -> Result
+  tx_status(network_id: string, tx_id: string, account_id: string, receipt: bool) -> Result
+  view_account(network_id: string, account_id: string) -> Result
+  view_account_structured(network_id: string, account_id: string) -> VAResult
+
+
+func node_status(network_id: string, node: string, service_id: string) -> Result: 
+    on node:
+        NearRpcServices service_id
+        res <- NearRpcServices.node_status(network_id)
+    <- res
+
+func view_account_raw(network_id: string, account_id: string, node: string, service_id: string) -> Result:
+  on node:
+    NearRpcServices service_id
+        res <- NearRpcServices.view_account(network_id, account_id)
+    <- res
+
+func view_account(network_id: string, account_id: string, node: string, service_id: string) -> VAResult:
+  on node:
+    NearRpcServices service_id
+        res <- NearRpcServices.view_account_structured(network_id, account_id)
+    <- res
+
+
+func account_balance(network_id: string, account_id: string, node: string, service_id: string) -> string:
+  on node:
+    NearRpcServices service_id
+        res <- NearRpcServices.view_account_structured(network_id, account_id)
+    <- res.stdout.amount
