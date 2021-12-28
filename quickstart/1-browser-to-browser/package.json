@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@fluencelabs/fluence": "^0.14.3",
+    "@fluencelabs/fluence": "0.17.0",
     "@fluencelabs/fluence-network-environment": "1.0.10",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
@@ -19,6 +19,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
+    "postinstall": "copy-avm-public public",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -45,8 +46,8 @@
     ]
   },
   "devDependencies": {
-    "@fluencelabs/aqua": "^0.4.0-235",
-    "@fluencelabs/aqua-lib": "0.1.14",
+    "@fluencelabs/aqua": "^0.5.2-256",
+    "@fluencelabs/aqua-lib": "^0.3.2",
     "chokidar-cli": "^2.1.0",
     "node-sass": "^6.0.1"
   }
