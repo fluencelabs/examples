@@ -1,2 +1,5 @@
 dist/
-src/_aqua/
+
+# fluence
+
+src/_aqua/*

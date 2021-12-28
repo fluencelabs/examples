@@ -44,3 +44,7 @@ package-lock.json
 
 .bak
 .bk
+
+# fluence
+
+src/_aqua/*
