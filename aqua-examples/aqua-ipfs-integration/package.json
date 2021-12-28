@@ -17,6 +17,7 @@
     "node": ">=15.0.0"
   },
   "devDependencies": {
-    "check-node-version": "^4.2.1"
+    "check-node-version": "^4.2.1",
+    "@fluencelabs/avm": "0.19.6"
   }
 }
