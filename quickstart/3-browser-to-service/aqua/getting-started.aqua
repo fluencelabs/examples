@@ -22,8 +22,8 @@ func sayHello(targetPeerId: PeerId, targetRelayPeerId: PeerId) -> string:
         comp <- HelloWorld.hello(%init_peer_id%)
 
     -- send the result to target browser in the background
-    co on targetPeerId via targetRelayPeerId:
-        res <- HelloPeer.hello(%init_peer_id%)
+    on targetPeerId via targetRelayPeerId:
+        co HelloPeer.hello(%init_peer_id%)
 
     -- send the result to the initiator
     <- comp.reply
