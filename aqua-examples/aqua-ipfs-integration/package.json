@@ -9,7 +9,7 @@
     "build": "check-node-version --npm '>= 7' && npm run build -w aqua -w nodejs -w web"
   },
   "dependencies": {
-    "@fluencelabs/fluence": "^0.14.3",
+    "@fluencelabs/fluence": "0.17.0",
     "typescript": "^4.4.4"
   },
   "engines": {
@@ -17,6 +17,7 @@
     "node": ">=15.0.0"
   },
   "devDependencies": {
-    "check-node-version": "^4.2.1"
+    "check-node-version": "^4.2.1",
+    "@fluencelabs/avm": "0.19.6"
   }
 }
