@@ -37,6 +37,7 @@ getter_topo = [
     service_id: "f5b456fa-ee18-4df1-b18b-84fe7ebc7ad0",
   }
 ];
+
 mean_topo = [
   {
     node: "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
@@ -57,7 +58,7 @@ async function main() {
   // create the Fluence client for the Krasnodar testnet
   await Fluence.start({ connectTo: krasnodar[5] });
   console.log(
-    "created a fluence client %s with relay %s",
+    "Created a fluence client with peer id %s and relay id %s",
     Fluence.getStatus().peerId,
     Fluence.getStatus().relayPeerId
   );
@@ -73,6 +74,7 @@ async function main() {
   console.log("seq result: ", network_result);
 
   // call the get_price_par function -- parallel processing
+  // func get_price_par(coin: string, currency: string, getter_topo: []NodeServicePair, mean_topo: NodeServicePair) -> Result:
   const network_result_par = await get_price_par("ethereum", "usd", getter_topo, mean_topo[0]
   );
   console.log("par result: ", network_result_par);

@@ -1,5 +1,4 @@
--- import "@fluencelabs/aqua-lib/builtin.aqua"
-import "builtin.aqua"
+import "@fluencelabs/aqua-lib/builtin.aqua"
 
 data Result:
   result: f64
