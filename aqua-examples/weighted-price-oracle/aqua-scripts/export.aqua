@@ -1,0 +1,16 @@
+import Peer from "@fluencelabs/aqua-lib/builtin.aqua"
+use add_trust from "@fluencelabs/trust-graph/trust-graph-api.aqua" as TrustGraph
+
+export add_trust
+
+func add_trust(issued_for_peer_id: string, expires_at_sec: u64) -> ?string:
+    on HOST_PEER_ID:
+        error <- TrustGraph.add_trust(issued_for_peer_id, expires_at_sec)
+    <- error
+
+
+func timestamp_sec() -> u64:
+    on HOST_PEER_ID:
+        result <- Peer.timestamp_sec()
+    <- result
+

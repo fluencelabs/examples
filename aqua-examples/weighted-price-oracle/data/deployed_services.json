@@ -1,0 +1,22 @@
+{
+    "price_getter": [
+        {
+            "node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+            "service_id": "7d495484-f0f0-4153-b4f0-fbb0fd162965"
+        },
+        {
+            "node": "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi",
+            "service_id": "a79386c1-d6fc-4a41-ab5a-60599b151345"
+        }
+    ],
+    "mean": [
+        {
+            "node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+            "service_id": "02fba79b-c72c-4ae6-b54b-8c7d871caf36"
+        },
+        {
+            "node": "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi",
+            "service_id": "d4aef7ec-4d2b-4643-9d7b-93a63387f1f0"
+        }
+    ]
+}

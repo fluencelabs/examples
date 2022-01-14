@@ -1,0 +1,51 @@
+{
+  "name": "price-oracle",
+  "version": "0.1.0",
+  "description": "Fluence Price Oracle Demo",
+  "main": "./dist/src/index.js",
+  "typings": "./dist/src/index.d.ts",
+  "files": [
+    "dist/*"
+  ],
+  "bic": [
+    "client-peer/*",
+    "*.aqua",
+    "package-lock.json"
+  ],
+  "dependencies": {
+    "@fluencelabs/fluence": "0.17.0",
+    "@fluencelabs/fluence-network-environment": "1.0.10",
+    "it-all": "^1.0.5"
+  },
+  "scripts": {
+    "compile-aqua": "aqua -i ../aqua-scripts -o src/_aqua",
+    "prebuild": "npm run compile-aqua",
+    "build": "tsc",
+    "prestart:local": "npm run build",
+    "start:local": "node dist/src/index.js local",
+    "prestart:remote": "npm run build",
+    "start:remote": "node dist/src/index.js krasnodar",
+    "start": "npm run start:remote"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fluencelabs/examples/aqua-examples/price-oracle"
+  },
+  "keywords": [
+    "aqua",
+    "fluence"
+  ],
+  "author": "Fluence Labs",
+  "license": "MIT",
+  "bugs": {
+    "url": "git+https://github.com/fluencelabs/examples/issues"
+  },
+  "homepage": "git+https://github.com/fluencelabs/examples/aqua-examples/price-oracle#readme",
+  "devDependencies": {
+    "@fluencelabs/aqua": "^0.5.2-256",
+    "@fluencelabs/aqua-lib": "^0.3.2",
+    "@fluencelabs/trust-graph": "0.1.2-hl-api.0",
+    "typescript": "^4.5.2",
+    "bs58": "^4.0.1"
+  }
+}

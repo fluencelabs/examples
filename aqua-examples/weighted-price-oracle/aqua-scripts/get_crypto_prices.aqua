@@ -1,0 +1,43 @@
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/trust-graph/trust-graph-api.aqua"
+
+data Result:
+  result: f64
+  success: bool
+  error_msg: string
+
+service PriceGetterService:
+  price_getter(coin: string, currency: string, timestamp_ms: u64) -> Result
+
+service WeightedMeanService:
+  weighted_mean(data: []f64, weights: []u32) -> Result
+
+service F64Op("op"):
+    identity(x:f64) -> f64
+
+service U32Op("op"):
+    identity(x:u32) -> u32
+
+data NodeServicePair:
+    node: string
+    service_id: string
+
+func get_weighted_price(coin: string, currency: string, getter_topo: []NodeServicePair, mean_topo: NodeServicePair) -> Result:
+  prices: *f64
+  weights: *u32
+  for topo <- getter_topo:
+    on topo.node:
+      PriceGetterService topo.service_id
+      ts_ms <- Peer.timestamp_ms()
+      res <- PriceGetterService.price_getter(coin, currency, ts_ms)
+      prices <- F64Op.identity(res.result)
+
+  on HOST_PEER_ID:
+    for topo <- getter_topo:
+      res <- get_weight(topo.node)
+      weights <- U32Op.identity(res.weight)
+
+  on mean_topo.node:
+    WeightedMeanService mean_topo.service_id
+    result <- WeightedMeanService.weighted_mean(prices, weights)
+  <- result
