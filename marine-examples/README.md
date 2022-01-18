@@ -2,7 +2,7 @@
 
 ## Overview
 
-Fluence services are composed from Wasm modules written in Rust and configuration files. The examples in this directory illustrate how to construct a variety of modules and services. If you are not accessing the examples from the Fluence devcontainer, see the [Setup Environment](https://doc.fluence.dev/docs/tutorials_tutorials/recipes_setting_up) section of the Fluence documentation.
+Fluence services are composed from Wasm modules written in Rust and configuration files. The examples in this directory illustrate how to construct a variety of modules and services. See the [Setup Environment](https://doc.fluence.dev/docs/tutorials_tutorials/recipes_setting_up) section of the Fluence documentation to get.
 
 **Services** are logical constructs derived from Wasm modules and the associated linking and configuration data, which describe how modules are linked with each other and how they interact, if at all, with the outside world. The instantiation of a service from Wasm modules takes place on the peer-to-peer network, i.e. at the node level. More specifically, **blueprints** are json documents that provide the necessary information to build, i.e. link, a service from Wasm modules. See Figure 1 for a stylized representation of module and service creation.
 
