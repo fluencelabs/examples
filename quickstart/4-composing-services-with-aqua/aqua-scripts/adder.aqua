@@ -1,3 +1,5 @@
+import "builtin.aqua"
+
 -- service interface for Wasm module
 service AddOne:
     add_one: u64 -> u64
@@ -16,7 +18,6 @@ func add_one(value: u64, node: string, service_id: string) -> u64:
         AddOne service_id
         res <- AddOne.add_one(value)
     <- res
-
 
 func add_one_three_times(value: u64, ns_tuples: []NodeServiceTuple) -> u64:
     on ns_tuples!0.node_id:
@@ -39,7 +40,8 @@ func add_one_par(value: u64, ns_tuples: []NodeServiceTuple) -> []u64:
         on ns.node_id:
             AddOne ns.service_id
             res <- AddOne.add_one(value)
-    MyOp.identity(res!2)
+        Op.noop()
+    join res[2]
     <- res
 
 data ValueNodeService:
@@ -53,5 +55,6 @@ func add_one_par_alt(payload: []ValueNodeService) -> []u64:
         on vns.node_id:
             AddOne vns.service_id
             res <- AddOne.add_one(vns.value)
-    MyOp.identity(res!2)
+        Op.noop()
+    join res[2]
     <- res
