@@ -1,4 +1,6 @@
-import "builtin.aqua"
+service Op("op"):
+    -- does nothing
+    noop()
 
 -- service interface for Wasm module
 service AddOne:
