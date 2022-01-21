@@ -4,10 +4,6 @@ import "builtin.aqua"
 service AddOne:
     add_one: u64 -> u64
 
--- identity service for formatting stream var
-service MyOp("op"):
-    identity(u: u64)
-
 -- convenience struc for (Peer Id, Service Id) tuples
 data NodeServiceTuple:
     node_id: string
@@ -32,7 +28,6 @@ func add_one_three_times(value: u64, ns_tuples: []NodeServiceTuple) -> u64:
         AddOne ns_tuples!2.service_id
         res3 <- AddOne.add_one(res2)
     <- res3
-
 
 func add_one_par(value: u64, ns_tuples: []NodeServiceTuple) -> []u64:
     res: *u64
