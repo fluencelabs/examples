@@ -8,7 +8,7 @@ Community members have been coding incredible peer-ro-pper applications and solu
     * [Ethereum and Elasticsearch](https://github.com/Joera/gitcoin11-fluence) example
   
 * Awesome NFT
-  * [mint and transfer](https://github.com/tejas-kothari/BazaarEx) example
+  * [Mint and transfer](https://github.com/tejas-kothari/BazaarEx) example
   
 * Awesome DID
   * [SelfId](https://github.com/fsy412/SelfId-Auth-Fluence)
