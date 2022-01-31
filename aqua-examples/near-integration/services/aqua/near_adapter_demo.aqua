@@ -29,13 +29,13 @@ func node_status(network_id: string, node: string, service_id: string) -> Result
         res <- NearRpcServices.node_status(network_id)
     <- res
 
-func view_account_raw(network_id: string, account_id: string, node: string, service_id: string) -> Result:
+func view_account(network_id: string, account_id: string, node: string, service_id: string) -> Result:
   on node:
     NearRpcServices service_id
         res <- NearRpcServices.view_account(network_id, account_id)
     <- res
 
-func view_account(network_id: string, account_id: string, node: string, service_id: string) -> VAResult:
+func view_account_structured(network_id: string, account_id: string, node: string, service_id: string) -> VAResult:
   on node:
     NearRpcServices service_id
         res <- NearRpcServices.view_account_structured(network_id, account_id)
@@ -47,3 +47,9 @@ func account_balance(network_id: string, account_id: string, node: string, servi
     NearRpcServices service_id
         res <- NearRpcServices.view_account_structured(network_id, account_id)
     <- res.stdout.amount
+
+func tx_status(network_id: string, tx_id: string, account_id: string, receipt: bool, node: string, service_id: string) -> Result:
+  on node:
+    NearRpcServices service_id
+    res <- NearRpcServices.tx_status(network_id, tx_id, account_id, receipt)
+  <- res
