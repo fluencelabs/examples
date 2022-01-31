@@ -14,7 +14,7 @@ const { connect, keyStores, KeyPair, WalletConnection, Account } = nearAPI;
 const MY_LAME_PASSWORD = "lame_password";
 
 // temp fix replace with your key, e.g., account pk
-const SeedArray = new Uint8Array([10, 10, 20, 20, 100, 100]);
+const SeedArray = new Uint8Array([10, 10, 20, 20, 100, 100, 10, 10, 20, 20, 100, 100, 10, 10, 10, 10, 10, 10, 20, 20, 100, 100, 10, 10, 20, 20, 100, 100, 10, 10, 10, 10]);
 
 
 class NearSigner implements NearSignerApiDef {
