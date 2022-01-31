@@ -1,7 +1,4 @@
 # NEAR + Fluence + Aqua Integrations
-
-**WIP: Tread With Care**
-
 ## Overview
 
 We provide integration examples for both a [Fluence JS](https://github.com/fluencelabs/fluence-js) node based on the [NEAR API JS](https://docs.near.org/docs/api/javascript-library) and distributed [Wasm services](https://github.com/fluencelabs/marine) wrapping the [NEAR RPC API](https://docs.near.org/docs/api/rpc). A [NEAR CLI](https://docs.near.org/docs/tools/near-cli) integration is planned for the near future.
@@ -122,7 +119,7 @@ Please take note of the **relay id** and **peer id** for use in your client peer
 ```bash
 aqua run \
     -i aqua -a "/dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi"  \
-    -f 'account_state("testnet", "<your account>", "lame_password", "<peer di>", "relay id")'
+    -f 'account_state("testnet", "<your account>", "lame_password", "<peer id>", "relay id")'
 ```
 
 *Replace* `<your account>` with your testnet account and `<peer id>` and `<relay id>` with the values provided by your peer output as discussed above. Once you've done that, the output should be similar to:
@@ -257,7 +254,7 @@ Your peerId: 12D3KooWG8yhYea2x8LiWWruLqRyrbHNAyq6oAj5jkjDLZe21YK1
 ]
 ```
 
-You can use the [Testnet Explorer](https://explorer.near.org/) to further investigate the money transfer you just executed.
+You can use the [Testnet Explorer](https://explorer.near.org/) to further investigate the token transfer you just executed.
 
 ### Summary
 
@@ -411,10 +408,8 @@ Your peerId: 12D3KooWQ9KDy48aFG3jcrAAofUdgGa3tEUxkdEjpKiwL7Tp7Uiv
 ]
 ```
 
-Give the already implemented `gas_price` and `tx_status` functions a try or add more methods from the RPC API. We are looking forward to your pull requests.
+Give the already implemented `view_account` and `tx_status` functions a try or add more methods from the RPC API. We are looking forward to your pull requests.
 
 ### Summary
 
-We created a framework to enable highly portable Wasm modules as an adapter to NEAR's JSON-RPC framework, which may be distributed as hosted services to Rust peer nodes. These services may be used on their own or in conjunction with a specialized peer node, see above, taking care of signing tasks while shielding the wallet keys from preying eyes. Regardless the implementation route taken, Aqua allows us to seamlessly compose and reuse our our services.
-
-
+We created portable Wasm modules to function as an adapter to NEAR's JSON-RPC framework, which can be distributed as hosted services to Rust peer nodes. These services may be used on their own or in conjunction with a specialized peer node, see above, taking care of signing tasks while shielding the secret (wallet) keys from preying eyes. Regardless of the implementation route taken, Aqua allows us to seamlessly compose and reuse our services regardless of the chosen deployment option.
