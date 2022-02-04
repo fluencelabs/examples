@@ -6,6 +6,23 @@ The `aqua-examples` directory contains examples demonstrating the use of Aqua to
 
 If you encounter a problem, please post an Issue or open a PR. If you want to contribute an example, please contact us by opening an Issue or a draft PR. See the [contribution guidelines](https://github.com/fluencelabs/fluence/blob/master/CONTRIBUTING.md).
 
+## Resource Directory
+
+* The [Ceramic Integration](./aqua-examples/aqua-ceramic-integration/) provides an example Wasm adapter for the Ceramic [CLI API](https://developers.ceramic.network/build/cli/api/) and [HTTP API](https://developers.ceramic.network/build/http/api/).
+  * Rust Wasm, Aqua
+
+* The [IPFS Integration](./aqua-examples/e/aqua-ipfs-integration) shows how to use the [aqua-ipfs](https://github.com/fluencelabs/aqua-ipfs) library to deploy single-module Wasm services to a Fluence node from a IPFS sidecar
+  * Fluence JS, Aqua
+
+* The [Near Integration](./aqua-examples/near-integration/) provides integration xexamples for the Near API JS and RPC API. We use Fluence JS to implement a minimal Near signing service and wrap a few select RPC examples into a Wasm module.
+  * Fluence JS, Rust Wasm, Aqua
+
+* The [Timestamp Oracle](./aqua-examples/ts-oracle) illustrates how to use builtin services to  acquire timestamps from a node's Kademlia neighborhood and then process those timesstamps using Wasm services into point or range estimates.
+  * Aqua, Rust Wasm
+
+* The [Price Oracle](./aqua-examples/price-oracle) provides a stylized example of how to create a price stream oracle using Rust Wasm services. Further provides a Fluent JS and Web client examples.
+  * Rust Wasm, Fluence JS, Aqua
+  
 ## License
 
 Unless otherwise indicated, the applicable license is [Apache 2.0](https://github.com/fluencelabs/fluence/blob/master/LICENSE).
