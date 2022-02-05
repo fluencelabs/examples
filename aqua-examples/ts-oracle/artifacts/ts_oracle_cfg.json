@@ -1,0 +1,5 @@
+{
+  "name": "ts_oracle",
+  "mem_page_count": 5,
+  "logger_enabled": false
+}
