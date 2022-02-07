@@ -352,26 +352,35 @@ func rpc_foo(network_id: string, block_ref:string, node_string, service_id: stri
         <- result
 ```
 
-Before we can use our Fluence NEAR adapter, we need to deploy our Wasm modules to one or more host peers. We can do that with Aqua or the [`fldist`](https://doc.fluence.dev/docs/knowledge_tools#fluence-proto-distributor-fldist) tool:
+Before we can use our Fluence NEAR adapter, we need to deploy our Wasm modules to one or more host peers. We can do that with [Aqua CLI](https://doc.fluence.dev/aqua-book/aqua-cli):
 
 ```bash
-fldist new_service \
-    --ms artifacts/curl_adapter.wasm:configs/curl_adapter_cfg.json artifacts/near_rpc_services.wasm:configs/near_rpc_services_cfg.json \
-    --name near-adapter \
-    --verbose
+aqua dist deploy \
+     --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
+     --data-path configs/near_deploy_cfg.json \
+     --service near-adapter
 ```
 
 Which gives us the deployment information:
 
 ```bash
-client seed: HuunejtheCeJueet52wqHcSCQqzYjRD1G9hyT8RiZZZ7
-client peerId: 12D3KooWAAsBJkGzSQ56XZpTsi9pDCqHDjF88AnwNuNYhhtyJpPR
-relay peerId: 12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf
-service id: 23ba9159-388d-41b3-b15f-2a6d5013ed4d
-service created successfully
+Your peerId: 12D3KooWNg9YAJWzSRC5Wt2U38beXWAZQfZc2xxqVLVogRkSYKiv
+"Going to upload a module..."
+2022.02.07 01:58:44 [INFO] created ipfs client to /ip4/164.90.164.229/tcp/5001
+2022.02.07 01:58:44 [INFO] connected to ipfs
+2022.02.07 01:58:45 [INFO] file uploaded
+"Going to upload a module..."
+2022.02.07 01:58:45 [INFO] created ipfs client to /ip4/164.90.164.229/tcp/5001
+2022.02.07 01:58:46 [INFO] connected to ipfs
+2022.02.07 01:58:49 [INFO] file uploaded
+"Now time to make a blueprint..."
+"Blueprint id:"
+"24b026f9b1b3f189d7998f875c0eb0c3394e546ee248ea292a27a555d3643774"
+"And your service id is:"
+"b39eb93d-0e7b-478c-976f-2e5b05ec02fb"
 ```
 
-Please note the node id, "12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf", and service id "23ba9159-388d-41b3-b15f-2a6d5013ed4d" for future use in our Aqua. Let's have a look at our aqua script in 'aqua/near_adapter_demo.aqua`:
+Please note the node id, "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi", and service id "b39eb93d-0e7b-478c-976f-2e5b05ec02fb" for future use in our Aqua. Let's have a look at our aqua script in 'aqua/near_adapter_demo.aqua`:
 
 ```aqua
 -- aqua/near_adapter_demo_aqua
@@ -387,25 +396,19 @@ Which we can run with the `aqua cli`:
 ```bash
 aqua run \
     -i aqua/near_adapter_demo.aqua \
-    -a /dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf \
-    -f 'node_status("testnet", "12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf", "23ba9159-388d-41b3-b15f-2a6d5013ed4d")'
+    -a /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
+    -f 'node_status("testnet", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi", "b39eb93d-0e7b-478c-976f-2e5b05ec02fb")'
 ```
 
 Which results in the following output:
 
 ```bash
-Your peerId: 12D3KooWQ9KDy48aFG3jcrAAofUdgGa3tEUxkdEjpKiwL7Tp7Uiv
-[
-  {
-    "stderr": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100  7548  100  7480  100    68   192k   1789 --:--:-- --:--:-- --:--:--  193k\n",
-    "stdout": "{\"jsonrpc\":\"2.0\",\"result\":{\"version\":{\"version\":\"1.23.0-rc.1\",\"build\":\"crates-0.10.0-70-g93e8521c9\"},\"chain_id\":\"testnet\",\"protocol_version\":49,\"latest_protocol_version\":49,\"rpc_addr\":\"0.0.0.0:4040\",\"validators\":[{\"account_id\":\"node1\",\"is_slashed\":false},{\"account_id\":\"node0\",\"is_slashed\":false},{\"account_id\":\"node2\",
-    \"is_slashed\":false}],\"sync_info\":{\"latest_block_hash\":\"HBCEesmK5W1K8FtnasswhZAKQ1qWxARjhPcPEbc4EtQq\",
-    
-    <snip>
-    
-    \"latest_block_height\":74946255,\"latest_state_root\":\"21RTTc1u7Uvdw7KPWuSvKkEPxgBCBtj9ddhaW16HTHpD\",\"latest_block_time\":\"2021-12-14T08:26:00.797528669Z\",\"syncing\":false,\"earliest_block_hash\":\"Gtfa893yb1vmWJSPHYMmJ4JsGRjPr4JBEMLZ8CMyLMtK\",\"earliest_block_height\":74691571,\"earliest_block_time\":\"2021-12-12T07:04:26.150892426Z\"},\"validator_account_id\":null},\"id\":\"dontcare\"}"
-  }
-]
+Your peerId: 12D3KooWMWt2xWsqZxF3sEcBajsDRVARziKdyqkCoDXKeqYMnawm
+{
+  "stderr": "",
+  "stdout": "{\"jsonrpc\":\"2.0\",\"result\":{\"version\":{\"version\":\"1.24.0-rc.2\",\"build\":\"crates-0.11.0-72-g6c5199f3b\"},\"chain_id\":\"testnet\",\"protocol_version\":51,\"latest_protocol_version\":51,\"rpc_addr\":\"0.0.0.0:4040\",\"validators\":[{\"account_id\":\"node1\",\"is_slashed\":false},{\"account_id\":\"node0\",\"is_slashed\":false},{\"account_id\":\"node2\",\"is_slashed\":false},{\"account_id\":\"node3\",\"is_slashed\":false},{\"account_id\":\"staked.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"masternode24.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"01node.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"p2p.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"legends.<snip>
+  \"latest_block_height\":81641688,\"latest_state_root\":\"4yNrvAWtpEEAzCigEsYLriY4KG9gECDebrUk3b8EBAk1\",\"latest_block_time\":\"2022-02-07T08:02:25.995190071Z\",\"syncing\":false,\"earliest_block_hash\":\"H3nLmP5PPLSCX863ipiMSRZaBAsBKhXUkAsSzuaBJJYJ\",\"earliest_block_height\":81395663,\"earliest_block_time\":\"2022-02-05T08:47:02.279368896Z\"},\"validator_account_id\":null},\"id\":\"dontcare\"}"
+}
 ```
 
 Give the already implemented `view_account` and `tx_status` functions a try or add more methods from the RPC API. We are looking forward to your pull requests.
