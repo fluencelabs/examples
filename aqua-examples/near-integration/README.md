@@ -411,7 +411,7 @@ Your peerId: 12D3KooWMWt2xWsqZxF3sEcBajsDRVARziKdyqkCoDXKeqYMnawm
 }
 ```
 
-Give the already implemented `view_account` and `tx_status` functions a try or add more methods from the RPC API. We are looking forward to your pull requests.
+Give the already implemented `view_account` and `tx_status` functions a try or add more methods from the RPC API -- we are looking forward to your pull requests.
 
 ### Summary
 
