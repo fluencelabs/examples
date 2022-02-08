@@ -15,7 +15,7 @@ marine-rs-sdk = { version = "0.6.11", features = ["logger"] }
 log = "0.4.14"
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.4.0"
+marine-rs-sdk-test = "0.4.1"
 
 [dev]
 [profile.release]
