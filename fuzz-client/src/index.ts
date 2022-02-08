@@ -29,10 +29,11 @@ async function main() {
     Fluence.getStatus().relayPeerId
   );
 
-  // call the get_price function -- sequential processing
+  // call the simple getter
   const ts_result = await ts_getter();
   console.log("simple result: ", ts_result);
 
+  // call the bounded getter
   const ts_result_tuple = await ts_getter_with_timeout();
   console.log("raw timestamps: %s\ndead peers: %s ", ts_result_tuple[0].filter(e => e !== 0), ts_result_tuple[1]);
 
