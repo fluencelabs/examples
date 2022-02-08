@@ -33,7 +33,6 @@ cargo install mrepl
 cargo install marine
 
 npm -g install @fluencelabs/aqua
-npm -g install @fluencelabs/fldist
 ```
 
 To compile the code to the wasi target:
@@ -54,29 +53,32 @@ test the code with
 cargo +nightly test --release
 ```
 
-and deploy the service to a peer of your choice with the `fldist` tool:
+and deploy the service to a peer of your choice with the `aqua` cli tool:
 
 ```bash
-fldist new_service \
-       --ms artifacts/ts_oracle.wasm:artifacts/ts_oracle_cfg.json \
-       --name ts-consensus \
-       --verbose
+aqua dist deploy \
+     --addr /dns4/kras-06.fluence.dev/tcp/19001/wss/p2p/12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr \
+     --data-path configs/ts_oracle_deploy_cfg.json \
+     --service ts-oracle
 ```
 
-As always, take note of the service id and let's compile our Aqua scripts:
+which results in:
 
 ```bash
-# results in air-scripts ts_getter.ts
-aqua -i aqua-scripts -o air-scripts 
+Your peerId: 12D3KooWHS2Eys5GmmdBGZHwUGRM4TRvcaW4m7dgGAShxbMEcKms
+"Going to upload a module..."
+2022.02.08 14:30:48 [INFO] created ipfs client to /ip4/161.35.212.85/tcp/5001
+2022.02.08 14:30:48 [INFO] connected to ipfs
+2022.02.08 14:30:50 [INFO] file uploaded
+"Now time to make a blueprint..."
+"Blueprint id:"
+"5617e051fbd7f8e18dfc16cace62f71f0ff090d576ee09e3520c196ef44f6a79"
+"And your service id is:"
+"388d8717-b547-43c3-af05-b4713893d453"
 ```
 
-which generates Typescript code wrapping of the compiled Aqua intermediary representation (AIR) or we can use the `-a` flag to compile Aqua to AIR files:
+As always, take note of the service id!
 
-```bash
-# results in air-scripts 
-# ts_getter.ts_getter.air and ts_getter.ts_oracle.air
-aqua -i aqua-scripts -o air-scripts -a
-```
 ### Approach
 
 We implemented a custom service that returns the mode and frequency for an array of timestamps, see `src/` that can be deployed on to any node of the peer-to-peer network and, once deployed, used to in an Aqua script. Moreover, network peers have builtin services including Kademlia and timestamp services. Both custom and bultin services are accessible by Aqua and ready for composition into an application.
@@ -137,24 +139,22 @@ func ts_oracle(node: string, oracle_service_id: string, min_points:u32) -> Oracl
 We can run our Aqua `ts_oracle` script against the deployed processing service to get our oracle point estimate using `aqua run` (Note that you can replace the service id with the one you obtained from your deployment):
 
 ```bash
-aqua run \ 
-    -i aqua-scripts \
-    -a /dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf \
-    -f 'ts_oracle("12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf", "ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9", 5)'
+aqua run \
+     -i aqua \
+     -a /dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf \
+     -f 'ts_oracle("12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf", "ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9", 5)'
 ```
 
 Which results in below but may be different for you:
 
 ```text
-Your peerId: 12D3KooWC6WzVSHaKxkedGcoHJgqj7pEaeXXWsiMtC8M7vjC1qTX
-[
-  {
-    "err_str": "",
-    "freq": 4,
-    "mode": 1638595617657,
-    "n": 12
-  }
-]
+Your peerId: 12D3KooWDB6bCvW7vim4iw88TRyyuouLiyZz2Cr2ZdaaBZKJ916d
+{
+  "err_str": "",
+  "freq": 3,
+  "mode": 1644352733889,
+  "n": 12
+}
 ```
 
 Alternatively, we can run the `ts_getter` functions just for the timestamps:
@@ -169,24 +169,19 @@ aqua run \
 Which gives us just the timestamps, which wil be different for you:
 
 ```text
-Your peerId: 12D3KooWKeRZaNkubmibXhBGVHRC1WBn9h9j4Qao6s9xPdiJiHxu
+Your peerId: 12D3KooWEdPZCXxSEDMLMTR8doUVhjcZ6YB5CUJnq36QwU65XVFH
 [
-  [
-    1638595815113,
-    1638595815112,
-    1638595815109,
-    1638595815112,
-    1638595815115,
-    1638595815114,
-    1638595815111,
-    1638595815110,
-    1638595815109,
-    1638595815111,
-    1638595815113,
-    1638595815112,
-    1638595815111,
-    1638595815111
-  ]
+  1644352807634,
+  1644352807632,
+  1644352807630,
+  1644352807629,
+  1644352807650,
+  1644352807630,
+  1644352807633,
+  1644352807633,
+  1644352807634,
+  1644352807631,
+  1644352807631
 ]
 ```
 
