@@ -24,7 +24,7 @@ func ts_getter() -> []u64:
   <- res
 
 
--- timestap getter with error collector over neighborhood 
+-- timestamp getter with error collector over neighborhood 
 func ts_getter_with_timeout()-> []u64, []string:
   -- timeout in ms
   rtt  = 1000
@@ -40,7 +40,7 @@ func ts_getter_with_timeout()-> []u64, []string:
   -- err message
   msg = "timeout"
   
-  -- collect non-rsponsive peer ids, if any
+  -- collect non-responsive peer ids, if any
   dead_peers: *string
   on HOST_PEER_ID:
     k <- Op.string_to_b58(HOST_PEER_ID)
