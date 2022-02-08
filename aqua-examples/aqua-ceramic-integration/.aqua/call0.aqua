@@ -1,4 +1,0 @@
-import "/Users/bebo/localdev/examples/aqua-examples/ceramic-demo/aqua/ceramic_demo.aqua"
-
-func callerUniqueFunction():
-  roundtrip("one", "two", "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "cac2af1e-16fe-4f44-8b92-4c0b34877971")
