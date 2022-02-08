@@ -19,8 +19,8 @@ ToDos:
 - [ ] Refactor CLI adapter for optional built-in deployment
 - [ ] Separate HTTP from CLI code
 - [ ] Add multimodule tests
-- [ ] Add use of Aqua demo
-- [ ] Change fldist to aqua cli
+- [X] Add use of Aqua demo
+- [X] Change fldist to aqua cli
 
 For another, comprehensive, end-to-end implementation of an adapter, see [Aqua IPFS Library](https://doc.fluence.dev/aqua-book/libraries/aqua-ipfs) and [Aqua IPFS demo](https://github.com/fluencelabs/examples/tree/main/aqua-examples/aqua-ipfs-integration).
 
@@ -235,28 +235,35 @@ result: String("{\"streamId\":\"kjzl6cwe1jw147gy6h9ygbtzzs0pjg4qyhp4bhx69k88h25e
 
 That is, `...\"chainId\":\"eip155:3\",\"blockNumber\":11266361,\"blockTimestamp\":1634752889}, ...` contains the chain confirmation reference and is readily viewable on [etherscan](https://ropsten.etherscan.io/block/11266361).
 
-Looks like our services are working and ready for deployment to the `stage` network. We use [`fldist`] command line tool to do so:
+Looks like our services are working and ready for deployment to the `stage` network. We use the `aqua` command line tool to do so:
 
 ```bash
-fldist new_service \
-        --ms artifacts/curl_adapter.wasm:configs/curl_adapter_cfg.json \
-             artifacts/ceramic_adapter_custom.wasm:configs/ceramic_adapter_cfg.json \
-        --name ceramic-adapter \
-        --verbose \
-        --env stage
+aqua dist deploy \
+     --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
+     --data-path configs/ceramic_adapter_deploy_cfg.json \
+     --service ceramic-service
 ```
 
 Which gives us our service id:
 
 ```bash
-client seed: GaVNhWaCzVc943kcxXhPbnbEmHFg1uUNNLHEKHVg6aTc
-client peerId: 12D3KooWS7mqgD5QUutPVuU4WoXdPUL8zzJpdPM44PzSYSTXYhcX
-relay peerId: 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE
-service id: 86314188-0571-4f42-8873-0cb07ffdcdcf  # <-- this is different for you
-service created successfully
+Your peerId: 12D3KooWRhFutxYqaX9MEhR1vB98xSwjcerfR4p3MEMmbFwkeJJQ
+"Going to upload a module..."
+2022.02.07 10:27:34 [INFO] created ipfs client to /ip4/134.209.186.43/tcp/5004
+2022.02.07 10:27:34 [INFO] connected to ipfs
+2022.02.07 10:27:37 [INFO] file uploaded
+"Going to upload a module..."
+2022.02.07 10:27:37 [INFO] created ipfs client to /ip4/134.209.186.43/tcp/5004
+2022.02.07 10:27:38 [INFO] connected to ipfs
+2022.02.07 10:27:41 [INFO] file uploaded
+"Now time to make a blueprint..."
+"Blueprint id:"
+"3ad65d83d277d3628ba930dcf65c5d71b53b0fc2af5815d4c727d53a8acbcefd"
+"And your service id is:"
+"39a67931-bca1-41b6-b64e-f8a5e68ac328"     # <-- this is different for you
 ```
 
-With our modules deployed and linked into service `86314188-0571-4f42-8873-0cb07ffdcdcf`, we are now ready to utilize Ceramic streams from the Fluence network with Aqua.
+With our modules deployed and linked into service `39a67931-bca1-41b6-b64e-f8a5e68ac328`, we are now ready to utilize Ceramic streams from the Fluence network with Aqua.
 
 ## Using the Ceramic Adapter With Aqua
 
@@ -300,7 +307,7 @@ func roundtrip(payload:string, payload_two: string, node:string, service_id:stri
     <- create_res.stdout, show_res.stdout, update_res.stdout
 ```
 
-We created three Aqua demo functions and used marine to export all interfaces to our aqua file before we added our code with  `marine aqua artifacts/ceramic_adapter_custom.wasm >> aqua/ceramic_demo.aqua`.:
+We created three Aqua demo functions and used marine to export all interfaces to our aqua file before we added our code with `marine aqua artifacts/ceramic_adapter_custom.wasm >> aqua/ceramic_demo.aqua`.:
 
 - `func create(payload:string, node:string, service_id:string) -> string:` shows how to create a stream and return only the StreamId as a string
 - `func create_obj(payload:string, node:string, service_id:string) -> CeramicResult:` shows how to create a stream and return the `CeramicResult` struct
@@ -309,88 +316,61 @@ We created three Aqua demo functions and used marine to export all interfaces to
 
 
 
-For the purposes of this demo, we continue to use `fldist` to run our Aqua scripts and therefore compile `ceramic_demo.aqua` to (raw) AIR:
+We continue to use `aqua` cli to run our Aqua scripts.  First, let's run our simple `create` which returns the StreamId as a string:
 
 ```bash
-aqua -i aqua  -o compiled-aqua -a
+aqua run -i aqua \
+   --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
+    -f'create(arg, "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "39a67931-bca1-41b6-b64e-f8a5e68ac328")' \
+    -d '{"arg": "{\"foo\":\"bar\"}"
+    }'
 ```
 
-which gives us an AIR file for each functions:
+Returns:
 
 ```bash
-2021.10.20 14:43:50 [INFO] Aqua Compiler 0.3.2-233
-2021.10.20 14:43:51 [INFO] Result /Users/bebo/localdev/examples/aqua-examples/ceramic-demo/compiled-aqua/ceramic_demo.create.air: compilation OK (3 functions, 1 services)
-2021.10.20 14:43:51 [INFO] Result /Users/bebo/localdev/examples/aqua-examples/ceramic-demo/compiled-aqua/ceramic_demo.create_obj.air: compilation OK (3 functions, 1 services)
-2021.10.20 14:43:51 [INFO] Result /Users/bebo/localdev/examples/aqua-examples/ceramic-demo/compiled-aqua/ceramic_demo.roundtrip.air: compilation OK (3 functions, 1 services)
+Your peerId: 12D3KooWKgpdZo2xVDYQ9MPqT3tMQwgo2zWQFWNtVPYWyhLN5kK5
+"kjzl6cwe1jw145d1ks7ubujk6hxc8em4n3z65may2mc9b321wep8hci0eprrpo3"
 ```
 
-Let's run through our Aqua functions. First, we run our simple `create` which returns the StreamId as a string:
+Now, we run the same functionality but with the `CeramicResult` as the return value:
 
 ```bash
-fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
-       run_air \
-       -p compiled-aqua/ceramic_demo.create.air \
-       -d '{"node":"12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",
-            "service_id":"86314188-0571-4f42-8873-0cb07ffdcdcf",
-            "payload": "{\"foo\":\"bar\"}"}'\
-        --env stage \
-       --generated
-```
-
-Yields:
-
-```bash
-[
-  "kjzl6cwe1jw14b840zszph98opnp0mlt2ca2y77ln2crxtljmnknsomfx036q4u"
-]
-```
-
-Please note that we need to escape the Ceramic payload(s)! Now, we run the same functionality but with the `CeramicResult` as the return value:
-
-```bash
-fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
-       run_air \
-       -p compiled-aqua/ceramic_demo.create_obj.air \
-       -d '{"node":"12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",
-            "service_id":"86314188-0571-4f42-8873-0cb07ffdcdcf",
-            "payload": "{\"foo\":\"bar\"}"}' \
-       --env stage \
-       --generated
+aqua run -i aqua \
+   --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
+    -f'create_obj(arg, "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "39a67931-bca1-41b6-b64e-f8a5e68ac328")' \
+    -d '{"arg": "{\"foo\":\"bar\"}"
+    }'
 ```
 
 Which returns the `CeramicResult` object:
 
 ```bash
-[
-  {
-    "ret_code": 0,
-    "stderr": "",
-    "stdout": "kjzl6cwe1jw14atuounxr2gi9ddc5i8ale3rgti7qetao8j81v6ea00ek8b7cdb"
-  }
-]
+Your peerId: 12D3KooWLsy44ycUSiQzEDX9PNZW3XEpLmAcLMaKxCZHqJKhu2Uc
+{
+  "ret_code": 0,
+  "stderr": "",
+  "stdout": "kjzl6cwe1jw1485qhhhjzpua7cc7xq03qqi2z0w93e12qc1w8sob78o2pebdvef"
+}
 ```
 
 This allows us to access members with the dot notation, e.g, CeramicResultObj.stderr. Finally, we run our roundtrip function where we create, update and show:
 
 ```bash
-fldist --node-id 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
-       run_air \
-       -p compiled-aqua/ceramic_demo.roundtrip.air \
-       -d '{"node":"12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",
-            "service_id":"86314188-0571-4f42-8873-0cb07ffdcdcf",
-            "payload": "{\"foo\":\"bar\"}",
-            "payload_two":"{\"foo\":\"bar open\"}"}' \
-       --env stage  \
-       --generated
+aqua run -i aqua \
+   --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
+    -f'roundtrip(arg, arg_2, "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "39a67931-bca1-41b6-b64e-f8a5e68ac328")' \
+    -d '{"arg": "{\"foo\":\"bar open\"}", "arg_2":"{\"foo\":\"bar closed\"}"}'
 ```
 
 Which returns the triple:
 
 ```bash
+Your peerId: 12D3KooWDvsgbe7MByxPkCwLU96kLcaq3Fyyc15w8SpZf6ELwtAW
 [
-  "kjzl6cwe1jw145gqlqwk0vv4bktbtn654fur4o9dyqdo797bkbohfa0wuip7b9l",
-  "{\n  \"foo\": \"bar\"\n}\n",
-  "{\n  \"foo\": \"bar open\"\n}\n"
+"kjzl6cwe1jw149tb39f0fe8bmig9kfi49ih2wuf09eslamxb4hckwgrfk2ivox9",
+"{\n  \"foo\": \"bar open\"\n}\n",
+"{\n  \"foo\": \"bar closed\"\n}\n"
 ]
 ```
 
