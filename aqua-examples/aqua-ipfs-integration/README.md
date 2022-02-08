@@ -17,18 +17,18 @@ You need npm v7 or later to run the examples
 
 1. Run it
 
-```
-npm i
-npm run build -w aqua
-npm start -w web
-```
+    ```bash
+    npm i
+    npm run build -w aqua
+    npm start -w web
+    ```
 
 2. Press "deploy"
 3. Copy WASM service CID and press "get_size"
 
 ### NodeJS example
 
-```
+```bash
 npm i
 npm run build -w aqua
 npm start -w nodejs
