@@ -23,7 +23,7 @@ If you encounter a problem, please post an Issue or open a PR. If you want to co
 * The [Price Oracle](./aqua-examples/price-oracle) provides a stylized example of how to create a price stream oracle using Rust Wasm services. Further provides a Fluent JS and Web client examples.
   * Rust Wasm, Fluence JS, Aqua
   
-* The [EIP712 Validator Node](https://github.com/fluencelabs/eip712-validation-node) provides a stylized example of validating signed EIP712 forms and storing the results in a local sqlite database. WE use FLuence JS to implement both peer and client, where the peer expose sqlite crud interfacs allowing other peers to query validations and form a consensus.
+* The [EIP712 Validator Node](https://github.com/fluencelabs/eip712-validation-node) provides a stylized example of validating signed EIP712 forms and storing the results in a local sqlite database. We use Fluence JS to implement both peer and client, where the peer expose sqlite crud interfaces allowing other peers to query validations and form a consensus.
   * Rust Wasm, Fluence JS, Aqua, SQLite
   
 ## License
