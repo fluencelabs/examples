@@ -15,7 +15,7 @@
  */
 
 use marine_rs_sdk::{marine, module_manifest, MountedBinaryResult};
-use picorand::{PicoRandGenerate, WyRand, RNG};
+use picorand::{WyRand, RNG};
 use serde_json;
 
 #[macro_use]
