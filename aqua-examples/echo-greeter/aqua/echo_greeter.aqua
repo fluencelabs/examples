@@ -1,5 +1,4 @@
-service OpString("op"):
-    identity(s: string)
+import "@fluencelabs/aqua-lib/builtin.aqua"
 
 data EchoResult:
   echo: string
@@ -73,7 +72,9 @@ func echo_greeting_par(greet: bool, echo_service: EchoServiceInput, greeting_ser
         GreetingService greeting_service.service_id
         on greeting_service.node:
           res <- GreetingService.greeting(result.echo, greet)
-    OpString.identity(res!5)
+        Op.noop()
+    -- OpString.identity(res!5)
+    join res[5]
     <- res
   
 -- call parallel with echo service, alternate version
@@ -88,7 +89,8 @@ func echo_greeting_par_alternative(greet: bool, echo_service: EchoServiceInput, 
         GreetingService greeting_service.service_id
         par on greeting_service.node:
           res <- GreetingService.greeting(result.echo, greet)
-    OpString.identity(res!5)
+          Op.noop()
+    join res[5]
     <- res
   
 
@@ -109,5 +111,7 @@ func echo_greeting_par_improved(echo_service: EchoServiceInput, greeting_service
         GreetingService greeting_service.service_id
         on greeting_service.node:
           res <- GreetingService.greeting(result.echo, greeting_service.greet)
-    OpString.identity(res!5)
+        Op.noop()
+    --OpString.identity(res!5)
+    join res[5]
     <- res
