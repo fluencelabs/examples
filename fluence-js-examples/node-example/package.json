@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prestart": "npm run compile-aqua",
     "start": "node -r ts-node/register src/index.ts",
     "compile-aqua": "aqua --import . -i ./aqua/ -o ./src/_aqua",
     "watch-aqua": "chokidar \"**/*.aqua\" -c \"npm run compile-aqua\""
