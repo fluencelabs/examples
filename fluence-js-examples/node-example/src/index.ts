@@ -1,4 +1,4 @@
-import { Fluence } from "@fluencelabs/fluence";
+import { Fluence, KeyPair } from "@fluencelabs/fluence";
 import { krasnodar } from "@fluencelabs/fluence-network-environment";
 import { registerCalc, CalcDef } from "./_aqua/calc";
 
@@ -40,9 +40,14 @@ const keypress = async () => {
   );
 };
 
+const relay = krasnodar[0];
+// generated with `npx aqua create_keypair`
+const skBytes = "tOpsT08fvYMnRypj3VtSoqWMN5W/AptKsP39yanlkg4=";
+
 async function main() {
   await Fluence.start({
-    connectTo: krasnodar[0],
+    connectTo: relay,
+    KeyPair: await KeyPair.fromEd25519SK(Buffer.from(skBytes, "base64")),
   });
 
   registerCalc(new Calc());

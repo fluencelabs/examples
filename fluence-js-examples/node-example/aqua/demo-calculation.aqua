@@ -1,6 +1,6 @@
 import "./calc.aqua"
 
-const PEER ?= "12D3KooWLBkw4Tz8bRoSriy5WEpHyWfU11jEK3b5yCa7FBRDRWH3"
+const PEER ?= "12D3KooWKETqJdR26urWDbkRAVRdPQhcYNSJNGMBTn1zuE9kjQmo"
 const RELAY ?= "12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e"
 
 func demoCalculation() -> f32:
