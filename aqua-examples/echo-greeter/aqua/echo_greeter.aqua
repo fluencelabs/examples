@@ -73,7 +73,6 @@ func echo_greeting_par(greet: bool, echo_service: EchoServiceInput, greeting_ser
         on greeting_service.node:
           res <- GreetingService.greeting(result.echo, greet)
         Op.noop()
-    -- OpString.identity(res!5)
     join res[5]
     <- res
   
