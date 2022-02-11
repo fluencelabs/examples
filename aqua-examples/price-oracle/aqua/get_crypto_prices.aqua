@@ -45,7 +45,6 @@ func get_price(coin: string, currency: string, node: string, pg_sid: string, mea
              --    logError("price_getter: ", price.error_msg)
     <- result
 
-
 func get_price_par(coin: string, currency: string, getter_topo: []NodeServicePair, mean_topo: NodeServicePair) -> Result:
   prices: *f64
   for topo <- getter_topo par:

@@ -136,7 +136,9 @@ Applications are composed from one or more services available on one or more Flu
 
 For implementation details, see [price_getter_service]("./../price_getter_service/src/main.rs), which compiles to our desired wasm32-wasi target. Since Wasm modules don't have sockets but we need to use cUrl, which is provided by the host node. In order to do that, we fist need to write an adapter that allows us to access the cUrl service from a Wasm module and then link that service to our price_getter service. See [cUrl adapter example](./marine-scripts/curl_adapter) for more details on the implementation of our [curl adapter service](./curl_adapter/src/main.rs). 
 
-Figure 3: Stylized Service Creation By Marine Module Linking
+Figure 3: Stylized Service Creation By Marine Module Linking$$
+
+$$
 
 <img src="images/figure_2.png " width="400" />
 
@@ -161,43 +163,53 @@ fldist env
 Pick any of the peer ids from the listed peers to deploy your services. Let's say we use peer id `12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi`:
 
 ```bash
-$ fldist --node-id 12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi new_service --ms artifacts/curl_adapter.wasm:configs/curl_adapter_cfg.json artifacts/price_getter_service.wasm:configs/price_getter_service_cfg.json --name price-getter-service-0
-service id: f5b456fa-ee18-4df1-b18b-84fe7ebc7ad0    # <--- REMEMBER service id !!
-service created successfully
-
-
-aqua dist deploy \
-     --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \ 
-     --data-path configs/ts_oracle_deploy_cfg.json --service price-getter
-
-Your peerId: 12D3KooWFx6c6LqkWDoNFLWyz3LG5y4bUw7XVCBtJaovDt7kykcd
-"Going to upload a module..."
-2022.02.09 23:05:07 [INFO] created ipfs client to /ip4/164.90.164.229/tcp/5001
-2022.02.09 23:05:07 [INFO] connected to ipfs
-2022.02.09 23:05:08 [INFO] file uploaded
-"Going to upload a module..."
-2022.02.09 23:05:08 [INFO] created ipfs client to /ip4/164.90.164.229/tcp/5001
-2022.02.09 23:05:09 [INFO] connected to ipfs
-2022.02.09 23:05:13 [INFO] file uploaded
-"Now time to make a blueprint..."
-
-
+aqua dist deploy  \
+     --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
+     --data-path configs/ts_oracle_deploy_cfg.json \
+     --service price-getter
 ```
 
-to deploy a price-getter service and
+to deploy a price-getter service, which gives us the service id:
 
 ```bash
-$ fldist --node-id 12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi  new_service --ms artifacts/mean_service.wasm:configs/mean_service_cfg.json  --name mean-service-0
-service id: debecd02-ba7d-40a2-92ab-08a9321da2cf    # <--- REMEMBER service id !!
-service created successfully
+Your peerId: 12D3KooWBK198aAioxPsiBDXBkkXkaQfkqCkLxTN3oZXVTN4B2em
+"Going to upload a module..."
+2022.02.11 00:23:23 [INFO] created ipfs client to /ip4/164.90.164.229/tcp/5001
+2022.02.11 00:23:23 [INFO] connected to ipfs
+2022.02.11 00:23:24 [INFO] file uploaded
+"Going to upload a module..."
+2022.02.11 00:23:24 [INFO] created ipfs client to /ip4/164.90.164.229/tcp/5001
+2022.02.11 00:23:24 [INFO] connected to ipfs
+2022.02.11 00:23:28 [INFO] file uploaded
+"Now time to make a blueprint..."
+"Blueprint id:"
+"5a3cb3ba33d1467298bb6dbea29c7ade2df820b0b0c858a7e3e38a8f9f73d81b"
+"And your service id is:"
+"10574828-c076-4f61-91d1-0a8c8d09bf9a"
+```
 
+and to deploy the mean service:
 
-aqua dist deploy  \\
-     --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \ 
+```bash
+aqua dist deploy  \
+     --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
      --data-path configs/ts_oracle_deploy_cfg.json \
      --service mean-service
+```
 
+which results in:
 
+```bash
+Your peerId: 12D3KooWEXqXQHJzQZ7vzq7WJwC56rEbrpAzw1wxZvoYV9Wc8JoR
+"Going to upload a module..."
+2022.02.11 00:30:37 [INFO] created ipfs client to /ip4/164.90.164.229/tcp/5001
+2022.02.11 00:30:37 [INFO] connected to ipfs
+2022.02.11 00:30:38 [INFO] file uploaded
+"Now time to make a blueprint..."
+"Blueprint id:"
+"6f438ff43b9d5e7f980992e339a3eeef7da4d0e2fefca8f6229e440b509d454d"
+"And your service id is:"
+"8249c94d-842c-4a9e-a7de-bec03e4594a1"
 ```
 
 to deploy a mean service. Please take note of the service-id you get back for each fo the deployments, which are needed to locate the service in the future.
@@ -233,6 +245,26 @@ func get_price(coin: string, currency: string, node: string, pg_sid: string, mea
     <- result                                                            --< Return result to client peer
 ```
 
+We can quickly test our code with `aqua cli`:
+
+```bash
+aqua run \
+     --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
+     -i aqua \
+     -f'get_price("ethereum", "usd", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi", "10574828-c076-4f61-91d1-0a8c8d09bf9a","8249c94d-842c-4a9e-a7de-bec03e4594a1")'
+```
+
+which gives us the following result:
+
+```bash
+Your peerId: 12D3KooWEvUosMJVQFi3wASPqpkCtzFphfFJPtsd1DbRBVh7JPFL
+{
+  "error_msg": "",
+  "result": 3253.51,
+  "success": true
+}
+```
+
 With just a few lines of code, we can program the network and application layers to compose hose peer-to-peer services into powerful decentralized applications. However, with a little more preparation, i.e., more deployed services, we can vastly improve and scale our solution. How? By parallelizing our workflow. In the file, `aqua-scripts/get_crypto_prices.aqua`, look at the `get_price_par` function:
 
 ```aqua
@@ -260,18 +292,29 @@ func get_price_par(coin: string, currency: string, getter_topo: []NodeServicePai
 
 ```
 
-In this invocation of our application workflow, we process price quote acquisition in parallel over price_getter services deployed to many nodes. This allows us to scale our workflow and take sull advantage of the network size and service deployment commitments.
+In this implementation of our application workflow, we process price quote acquisition in parallel over price_getter services deployed to many nodes. This allows us to scale our workflow and take full advantage of the network size and service deployment commitments.
 
-To compile our Aqua script, we use the `aqua` tool and either compile our code to raw Air:
+Again, using `aqua cli`:
 
-```text
-% aqua -i aqua-scripts -o air-scripts -a
+```bash
+aqua run \
+     --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
+     -i aqua \
+     -f'get_price_par(coin, currency, getter_topo, mean_topo)' \
+     -d '{"coin":"ethereum", "currency": "usd",
+          "getter_topo":[{"node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS","service_id": "b67586f7-e96f-49ee-914e-9eabe1a0b83d"},{"node": "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi","service_id": "f5b456fa-ee18-4df1-b18b-84fe7ebc7ad0"}],
+          "mean_topo":{"node": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS","service_id": "79b8ddb9-e2e6-4924-9293-c5d55c94af6b"}}'
 ```
 
-or to a ready-made typescript stub:
+which gives us:
 
-```text
-% aqua -i aqua-scripts -o air-scripts
+```bash
+Your peerId: 12D3KooWBxW9SAUJA9xw4KUSCT7LGsRFo2XU1e6WDii1dmotyPSt
+{
+  "error_msg": "",
+  "result": 3377.48,
+  "success": true
+}
 ```
 
 ## Summary
