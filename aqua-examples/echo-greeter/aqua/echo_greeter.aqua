@@ -88,7 +88,7 @@ func echo_greeting_par_alternative(greet: bool, echo_service: EchoServiceInput, 
         GreetingService greeting_service.service_id
         par on greeting_service.node:
           res <- GreetingService.greeting(result.echo, greet)
-          Op.noop()
+        Op.noop()
     join res[5]
     <- res
   
@@ -111,6 +111,5 @@ func echo_greeting_par_improved(echo_service: EchoServiceInput, greeting_service
         on greeting_service.node:
           res <- GreetingService.greeting(result.echo, greeting_service.greet)
         Op.noop()
-    --OpString.identity(res!5)
     join res[5]
     <- res

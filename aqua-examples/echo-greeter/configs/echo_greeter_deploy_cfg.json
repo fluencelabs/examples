@@ -1,0 +1,20 @@
+{
+  "echo-greeter": {
+    "name": "greeting-service",
+    "modules": [
+      {
+        "name": "greeting-service",
+        "path": "./artifacts/greeting.wasm"
+      }
+    ]
+  },
+  "echo-service": {
+    "name": "echo-service",
+    "modules": [
+      {
+        "name": "echo",
+        "path": "./artifacts/echo_service.wasm"
+      }
+    ]
+  }
+}

@@ -136,13 +136,6 @@ async function main() {
   );
   console.log("par result                          : ", par_result);
 
-  par_result = await echo_greeting_par_alternative(
-    true,
-    echo_service,
-    greeting_services
-  );
-  console.log("par alternative result              : ", par_result);
-
   par_result = await echo_greeting_par_improved(
     echo_service,
     greeting_services

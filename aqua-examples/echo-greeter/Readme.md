@@ -114,34 +114,50 @@ Any one of the peers will do and we can deploy our services with the `fldist` to
 
 ```text
 # deploy greeting service
-fldist --node-id 12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE \
-       new_service \
-       --ms artifacts/greeting.wasm:configs/greeting_cfg.json \
-       --name greeting-demo
+aqua dist deploy \
+     --addr /dns4/kras-03.fluence.dev/tcp/19001/wss/p2p/12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE \
+     --data-path configs/echo_greeter_deploy_cfg.json \
+     --service echo-greeter
 ```
 
 Which gives us the service id for the greeting service:
 
 ```text
-service id: 9436af06-86ab-4df3-ba2a-ad29e37043c2
-service created successfully
+Your peerId: 12D3KooWG65EzhW66PFpFGr79CQdMdif4THbkp6CVoQwbwaSM2aq
+"Going to upload a module..."
+2022.02.09 23:47:57 [INFO] created ipfs client to /ip4/161.35.222.178/tcp/5001
+2022.02.09 23:47:57 [INFO] connected to ipfs
+2022.02.09 23:47:58 [INFO] file uploaded
+"Now time to make a blueprint..."
+"Blueprint id:"
+"de3e242cb4489f2ed04b4ad8ff0e7cee701b75d86422c51b691dfeee8ab4ed92"
+"And your service id is:"
+"c2f5f5d3-708a-4b3e-bb97-149bb16cf048"
 ```
 
 and
 
 ```text
 # deploy echo service
-fldist --node-id 12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE \
-       new_service \
-       --ms artifacts/echo_service.wasm:configs/echo_service_cfg.json \
-       --name echo-demo
+aqua dist deploy \
+     --addr /dns4/kras-03.fluence.dev/tcp/19001/wss/p2p/12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE \
+     --data-path configs/echo_greeter_deploy_cfg.json \
+     --service echo-service
 ```
 
 Which gives as the id for the echo service:
 
 ```text
-service id: ff3f3aa0-daeb-4555-b596-0f653df2ace9
-service created successfully
+Your peerId: 12D3KooWR58xvHD7nLKfnHVeqWL4MQ9dmnyq4sTLu4ENabHSmEwn
+"Going to upload a module..."
+2022.02.10 00:13:03 [INFO] created ipfs client to /ip4/161.35.222.178/tcp/5001
+2022.02.10 00:13:03 [INFO] connected to ipfs
+2022.02.10 00:13:05 [INFO] file uploaded
+"Now time to make a blueprint..."
+"Blueprint id:"
+"dfbcf30cccee5b9a05ac707617c652130d53ef94a1c600a98db396b5455514fa"
+"And your service id is:"
+"628109b6-f702-4b26-af36-f6f9bc008219"
 ```
 
 Take note of the service id for each service deployed as we need the peer and service id to execute each service.
@@ -239,30 +255,21 @@ In the function body we:
 7. Call the Greeting service with a name and the greet parameters in sequence
 8. Return the results array
 
-Let's run the compiled Aqua code with the `fldist` cli tool:
-
-**Please note that the `fldist run_air` examples below are NOT running. We are in the process of switching to `aqua run`, which should be ready shortly. Please proceed to `client-peer` example, which works as expected.**
-
 ```text
-fldist run_air \
-       -p aqua-compiled/echo_greeter.echo_greeting_seq.air \
-       -d '{"names":["jim", "john", "james"],
-            "greet": true,
-            "node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE", "greeting_service_id":"5a03906b-3217-40a2-93fb-7e83be735408",
-            "echo_service_id": "893a6fb8-43b9-4b11-8786-93300bd68bc8"
-            }' \
-       --generated
+aqua run\
+     -a /dns4/kras-03.fluence.dev/tcp/19001/wss/p2p/12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE \
+     -i aqua \
+     -f 'echo_greeting_seq(names, greet, node, echo_service_id, greeting_service_id)' -d '{"names":["jim", "john", "james"],"greet": true,"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE","greeting_service_id":"5a03906b-3217-40a2-93fb-7e83be735408", "echo_service_id": "893a6fb8-43b9-4b11-8786-93300bd68bc8"}'
 ```
 
-`fldist` provides a client peer and deploys the compiled Aqua script, with the `-p` flag, and  input data, with the `-d` flag, in form of a json string to the peer-to-peer network for execution and returns expected result:
+`aqua run` provides a client peer and deploys the compiled Aqua script and  input data for execution and returns the expected result:
 
-```text
+```bash
+[Your peerId: 12D3KooWSKem9nrxLBngskEPAmor9SkH6PKA4YGtTbrTM2VsyKrp
 [
-  [
-    "Hi, jim",
-    "Hi, john",
-    "Hi, james"
-  ]
+  "Hi, jim",
+  "Hi, john",
+  "Hi, james"
 ]
 ```
 
@@ -294,31 +301,25 @@ Since we want to compose services deployed on different nodes, we express this r
 
 Again, we can execute our workflow with the `fldist` tool:
 
-```shell
-fldist run_air \
-        -p aqua-compiled/echo_greeter.echo_greeting_seq_2.air \
-        -d '{"names":["jim", "john", "james"],
-             "greet": true,
-             "greeting_topo":{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE",
-                             "service_id":"5a03906b-3217-40a2-93fb-7e83be735408"},
-            "echo_topo": {"node": "12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
-                          "service_id": "fb5f7126-e1ee-4ecf-81e7-20804cb7203b"}}' \
-        --generated
+```bash
+aqua run\
+     -a /dns4/kras-03.fluence.dev/tcp/19001/wss/p2p/12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE \
+     -i aqua \
+     -f 'echo_greeting_seq_2(names, greet, echo_topo, greeting_topo)' -d '{"names":["jim", "john", "james"],"greet": true,"greeting_topo":{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE","service_id":"5a03906b-3217-40a2-93fb-7e83be735408"},"echo_topo": {"node": "12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt","service_id": "fb5f7126-e1ee-4ecf-81e7-20804cb7203b"}}'
 ```
 
 Regardless of the difference in service hosts, we of course get the expected result:
 
-```json
+```bash
+Your peerId: 12D3KooWPvTHyy7AyDAYqKdUiMJ5gcMUMBN8vdWJrFjoVMCZAb3t
 [
-  [
-    "Hi, jim",
-    "Hi, john",
-    "Hi, james"
-  ]
+  "Hi, jim",
+  "Hi, john",
+  "Hi, james"
 ]
 ```
 
-Both workflow examples we've seen are **seq**uentially executing service calls. Let's kick it up a notch and process echo service outputs in **par**allel. Of course, we need to have the necessary greeting services deployed on different peers otherwise parallel processing defaults to sequential processing. Also, to continue to keep things compact, we introduce the `EchoServiceInput` struct.
+Both workflow examples we've seen are **seq**uentially executing service calls. Let's kick it up a notch and process echo service outputs in **par**allel. Of course, we need to have the necessary greeting services deployed. Also, to continue to keep things compact, we introduce the `EchoServiceInput` struct.
 
 ```aqua
 
@@ -346,34 +347,45 @@ func echo_greeting_par(greet: bool, echo_service: EchoServiceInput, greeting_ser
 In this implementation version, we call the echo-service, just as before, and introduce parallelization when we reach the greeting service fold. That is, each greeting service arm is run in parallel and for each *result*, we execute k greeting services, as specified in greeting_services array, in parallel. Note that as a consequence of the parallelization we need to introduce a `join` on *res* as the result streaming into *res* happens on the specified node and therefore without being visible to the other streaming activities. We accomplish this with the `OpString.identity(res!5)` function where the argument needs to be a literal at this point. 
 
 
-Our updated `fldist` reads:
+Our updated `aqua run` reads:
 
 ```bash
-fldist run_air \
-       -p aqua-compiled/echo_greeter.echo_greeting_par.air  \
-       -d '{"echo_service":{"names":["jim", "john", "james"],
-                            "node": "12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
-                            "service_id": "fb5f7126-e1ee-4ecf-81e7-20804cb7203b"},
+aqua run\
+     -a /dns4/kras-03.fluence.dev/tcp/19001/wss/p2p/12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE \
+     -i aqua \
+     -f 'echo_greeting_par(greet, echo_service, greeting_services)' \
+     -d '{"greet":true, "echo_service":{"node": "12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
+                          "service_id": "fb5f7126-e1ee-4ecf-81e7-20804cb7203b",
+                          "names":["jim", "john", "james"]
+                         },
             "greeting_services":[{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE",
                                   "service_id":"5a03906b-3217-40a2-93fb-7e83be735408"},
                                  {"node":"12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
-                                  "service_id":"5cf520ff-dd65-47d7-a51a-2bf08dfe2ede"}],
-            "greet": true}' \
-            --generated
+                                  "service_id":"5cf520ff-dd65-47d7-a51a-2bf08dfe2ede"}]
+            }'
 ```
 
 And our result is:
 
-```json
-
-  [
-    "Hi, jim",
-    "Hi, jim",
-    "Hi, john",
-    "Hi, john",
-    "Hi, james",
-    "Hi, james"
-  ]
+```bash
+Your peerId: 12D3KooWNjhhb1rgpgmthU6U1eRQMUDkKU5FayZ53hFzm2GV7Rcs
+  waiting for an argument with idx '5' on stream with size '0'
+  waiting for an argument with idx '5' on stream with size '3'
+  waiting for an argument with idx '5' on stream with size '3'
+  waiting for an argument with idx '5' on stream with size '3'
+  waiting for an argument with idx '5' on stream with size '3'
+  waiting for an argument with idx '5' on stream with size '3'
+  waiting for an argument with idx '5' on stream with size '4'
+  waiting for an argument with idx '5' on stream with size '4'
+  waiting for an argument with idx '5' on stream with size '5'
+  waiting for an argument with idx '5' on stream with size '5'
+[
+  "Hi, jim",
+  "Hi, jim",
+  "Hi, john",
+  "Hi, john",
+  "Hi, james",
+  "Hi, james"
 ]
 ```
 
@@ -424,9 +436,10 @@ gives us the updated result:
     "Hi, john",
     "Hi, james"
   ]
+]
 ```
 
-With a very minor modification, i.e., the placement of `par`, we can drastically later the (re-)use of deployed services!
+With a very minor modification, i.e., the placement of `par`, we can drastically improve the (re-)use of deployed services!
 
 With some additional modifications to our Aqua function, we can further improve readability by supplying the *greet* parameter for each service. Let's add a `GreetingServiceInput` struct and update the function signatures and bodies:
 
@@ -455,32 +468,42 @@ Run the workflow with the updated json string:
 
 
 ```bash
-fldist run_air \
-       -p aqua-compiled/echo_greeter.echo_greeting_par_improved.air \
-       -d '{"echo_service":{"names":["jim", "john", "james"],
-                            "node": "12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
-                            "service_id": "fb5f7126-e1ee-4ecf-81e7-20804cb7203b"},
+ aqua run\
+     -a /dns4/kras-03.fluence.dev/tcp/19001/wss/p2p/12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE \
+     -i aqua \
+     -f 'echo_greeting_par_improved(echo_service, greeting_services)' \
+     -d '{ "echo_service":{"node": "12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
+                          "service_id": "fb5f7126-e1ee-4ecf-81e7-20804cb7203b",
+                          "names":["jim", "john", "james"]
+                         },
             "greeting_services":[{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE",
-                                  "service_id":"5a03906b-3217-40a2-93fb-7e83be735408",
-                                  "greet":true},
-                                  {"node":"12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
-                                  "service_id":"5cf520ff-dd65-47d7-a51a-2bf08dfe2ede",
-                                  "greet":false}]}' \
-      --generated
+                                  "service_id":"5a03906b-3217-40a2-93fb-7e83be735408", "greet":true},
+                                 {"node":"12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
+                                  "service_id":"5cf520ff-dd65-47d7-a51a-2bf08dfe2ede", "greet":false}]
+            }'
 ```
 
 Which gives us:
 
-```json
+```bash
+[Your peerId: 12D3KooWBSiX3g472QQ5TAhoffUy1F1f6mjEPcsYH6BT5qrXV6iH
+  waiting for an argument with idx '5' on stream with size '0'
+  waiting for an argument with idx '5' on stream with size '3'
+  waiting for an argument with idx '5' on stream with size '3'
+  waiting for an argument with idx '5' on stream with size '3'
+  waiting for an argument with idx '5' on stream with size '3'
+  waiting for an argument with idx '5' on stream with size '3'
+  waiting for an argument with idx '5' on stream with size '4'
+  waiting for an argument with idx '5' on stream with size '4'
+  waiting for an argument with idx '5' on stream with size '5'
+  waiting for an argument with idx '5' on stream with size '5'
 [
-  [
-    "Hi, jim",
-    "Bye, jim",
-    "Hi, john",
-    "Bye, john",
-    "Hi, james",
-    "Bye, james"
-  ]
+  "Hi, jim",
+  "Bye, jim",
+  "Hi, john",
+  "Bye, john",
+  "Hi, james",
+  "Bye, james"
 ]
 ```
 
