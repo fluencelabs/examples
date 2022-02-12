@@ -1,3 +1,11 @@
 {
-    "name": "call_parameters"
+  "call_parameters": {
+    "modules": [
+      {
+        "name": "call_parameters",
+        "path": "./artifacts/call_parameters.wasm",
+        "logger_enabled": [true]
+      }
+    ]
+  }
 }

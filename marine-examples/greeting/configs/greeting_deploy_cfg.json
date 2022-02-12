@@ -1,0 +1,11 @@
+{
+  "greeting": {
+    "modules": [
+      {
+        "name": "greeting",
+        "path": "./artifacts/greeting.wasm",
+        "logger_enabled": [true]
+      }
+    ]
+  }
+}

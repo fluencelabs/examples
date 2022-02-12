@@ -742,62 +742,68 @@ After that IDEs will provide code completion for `marine_test_env`. In order to 
 
 In each of the examples we created modules and services configurations and tested and inspected them with the Marine REPL. Feels like we're all dressed up and nowhere to go. In this section we briefly discuss how to deploy our modules and configurations to the network as services using the *Greeting* example.
 
-Before we begin, you need to have the `fldist` tool installed. See the [Tools documentation](https://doc.fluence.dev/docs/knowledge_tools) for more information.
+Before we begin, you need to have the `aqua` tool installed. See the [Tools documentation](https://doc.fluence.dev/docs/knowledge_tools) for more information.
 
-We use the `fldist new_service` command to do our bidding:
+We use the `aqua dist deploy` command to do our bidding:
 
 ```zsh
-fldist new_service --help
-fldist new_service
+aqua dist deploy --help
 
-Create service from a list of modules
+Usage: aqua dist deploy [--timeout <integer>] [--log-level <string>] --addr <string> [--on <string>] [--print-air] [--sk <string>] --data-path <string> --service <string>
 
-Options:
-      --help              Show help                                    [boolean]
-      --version           Show version number                          [boolean]
-  -v, --verbose           Display verbose information such as created client
-                          seed + peer Id and relay peer id
-                                                      [boolean] [default: false]
-  -s, --seed              Client seed                                   [string]
-      --sk, --secret-key  Clients ed25519 private key in base64 (32 byte)
-                                                                        [string]
-      --env               Environment to use
-        [required] [choices: "krasnodar", "local", "testnet", "stage"] [default:
-                                                                    "krasnodar"]
-      --node-id, --node   PeerId of the node to use
-      --node-addr         Multiaddr of the node to use
-      --log               log level
-       [required] [choices: "trace", "debug", "info", "warn", "error"] [default:
-                                                                        "error"]
-      --ttl               particle time to live in ms
-                                            [number] [required] [default: 60000]
-      --ms, --modules     array of path:config pairs; meaning <path to wasm
-                          module>:<path to config>            [array] [required]
-  -n, --name              name of the service; will be set in the blueprint
-                                                             [string] [required]
+Deploy a service onto a remote peer
+
+Options and flags:
+    --help
+        Display this help text.
+    --timeout <integer>, -t <integer>
+        Request timeout in milliseconds
+    --log-level <string>
+        Set log level
+    --addr <string>, -a <string>
+        Relay multiaddress
+    --on <string>, -o <string>
+        Where function will be run. Default: host_peer_id
+    --print-air
+        Prints generated AIR code before function execution
+    --sk <string>, -s <string>
+        Ed25519 32-byte secret key in base64
+    --data-path <string>, -p <string>
+        Path to file with arguments map in JSON format
+    --service <string>, -s <string>
+        What service from the config file to deploy
 ```
 
-Aside from our modules and configuration, we also want to supply the peer id of the node we want to host our service. You cna find all available nodes on the [Fluence Dashboard](https://dash.fluence.dev/nodes). Please note that for all of our examples we will use peer `12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA`. Alternatively, we can deploy to a local node -- see  [Deploy A Local Node](https://doc.fluence.dev/docs/tutorials_tutorials/tutorial_run_local_node) for instructions.
+Aside from our modules and configuration, we also want to supply the peer id of the node we want to host our service. You can find all available nodes on the [Fluence Dashboard](https://dash.fluence.dev/nodes). Please note that for all of our examples we will use peer `12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA`. Alternatively, we can deploy to a local node -- see  [Deploy A Local Node](https://doc.fluence.dev/docs/tutorials_tutorials/tutorial_run_local_node) for instructions.
 
 To create our greeting service on peer `12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA`:
 
 ```zsh
-fldist --node-id 12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA new_service \
-       --ms artifacts/greeting.wasm:configs/greeting_cfg.json \
-       --name my-greeting-service
+aqua dist deploy \
+     --addr /dns4/kras-01.fluence.dev/tcp/19001/wss/p2p/12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA
+     --data-path configs/greeting_deploy_cfg.json \
+     --service my-greeting-service
 ```
 
-To recap the `fldist` command: We specify the
+To recap the `aqua dist deploy` command: We specify the
 
-1. Peer id with the `node-id` flag
-2. Module and config file location with the `--ms` flag
-3. Service name with the `--name` flag
+1. Peer id with the `addr` flag
+2. Config file location with the `data-path` flag
+3. Service name with the `service` flag
 
 Which results in a success message and more importantly, the unique id for the deployed service:
 
-```zsh
-service id: 810b8abc-6b9d-4227-a228-a53145086464
-service created successfully
+```bash
+Your peerId: 12D3KooWBVzSqoQqFycENVhw7W5RY1UHwPCn6U9iHG2mbwuCuLq3
+"Going to upload a module..."
+2022.02.11 18:57:48 [INFO] created ipfs client to /ip4/178.128.194.190/tcp/5001
+2022.02.11 18:57:48 [INFO] connected to ipfs
+2022.02.11 18:57:50 [INFO] file uploaded
+"Now time to make a blueprint..."
+"Blueprint id:"
+"8d210ec2b83e4c661c71820b79f02d99908794e8af8034b465762f61682bc43b"
+"And your service id is:"
+"ec71a1fc-66d7-41f4-bff1-f9c07d361bd4"
 ```
 
-The (peer id, service id) tuple is going to be useful once you start putting the service to work with, say, [Aqua](https://doc.fluence.dev/aqua-book/) and you should hold on the data for future use. Also, you can look up your service on the [Fluence Dashboard](https://dash.fluence.dev/blueprint/d67cdb81c416bff902e0b5847a39b84e2cb42d21dde6426de14bb75d1d61236d/). For more detailed information regarding the Fluence solution see the [Fluence documentation](https://doc.fluence.dev/docs/) and if you have any questions, comments or suggestions for improvements, please open create Issue or open a PR.
+The (peer id, service id) tuple is going to be useful once you start putting the service to work with, say, [Aqua](https://doc.fluence.dev/aqua-book/) and you should hold on the data for future use. Also, you can look up your service on the [Fluence Dashboard](https://dash.fluence.dev/blueprint/8d210ec2b83e4c661c71820b79f02d99908794e8af8034b465762f61682bc43b). For more detailed information regarding the Fluence solution see the [Fluence documentation](https://doc.fluence.dev) and if you have any questions, comments or suggestions for improvements, please open an Issue or PR.
