@@ -13,3 +13,14 @@ client peerId: 12D3KooWBeEsUnMV9MZ6QGMfaxcTvw8mGFEMGDe7rhKN8RQv1Gs8
 relay peerId: 12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi
 service id: 61a86f67-ffc2-4dea-8746-fd4f04d9c75b
 service created successfully
+
+Your peerId: 12D3KooWFQfB6BjJ7BevJYzovYmSX61ehePXEpKH2TcjDFXVXVVU
+"Going to upload a module..."
+2022.02.11 18:25:12 [INFO] created ipfs client to /ip4/164.90.164.229/tcp/5001
+2022.02.11 18:25:12 [INFO] connected to ipfs
+2022.02.11 18:25:14 [INFO] file uploaded
+"Now time to make a blueprint..."
+"Blueprint id:"
+"be63a51516ca3743bbd61d4b156c8e3a6b2249cb2554730d027e9b28f718d6d6"
+"And your service id is:"
+"86d6cc77-19f0-4b8c-b144-7cf4fd6be50b"
