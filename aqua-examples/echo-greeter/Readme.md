@@ -110,7 +110,7 @@ Looks like all is working as planned and we're ready to deploy our services to t
 /dns4/kras-09.fluence.dev/tcp/19001/wss/p2p/12D3KooWD7CvsYcpF9HE9CCV9aY3SJ317tkXVykjtZnht2EbzDPm
 ```
 
-Any one of the peers will do and we can deploy our services with the `fldist` tool by providing the peer id of the host node and the location of the Wasm module(s) and configuration file defining the service.  
+Any one of the peers will do and we can deploy our services with the `aqua` cli tool by providing the peer id of the host node and the location of the Wasm module(s) and configuration file defining the service.  
 
 ```text
 # deploy greeting service
@@ -299,7 +299,7 @@ func echo_greeting_seq_2(names: []string, greet: bool, echo_topo: NodeServicePai
 
 Since we want to compose services deployed on different nodes, we express this requirement by specifying the (node, service) tuples via `on echo_topo.node` and `on greeting-topo.node` in sequence. That is, the workflow first calls the echo-service followed by three sequential calls on the greeting service.
 
-Again, we can execute our workflow with the `fldist` tool:
+Again, we can execute our workflow with the `aqua` cli tool:
 
 ```bash
 aqua run\
@@ -389,57 +389,7 @@ Your peerId: 12D3KooWNjhhb1rgpgmthU6U1eRQMUDkKU5FayZ53hFzm2GV7Rcs
 ]
 ```
 
-Since we got three input names and two greeting services, we expect, and got, six results where the parallelization is on each echo-service result. Of course, we can change the point of parallelization to cover the echo-service results array for each provided service. Our updated Auqa composition function now reads:
-
-```aqua
--- call parallel with echo service, alternate version
-func echo_greeting_par_alternative(greet: bool, echo_service: EchoServiceInput, greeting_services: []NodeServicePair) -> []string:
-    res: *string
-    on echo_service.node:
-        EchoService echo_service.service_id
-        echo_results <- EchoService.echo(echo_service.names)
-    
-    for result <- echo_results:
-      for greeting_service <- greeting_services:
-        GreetingService greeting_service.service_id
-        par on greeting_service.node:                               --< Parallelization at the array level
-          res <- GreetingService.greeting(result.echo, greet)
-    OpString.identity(res!5)
-    <- res
-```
-
-And running the workflow with the updated data:
-
-```bash
-fldist run_air \
-       -p aqua-compiled/echo_greeter.echo_greeting_par_alternative.air \
-       -d '{"echo_service":{"names":["jim", "john", "james"],
-                            "node": "12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
-                            "service_id": "fb5f7126-e1ee-4ecf-81e7-20804cb7203b"},
-            "greeting_services":[{"node":"12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE",
-                                  "service_id":"5a03906b-3217-40a2-93fb-7e83be735408"},
-                                  {"node":"12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt",
-                                   "service_id":"5cf520ff-dd65-47d7-a51a-2bf08dfe2ede"}],
-            "greet": true}' \
-       --generated
-```
-
-gives us the updated result:
-
-```json
-[
-  [
-    "Hi, jim",
-    "Hi, john",
-    "Hi, james",
-    "Hi, jim",
-    "Hi, john",
-    "Hi, james"
-  ]
-]
-```
-
-With a very minor modification, i.e., the placement of `par`, we can drastically improve the (re-)use of deployed services!
+Since we got three input names and two greeting services, we expect and got six results where the parallelization is on each echo-service result.
 
 With some additional modifications to our Aqua function, we can further improve readability by supplying the *greet* parameter for each service. Let's add a `GreetingServiceInput` struct and update the function signatures and bodies:
 
@@ -509,11 +459,11 @@ Which gives us:
 
 Again, with very minor adjustments to our Aqua function, we can significantly improve the re-use of already deployed services.
 
-In this section, we explored how we can use Aqua to program hosted services into applications. Along the way, we investigated sequential and parallel workflows and discovered that changes in processing or workflow logic are taken care of at the Aqua level not requiring any changes to the deployed services. Throughout our experimentation with Aqua and deployed services, we used the `fldist` tool as our local cli client peer. In the next section, we introduce the development and use of a Typescript client peer.  
+In this section, we explored how we can use Aqua to program hosted services into applications. Along the way, we investigated sequential and parallel workflows and discovered that changes in processing or workflow logic are taken care of at the Aqua level not requiring any changes to the deployed services. Throughout our experimentation with Aqua and deployed services, we used the `aqua` tool as our local cli client peer. In the next section, we introduce the development and use of a Typescript client peer.  
 
 ### Developing And Working With A Typescript Client
 
-In the previous section we used `fldist` as our local peer client to run the execution of our compiled Aqua scripts on the network. Alternatively, Aqua code can be directly compiled to Typescript utilizing the Fluence [JS-SDK](https://github.com/fluencelabs/fluence-js).
+In the previous section we used `aqua` as our local peer client to run the execution of our compiled Aqua scripts on the network. Alternatively, Aqua code can be directly compiled to Typescript utilizing the Fluence [JS-SDK](https://github.com/fluencelabs/fluence-js).
 
 Let's install the required packages:
 

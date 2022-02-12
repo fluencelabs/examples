@@ -292,9 +292,9 @@ func get_price_par(coin: string, currency: string, getter_topo: []NodeServicePai
 
 ```
 
-In this implementation of our application workflow, we process price quote acquisition in parallel over price_getter services deployed to many nodes. This allows us to scale our workflow and take full advantage of the network size and service deployment commitments.
+In this implementation of our application workflow, we process price quote acquisition in parallel over `price_getter` services deployed to many nodes. This allows us to scale our workflow and take full advantage of the network size and service deployment commitments.
 
-Again, using `aqua cli`:
+Again, using `aqua` cli:
 
 ```bash
 aqua run \
