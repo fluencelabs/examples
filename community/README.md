@@ -22,7 +22,7 @@ Community members have been coding incredible peer-ro-pper applications and solu
 
 * [BazaarEx](https://github.com/tejas-kothari/BazaarEx) is an online marketplac for second-hand electronic goods with an emphasis of decentralized logistics and using NFTs. Check out their excellent [documentation](https://xpact.gitbook.io/bazaarex/).
   
-## Verifiable Credentials And decentralized Identities With Fluence And Aqua
+## Verifiable Credentials And Decentralized Identities With Fluence And Aqua
 
 * Ceramic's [IdentityLink](https://developers.ceramic.network/tools/identitylink/overview/) is a service that issues verifiable claims which prove that a decentralized identity (DID) owns one or more (Web2) social accounts
   * The [IdentityLink API Aqua](https://github.com/synycboom/identity-link-api-aqua) project implements Ceramic's IdentityLink API as a peer-to-peer protocol to help users associate their social accounts to Decentralized Identifiers (DID) with Aqua.
