@@ -12,7 +12,6 @@
         "@types/node": "^12.20.16",
         "@types/react": "^17.0.14",
         "@types/react-dom": "^17.0.9",
-        "buffer": "^6.0.3",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-scripts": "^5.0.0",
@@ -21,6 +20,7 @@
     },
     "scripts": {
         "postinstall": "copy-avm-public public",
+        "prestart": "npm run compile-aqua",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
