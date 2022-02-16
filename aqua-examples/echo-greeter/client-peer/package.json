@@ -42,7 +42,7 @@
   },
   "homepage": "git+https://github.com/fluencelabs/examples/aqua-examples/echo-greeter#readme",
   "devDependencies": {
-    "@fluencelabs/aqua": "^0.6.0-275",
+    "@fluencelabs/aqua": "^0.6.1-278",
     "@fluencelabs/aqua-lib": "^0.4.0",
     "typescript": "^4.5.5"
   }
