@@ -152,10 +152,10 @@ We now have our code in place and area ready to compile and our compilation inst
 
 which gives you the updated Wasm modules in the `artifacts` directory. 
 
-The next step is to deploy the two services to one or more peers and we use the `fldist` tool to get this done. First, we need to now what peers are available and we can get an enumeration from:
+The next step is to deploy the two services to one or more peers and we use the `aqua` cli tool to get this done. First, we need to now what peers are available and we can get an enumeration from:
 
 ```bash
-fldist env
+aqua env
 ```
 
 *Please note that multiple service instances have been already deployed and the (peer id, service id) tuples can be found in [data]("./data/deployed_services.json) json file. While your more than welcome to deploy your services, you don't have to in order to use them.*
