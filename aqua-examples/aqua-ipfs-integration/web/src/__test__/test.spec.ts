@@ -2,7 +2,7 @@ import handler from 'serve-handler';
 import http from 'http';
 import path from 'path';
 
-const port = 3000;
+const port = 3001;
 const uri = `http://localhost:${port}/`
 const publicPath = path.join(__dirname, '../../build/');
 
@@ -36,18 +36,29 @@ describe('smoke test', () => {
         console.log('going to the page in browser...');
         await page.goto(uri);
 
+        console.log('clicking connect button...');
+        await page.click('.btn-connect');
+    
         console.log('waiting for fluence to connect...');
         await page.waitForTimeout(1000);
+    
+        console.log('waiting for "deploy service" button to appear...');
+        await page.waitForSelector('#deploy-service');
 
-        console.log('clicking button...');
-        await page.click('#btn');
+        console.log('clicking "deploy service" button...');
+        await page.click('#deploy-service');
 
-        console.log('waiting for relay time to appear...');
-        const elem = await page.waitForSelector('#relayTime');
+        console.log('waiting for "get size" button to appear...');
+        await page.waitForSelector('#get-size');
 
-        console.log('getting the content of relay time div...');
-        const content = await elem?.evaluate((x) => x.textContent);
+        console.log('clicking "get size" button...');
+        await page.click('#get-size');
 
-        expect(content?.length).toBeGreaterThan(10);
+        console.log('waiting for result to appear...');
+        const sizeEl = await page.waitForSelector('#file-size');
+        
+        const size = await sizeEl?.evaluate(x => x.textContent);
+
+        expect(size).toBe("144804");
     }, 10000);
 });

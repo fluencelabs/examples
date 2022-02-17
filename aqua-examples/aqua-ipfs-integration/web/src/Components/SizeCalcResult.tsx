@@ -16,7 +16,7 @@ export const SizeCalcResult = () => {
           CID
         </p>
       </div>
-      <TextWithLabel text="File size:" value={fileSize} />
+      <TextWithLabel id="file-size" text="File size:" value={fileSize} />
       <TextWithLabel text="File size IPFS CID:" value={fileSizeCID} />
     </>
   );

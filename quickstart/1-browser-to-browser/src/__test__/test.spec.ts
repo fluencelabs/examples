@@ -17,7 +17,7 @@ const server = http.createServer((request, response) => {
 
 const startServer = async () => {
     return new Promise((resolve: any) => {
-        server.listen(3000, resolve);
+        server.listen(port, resolve);
     })
 }
 
