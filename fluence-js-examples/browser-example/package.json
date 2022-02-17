@@ -12,6 +12,7 @@
         "@types/node": "^12.20.16",
         "@types/react": "^17.0.14",
         "@types/react-dom": "^17.0.9",
+        "@types/serve-handler": "^6.1.1",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-scripts": "^5.0.0",
@@ -23,8 +24,8 @@
         "prestart": "npm run compile-aqua",
         "start": "react-scripts start",
         "build": "react-scripts build",
-        "test": "react-scripts test",
-        "test-e2e": "jest --config=jest.config.js",
+        "test": "jest --config=jest.config.js",
+        "_test": "react-scripts test",
         "eject": "react-scripts eject",
         "compile-aqua": "aqua -i ./aqua/ -o ./src/_aqua",
         "watch-aqua": "chokidar \"**/*.aqua\" -c \"npm run compile-aqua\""
@@ -39,7 +40,9 @@
         "production": [
             ">0.2%",
             "not dead",
-            "not op_mini all"
+            "not op_mini all",
+            "not ie 11",
+            "not android 4.4.3-4.4.4"
         ],
         "development": [
             "last 1 chrome version",
@@ -55,6 +58,7 @@
         "chokidar-cli": "^2.1.0",
         "jest-puppeteer": "^6.0.2",
         "node-sass": "^6.0.1",
+        "serve": "^13.0.2",
         "ts-jest": "^27.1.3"
     }
 }

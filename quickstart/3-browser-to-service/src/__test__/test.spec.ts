@@ -1,5 +1,31 @@
 import { Page } from 'puppeteer';
+import handler from 'serve-handler';
+import http from 'http';
+import path from 'path';
 
+const port = 3000;
+const uri = `http://localhost:${port}/`
+const publicPath = path.join(__dirname, '../../build/');
+
+console.log(publicPath);
+
+const server = http.createServer((request, response) => {
+    return handler(request, response, {
+        public: publicPath
+  });
+})
+
+const startServer = async () => {
+    return new Promise((resolve: any) => {
+        server.listen(3000, resolve);
+    })
+}
+
+const stopServer = async () => {
+    return new Promise((resolve: any) => {
+        server.close(resolve);
+    })
+}
 const peerIdLength = '12D3KooWM2CYSHefG6KPKbYFAgsbPh8p6b8HYHc6VNkge2rPtYv5'.length;
 
 const loadApp = async (page: Page) => {
@@ -34,6 +60,10 @@ const waitForSelectorAndGetText = async (page: Page, selector: string) => {
 };
 
 describe('smoke test', () => {
+    beforeAll(startServer);
+
+    afterAll(stopServer);
+
     it('should work', async () => {
         const page1 = await browser.newPage();
         const page2 = await browser.newPage();
