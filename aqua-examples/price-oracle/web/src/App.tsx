@@ -94,14 +94,14 @@ function App() {
           <TextInput text={"meanSid"} value={meanSid} setValue={setMeanSid} />
 
           <div className="row">
-            <button className="btn btn-hello" onClick={() => doGetPrice()}>
+            <button id="btn" className="btn btn-hello" onClick={() => doGetPrice()}>
               Get price
             </button>
           </div>
         </div>
         <h2>Coin price</h2>
         {result && result.success && (
-          <p className="success">The price is: {result.result}</p>
+          <p id="price" className="success">The price is: {result.result}</p>
         )}
         {result && !result.success && (
           <p className="error">Error: {result.error_msg}</p>
