@@ -1,4 +1,4 @@
-name:  Run tests for js-based projects
+name:  Run tests for "aqua ipfs integration" project
 
 on:
     push:
