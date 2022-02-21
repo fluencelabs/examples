@@ -19,6 +19,7 @@
     },
     "scripts": {
         "prestart": "npm run compile-aqua",
+        "prebuild": "npm run compile-aqua",
         "start": "node -r ts-node/register src/index.ts",
         "test": "jest",
         "build": "tsc",

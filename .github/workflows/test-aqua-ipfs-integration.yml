@@ -61,5 +61,5 @@ jobs:
               run: |
                 npm i
                 npm run build
-                bpm run test -w nodejs
-                bpm run test -w web
+                npm run test -w nodejs
+                npm run test -w web
