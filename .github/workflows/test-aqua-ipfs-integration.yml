@@ -37,12 +37,6 @@ jobs:
                 target: wasm32-wasi
                 profile: minimal
 
-            - uses: actions-rs/cargo@v1
-              with:
-                toolchain: nightly-2021-07-13
-                command: update
-                args: --aggressive
-
             - name: Install marine
               run: cargo install marine || true
 
