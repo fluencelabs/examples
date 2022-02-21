@@ -7,7 +7,24 @@ describe('smoke test', () => {
 
         await main(krasnodar);
 
-        expect(console.log).toBeCalledTimes(0);
-        // TODO::
-    });
+        expect(console.log).toBeCalledTimes(16);
+        expect(console.log).toHaveBeenNthCalledWith(
+            13,
+            '📗 uploaded file:',
+            expect.objectContaining({
+                path: 'NZgK6DB.png',
+                size: expect.any(Number),
+                cid: expect.anything(),
+            }),
+        );
+        expect(console.log).toHaveBeenNthCalledWith(
+            15,
+            '📗 File size is saved to IPFS:',
+            expect.objectContaining({
+                error: '',
+                hash: expect.any(String),
+                success: true,
+            }),
+        );
+    }, 20000);
 });

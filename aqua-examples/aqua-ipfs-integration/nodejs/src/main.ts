@@ -58,6 +58,8 @@ export async function main(environment: Node[]) {
     );
     service_id = fromOption(service_id);
     if (service_id === null) {
+        await Fluence.stop();
+        await providerClient.stop();
         return;
     }
 
@@ -83,7 +85,9 @@ export async function main(environment: Node[]) {
 
     let result = await remove_service(serviceHost.peerId, service_id);
     console.log('📗 ProcessFiles service removed', result);
-    return;
+
+    await Fluence.stop();
+    await providerClient.stop();
 }
 
 function fromOption<T>(opt: T | T[] | null): T | null {
