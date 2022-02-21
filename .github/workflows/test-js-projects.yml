@@ -1,4 +1,4 @@
-name:  Run tests for "browser to browser example"
+name:  Run tests for js-based projects
 
 on:
     push:
@@ -6,13 +6,20 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
-        defaults:
-          run:
-            working-directory: ./quickstart/1-browser-to-browser
             
         strategy:
             matrix:
                 node-version: [16.x]
+                working-directory: [
+                    "/quickstart/1-browser-to-browser", 
+                    "/quickstart/3-browser-to-service", 
+                    "/fluence-js-examples/hello-world", 
+                    "/fluence-js-examples/browser-example", 
+                    "/fluence-js-examples/node-example", 
+                    "/aqua-examples/echo-greeter/client-peer", 
+                    "/aqua-examples/price-oracle/client-peer", 
+                    "/aqua-examples/price-oracle/web"
+                ]
 
         steps:
             - uses: actions/checkout@v2
@@ -30,6 +37,7 @@ jobs:
                   node-version: ${{ matrix.node-version }}
 
             - name: run tests
+              working-directory: ${{ matrix.working-directory }}
               env: 
                   CI: true
               run: |
