@@ -21,6 +21,7 @@
     "scripts": {
         "postinstall": "copy-avm-public public",
         "prestart": "npm run compile-aqua",
+        "prebuild": "npm run compile-aqua",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "jest --config=jest.config.js",
