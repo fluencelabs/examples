@@ -10,5 +10,5 @@ describe('smoke test', () => {
         expect(console.log).toHaveBeenNthCalledWith(1, 'Hello, world!');
         expect(console.log).toHaveBeenNthCalledWith(2, 'Wealth awaits you very soon.');
         expect(console.log).toHaveBeenNthCalledWith(3, 'The relay time is: ', expect.anything());
-    });
+    }, 10000);
 });

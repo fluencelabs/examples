@@ -8,5 +8,5 @@ describe('smoke test', () => {
         const res = await demoCalculation();
 
         expect(res).toBe(7);
-    });
+    }, 10000);
 });
