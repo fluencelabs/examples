@@ -48,6 +48,10 @@ export async function runServer() {
     console.log('press any key to quit...');
 }
 
+export async function justStop() {
+    await Fluence.stop();
+}
+
 export async function waitForKeypressAndStop() {
     process.stdin.setRawMode(true);
     process.stdin.resume();
