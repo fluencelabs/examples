@@ -34,14 +34,14 @@ function App() {
       </header>
 
       <div className="content">
-        <h1>Status: {Fluence.getStatus().isConnected ? "Connected" : "Disconnected"}</h1>
-        <button className="btn" onClick={onGetRelayTimeBtnClick}>
+        <h1>Status: <span id="status">{Fluence.getStatus().isConnected ? "Connected" : "Disconnected"}</span></h1>
+        <button id="btn" className="btn" onClick={onGetRelayTimeBtnClick}>
           Get relay time
         </button>
         {relayTime && (
           <>
             <h2>Relay time:</h2>
-            <div>{relayTime?.toLocaleString() || ""}</div>
+            <div id="relayTime">{relayTime?.toLocaleString() || ""}</div>
           </>
         )}
       </div>

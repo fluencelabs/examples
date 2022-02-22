@@ -28,7 +28,7 @@ export const SizeCalcForm = () => {
       <TextInput text={"IPFS CID"} value={fileCID} setValue={setFileCID} />
 
       <div className="row">
-        <button className="btn btn-right" onClick={getFileSize}>
+        <button id="get-size" className="btn btn-right" onClick={getFileSize}>
           get size
         </button>
       </div>

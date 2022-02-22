@@ -56,7 +56,9 @@ function App() {
               <tbody>
                 <tr>
                   <td className="bold">Peer id:</td>
-                  <td className="mono">{Fluence.getStatus().peerId!}</td>
+                  <td className="mono">
+                    <span id="peerId">{Fluence.getStatus().peerId!}</span>
+                  </td>
                   <td>
                     <button
                       className="btn-clipboard"
@@ -68,7 +70,11 @@ function App() {
                 </tr>
                 <tr>
                   <td className="bold">Relay peer id:</td>
-                  <td className="mono">{Fluence.getStatus().relayPeerId}</td>
+                  <td className="mono">
+                     <span id="relayId">
+                      {Fluence.getStatus().relayPeerId}
+                    </span>
+                  </td>
                   <td>
                     <button
                       className="btn-clipboard"
@@ -90,6 +96,7 @@ function App() {
               <div className="row">
                 <label className="label bold">Target peer id</label>
                 <input
+                  id="targetPeerId"
                   className="input"
                   type="text"
                   onChange={(e) => setPeerIdInput(e.target.value)}
@@ -99,6 +106,7 @@ function App() {
               <div className="row">
                 <label className="label bold">Target relay</label>
                 <input
+                  id="targetRelayId"
                   className="input"
                   type="text"
                   onChange={(e) => setRelayPeerIdInput(e.target.value)}
@@ -132,7 +140,7 @@ function App() {
         {helloMessage && (
           <>
             <h2>Message</h2>
-            <div> {helloMessage} </div>
+            <div id="message"> {helloMessage} </div>
           </>
         )}
       </div>

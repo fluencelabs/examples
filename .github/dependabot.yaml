@@ -59,6 +59,40 @@ updates:
       - dependency-name: "@fluencelabs/fluence-network-environment"
       - dependency-name: "@fluencelabs/aqua"
       - dependency-name: "@fluencelabs/aqua-lib"
+      - dependency-name: "@fluencelabs/aqua-ipfs"
+
+  - package-ecosystem: "npm"
+    directory: "/aqua-examples/aqua-ipfs-integration/nodejs"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-name: "@fluencelabs/fluence"
+      - dependency-name: "@fluencelabs/fluence-network-environment"
+      - dependency-name: "@fluencelabs/aqua"
+      - dependency-name: "@fluencelabs/aqua-lib"
+      - dependency-name: "@fluencelabs/aqua-ipfs"
+
+  - package-ecosystem: "npm"
+    directory: "/aqua-examples/aqua-ipfs-integration/web"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-name: "@fluencelabs/fluence"
+      - dependency-name: "@fluencelabs/fluence-network-environment"
+      - dependency-name: "@fluencelabs/aqua"
+      - dependency-name: "@fluencelabs/aqua-lib"
+      - dependency-name: "@fluencelabs/aqua-ipfs"
+
+  - package-ecosystem: "npm"
+    directory: "/aqua-examples/aqua-ipfs-integration/aqua"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-name: "@fluencelabs/fluence"
+      - dependency-name: "@fluencelabs/fluence-network-environment"
+      - dependency-name: "@fluencelabs/aqua"
+      - dependency-name: "@fluencelabs/aqua-lib"
+      - dependency-name: "@fluencelabs/aqua-ipfs"
 
   - package-ecosystem: "npm"
     directory: "/aqua-examples/echo-greeter/client-peer"
@@ -72,6 +106,16 @@ updates:
 
   - package-ecosystem: "npm"
     directory: "/aqua-examples/price-oracle/client-peer"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-name: "@fluencelabs/fluence"
+      - dependency-name: "@fluencelabs/fluence-network-environment"
+      - dependency-name: "@fluencelabs/aqua"
+      - dependency-name: "@fluencelabs/aqua-lib"
+
+  - package-ecosystem: "npm"
+    directory: "/aqua-examples/price-oracle/web"
     schedule:
       interval: "daily"
     allow:

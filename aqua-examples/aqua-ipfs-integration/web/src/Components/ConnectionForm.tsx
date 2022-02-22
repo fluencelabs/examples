@@ -11,7 +11,7 @@ export const ConnectionForm = () => {
         {relayNodes.map((x) => (
           <li key={x.peerId}>
             <span className="mono">{x.peerId}</span>
-            <button className="btn" onClick={() => connect(x.multiaddr)}>
+            <button className="btn btn-connect" onClick={() => connect(x.multiaddr)}>
               Connect
             </button>
           </li>

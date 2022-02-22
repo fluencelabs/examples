@@ -31,7 +31,7 @@ export const IpfsForm = () => {
         setValue={setWasm}
       />
       <div className="row">
-        <button className="btn btn-right" onClick={deployService}>
+        <button id="deploy-service" className="btn btn-right" onClick={deployService}>
           deploy service
         </button>
       </div>

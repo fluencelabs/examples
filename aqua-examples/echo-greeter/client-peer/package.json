@@ -1,49 +1,53 @@
 {
-  "name": "echo-greeter-example",
-  "version": "0.1.0",
-  "description": "Fluence Echo Greeter Example",
-  "main": "./dist/src/index.js",
-  "typings": "./dist/src/index.d.ts",
-  "files": [
-    "dist/*"
-  ],
-  "bic": [
-    "client-peer/*",
-    "*.aqua",
-    "package-lock.json"
-  ],
-  "dependencies": {
-    "@fluencelabs/fluence": "0.19.1",
-    "@fluencelabs/fluence-network-environment": "^1.0.13",
-    "it-all": "^1.0.5"
-  },
-  "scripts": {
-    "compile-aqua": "aqua -i ../aqua -o src/_aqua",
-    "prebuild": "npm run compile-aqua",
-    "build": "tsc",
-    "prestart:local": "npm run build",
-    "start:local": "node dist/src/index.js local",
-    "prestart:remote": "npm run build",
-    "start:remote": "node dist/src/index.js krasnodar",
-    "start": "npm run start:remote"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fluencelabs/examples/aqua-examples/echo-greeter"
-  },
-  "keywords": [
-    "aqua",
-    "fluence"
-  ],
-  "author": "Fluence Labs",
-  "license": "MIT",
-  "bugs": {
-    "url": "git+https://github.com/fluencelabs/examples/issues"
-  },
-  "homepage": "git+https://github.com/fluencelabs/examples/aqua-examples/echo-greeter#readme",
-  "devDependencies": {
-    "@fluencelabs/aqua": "^0.6.1-278",
-    "@fluencelabs/aqua-lib": "^0.4.0",
-    "typescript": "^4.5.5"
-  }
+    "name": "echo-greeter-example",
+    "version": "0.1.0",
+    "description": "Fluence Echo Greeter Example",
+    "main": "./dist/src/index.js",
+    "typings": "./dist/src/index.d.ts",
+    "files": [
+        "dist/*"
+    ],
+    "bic": [
+        "client-peer/*",
+        "*.aqua",
+        "package-lock.json"
+    ],
+    "dependencies": {
+        "@fluencelabs/fluence": "0.19.1",
+        "@fluencelabs/fluence-network-environment": "^1.0.13",
+        "it-all": "^1.0.5"
+    },
+    "scripts": {
+        "prestart": "npm run compile-aqua",
+        "prebuild": "npm run compile-aqua",
+        "start": "node -r ts-node/register src/index.ts",
+        "test": "jest",
+        "build": "tsc",
+        "compile-aqua": "aqua --import . -i ../aqua/ -o ./src/_aqua",
+        "watch-aqua": "chokidar \"**/*.aqua\" -c \"npm run compile-aqua\""
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/fluencelabs/examples/aqua-examples/echo-greeter"
+    },
+    "keywords": [
+        "aqua",
+        "fluence"
+    ],
+    "author": "Fluence Labs",
+    "license": "MIT",
+    "bugs": {
+        "url": "git+https://github.com/fluencelabs/examples/issues"
+    },
+    "homepage": "git+https://github.com/fluencelabs/examples/aqua-examples/echo-greeter#readme",
+    "devDependencies": {
+        "@fluencelabs/aqua": "^0.6.0-272",
+        "@fluencelabs/aqua-lib": "^0.4.0",
+        "chokidar-cli": "^3.0.0",
+        "ts-node": "^10.2.1",
+        "typescript": "^4.4.2",
+        "@types/jest": "^27.0.3",
+        "jest": "^27.4.0",
+        "ts-jest": "^27.0.7"
+    }
 }
