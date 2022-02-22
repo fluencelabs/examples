@@ -3,29 +3,28 @@ import http from 'http';
 import path from 'path';
 
 const port = 3000;
-const uri = `http://localhost:${port}/`
+const uri = `http://localhost:${port}/`;
 const publicPath = path.join(__dirname, '../../build/');
 
 console.log(publicPath);
 
 const server = http.createServer((request, response) => {
     return handler(request, response, {
-        public: publicPath
-  });
-})
+        public: publicPath,
+    });
+});
 
 const startServer = async () => {
     return new Promise((resolve: any) => {
         server.listen(port, resolve);
-    })
-}
+    });
+};
 
 const stopServer = async () => {
     return new Promise((resolve: any) => {
         server.close(resolve);
-    })
-}
-
+    });
+};
 
 describe('smoke test', () => {
     beforeAll(startServer);
@@ -48,6 +47,6 @@ describe('smoke test', () => {
         console.log('getting the content of price div...');
         const content = await elem?.evaluate((x) => x.textContent);
 
-        expect(content).toMatch("The price is:")
-    }, 10000);
+        expect(content).toMatch('The price is:');
+    }, 15000);
 });

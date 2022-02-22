@@ -30,5 +30,5 @@ describe('smoke test', () => {
             'Hi, Jake',
             'Bye, Jake',
         ]);
-    }, 10000);
+    }, 15000);
 });

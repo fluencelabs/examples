@@ -17,5 +17,5 @@ describe('smoke test', () => {
             result: expect.any(Number),
             success: true,
         });
-    }, 10000);
+    }, 15000);
 });
