@@ -36,7 +36,7 @@ describe('smoke test', () => {
         await page.goto(uri);
 
         console.log('waiting for fluence to connect...');
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(2000);
 
         console.log('clicking button...');
         await page.click('#btn');
