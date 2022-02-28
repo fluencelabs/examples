@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@fluencelabs/aqua": "^0.6.1-279",
-    "@fluencelabs/aqua-lib": "^0.4.0",
+    "@fluencelabs/aqua-lib": "^0.4.1",
     "typescript": "^4.5.5"
   }
 }
