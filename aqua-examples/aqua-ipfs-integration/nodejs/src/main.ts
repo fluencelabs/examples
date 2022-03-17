@@ -29,65 +29,67 @@ export async function main(environment: Node[]) {
     let serviceHost = environment[2];
 
     let providerClient = new FluencePeer();
-    await providerClient.start({ connectTo: providerHost });
-    console.log('📘 uploading .wasm to node %s', providerHost.multiaddr);
-    let path = globSource('../service/artifacts/process_files.wasm');
-    let { file, swarmAddr, rpcAddr } = await provideFile(path, providerClient);
-    console.log('📗 swarmAddr', swarmAddr);
-    console.log('📗 rpcAddr', rpcAddr);
+    try {
+        await providerClient.start({ connectTo: providerHost });
+        console.log('📘 uploading .wasm to node %s', providerHost.multiaddr);
+        let path = globSource('../service/artifacts/process_files.wasm');
+        let { file, swarmAddr, rpcAddr } = await provideFile(path, providerClient);
+        console.log('📗 swarmAddr', swarmAddr);
+        console.log('📗 rpcAddr', rpcAddr);
 
-    await Fluence.start({ connectTo: relay });
-    console.log(
-        '📗 created a fluence client %s with relay %s',
-        Fluence.getStatus().peerId,
-        Fluence.getStatus().relayPeerId,
-    );
+        await Fluence.start({ connectTo: relay });
+        console.log(
+            '📗 created a fluence client %s with relay %s',
+            Fluence.getStatus().peerId,
+            Fluence.getStatus().relayPeerId,
+        );
 
-    // default IPFS timeout is 1 sec, set to 10 secs to retrieve file from remote node
-    await set_timeout(serviceHost.peerId, 10);
+        // default IPFS timeout is 1 sec, set to 10 secs to retrieve file from remote node
+        await set_timeout(serviceHost.peerId, 10);
 
-    console.log('\n\n📘 Will deploy ProcessFiles service');
-    var service_id = await deploy_service(
-        serviceHost.peerId,
-        file.cid.toString(),
-        rpcAddr,
-        (label, error) => {
-            console.error('📕 deploy_service failed: ', label, error);
-        },
-        { ttl: 10000 },
-    );
-    service_id = fromOption(service_id);
-    if (service_id === null) {
+        console.log('\n\n📘 Will deploy ProcessFiles service');
+        var service_id = await deploy_service(
+            serviceHost.peerId,
+            file.cid.toString(),
+            rpcAddr,
+            (label, error) => {
+                console.error('📕 deploy_service failed: ', label, error);
+            },
+            { ttl: 10000 },
+        );
+        service_id = fromOption(service_id);
+        if (service_id === null) {
+            await Fluence.stop();
+            await providerClient.stop();
+            return;
+        }
+
+        console.log('📗 ProcessFiles service is now deployed and available as', service_id);
+
+        console.log('\n\n📘 Will upload file & calculate its size');
+        let { file: newFile } = await provideFile(urlSource('https://i.imgur.com/NZgK6DB.png'), providerClient);
+        var putResult = await put_file_size(
+            serviceHost.peerId,
+            newFile.cid.toString(),
+            rpcAddr,
+            service_id,
+            (fileSize) => console.log('📗 Calculated file size:', fileSize),
+            (label, error) => {
+                console.error('📕 put_file_size failed: ', label, error);
+            },
+            { ttl: 10000 },
+        );
+        putResult = fromOption(putResult);
+        if (putResult !== null) {
+            console.log('📗 File size is saved to IPFS:', putResult);
+        }
+
+        let result = await remove_service(serviceHost.peerId, service_id);
+        console.log('📗 ProcessFiles service removed', result);
+    } finally {
         await Fluence.stop();
         await providerClient.stop();
-        return;
     }
-
-    console.log('📗 ProcessFiles service is now deployed and available as', service_id);
-
-    console.log('\n\n📘 Will upload file & calculate its size');
-    let { file: newFile } = await provideFile(urlSource('https://i.imgur.com/NZgK6DB.png'), providerClient);
-    var putResult = await put_file_size(
-        serviceHost.peerId,
-        newFile.cid.toString(),
-        rpcAddr,
-        service_id,
-        (fileSize) => console.log('📗 Calculated file size:', fileSize),
-        (label, error) => {
-            console.error('📕 put_file_size failed: ', label, error);
-        },
-        { ttl: 10000 },
-    );
-    putResult = fromOption(putResult);
-    if (putResult !== null) {
-        console.log('📗 File size is saved to IPFS:', putResult);
-    }
-
-    let result = await remove_service(serviceHost.peerId, service_id);
-    console.log('📗 ProcessFiles service removed', result);
-
-    await Fluence.stop();
-    await providerClient.stop();
 }
 
 function fromOption<T>(opt: T | T[] | null): T | null {
