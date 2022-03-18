@@ -53,18 +53,9 @@ jobs:
           set -x
           NODE="/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3"
           SERVICE_ID=`./deploy.sh $NODE`
+          INPUT=$GITHUB_WORKSPACE/.github/deploy.aqua
 
-          echo "
-service CallParameters:
-  call_parameters() -> string
-
-func call(service_id: string) -> string:
-  on HOST_PEER_ID:
-    CallParameters service_id
-    r <- CallParameters.call_parameters()
-    <- r
-" > /tmp/call.aqua
-          RESULT=$(aqua run --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'call(service_id)' -d '{"service_id": "'$SERVICE_ID'"}' --input /tmp/call.aqua)
+          RESULT=$(aqua run --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'call(service_id)' -d '{"service_id": "'$SERVICE_ID'"}' --input $INPUT)
           
           EXPECTED_PEER_ID=$(echo -e "$RESULT" | sed -n '1p' | grep -o '12D3.*')
           RESULT_PEER_ID=$(echo -e "$RESULT" | sed -n '2p' | tr -d \")

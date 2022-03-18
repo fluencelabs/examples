@@ -70,17 +70,9 @@ jobs:
         run: |
           set -x
           NODE="/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3"
+          INPUT=$GITHUB_WORKSPACE/.github/check_connection.aqua
 
-          echo "
-service Op:
-  noop() ->
-
-func check_connection() -> string:
-  on HOST_PEER_ID:
-    Op.noop()
-  <- "ok"
-" > /tmp/check_connection.aqua
-          RESULT=$(aqua run --addr ${{ matrix.node }} --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'check_connection()' --input /tmp/call.aqua)
+          RESULT=$(aqua run --addr ${{ matrix.node }} --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'check_connection()' --input $INPUT)
           
           if [ "$RESULT" -neq "ok" ]; then
             echo "Failed to connect to ${{ matrix.node }}"
