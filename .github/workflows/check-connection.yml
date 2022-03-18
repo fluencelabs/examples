@@ -8,6 +8,24 @@ on:
 jobs:
   check-deployment:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+          node: [
+            '/dns4/kras-00.fluence.dev/tcp/19990/wss/p2p/12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e',
+            '/dns4/kras-00.fluence.dev/tcp/19001/wss/p2p/12D3KooWR4cv1a8tv7pps4HH6wePNaK6gf1Hww5wcCMzeWxyNw51',
+            '/dns4/kras-01.fluence.dev/tcp/19001/wss/p2p/12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA',
+            '/dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf',
+            '/dns4/kras-03.fluence.dev/tcp/19001/wss/p2p/12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE',
+            '/dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi',
+            '/dns4/kras-05.fluence.dev/tcp/19001/wss/p2p/12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS',
+            '/dns4/kras-06.fluence.dev/tcp/19001/wss/p2p/12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr',
+            '/dns4/kras-07.fluence.dev/tcp/19001/wss/p2p/12D3KooWEFFCZnar1cUJQ3rMWjvPQg6yMV2aXWs2DkJNSRbduBWn',
+            '/dns4/kras-08.fluence.dev/tcp/19001/wss/p2p/12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt',
+            '/dns4/kras-09.fluence.dev/tcp/19001/wss/p2p/12D3KooWD7CvsYcpF9HE9CCV9aY3SJ317tkXVykjtZnht2EbzDPm'
+          ]
+      fail-fast: false
+
     defaults:
       run:
         shell: bash
@@ -52,33 +70,22 @@ jobs:
         run: |
           set -x
           NODE="/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3"
-          SERVICE_ID=`./deploy.sh $NODE`
 
           echo "
-service CallParameters:
-  call_parameters() -> string
+service Op:
+  noop() ->
 
-func call(service_id: string) -> string:
+func check_connection() -> string:
   on HOST_PEER_ID:
-    CallParameters service_id
-    r <- CallParameters.call_parameters()
-    <- r
-" > /tmp/call.aqua
-          RESULT=$(aqua run --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'call(service_id)' -d '{"service_id": "'$SERVICE_ID'"}' --input /tmp/call.aqua)
+    Op.noop()
+  <- "ok"
+" > /tmp/check_connection.aqua
+          RESULT=$(aqua run --addr ${{ matrix.node }} --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'check_connection()' --input /tmp/call.aqua)
           
-          EXPECTED_PEER_ID=$(echo -e "$RESULT" | sed -n '1p' | grep -o '12D3.*')
-          RESULT_PEER_ID=$(echo -e "$RESULT" | sed -n '2p' | tr -d \")
-          if [ "$EXPECTED_PEER_ID" -neq "$RESULT_PEER_ID" ]; then
-            echo "Expected $EXPECTED_PEER_ID, got $RESULT_PEER_ID"
+          if [ "$RESULT" -neq "ok" ]; then
+            echo "Failed to connect to ${{ matrix.node }}"
             exit 1
           fi
 
-          RESULT_SERVICE_ID=$(echo -e "$RESULT" | sed -n '3p')
-          if [ "$SERVICE_ID" -neq "$RESULT_SERVICE_ID" ]; then
-            echo "Expected $SERVICE_ID, got $RESULT_SERVICE_ID"
-            exit 1
-          fi
-
-          aqua dist remove --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= --id "$SERVICE_ID"
         working-directory: marine-examples/call_parameters
 
