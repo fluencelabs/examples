@@ -1,5 +1,5 @@
-service Op:
-  noop() ->
+service Op("op"):
+  noop()
 
 func check_connection() -> string:
   on HOST_PEER_ID:

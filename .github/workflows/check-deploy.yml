@@ -46,7 +46,7 @@ jobs:
         with:
             node-version: 16
 
-      - run: npm install -g @fluencelabs/aqua
+      - run: npm install -g @fluencelabs/aqua@0.6.4-283
 
       - name: "Check call_parameters deployment"
         run: |
@@ -56,7 +56,8 @@ jobs:
           INPUT=$GITHUB_WORKSPACE/.github/deploy.aqua
 
           RESULT=$(aqua run --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'call(service_id)' -d '{"service_id": "'$SERVICE_ID'"}' --input $INPUT)
-          
+          RESULT=$(echo $RESULT | sed -e 's/Your peerId: [a-zA-Z0-9]*//g')
+
           EXPECTED_PEER_ID=$(echo -e "$RESULT" | sed -n '1p' | grep -o '12D3.*')
           RESULT_PEER_ID=$(echo -e "$RESULT" | sed -n '2p' | tr -d \")
           if [ "$EXPECTED_PEER_ID" -neq "$RESULT_PEER_ID" ]; then

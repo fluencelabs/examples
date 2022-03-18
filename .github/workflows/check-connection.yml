@@ -64,18 +64,19 @@ jobs:
         with:
             node-version: 16
 
-      - run: npm install -g @fluencelabs/aqua
+      - run: npm install -g @fluencelabs/aqua@0.6.4-283
 
       - name: "Check call_parameters deployment"
         run: |
           set -x
-          NODE="/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3"
+          NODE=${{ matrix.node }}
           INPUT=$GITHUB_WORKSPACE/.github/check_connection.aqua
 
-          RESULT=$(aqua run --addr ${{ matrix.node }} --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'check_connection()' --input $INPUT)
-          
-          if [ "$RESULT" -neq "ok" ]; then
-            echo "Failed to connect to ${{ matrix.node }}"
+          RESULT=$(aqua run --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'check_connection()' --input $INPUT)
+          RESULT=$(echo $RESULT | sed -e 's/Your peerId: [a-zA-Z0-9]*//g' | xargs)
+
+          if [ "$RESULT" != "ok" ]; then
+            echo "Failed to connect to $NODE"
             exit 1
           fi
 
