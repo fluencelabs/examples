@@ -46,7 +46,7 @@ jobs:
         with:
             node-version: 16
 
-      - run: npm install -g @fluencelabs/fldist
+      - run: npm install -g @fluencelabs/aqua
 
       - name: "Check call_parameters deployment"
         run: |
