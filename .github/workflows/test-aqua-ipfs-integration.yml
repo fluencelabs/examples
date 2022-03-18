@@ -10,6 +10,8 @@ jobs:
         strategy:
             matrix:
                 node-version: [16.x]
+                project: [web, nodejs]
+            fail-fast: false
 
         steps:
             - uses: actions/checkout@v2
@@ -61,5 +63,4 @@ jobs:
               run: |
                 npm i
                 CI=false npm run build
-                npm run test -w nodejs
-                npm run test -w web
+                npm run test -w ${{ matrix.project }}
