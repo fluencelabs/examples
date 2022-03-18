@@ -66,7 +66,7 @@ jobs:
 
       - run: npm install -g @fluencelabs/aqua@0.6.4-283
 
-      - name: "Check call_parameters deployment"
+      - name: "Check connection to network"
         run: |
           set -x
           NODE=${{ matrix.node }}
