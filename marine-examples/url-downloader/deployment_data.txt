@@ -1,4 +1,4 @@
- aqua dist deploy \
+ aqua remote deploy \
       --addr /dns4/kras-06.fluence.dev/tcp/19001/wss/p2p/12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr \
       --data-path deployment_cfg.json \
       --service url-downloader

@@ -744,12 +744,12 @@ In each of the examples we created modules and services configurations and teste
 
 Before we begin, you need to have the `aqua` tool installed. See the [Tools documentation](https://doc.fluence.dev/docs/knowledge_tools) for more information.
 
-We use the `aqua dist deploy` command to do our bidding:
+We use the `aqua remote deploy` command to do our bidding:
 
 ```zsh
-aqua dist deploy --help
+aqua remote deploy --help
 
-Usage: aqua dist deploy [--timeout <integer>] [--log-level <string>] --addr <string> [--on <string>] [--print-air] [--sk <string>] --data-path <string> --service <string>
+Usage: aqua remote deploy [--timeout <integer>] [--log-level <string>] --addr <string> [--on <string>] [--print-air] [--sk <string>] --data-path <string> --service <string>
 
 Deploy a service onto a remote peer
 
@@ -779,13 +779,13 @@ Aside from our modules and configuration, we also want to supply the peer id of 
 To create our greeting service on peer `12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA`:
 
 ```zsh
-aqua dist deploy \
+aqua remote deploy \
      --addr /dns4/kras-01.fluence.dev/tcp/19001/wss/p2p/12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA
      --data-path configs/greeting_deploy_cfg.json \
      --service my-greeting-service
 ```
 
-To recap the `aqua dist deploy` command: We specify the
+To recap the `aqua remote deploy` command: We specify the
 
 1. Peer id with the `addr` flag
 2. Config file location with the `data-path` flag

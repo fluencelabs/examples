@@ -22,34 +22,34 @@ jobs:
             ~/.cargo/bin
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      
+
       - run: docker run -d --rm -e RUST_LOG="info" --name fluence -p 5001:5001 -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj --local
-      
+
       - name: Download marine
         run: sudo bash $GITHUB_WORKSPACE/.github/download_marine.sh
-      
+
       - name: Install Rust
         run: |
           rustup toolchain install nightly-2021-04-24-x86_64-unknown-linux-gnu
           rustup default nightly-2021-04-24-x86_64-unknown-linux-gnu
           rustup target add wasm32-wasi --toolchain nightly-2021-04-24-x86_64-unknown-linux-gnu
-  
+
       - uses: actions/cache@v2
         with:
-            path: ~/.npm
-            key: ${{ runner.os }}-v1-node-16-${{ hashFiles('**/package-lock.json') }}
-            restore-keys: |
-                ${{ runner.os }}-v1-node-16
-      
+          path: ~/.npm
+          key: ${{ runner.os }}-v1-node-16-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-v1-node-16
+
       - name: Setup Node.js 16
         uses: actions/setup-node@v1
         with:
-            node-version: 16
+          node-version: 16
 
       - run: npm install -g @fluencelabs/aqua@0.6.4-283
 
       - name: "Wait for aqua-ipfs service to start"
-        run: |          
+        run: |
           set -o errexit -o nounset -o pipefail
           set -x
           while true; do
@@ -87,6 +87,5 @@ jobs:
             exit 1
           fi
 
-          aqua dist remove --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= --id "$SERVICE_ID"
+           remove --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= --id "$SERVICE_ID"
         working-directory: marine-examples/call_parameters
-
