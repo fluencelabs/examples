@@ -74,17 +74,17 @@ jobs:
           INPUT=$GITHUB_WORKSPACE/.github/deploy.aqua
 
           RESULT=$(aqua run --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'call(service_id)' -d '{"service_id": "'$SERVICE_ID'"}' --input $INPUT)
-          RESULT=$(echo $RESULT | sed -e 's/Your peerId: [a-zA-Z0-9]*//g')
+          # RESULT=$(echo $RESULT | sed -e 's/Your peerId: [a-zA-Z0-9]*//g')
 
           EXPECTED_PEER_ID=$(echo -e "$RESULT" | sed -n '1p' | grep -o '12D3.*')
           RESULT_PEER_ID=$(echo -e "$RESULT" | sed -n '2p' | tr -d \")
-          if [ "$EXPECTED_PEER_ID" -neq "$RESULT_PEER_ID" ]; then
+          if [ "$EXPECTED_PEER_ID" != "$RESULT_PEER_ID" ]; then
             echo "Expected $EXPECTED_PEER_ID, got $RESULT_PEER_ID"
             exit 1
           fi
 
           RESULT_SERVICE_ID=$(echo -e "$RESULT" | sed -n '3p')
-          if [ "$SERVICE_ID" -neq "$RESULT_SERVICE_ID" ]; then
+          if [ "$SERVICE_ID" != "$RESULT_SERVICE_ID" ]; then
             echo "Expected $SERVICE_ID, got $RESULT_SERVICE_ID"
             exit 1
           fi
