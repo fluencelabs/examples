@@ -1,13 +1,15 @@
 #!/bin/bash
 set -o errexit -o nounset -o pipefail
 
-if [[ -z "${NODE:-}" ]]; then
-    NODE_ADDR=""
+./build.sh
+
+if [ $# -eq 1 ]; then
+    NODE="$1"
 else
-    NODE_ADDR="--node-addr $NODE"
+    echo "Expected single argument: node multiaddress. Got $# arguments."
+    exit 1
 fi
 
-./build.sh
 
 # check it .wasm was built
 WASM="artifacts/call_parameters.wasm"
@@ -15,5 +17,5 @@ test -f "$WASM" || echo >&2 "Couldn't find $WASM"
 
 # create a service from that .wasm
 CONFIG="config.json"
-SERVICE_ID=$(fldist new_service $NODE_ADDR --modules "$WASM:$CONFIG" --name call_parameters | head -n1 | sed -e 's/service id: //')
+SERVICE_ID=$(aqua dist deploy --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= --data-path config.json --service call_parameters --addr "$NODE" | tail -n 1 | tr -d \")
 echo $SERVICE_ID

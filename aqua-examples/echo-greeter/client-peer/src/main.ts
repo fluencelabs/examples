@@ -89,40 +89,42 @@ export async function main() {
     // console.log("hello");
     // setLogLevel('DEBUG');
 
-    await Fluence.start({ connectTo: krasnodar[2] });
-    console.log(
-        'created a fluence client %s with relay %s',
-        Fluence.getStatus().peerId,
-        Fluence.getStatus().relayPeerId,
-    );
+    try {
+        await Fluence.start({ connectTo: krasnodar[2] });
+        console.log(
+            'created a fluence client %s with relay %s',
+            Fluence.getStatus().peerId,
+            Fluence.getStatus().relayPeerId,
+        );
 
-    let echo_result = await echo(names, echo_topos[0].node, echo_topos[0].service_id);
+        let echo_result = await echo(names, echo_topos[0].node, echo_topos[0].service_id);
 
-    let result = '';
+        let result = '';
 
-    for (let item of echo_result) {
-        result += item.echo + ',';
+        for (let item of echo_result) {
+            result += item.echo + ',';
+        }
+        console.log('echo result                       : ', result);
+
+        let greeting_result = await greeting(names[0], true, greeting_topos[0].node, greeting_topos[0].service_id);
+        console.log('greeting result                   : ', greeting_result);
+
+        // echo_greeting_par(greet: bool, echo_service: EchoServiceInput, greeting_services: []NodeServicePair) -> []string:
+        let seq_result = await echo_greeting_seq(
+            names,
+            true,
+            echo_topos[0].node,
+            echo_topos[0].service_id,
+            greeting_topos[0].service_id,
+        );
+        console.log('seq result                         : ', seq_result);
+
+        let par_result = await echo_greeting_par(true, echo_service, greeting_services);
+        console.log('par result                          : ', par_result);
+
+        par_result = await echo_greeting_par_improved(echo_service, greeting_services);
+        console.log('par improved signature result        : ', par_result);
+    } finally {
+        await Fluence.stop();
     }
-    console.log('echo result                       : ', result);
-
-    let greeting_result = await greeting(names[0], true, greeting_topos[0].node, greeting_topos[0].service_id);
-    console.log('greeting result                   : ', greeting_result);
-
-    // echo_greeting_par(greet: bool, echo_service: EchoServiceInput, greeting_services: []NodeServicePair) -> []string:
-    let seq_result = await echo_greeting_seq(
-        names,
-        true,
-        echo_topos[0].node,
-        echo_topos[0].service_id,
-        greeting_topos[0].service_id,
-    );
-    console.log('seq result                         : ', seq_result);
-
-    let par_result = await echo_greeting_par(true, echo_service, greeting_services);
-    console.log('par result                          : ', par_result);
-
-    par_result = await echo_greeting_par_improved(echo_service, greeting_services);
-    console.log('par improved signature result        : ', par_result);
-
-    await Fluence.stop();
 }

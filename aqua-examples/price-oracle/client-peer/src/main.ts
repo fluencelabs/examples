@@ -54,29 +54,30 @@ export async function main() {
 
     // Uncomment to enable debug logs:
     // setLogLevel('DEBUG');
+    try {
+        // create the Fluence client for the Krasnodar testnet
+        await Fluence.start({ connectTo: krasnodar[5] });
+        console.log(
+            'Created a fluence client with peer id %s and relay id %s',
+            Fluence.getStatus().peerId,
+            Fluence.getStatus().relayPeerId,
+        );
 
-    // create the Fluence client for the Krasnodar testnet
-    await Fluence.start({ connectTo: krasnodar[5] });
-    console.log(
-        'Created a fluence client with peer id %s and relay id %s',
-        Fluence.getStatus().peerId,
-        Fluence.getStatus().relayPeerId,
-    );
+        // call the get_price function -- sequential processing
+        const network_result = await get_price(
+            'ethereum',
+            'usd',
+            getter_topo[1].node,
+            getter_topo[1].service_id,
+            mean_topo[1].service_id,
+        );
+        console.log('seq result: ', network_result);
 
-    // call the get_price function -- sequential processing
-    const network_result = await get_price(
-        'ethereum',
-        'usd',
-        getter_topo[1].node,
-        getter_topo[1].service_id,
-        mean_topo[1].service_id,
-    );
-    console.log('seq result: ', network_result);
-
-    // call the get_price_par function -- parallel processing
-    // func get_price_par(coin: string, currency: string, getter_topo: []NodeServicePair, mean_topo: NodeServicePair) -> Result:
-    const network_result_par = await get_price_par('ethereum', 'usd', getter_topo, mean_topo[0]);
-    console.log('par result: ', network_result_par);
-
-    await Fluence.stop();
+        // call the get_price_par function -- parallel processing
+        // func get_price_par(coin: string, currency: string, getter_topo: []NodeServicePair, mean_topo: NodeServicePair) -> Result:
+        const network_result_par = await get_price_par('ethereum', 'usd', getter_topo, mean_topo[0]);
+        console.log('par result: ', network_result_par);
+    } finally {
+        await Fluence.stop();
+    }
 }

@@ -1,0 +1,84 @@
+name: "check-connection"
+
+on:
+  push:
+    # branches:
+    #   - "master"
+
+jobs:
+  check-deployment:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+          node: [
+            '/dns4/kras-00.fluence.dev/tcp/19990/wss/p2p/12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e',
+            '/dns4/kras-00.fluence.dev/tcp/19001/wss/p2p/12D3KooWR4cv1a8tv7pps4HH6wePNaK6gf1Hww5wcCMzeWxyNw51',
+            '/dns4/kras-01.fluence.dev/tcp/19001/wss/p2p/12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA',
+            '/dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf',
+            '/dns4/kras-03.fluence.dev/tcp/19001/wss/p2p/12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE',
+            '/dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi',
+            '/dns4/kras-05.fluence.dev/tcp/19001/wss/p2p/12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS',
+            '/dns4/kras-06.fluence.dev/tcp/19001/wss/p2p/12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr',
+            '/dns4/kras-07.fluence.dev/tcp/19001/wss/p2p/12D3KooWEFFCZnar1cUJQ3rMWjvPQg6yMV2aXWs2DkJNSRbduBWn',
+            '/dns4/kras-08.fluence.dev/tcp/19001/wss/p2p/12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt',
+            '/dns4/kras-09.fluence.dev/tcp/19001/wss/p2p/12D3KooWD7CvsYcpF9HE9CCV9aY3SJ317tkXVykjtZnht2EbzDPm'
+          ]
+      fail-fast: false
+
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      
+      - run: docker run -d --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj --local
+      
+      - name: Download marine
+        run: sudo bash $GITHUB_WORKSPACE/.github/download_marine.sh
+      
+      - name: Install Rust
+        run: |
+          rustup toolchain install nightly-2021-04-24-x86_64-unknown-linux-gnu
+          rustup default nightly-2021-04-24-x86_64-unknown-linux-gnu
+          rustup target add wasm32-wasi --toolchain nightly-2021-04-24-x86_64-unknown-linux-gnu
+  
+      - uses: actions/cache@v2
+        with:
+            path: ~/.npm
+            key: ${{ runner.os }}-v1-node-16-${{ hashFiles('**/package-lock.json') }}
+            restore-keys: |
+                ${{ runner.os }}-v1-node-16
+      
+      - name: Setup Node.js 16
+        uses: actions/setup-node@v1
+        with:
+            node-version: 16
+
+      - run: npm install -g @fluencelabs/aqua@0.6.4-283
+
+      - name: "Check connection to network"
+        run: |
+          set -x
+          NODE=${{ matrix.node }}
+          INPUT=$GITHUB_WORKSPACE/.github/check_connection.aqua
+
+          RESULT=$(aqua run --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'check_connection()' --input $INPUT)
+          RESULT=$(echo $RESULT | sed -e 's/Your peerId: [a-zA-Z0-9]*//g' | xargs)
+
+          if [ "$RESULT" != "ok" ]; then
+            echo "Failed to connect to $NODE"
+            exit 1
+          fi
+
+        working-directory: marine-examples/call_parameters
+

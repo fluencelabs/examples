@@ -20,6 +20,7 @@ jobs:
                     "./aqua-examples/price-oracle/client-peer", 
                     "./aqua-examples/price-oracle/web"
                 ]
+            fail-fast: false
 
         steps:
             - uses: actions/checkout@v2
