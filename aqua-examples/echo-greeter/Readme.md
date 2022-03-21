@@ -97,10 +97,10 @@ result: String("Bye, yah")
  elapsed time: 49.64µs
 ```
 
-Looks like all is working as planned and we're ready to deploy our services to the Fluence testnet. To deploy a service, we need the peer id of our desired host node, which we can get with `aqua env`:
+Looks like all is working as planned and we're ready to deploy our services to the Fluence testnet. To deploy a service, we need the peer id of our desired host node, which we can get with `aqua config default_peers`:
 
 ```text
-% aqua env
+% aqua config default_peers
 /dns4/kras-00.fluence.dev/tcp/19990/wss/p2p/12D3KooWSD5PToNiLQwKDXsu8JSysCwUt8BVUJEqCHcDe7P5h45e
 /dns4/kras-00.fluence.dev/tcp/19001/wss/p2p/12D3KooWR4cv1a8tv7pps4HH6wePNaK6gf1Hww5wcCMzeWxyNw51
 /dns4/kras-01.fluence.dev/tcp/19001/wss/p2p/12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA

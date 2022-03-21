@@ -12,7 +12,7 @@ In this example, we develop an adapter for the Ceramic [CLI API](https://develop
 
 Our adapter service mounts the Ceramic CLI with the [MountedBinaryResult](https://doc.fluence.dev/docs/knowledge_aquamarine/marine/marine-rs-sdk#mountedbinaryresult) interface requiring the availability of [Ceramic tools](https://developers.ceramic.network/build/cli/installation/) as a sidecar. In addition, a limited Ceramic HTTP API implementation is also available using the Marine [curl adapter](https://doc.fluence.dev/docs/tutorials_tutorials/curl-as-a-service). Since the HTTP API is limited and won't let users create streams, it is offered primarily for educational purposes, although it may be useful in scenarios where a ceramic daemon deployment is not feasible.
 
-**Please note that Ceramic binary access is currently only available at Fluence's `stage` network environment (`aqua env stage`) with path `/usr/bin/ceramic`.**
+**Please note that Ceramic binary access is currently only available at Fluence's `stage` network environment (`aqua config default_peers stage`) with path `/usr/bin/ceramic`.**
 
 ToDos:
 
