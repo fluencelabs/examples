@@ -50,6 +50,7 @@ jobs:
 
       - name: "Wait for aqua-ipfs service to start"
         run: |          
+          set -o errexit -o nounset -o pipefail
           set -x
           while true; do
             STATUS=$(docker logs fluence |& grep -q 'Fluence has been successfully started.' && echo "OK" || echo "FAIL")
