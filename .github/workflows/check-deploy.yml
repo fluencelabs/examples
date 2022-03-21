@@ -52,9 +52,8 @@ jobs:
         run: |          
           set -x
           while true; do
-            docker logs fluence |& grep -q 'Fluence has been successfully started.'
-            exit_code=$?
-            if [ $exit_code -eq 0 ]; then
+            STATUS=$(docker logs fluence |& grep -q 'Fluence has been successfully started.' && echo "OK" || echo "FAIL")
+            if [ $STATUS == "OK" ]; then
               break;
             else
               sleep 0.5
