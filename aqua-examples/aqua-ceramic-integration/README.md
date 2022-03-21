@@ -240,7 +240,7 @@ Looks like our services are working and ready for deployment to the `stage` netw
 ```bash
 aqua remote deploy \
      --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
-     --data-path configs/ceramic_adapter_deploy_cfg.json \
+     --config-path configs/ceramic_adapter_deploy_cfg.json \
      --service ceramic-service
 ```
 

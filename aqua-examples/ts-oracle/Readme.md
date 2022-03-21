@@ -58,7 +58,7 @@ and deploy the service to a peer of your choice with the `aqua` cli tool:
 ```bash
 aqua remote deploy \
      --addr /dns4/kras-06.fluence.dev/tcp/19001/wss/p2p/12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr \
-     --data-path configs/ts_oracle_deploy_cfg.json \
+     --config-path configs/ts_oracle_deploy_cfg.json \
      --service ts-oracle
 ```
 

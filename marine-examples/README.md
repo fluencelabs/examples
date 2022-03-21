@@ -749,7 +749,7 @@ We use the `aqua remote deploy` command to do our bidding:
 ```zsh
 aqua remote deploy --help
 
-Usage: aqua remote deploy [--timeout <integer>] [--log-level <string>] --addr <string> [--on <string>] [--print-air] [--sk <string>] --data-path <string> --service <string>
+Usage: aqua remote deploy [--timeout <integer>] [--log-level <string>] --addr <string> [--on <string>] [--print-air] [--sk <string>] --config-path <string> --service <string>
 
 Deploy a service onto a remote peer
 
@@ -768,7 +768,7 @@ Options and flags:
         Prints generated AIR code before function execution
     --sk <string>, -s <string>
         Ed25519 32-byte secret key in base64
-    --data-path <string>, -p <string>
+    --config-path <string>, -p <string>
         Path to file with arguments map in JSON format
     --service <string>, -s <string>
         What service from the config file to deploy
@@ -781,7 +781,7 @@ To create our greeting service on peer `12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWc
 ```zsh
 aqua remote deploy \
      --addr /dns4/kras-01.fluence.dev/tcp/19001/wss/p2p/12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA
-     --data-path configs/greeting_deploy_cfg.json \
+     --config-path configs/greeting_deploy_cfg.json \
      --service my-greeting-service
 ```
 

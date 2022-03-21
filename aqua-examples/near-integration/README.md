@@ -357,7 +357,7 @@ Before we can use our Fluence NEAR adapter, we need to deploy our Wasm modules t
 ```bash
 aqua remote deploy \
      --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
-     --data-path configs/near_deploy_cfg.json \
+     --config-path configs/near_deploy_cfg.json \
      --service near-adapter
 ```
 
