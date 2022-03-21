@@ -1,8 +1,6 @@
 #!/bin/bash
 set -o errexit -o nounset -o pipefail
 
-./build.sh
-
 if [ $# -eq 1 ]; then
     NODE="$1"
 else
@@ -10,6 +8,7 @@ else
     exit 1
 fi
 
+./build.sh
 
 # check it .wasm was built
 WASM="artifacts/call_parameters.wasm"
