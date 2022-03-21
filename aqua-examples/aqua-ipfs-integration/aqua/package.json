@@ -1,37 +1,37 @@
 {
-  "name": "@fluencelabs/ipfs-execution-aqua",
-  "version": "0.1.0",
-  "description": "An example of executing WASM code from IPFS over IPFS files",
-  "main": "dist/index.js",
-  "scripts": {
-    "postinstall": "../service/scripts/build.sh",
-    "compile-aqua": "aqua -m ../node_modules -i aqua -o src",
-    "build": "npm run compile-aqua && tsc"
-  },
-  "keywords": [
-    "fluence",
-    "wasm",
-    "ipfs",
-    "functions",
-    "faas",
-    "decentralization",
-    "p2p",
-    "libp2p"
-  ],
-  "author": "Fluence Labs",
-  "license": "MIT",
-  "dependencies": {
-    "@fluencelabs/aqua-ipfs": "0.5.2",
-    "@fluencelabs/fluence": "0.19.2",
-    "@fluencelabs/fluence-network-environment": "1.0.13",
-    "ipfs-http-client": "^50.1.2",
-    "it-all": "^1.0.5",
-    "multiaddr": "^10.0.0",
-    "uint8arrays": "^2.1.5"
-  },
-  "devDependencies": {
-    "@fluencelabs/aqua": "^0.6.1-279",
-    "@fluencelabs/aqua-lib": "^0.4.0",
-    "typescript": "^4.5.5"
-  }
+    "name": "@fluencelabs/ipfs-execution-aqua",
+    "version": "0.1.0",
+    "description": "An example of executing WASM code from IPFS over IPFS files",
+    "main": "dist/index.js",
+    "scripts": {
+        "postinstall": "../service/scripts/build.sh",
+        "compile-aqua": "aqua -m ../node_modules -i aqua -o src",
+        "build": "npm run compile-aqua && tsc"
+    },
+    "keywords": [
+        "fluence",
+        "wasm",
+        "ipfs",
+        "functions",
+        "faas",
+        "decentralization",
+        "p2p",
+        "libp2p"
+    ],
+    "author": "Fluence Labs",
+    "license": "MIT",
+    "dependencies": {
+        "@fluencelabs/aqua-ipfs": "0.5.2",
+        "@fluencelabs/fluence": "^0.21.5",
+        "@fluencelabs/fluence-network-environment": "1.0.13",
+        "ipfs-http-client": "^50.1.2",
+        "it-all": "^1.0.5",
+        "multiaddr": "^10.0.0",
+        "uint8arrays": "^2.1.5"
+    },
+    "devDependencies": {
+        "@fluencelabs/aqua": "^0.6.4-283",
+        "@fluencelabs/aqua-lib": "^0.4.0",
+        "typescript": "^4.5.5"
+    }
 }
