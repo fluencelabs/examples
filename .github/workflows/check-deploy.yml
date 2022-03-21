@@ -23,7 +23,7 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       
-      - run: docker run -d --rm -e RUST_LOG="info" -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj --local
+      - run: docker run -d --rm -e RUST_LOG="info" --name fluence -p 5001:5001 -p 1210:1210 -p 4310:4310 fluencelabs/fluence -t 1210 -w 4310 -k gKdiCSUr1TFGFEgu2t8Ch1XEUsrN5A2UfBLjSZvfci9SPR3NvZpACfcpPGC3eY4zma1pk7UvYv5zb1VjvPHwCjj --local
       
       - name: Download marine
         run: sudo bash $GITHUB_WORKSPACE/.github/download_marine.sh
@@ -47,6 +47,20 @@ jobs:
             node-version: 16
 
       - run: npm install -g @fluencelabs/aqua@0.6.4-283
+
+      - name: "Wait for aqua-ipfs service to start"
+        run: |
+          set -x
+          while true; do
+            docker logs fluence |& grep -q 'Fluence has been successfully started.'
+            exit_code=$?
+            if [ $exit_code -eq 0 ]; then
+              break;
+            else
+              sleep 0.5
+              echo "Waiting for all builtin services to start"
+            fi
+          done
 
       - name: "Check call_parameters deployment"
         run: |
