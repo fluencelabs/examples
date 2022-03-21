@@ -49,9 +49,7 @@ jobs:
       - run: npm install -g @fluencelabs/aqua@0.6.4-283
 
       - name: "Wait for aqua-ipfs service to start"
-        run: |
-          set -o errexit -o nounset -o pipefail
-          
+        run: |          
           set -x
           while true; do
             docker logs fluence |& grep -q 'Fluence has been successfully started.'
