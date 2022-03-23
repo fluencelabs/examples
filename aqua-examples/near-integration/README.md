@@ -355,7 +355,7 @@ func rpc_foo(network_id: string, block_ref:string, node_string, service_id: stri
 Before we can use our Fluence NEAR adapter, we need to deploy our Wasm modules to one or more host peers. We can do that with [Aqua CLI](https://doc.fluence.dev/aqua-book/aqua-cli):
 
 ```bash
-aqua remote deploy \
+aqua remote deploy_service \
      --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
      --config-path configs/near_deploy_cfg.json \
      --service near-adapter

@@ -238,7 +238,7 @@ That is, `...\"chainId\":\"eip155:3\",\"blockNumber\":11266361,\"blockTimestamp\
 Looks like our services are working and ready for deployment to the `stage` network. We use the `aqua` command line tool to do so:
 
 ```bash
-aqua remote deploy \
+aqua remote deploy_service \
      --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
      --config-path configs/ceramic_adapter_deploy_cfg.json \
      --service ceramic-service
