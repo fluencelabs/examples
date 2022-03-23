@@ -6,11 +6,17 @@ set -o errexit -o nounset -o pipefail
 echo "Deploying storage"
 (
   cd artifacts
-  fldist new_service --name "local_storage" --modules local_storage.wasm:local_storage.json
+  aqua remote deploy_service \
+       --addr /dns4/kras-05.fluence.dev/tcp/19001/wss/p2p/12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS \
+       --data-path deployment_cfg.json \
+       --service local-storage
 )
 
 echo "\n\nDeploying curl"
 (
   cd artifacts
-  fldist new_service --name "curl_adapter" --modules curl_adapter.wasm:curl_adapter.json
+  aqua remote deploy_service \
+      --addr /dns4/kras-05.fluence.dev/tcp/19001/wss/p2p/12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS \
+      --data-path deployment_cfg.json \
+      --service curl-adapter
 )
