@@ -25,7 +25,7 @@
         "ts-jest": "^27.0.7"
     },
     "dependencies": {
-        "@fluencelabs/fluence": "^0.19.1",
+        "@fluencelabs/fluence": "^0.21.7",
         "@fluencelabs/fluence-network-environment": "^1.0.13"
     }
 }
