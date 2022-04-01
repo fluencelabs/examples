@@ -1,0 +1,11 @@
+{
+  "vrf-wasm": {
+    "name": "vrf-wasm",
+    "modules": [
+      {
+        "name": "vrf-wasm",
+        "path": "./artifacts/vrf_wasm.wasm"
+      }
+    ]
+  }
+}

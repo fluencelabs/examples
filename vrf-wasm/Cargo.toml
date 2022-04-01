@@ -1,0 +1,25 @@
+[package]
+name = "vrf_wasm"
+version = "0.1.5"
+authors = ["boneyard93501 <4523011+boneyard93501@users.noreply.github.com>"]
+edition = "2018"
+description = "vrf-wasm, a Marine wasi module"
+license = "Apache-2.0"
+
+[[bin]]
+name = "vrf_wasm"
+path = "src/main.rs"
+
+[dependencies]
+marine-rs-sdk = { version = "0.6.15", features = ["logger"] }
+log = "0.4.14"
+vrf = "0.2.3"
+# openssl-sys = { version = "0.9.72", features = ["vendored"] }
+hex = { version = "0.4.3", default-features = false }
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.4.1"
+
+[dev]
+[profile.release]
+opt-level = "s"
