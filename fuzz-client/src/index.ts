@@ -19,7 +19,7 @@ import { krasnodar } from "@fluencelabs/fluence-network-environment";
 import { collect_timestamps_from_neighborhood } from "./_aqua/timestamp_gatherer";
 
 async function main() {
-  if (process.env.DEBUG) {
+  if (process.env.DEBUG === 'true') {
     setLogLevel("DEBUG");
   }
 
