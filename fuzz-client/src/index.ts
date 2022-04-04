@@ -15,14 +15,18 @@
  */
 
 import { setLogLevel, Fluence } from "@fluencelabs/fluence";
-import { krasnodar, Node } from "@fluencelabs/fluence-network-environment";
-import { ts_getter, ts_getter_with_timeout } from "./_aqua/timestamp_gatherer";
+import { krasnodar } from "@fluencelabs/fluence-network-environment";
+import { collect_timestamps_from_neighborhood } from "./_aqua/timestamp_gatherer";
 
 async function main() {
+  if (process.env.DEBUG) {
+    setLogLevel("DEBUG");
+  }
 
-  // create the Fluence client for the Krasnodar testnet
-  // and we're using peer 6 to do so
-  await Fluence.start({ connectTo: krasnodar[5] });
+  // Connect to the address specified by environment variable RELAY or use krasnodar[5] if not set
+  let relay = process.env.RELAY || krasnodar[5];
+
+  await Fluence.start({ connectTo: relay });
   console.log(
     "Created a fluence client with peer id %s and relay id %s",
     Fluence.getStatus().peerId,
@@ -30,13 +34,9 @@ async function main() {
   );
 
   // call the simple getter
-  const ts_result = await ts_getter();
-  console.log("simple result: ", ts_result);
-
-  // call the bounded getter
-  const ts_result_tuple = await ts_getter_with_timeout();
-  console.log("raw timestamps: %s\ndead peers: %s ", ts_result_tuple[0].filter(e => e !== 0), ts_result_tuple[1]);
-
+  const [timestamps, dead_peers] = await collect_timestamps_from_neighborhood();
+  console.log("timestamps: %s", timestamps);
+  console.log("dead peers: %s ", dead_peers);
 
   await Fluence.stop();
 }

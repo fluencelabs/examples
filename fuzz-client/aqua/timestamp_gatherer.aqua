@@ -1,60 +1,72 @@
 import "@fluencelabs/aqua-lib/builtin.aqua"
 
+-- per-node timeout to decide if it's down
+const TIMEOUT = 2000
 
--- simple timestamp getter for kademlia neigborhodd which is max size 20
-func ts_getter() -> []u64:
+-- simple timestamp getter for kademlia neigborhood which is max size 20
+func collect_timestamps_from_neighborhood() -> []u64, []PeerId:
+  timestamps: *u64
+  statuses: *string
+  dead_peers: *PeerId
   -- on this peer
   on HOST_PEER_ID:
     -- convert peer id to b58
     k <- Op.string_to_b58(HOST_PEER_ID)
     -- get all neighbors
     nodes <- Kademlia.neighborhood(k, nil, nil)
-    res: *u64
     -- for each neighbor
     for n <- nodes par:
+      status: *string
       -- on selected neighbor peer
       on n:
         -- get the timestamp from that node
-        res <- Peer.timestamp_ms()
-      -- hot fix to force switching to peer
-      Op.noop()
-    -- join the results, which is tricky rght now since we can't use array len
-    -- the testnet size n is 10 so n -1
-    join res[9]
-  <- res
+        timestamps <- Peer.timestamp_ms()
+        status <<- "ok"
+      -- run timeout task in parallel, so if node `n` is down, we'll get `timed out` status
+      -- this pattern is documented: https://doc.fluence.dev/aqua-book/language/flow/parallel#timeout-and-race-patterns 
+      par status <- Peer.timeout(TIMEOUT, "timed out")
+      statuses <<- status!
+      if status! != "ok":
+        dead_peers <<- n
+    
+    -- wait for all nodes to respond or timeout
+    length <- Op.array_length(nodes)
+    join statuses[length - 1]
+  <- timestamps, dead_peers
 
 
--- timestamp getter with error collector over neighborhood 
-func ts_getter_with_timeout()-> []u64, []string:
-  -- timeout in ms
-  rtt  = 1000
 
-  res: *u64
+-- -- timestamp getter with error collector over neighborhood 
+-- func ts_getter_with_timeout()-> []u64, []string:
+--   -- timeout in ms
+--   rtt  = 1000
 
-  -- error value for no timestamp
-  err_value = 0
+--   res: *u64
 
-  -- neighborhood n = 20 decr by 1 for array 
-  n_neighborhood = 19
+--   -- error value for no timestamp
+--   err_value = 0
 
-  -- err message
-  msg = "timeout"
+--   -- neighborhood n = 20 decr by 1 for array 
+--   n_neighborhood = 19
+
+--   -- err message
+--   msg = "timeout"
   
-  -- collect non-responsive peer ids, if any
-  dead_peers: *string
-  on HOST_PEER_ID:
-    k <- Op.string_to_b58(HOST_PEER_ID)
-    nodes <- Kademlia.neighborhood(k, nil, nil)
-    for n <- nodes par:
-        status: *string
-        on n:
-            res <- Peer.timestamp_ms()
-            status <<- "success"
-        par status <- Peer.timeout(rtt, msg)
-        if status! != "success":
-          res <<- err_value
-          dead_peers <<- n
-        Op.noop()
+--   -- collect non-responsive peer ids, if any
+--   dead_peers: *string
+--   on HOST_PEER_ID:
+--     k <- Op.string_to_b58(HOST_PEER_ID)
+--     nodes <- Kademlia.neighborhood(k, nil, nil)
+--     for n <- nodes par:
+--         status: *string
+--         on n:
+--             res <- Peer.timestamp_ms()
+--             status <<- "success"
+--         par status <- Peer.timeout(rtt, msg)
+--         if status! != "success":
+--           res <<- err_value
+--           dead_peers <<- n
+--         Op.noop()
         
-    join res[n_neighborhood]
-  <- res, dead_peers
+--     join res[n_neighborhood]
+--   <- res, dead_peers
