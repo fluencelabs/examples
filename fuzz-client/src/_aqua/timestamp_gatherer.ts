@@ -45,55 +45,63 @@ export function collect_timestamps_from_neighborhood(...args: any) {
                               (seq
                                (seq
                                 (seq
-                                 (seq
-                                  (call -relay- ("op" "string_to_b58") [-relay-] k)
-                                  (call -relay- ("kad" "neighborhood") [k [] []] nodes)
-                                 )
-                                 (par
-                                  (fold nodes n
-                                   (par
-                                    (new $status
+                                 (call -relay- ("op" "string_to_b58") [-relay-] k)
+                                 (call -relay- ("kad" "neighborhood") [k [] []] nodes)
+                                )
+                                (par
+                                 (fold nodes n
+                                  (par
+                                   (new $status
+                                    (seq
                                      (seq
                                       (seq
-                                       (seq
-                                        (par
-                                         (xor
-                                          (seq
-                                           (call n ("peer" "timestamp_ms") [] $timestamps)
-                                           (ap "ok" $status)
-                                          )
-                                          (seq
-                                           (call -relay- ("op" "noop") [])
-                                           (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
-                                          )
+                                       (par
+                                        (xor
+                                         (seq
+                                          (call n ("peer" "timestamp_ms") [] $timestamps)
+                                          (ap "ok" $status)
                                          )
-                                         (call -relay- ("peer" "timeout") [2000 "timed out"] $status)
+                                         (seq
+                                          (call -relay- ("op" "noop") [])
+                                          (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+                                         )
                                         )
-                                        (call -relay- ("op" "identity") [$status.$.[0]!] push-to-stream-30)
+                                        (call -relay- ("peer" "timeout") [2000 "timed out"] $status)
                                        )
-                                       (ap push-to-stream-30 $statuses)
+                                       (call -relay- ("op" "identity") [$status.$.[0]!] push-to-stream-30)
                                       )
-                                      (xor
-                                       (mismatch $status.$.[0]! "ok"
-                                        (ap n $dead_peers)
-                                       )
-                                       (null)
+                                      (ap push-to-stream-30 $statuses)
+                                     )
+                                     (xor
+                                      (mismatch $status.$.[0]! "ok"
+                                       (ap n $dead_peers)
                                       )
+                                      (null)
                                      )
                                     )
-                                    (next n)
                                    )
+                                   (next n)
                                   )
-                                  (null)
                                  )
+                                 (null)
                                 )
-                                (call -relay- ("op" "array_length") [nodes] length)
                                )
-                               (call -relay- ("math" "sub") [length 1] sub)
+                               (call -relay- ("op" "array_length") [nodes] length)
                               )
-                              (call -relay- ("op" "noop") [$statuses.$.[sub]!])
+                              (xor
+                               (mismatch length 0
+                                (xor
+                                 (seq
+                                  (call -relay- ("math" "sub") [length 1] sub)
+                                  (call -relay- ("op" "noop") [$statuses.$.[sub]!])
+                                 )
+                                 (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+                                )
+                               )
+                               (null)
+                              )
                              )
-                             (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+                             (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
                             )
                             (call %init_peer_id% ("op" "identity") [$dead_peers] dead_peers-fix)
                            )
@@ -105,10 +113,10 @@ export function collect_timestamps_from_neighborhood(...args: any) {
                       )
                       (xor
                        (call %init_peer_id% ("callbackSrv" "response") [timestamps-fix dead_peers-fix])
-                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 4])
                       )
                      )
-                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 4])
+                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 5])
                     )
     `
     return callFunction(

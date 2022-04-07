@@ -31,42 +31,6 @@ func collect_timestamps_from_neighborhood() -> []u64, []PeerId:
     
     -- wait for all nodes to respond or timeout
     length <- Op.array_length(nodes)
-    join statuses[length - 1]
+    if length != 0:
+      join statuses[length - 1]
   <- timestamps, dead_peers
-
-
-
--- -- timestamp getter with error collector over neighborhood 
--- func ts_getter_with_timeout()-> []u64, []string:
---   -- timeout in ms
---   rtt  = 1000
-
---   res: *u64
-
---   -- error value for no timestamp
---   err_value = 0
-
---   -- neighborhood n = 20 decr by 1 for array 
---   n_neighborhood = 19
-
---   -- err message
---   msg = "timeout"
-  
---   -- collect non-responsive peer ids, if any
---   dead_peers: *string
---   on HOST_PEER_ID:
---     k <- Op.string_to_b58(HOST_PEER_ID)
---     nodes <- Kademlia.neighborhood(k, nil, nil)
---     for n <- nodes par:
---         status: *string
---         on n:
---             res <- Peer.timestamp_ms()
---             status <<- "success"
---         par status <- Peer.timeout(rtt, msg)
---         if status! != "success":
---           res <<- err_value
---           dead_peers <<- n
---         Op.noop()
-        
---     join res[n_neighborhood]
---   <- res, dead_peers

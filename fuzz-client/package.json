@@ -20,7 +20,8 @@
   "scripts": {
     "start": "node -r ts-node/register src/index.ts",
     "compile-aqua": "aqua -i aqua -o src/_aqua/",
-    "watch-aqua": "chokidar \"**/*.aqua\" -c \"npm run compile-aqua\""
+    "watch-aqua": "chokidar \"**/*.aqua\" -c \"npm run compile-aqua\"",
+    "buildpush": "docker build -f docker/Dockerfile -t fluencelabs/anti-fuzz . && docker push fluencelabs/anti-fuzz"
   },
   "keywords": [
     "aqua",
