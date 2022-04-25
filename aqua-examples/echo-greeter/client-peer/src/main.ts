@@ -90,7 +90,7 @@ export async function main() {
     // setLogLevel('DEBUG');
 
     try {
-        await Fluence.start({ connectTo: krasnodar[2] });
+        await Fluence.start({ connectTo: krasnodar[5] });
         console.log(
             'created a fluence client %s with relay %s',
             Fluence.getStatus().peerId,
