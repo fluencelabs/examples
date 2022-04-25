@@ -15,16 +15,16 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@fluencelabs/aqua": "^0.6.0-272",
+        "@fluencelabs/aqua": "^0.7.1-300",
         "chokidar-cli": "^3.0.0",
-        "ts-node": "^10.2.1",
-        "typescript": "^4.4.2",
+        "ts-node": "^10.7.0",
+        "typescript": "^4.6.3",
         "@types/jest": "^27.0.3",
         "jest": "^27.4.0",
         "ts-jest": "^27.0.7"
     },
     "dependencies": {
-        "@fluencelabs/fluence": "^0.21.8",
+        "@fluencelabs/fluence": "^0.22.0",
         "@fluencelabs/fluence-network-environment": "^1.0.13"
     }
 }
