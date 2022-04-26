@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "@fluencelabs/aqua": "^0.7.1-300",
-        "@fluencelabs/fluence": "^0.22.0",
+        "@fluencelabs/fluence": "^0.23.0",
         "typescript": "^4.6.3"
     },
     "engines": {
