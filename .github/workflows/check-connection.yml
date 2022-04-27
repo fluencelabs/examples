@@ -64,7 +64,7 @@ jobs:
         with:
             node-version: 16
 
-      - run: npm install -g @fluencelabs/aqua@0.6.4-283
+      - run: npm install -g @fluencelabs/aqua@latest
 
       - name: "Check connection to network"
         run: |
