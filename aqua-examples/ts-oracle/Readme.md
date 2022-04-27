@@ -164,7 +164,7 @@ Alternatively, we can run the `ts_getter` functions just for the timestamps:
 aqua run \
     -i aqua \
     -a /dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf \
-    -f 'ts_getter("12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf", "ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9", 5, 10)'
+    -f 'ts_getter("12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf")'
 ```
 
 Which gives us just the timestamps, which wil be different for you:
