@@ -57,9 +57,10 @@ and deploy the service to a peer of your choice with the `aqua` cli tool:
 
 ```bash
 aqua remote deploy_service \
-     --addr /dns4/kras-06.fluence.dev/tcp/19001/wss/p2p/12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr \
+     --addr krasnodar-06 \
      --data-path configs/ts_oracle_deploy_cfg.json \
-     --service ts-oracle
+     --service ts-oracle \
+     --sk <your secret key>
 ```
 
 which results in:
@@ -161,7 +162,7 @@ Alternatively, we can run the `ts_getter` functions just for the timestamps:
 
 ```bash
 aqua run \
-    -i aqua-scripts \
+    -i aqua \
     -a /dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf \
     -f 'ts_getter("12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf", "ed657e45-0fe3-4d6c-b3a4-a2981b7cadb9", 5, 10)'
 ```
