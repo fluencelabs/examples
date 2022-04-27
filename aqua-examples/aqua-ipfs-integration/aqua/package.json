@@ -6,6 +6,7 @@
     "scripts": {
         "postinstall": "../service/scripts/build.sh",
         "compile-aqua": "aqua -m ../node_modules -i aqua -o src",
+        "prebuild": "../service/scripts/build.sh",
         "build": "npm run compile-aqua && tsc"
     },
     "keywords": [
