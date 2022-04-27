@@ -15,7 +15,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@fluencelabs/aqua": "^0.7.1-300",
+        "@fluencelabs/aqua": "^0.7.2-303",
         "@fluencelabs/aqua-lib": "^0.4.3",
         "chokidar-cli": "^3.0.0",
         "ts-node": "^10.6.0",
@@ -25,7 +25,7 @@
         "ts-jest": "^27.0.7"
     },
     "dependencies": {
-        "@fluencelabs/fluence": "^0.22.0",
+        "@fluencelabs/fluence": "^0.23.0",
         "@fluencelabs/fluence-network-environment": "^1.0.13"
     }
 }
