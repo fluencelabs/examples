@@ -165,7 +165,7 @@ Pick any of the peer ids from the listed peers to deploy your services. Let's sa
 ```bash
 aqua remote deploy_service  \
      --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
-     --data-path configs/ts_oracle_deploy_cfg.json \
+     --config-path configs/ts_oracle_deploy_cfg.json \
      --service price-getter
 ```
 
@@ -193,7 +193,7 @@ and to deploy the mean service:
 ```bash
 aqua remote deploy_service  \
      --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
-     --data-path configs/ts_oracle_deploy_cfg.json \
+     --config-path configs/ts_oracle_deploy_cfg.json \
      --service mean-service
 ```
 

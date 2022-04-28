@@ -126,7 +126,7 @@ export const useRemoveService = () => {
     if (!isConnected || serviceId === null) {
       return;
     }
-    
+
     await remove_service(relay!, serviceId, {
       ttl: 10000,
     });

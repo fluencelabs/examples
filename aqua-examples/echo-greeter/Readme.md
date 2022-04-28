@@ -116,7 +116,7 @@ Any one of the peers will do and we can deploy our services with the `aqua` cli 
 # deploy greeting service
 aqua remote deploy_service \
      --addr /dns4/kras-03.fluence.dev/tcp/19001/wss/p2p/12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE \
-     --data-path configs/echo_greeter_deploy_cfg.json \
+     --config-path configs/echo_greeter_deploy_cfg.json \
      --service echo-greeter
 ```
 
@@ -141,7 +141,7 @@ and
 # deploy echo service
 aqua remote deploy_service \
      --addr /dns4/kras-03.fluence.dev/tcp/19001/wss/p2p/12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE \
-     --data-path configs/echo_greeter_deploy_cfg.json \
+     --config-path configs/echo_greeter_deploy_cfg.json \
      --service echo-service
 ```
 

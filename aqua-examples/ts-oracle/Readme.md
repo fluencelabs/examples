@@ -58,7 +58,7 @@ and deploy the service to a peer of your choice with the `aqua` cli tool:
 ```bash
 aqua remote deploy_service \
      --addr krasnodar-06 \
-     --data-path configs/ts_oracle_deploy_cfg.json \
+     --config-path configs/ts_oracle_deploy_cfg.json \
      --service ts-oracle \
      --sk <your secret key>
 ```

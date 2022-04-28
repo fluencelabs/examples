@@ -1,6 +1,5 @@
 {
   "ts-oracle": {
-    "name": "ts-oracle",
     "modules": [
       {
         "name": "ts_oracle",
