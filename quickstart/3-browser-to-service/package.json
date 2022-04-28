@@ -51,7 +51,7 @@
         ]
     },
     "devDependencies": {
-        "@fluencelabs/aqua": "^0.7.2-303",
+        "@fluencelabs/aqua": "^0.7.2-304",
         "@fluencelabs/aqua-lib": "^0.4.3",
         "@types/jest-environment-puppeteer": "^4.4.1",
         "@types/puppeteer": "^5.4.4",
