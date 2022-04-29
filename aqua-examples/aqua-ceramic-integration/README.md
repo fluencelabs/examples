@@ -242,28 +242,28 @@ aqua remote deploy_service \
      --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
      --config-path configs/ceramic_adapter_deploy_cfg.json \
      --service ceramic-service
+     --sk <your secret key>
 ```
 
 Which gives us our service id:
 
 ```bash
-Your peerId: 12D3KooWRhFutxYqaX9MEhR1vB98xSwjcerfR4p3MEMmbFwkeJJQ
-"Going to upload a module..."
-2022.02.07 10:27:34 [INFO] created ipfs client to /ip4/134.209.186.43/tcp/5004
-2022.02.07 10:27:34 [INFO] connected to ipfs
-2022.02.07 10:27:37 [INFO] file uploaded
-"Going to upload a module..."
-2022.02.07 10:27:37 [INFO] created ipfs client to /ip4/134.209.186.43/tcp/5004
-2022.02.07 10:27:38 [INFO] connected to ipfs
-2022.02.07 10:27:41 [INFO] file uploaded
-"Now time to make a blueprint..."
-"Blueprint id:"
-"3ad65d83d277d3628ba930dcf65c5d71b53b0fc2af5815d4c727d53a8acbcefd"
-"And your service id is:"
-"39a67931-bca1-41b6-b64e-f8a5e68ac328"     # <-- this is different for you
+Going to upload a module...
+2022.04.29 12:03:55 [ERROR] created ipfs client to /ip4/134.209.186.43/tcp/5004
+2022.04.29 12:03:55 [ERROR] connected to ipfs
+2022.04.29 12:03:55 [ERROR] file uploaded
+Going to upload a module...
+2022.04.29 12:03:57 [ERROR] created ipfs client to /ip4/134.209.186.43/tcp/5004
+2022.04.29 12:03:57 [ERROR] connected to ipfs
+2022.04.29 12:03:57 [ERROR] file uploaded
+Now time to make a blueprint...
+Blueprint id:
+9eda8608af7fdb304b1cbbdd875df3a5a08616bbe9847e74454e1b217c7b4fd4
+And your service id is:
+"e9fbfb09-c8b8-447a-b405-5de579b8db6c" # <-- this is different for you
 ```
 
-With our modules deployed and linked into service `39a67931-bca1-41b6-b64e-f8a5e68ac328`, we are now ready to utilize Ceramic streams from the Fluence network with Aqua.
+With our modules deployed and linked into service `e9fbfb09-c8b8-447a-b405-5de579b8db6c`, we are now ready to utilize Ceramic streams from the Fluence network with Aqua.
 
 ## Using the Ceramic Adapter With Aqua
 
@@ -321,7 +321,7 @@ We continue to use `aqua` cli to run our Aqua scripts.  First, let's run our sim
 ```bash
 aqua run -i aqua \
    --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
-    -f'create(arg, "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "39a67931-bca1-41b6-b64e-f8a5e68ac328")' \
+    -f'create(arg, "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "e9fbfb09-c8b8-447a-b405-5de579b8db6c")' \
     -d '{"arg": "{\"foo\":\"bar\"}"
     }'
 ```
@@ -338,7 +338,7 @@ Now, we run the same functionality but with the `CeramicResult` as the return va
 ```bash
 aqua run -i aqua \
    --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
-    -f'create_obj(arg, "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "39a67931-bca1-41b6-b64e-f8a5e68ac328")' \
+    -f'create_obj(arg, "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "e9fbfb09-c8b8-447a-b405-5de579b8db6c")' \
     -d '{"arg": "{\"foo\":\"bar\"}"
     }'
 ```
@@ -359,7 +359,7 @@ This allows us to access members with the dot notation, e.g, CeramicResultObj.st
 ```bash
 aqua run -i aqua \
    --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
-    -f'roundtrip(arg, arg_2, "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "39a67931-bca1-41b6-b64e-f8a5e68ac328")' \
+    -f'roundtrip(arg, arg_2, "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "e9fbfb09-c8b8-447a-b405-5de579b8db6c")' \
     -d '{"arg": "{\"foo\":\"bar open\"}", "arg_2":"{\"foo\":\"bar closed\"}"}'
 ```
 
