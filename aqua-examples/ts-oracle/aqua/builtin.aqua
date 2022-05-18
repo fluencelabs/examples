@@ -167,7 +167,7 @@ service Dist("dist"):
     -- Constructs a ModuleConfig structure
     -- Arguments:
     --  module_name        - import name of the module
-    --  mem_pages_count    - Maximum memory size accessible by a module in Wasm pages (64 Kb)
+    --  max_heap_size    - Maximum memory size accessible by a module in Wasm pages (64 Kb)
     --  logger_enabled     - Defines whether Marine should provide a special host log_utf8_string function for this module
     --  preopened_files    - Files available for this module. Module can access only files from this list
     --  envs               - environment variables available for this module
@@ -178,8 +178,8 @@ service Dist("dist"):
     --                       call /usr/bin/curl binary as function 'curl'
     --  logging_mask       - Binary mask to enable & disable logging targets. Targets are
     --                       configured in WasmLoggerBuilder::with_target_map
-    --  mem_pages_count    - Maximum memory size accessible by a module in Wasm pages (64 Kb)
-    make_module_config(name: string, mem_pages_count: ?u32, logger_enabled: ?bool, preopened_files: ?[]string, envs: ?Pairs, mapped_dirs: ?Pairs, mounted_binaries: ?Pairs, logging_mask: ?i32) -> ModuleConfig
+    --  max_heap_size    - Maximum memory size accessible by a module in Wasm pages (64 Kb)
+    make_module_config(name: string, max_heap_size: ?u32, logger_enabled: ?bool, preopened_files: ?[]string, envs: ?Pairs, mapped_dirs: ?Pairs, mounted_binaries: ?Pairs, logging_mask: ?i32) -> ModuleConfig
 
     -- Constructs a ModuleConfig structure
     -- Arguments:
