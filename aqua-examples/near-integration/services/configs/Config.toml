@@ -2,12 +2,12 @@ modules_dir = "artifacts"
 
 [[module]]
 name = "curl_adapter"
-mem_pages_count = 10
+max_heap_size = "100 KiB"
 logger_enabled = true
 [module.mounted_binaries]
 curl = "/usr/bin/curl"
 
 [[module]]
 name = "near_rpc_services"
-mem_pages_count = 10
+max_heap_size = "10 KiB"
 logger_enabled = true
