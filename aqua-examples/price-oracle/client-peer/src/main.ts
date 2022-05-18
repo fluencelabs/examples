@@ -56,7 +56,7 @@ export async function main() {
     // setLogLevel('DEBUG');
     try {
         // create the Fluence client for the Krasnodar testnet
-        await Fluence.start({ connectTo: krasnodar[5] });
+        await Fluence.start({ connectTo: krasnodar[6] });
         console.log(
             'Created a fluence client with peer id %s and relay id %s',
             Fluence.getStatus().peerId,
