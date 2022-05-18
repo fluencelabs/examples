@@ -145,7 +145,7 @@ modules_dir = "artifacts"   # <-- that's where our Wasm modules are
 
 [[module]]
 name = "curl_adapter"       # <-- for the curl adapter which we need for the http adapter
-mem_pages_count = 100
+max_heap_size = "100 KiB"
 logger_enabled = true
 
 [module.mounted_binaries]
@@ -154,7 +154,7 @@ curl = "/usr/bin/curl"      # <-- path to curl on LOCAL machine
 
 [[module]]
 name = "ceramic_adapter_custom"    <-- for the ceramic adapter we are creating
-mem_pages_count = 50
+max_heap_size = "50 KiB"
 logger_enabled = true
 
 [module.mounted_binaries]

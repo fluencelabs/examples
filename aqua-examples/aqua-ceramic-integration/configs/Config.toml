@@ -2,7 +2,7 @@ modules_dir = "artifacts"
 
 [[module]]
 name = "curl_adapter"
-mem_pages_count = 100
+max_heap_size = "100 KiB"
 logger_enabled = true
 
 [module.mounted_binaries]
@@ -10,7 +10,7 @@ curl = "/usr/bin/curl"
 
 [[module]]
 name = "ceramic_adapter_custom"
-mem_pages_count = 50
+max_heap_size = "50 Kib"
 logger_enabled = true
 
 [module.mounted_binaries]

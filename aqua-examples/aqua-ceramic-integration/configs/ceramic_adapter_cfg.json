@@ -3,6 +3,6 @@
   "mountedBinaries": {
     "ceramic": "/usr/bin/ceramic"
   },
-  "mem_page_count": 100,
+  "max_heap_size": "100 KiB",
   "logger_enabled": true
 }
