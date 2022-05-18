@@ -52,7 +52,7 @@
     },
     "devDependencies": {
         "@types/serve-handler": "^6.1.1",
-        "@fluencelabs/aqua": "^0.7.2-306",
+        "@fluencelabs/aqua": "^0.7.2-311",
         "@types/jest-environment-puppeteer": "^4.4.1",
         "@types/puppeteer": "^5.4.4",
         "chokidar-cli": "^2.1.0",
