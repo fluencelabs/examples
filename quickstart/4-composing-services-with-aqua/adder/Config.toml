@@ -1,6 +1,6 @@
 modules_dir = "artifacts/"
 
 [[module]]
-    name = "adder"
-    mem_pages_count = 1
-    logger_enabled = true
+name = "adder"
+max_heap_size = "10 KiB"
+logger_enabled = true
