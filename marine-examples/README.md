@@ -76,7 +76,7 @@ modules_dir = "artifacts/"  # <- 1
 
 [[module]]
     name = "greeting"       # <- 2 
-    mem_pages_count = 1     # <- 3
+    max_heap_size = "10 KiB"     # <- 3
     logger_enabled = false  # <- 4
 ```
 
@@ -146,12 +146,12 @@ modules_dir = "artifacts/"
 
 [[module]]
     name = "records_effector"
-    mem_pages_count = 1
+    max_heap_size = "10 KiB"
     logger_enabled = true
 
 [[module]]
     name = "records_pure"
-    mem_pages_count = 1
+    max_heap_size = "10 KiB"
     logger_enabled = true
 ```
 
@@ -208,7 +208,7 @@ modules_dir = "artifacts/"
 
 [[module]]                       <- 1
     name = "sqlite3"
-    mem_pages_count = 100
+    max_heap_size = "100 KiB"
     logger_enabled = false
 
     [module.wasi]
@@ -217,7 +217,7 @@ modules_dir = "artifacts/"
 
 [[module]]                       <- 2
     name = "sqlite_test"
-    mem_pages_count = 1
+    max_heap_size = "10 KiB"
     logger_enabled = false
 
     [module.wasi]

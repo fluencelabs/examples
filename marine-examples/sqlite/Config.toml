@@ -1,19 +1,19 @@
 modules_dir = "artifacts/"
 
 [[module]]
-    name = "sqlite3"
-    mem_pages_count = 100
-    logger_enabled = false
+name = "sqlite3"
+max_heap_size = "100  KiB"
+logger_enabled = false
 
-    [module.wasi]
-    preopened_files = ["/tmp"]
-    mapped_dirs = { "tmp" = "/tmp" }
+[module.wasi]
+preopened_files = ["/tmp"]
+mapped_dirs = { "tmp" = "/tmp" }
 
 [[module]]
-    name = "sqlite_test"
-    mem_pages_count = 1
-    logger_enabled = false
+name = "sqlite_test"
+max_heap_size = "10  KiB"
+logger_enabled = false
 
-    [module.wasi]
-    preopened_files = ["/tmp"]
-    mapped_dirs = { "tmp" = "/tmp" }
+[module.wasi]
+preopened_files = ["/tmp"]
+mapped_dirs = { "tmp" = "/tmp" }
