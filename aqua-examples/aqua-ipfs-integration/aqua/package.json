@@ -31,7 +31,7 @@
         "uint8arrays": "^2.1.5"
     },
     "devDependencies": {
-        "@fluencelabs/aqua": "^0.7.2-311",
+        "@fluencelabs/aqua": "^0.7.2-314",
         "@fluencelabs/aqua-lib": "^0.5.1",
         "typescript": "^4.6.3"
     }
