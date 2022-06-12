@@ -1,0 +1,11 @@
+{
+  "multi-provider-query": {
+    "name": "multi-provider-query",
+    "modules": [
+      {
+        "name": "multi-provider-query",
+        "path": "./artifacts/multi_provider_query.wasm"
+      }
+    ]
+  }
+}
