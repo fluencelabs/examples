@@ -161,10 +161,10 @@ fn get_balance(provider: ProviderInfo, account: String, block_height: String) ->
     if response.error.is_none() {
         let raw_response = response.result.unwrap();
         let balance = u128::from_str_radix(raw_response.trim_start_matches("0x"), 16);
-
         let result = match balance {
             Ok(r) => {
-                let j_res = serde_json::json!({ "balance": r });
+                let balance = format!("{}", r);
+                let j_res = serde_json::json!({ "balance": balance });
                 EVMResult {
                     stdout: j_res.to_string(),
                     stderr: "".to_owned(),
