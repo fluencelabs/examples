@@ -1,0 +1,47 @@
+data EVMResult:
+  stdout: string
+  stderr: string
+
+
+data ProviderInfo:
+  url: string
+  api_key: string
+  name: string
+
+data Providers:
+    urls: []ProviderInfo
+
+service MyOp("op"):
+  identity(x:string) -> string
+
+service MultiProviderQuery("service-id"):
+  get_balance(provider: ProviderInfo, account: string, block_height: string) -> EVMResult
+  get_block_number(provider: ProviderInfo) -> EVMResult
+
+
+-- service MultiProviderUtilities:
+
+
+
+func get_block_height(provider: ProviderInfo, service_id: string, node: string) -> EVMResult:
+
+    on node:
+        MultiProviderQuery service_id
+          res <- MultiProviderQuery.get_block_number(provider)
+    <- res
+
+
+func get_block_heights(providers: Providers, service_id: string, node: string) -> []EVMResult:
+    block_heights: *EVMResult
+    on node:
+        MultiProviderQuery service_id
+        for provider <- providers.urls par:
+            -- res <- MultiProviderQuery.get_block_number(url)
+            -- block_heights <- MyOp.identity(res)
+            block_heights <- MultiProviderQuery.get_block_number(provider)
+    -- join block_heights[1]
+    <- block_heights
+
+
+func hello() -> string:
+  <- "hello"

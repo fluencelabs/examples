@@ -187,6 +187,12 @@ fn get_balance(provider: ProviderInfo, account: String, block_height: String) ->
     }
 }
 
+
+fn ping() -> String {
+    format!("pong")
+}
+}
+
 #[marine]
 #[link(wasm_import_module = "curl_adapter")]
 extern "C" {

@@ -11,7 +11,7 @@
       {
         "name": "multi-provider-query",
         "path": "./artifacts/multi_provider_query.wasm",
-        "max_heap_size": "32 MiB",
+        "max_heap_size": "64 MiB",
         "logger_enabled": [true]
       }
     ]
