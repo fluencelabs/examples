@@ -1,0 +1,42 @@
+-- import "@fluencelabs/aqua-lib/builtin.aqua"
+
+-- func n_urls(providers:Providers) -> i64:
+--   res: *string
+--   for provider <- providers.urls:
+--    res <<- provider.url
+--  n <- Op.array_length(res)
+--  <- n
+
+data EVMResult:
+  stdout: string
+  stderr: string
+
+data ProviderInfo:
+  url: string
+  api_key: string
+  name: string
+
+data Providers:
+    urls: []ProviderInfo
+
+service MyOp("op"):
+  identity(x:string) -> string
+  array_length(providers: []ProviderInfo) -> i64
+
+service MultiProviderQuery("service-id"):
+  get_balance(provider: ProviderInfo, account: string, block_height: string) -> EVMResult
+  get_block_number(provider: ProviderInfo) -> EVMResult
+
+func get_block_heights(providers: Providers, service_id: string, node: string) -> []EVMResult, i64:
+    block_heights: *EVMResult
+    -- n <- n_urls(providers)
+    n <- MyOp.array_length(providers.urls)
+
+    if n > 0:
+      on node:
+        MultiProviderQuery service_id
+        for provider <- providers.urls par:
+          block_heights <- MultiProviderQuery.get_block_number(provider)
+      join block_heights[n-1]
+
+    <- block_heights, n
