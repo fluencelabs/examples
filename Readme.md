@@ -14,7 +14,7 @@ If you encounter a problem, please post an Issue or open a PR. If you want to co
 * The [IPFS Integration](./aqua-examples/e/aqua-ipfs-integration) shows how to use the [aqua-ipfs](https://github.com/fluencelabs/aqua-ipfs) library to deploy single-module Wasm services to a Fluence node from a IPFS sidecar
   * Fluence JS, Aqua
 
-* The [Near Integration](./aqua-examples/near-integration/) provides integration xexamples for the Near API JS and RPC API. We use Fluence JS to implement a minimal Near signing service and wrap a few select RPC examples into a Wasm module.
+* The [Near Integration](./aqua-examples/near-integration/) provides integration examples for the Near API JS and RPC API. We use Fluence JS to implement a minimal Near signing service and wrap a few select RPC examples into a Wasm module.
   * Fluence JS, Rust Wasm, Aqua
 
 * The [Timestamp Oracle](./aqua-examples/ts-oracle) illustrates how to use builtin services to  acquire timestamps from a node's Kademlia neighborhood and then process those timesstamps using Wasm services into point or range estimates.
