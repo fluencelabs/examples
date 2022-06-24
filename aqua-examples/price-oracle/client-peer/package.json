@@ -41,7 +41,7 @@
     },
     "homepage": "git+https://github.com/fluencelabs/examples/aqua-examples/price-oracle#readme",
     "devDependencies": {
-        "@fluencelabs/aqua": "^0.7.2-314",
+        "@fluencelabs/aqua": "^0.15.0",
         "@fluencelabs/aqua-lib": "^0.5.2",
         "@types/jest": "^27.0.3",
         "chokidar-cli": "^3.0.0",
