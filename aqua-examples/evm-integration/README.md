@@ -356,7 +356,7 @@ And your service id is:
 "84d4d018-0c13-4d6d-8c11-599a3919911c"
 ```
 
-If you deloy the services, you're service ids are different, of course. Also, feel free to use different peers. Just with your keys, make sure you keep the (peer id, service id) in a safe place for future use. Now that we have our services deployed, it's time to create our Aqua script.
+If you deploy the services, you're service ids are different, of course. Also, feel free to use different peers. Just with your keys, make sure you keep the (peer id, service id) in a safe place for future use. Now that we have our services deployed, it's time to create our Aqua script.
 
 ### Aqua
 
@@ -588,7 +588,7 @@ func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress
   <- oracle[0]
 ```
 
-In essence, we are building on our priot work and piping the array of EVMResults in the SimpleQuorum service to arrive at the oracle. Again, with `aqua cli`:
+In essence, we are building on our prior work and piping the array of EVMResults in the SimpleQuorum service to arrive at the oracle. Again, with `aqua cli`:
 
 ```bash
 aqua run \
@@ -663,6 +663,7 @@ aqua run \
                    {"peer_id":"12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA", "service_id":"3c321110-b069-42c6-b5e0-aed73d976a60"},
                    {"peer_id":"12D3KooWMMGdfVEJ1rWe1nH1nehYDzNEHhg5ogdfiGk88AupCMnf", "service_id":"84d4d018-0c13-4d6d-8c11-599a3919911c"}],
           "arg3": {"peer_id":"12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA", "service_id":"b348351e-485c-4424-b0a9-3e4304ce9431"}}'
+
 [
 {
   "err_str": "",
@@ -672,7 +673,6 @@ aqua run \
 },
 true
 ]
-
 ```
 
 In this case, all response values are of the same magnitude, which is encouraging, and we have a quorum against the 0.66 threshold value.
@@ -684,6 +684,7 @@ We developed a model to decentralize EVM hosting providers for our DApps and imp
 Along our journey, we pretty much touched on every possible chokepoint and discussed what a feasible approach to a quorum might look like. However, we made a couple significant omissions:
 
 * we trusted the Fluence nodes, which is not necessarily the right course of action. If you don't trust the Fluence nodes, you can expand on our work by running each providers set across multiple nodes end then compare the results sets across nodes, for example. We are very much looking forward to your PR!
-* we are satisfied with a probabilistic true-false quorum number, which may be enough for a lot of use cases. However, we can expand our analysis to introduce learning over response (failure) attributes to the process to develop trust weights for each provider. That might allow us to use smaller subsets of providers for each call and run "test" requests outside of our workflow to update provider trust weights and then just pick the most trusted providers at "run time." Ditto for Fluence providers. Again, we are looking forward to your PRs.
+* we are satisfied with a probabilistic true-false quorum, which may be enough for a lot of use cases. However, we can expand our analysis to introduce learning over response (failure) attributes to the process to develop trust weights for each provider. That might allow us to use smaller subsets of providers for each call and run "test" requests outside of our workflow to update provider trust weights and then just pick the most trusted providers at "run time." Ditto for Fluence providers. Again, we are looking forward to your PRs.
+* we only used the Ethereum mainnet options for the provider requests. Please run it with other hosted blockchain solutions, such as Polygon PoS, and let us know if things don't work out in the Issues.
 
 Thank you for making it all the way to end and we hope that this little tutorial not only helped you learn a bit more about Fluence and Aqua but also provided a reminder on just how vigilant DApp developers need to be to be deserving of the *D*.
