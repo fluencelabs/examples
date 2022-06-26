@@ -12,3 +12,9 @@ curl = "/usr/bin/curl"
 name = "multi_provider_query"
 max_heap_size = "10 KiB"
 logger_enabled = true
+
+
+[[module]]
+name = "simple_quorum"
+max_heap_size = "10 KiB"
+logger_enabled = true
