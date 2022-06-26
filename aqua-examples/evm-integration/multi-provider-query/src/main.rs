@@ -25,23 +25,21 @@ module_manifest!();
 
 fn main() {}
 
+fn get_nonce() -> u64 {
+    NONCE_COUNTER.fetch_add(1, Ordering::SeqCst) as u64
+}
+
 #[marine]
 pub struct ProviderInfo {
     pub url: String,
-    pub api_key: String,
     pub name: String,
 }
 
 #[marine]
 pub struct EVMResult {
+    pub provider: String,
     pub stdout: String,
     pub stderr: String,
-}
-
-// fn url_maker(url:String, )
-
-fn get_nonce() -> u64 {
-    NONCE_COUNTER.fetch_add(1, Ordering::SeqCst) as u64
 }
 
 #[derive(Serialize, Deserialize)]
@@ -76,13 +74,15 @@ impl RpcData {
     }
 }
 
-fn get_curl_cmd(url: String, data: String) -> Vec<String> {
+fn curl_cmd_builder(url: String, data: String) -> Vec<String> {
     let curl_cmd: Vec<String> = vec![
         url,
         "-X".to_string(),
         "POST".to_string(),
         "-H".to_string(),
         "Accept: application/json".to_string(),
+        "-H".to_string(),
+        "Content-Type: application/json".to_string(),
         "-d".to_string(),
         data,
     ];
@@ -93,8 +93,18 @@ fn get_curl_cmd(url: String, data: String) -> Vec<String> {
 fn get_curl_response(curl_cmd: Vec<String>) -> RpcResponse {
     let response = curl_request(curl_cmd);
     let response = String::from_utf8(response.stdout).unwrap();
-    let response: RpcResponse = serde_json::from_str(&response).unwrap();
-    response
+    let response: Result<RpcResponse, _> = serde_json::from_str(&response);
+    match response {
+        Ok(r) => r,
+        Err(e) => RpcResponse {
+            jsonrpc: "".to_owned(),
+            error: Some(RpcResponseError {
+                code: -1,
+                message: e.to_string(),
+            }),
+            result: None,
+        },
+    }
 }
 
 #[marine]
@@ -107,7 +117,7 @@ fn get_block_number(provider: ProviderInfo) -> EVMResult {
     let data = RpcData::new(method.to_owned(), params);
     let data = serde_json::to_string(&data).unwrap();
 
-    let curl_cmd = get_curl_cmd(url, data);
+    let curl_cmd = curl_cmd_builder(url, data);
     let response = get_curl_response(curl_cmd);
 
     if response.error.is_none() {
@@ -116,8 +126,9 @@ fn get_block_number(provider: ProviderInfo) -> EVMResult {
 
         let result = match block_height {
             Ok(r) => {
-                let j_res = serde_json::json!({ "block-heigh": r });
+                let j_res = serde_json::json!({ "block-height": r });
                 EVMResult {
+                    provider: provider.name,
                     stdout: j_res.to_string(),
                     stderr: "".to_owned(),
                 }
@@ -125,6 +136,7 @@ fn get_block_number(provider: ProviderInfo) -> EVMResult {
             Err(e) => {
                 let err = format!("unable to convert {} to u64 with error {}", raw_response, e);
                 EVMResult {
+                    provider: provider.name,
                     stdout: "".to_owned(),
                     stderr: err,
                 }
@@ -134,63 +146,10 @@ fn get_block_number(provider: ProviderInfo) -> EVMResult {
     }
 
     EVMResult {
+        provider: provider.name,
         stdout: "".to_owned(),
         stderr: serde_json::to_string(&response.error).unwrap(),
     }
-}
-
-// see https://eth.wiki/json-rpc/API#eth_getBalance
-#[marine]
-fn get_balance(provider: ProviderInfo, account: String, block_height: String) -> EVMResult {
-    let method = "eth_getBalance";
-    let mut params: Vec<String> = vec![account];
-
-    if block_height.len() > 0 {
-        params.push(block_height)
-    } else {
-        params.push("latest".to_string())
-    }
-    let url = provider.url;
-
-    let data = RpcData::new(method.to_owned(), params);
-    let data = serde_json::to_string(&data).unwrap();
-
-    let curl_cmd = get_curl_cmd(url, data);
-    let response = get_curl_response(curl_cmd);
-
-    if response.error.is_none() {
-        let raw_response = response.result.unwrap();
-        let balance = u128::from_str_radix(raw_response.trim_start_matches("0x"), 16);
-        let result = match balance {
-            Ok(r) => {
-                let balance = format!("{}", r);
-                let j_res = serde_json::json!({ "balance": balance });
-                EVMResult {
-                    stdout: j_res.to_string(),
-                    stderr: "".to_owned(),
-                }
-            }
-            Err(e) => {
-                let err = format!("unable to convert {} to u64 with error {}", raw_response, e);
-                EVMResult {
-                    stdout: "".to_owned(),
-                    stderr: err,
-                }
-            }
-        };
-        return result;
-    };
-
-    EVMResult {
-        stdout: "".to_owned(),
-        stderr: serde_json::to_string(&response.error).unwrap(),
-    }
-}
-
-
-fn ping() -> String {
-    format!("pong")
-}
 }
 
 #[marine]
