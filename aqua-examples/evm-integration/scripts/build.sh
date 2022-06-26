@@ -14,4 +14,9 @@ cargo update --aggressive
 marine build --release
 cp target/wasm32-wasi/release/multi_provider_query.wasm ../artifacts/
 
+cd ../simple-quorum
+cargo update --aggressive
+marine build --release
+cp target/wasm32-wasi/release/simple_quorum.wasm ../artifacts/
+
 cd ..
