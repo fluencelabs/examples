@@ -6,7 +6,7 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
-            
+
         strategy:
             matrix:
                 node-version: [16.x]
@@ -28,14 +28,14 @@ jobs:
             - name: Install Rust toolchain with wasm32-unknown-unknown
               uses: actions-rs/toolchain@v1
               with:
-                    toolchain: nightly-2021-07-13
+                    toolchain: nightly-2022-06-27
                     target: wasm32-unknown-unknown
                     profile: minimal
                     override: true
             - name: Install wasm32-wasi
               uses: actions-rs/toolchain@v1
               with:
-                toolchain: nightly-2021-07-13
+                toolchain: nightly-2022-06-27
                 target: wasm32-wasi
                 profile: minimal
 
@@ -56,9 +56,9 @@ jobs:
 
             ### === Rust tests ===
             - name: run tests
-              working-directory: 
+              working-directory:
                 ./aqua-examples/aqua-ipfs-integration
-              env: 
+              env:
                   CI: true
               run: |
                 npm i
