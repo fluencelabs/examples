@@ -84,6 +84,4 @@ jobs:
             echo "Expected $SERVICE_ID, got $RESULT_SERVICE_ID"
             exit 1
           fi
-
-          aqua remove --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= --id "$SERVICE_ID"
         working-directory: marine-examples/call_parameters
