@@ -46,7 +46,7 @@ jobs:
         with:
           node-version: 16
 
-      - run: npm install -g @fluencelabs/aqua@0.6.4-283
+      - run: npm install -g @fluencelabs/aqua@0.7.4-320
 
       - name: "Wait for aqua-ipfs service to start"
         run: |
