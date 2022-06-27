@@ -85,5 +85,5 @@ jobs:
             exit 1
           fi
 
-           remove --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= --id "$SERVICE_ID"
+          aqua remove --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= --id "$SERVICE_ID"
         working-directory: marine-examples/call_parameters
