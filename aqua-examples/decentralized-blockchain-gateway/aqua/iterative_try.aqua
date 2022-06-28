@@ -1,0 +1,25 @@
+data FunctionAddress:
+  peer_id: string
+  service_id: string
+
+func get_service_id_no_try(node: string, services: []FunctionAddress) -> string:
+  res: *string
+  for service <- services:
+    if service.peer_id == node:
+      res <<- service.service_id
+  <- res[0]
+
+func get_service_id_try(node: string, services: []FunctionAddress) -> string:
+  res: *string
+  for service <- services try:
+    if service.peer_id == node:
+      res <<- service.service_id
+  <- res[0]
+
+func get_service_id_par(node: string, services: []FunctionAddress) -> string:
+  res: *string
+  for service <- services par:
+    if service.peer_id == node:
+      res <<- service.service_id
+  <- res[0]
+   

@@ -1,0 +1,73 @@
+data FunctionAddress:
+  peer_id: string
+  service_id: string
+
+data Provider:
+  name: string
+  url: string
+
+data EVMResult:
+  stdout: string
+  stderr: string
+
+service MyOp("op"):
+  -- identity(x:string) -> string
+  array_length(providers: []Provider) -> i64
+  -- array_length(nodes: []string) -> i64
+
+service MultiProviderQuery("service-id"):
+  get_block_number(provider: Provider) -> EVMResult   
+
+func get_service_id_no_try(node: string, services: []FunctionAddress) -> string:
+  res: *string
+  for service <- services:
+    if service.peer_id == node:
+      res <<- service.service_id
+  <- res[0]
+
+--func custom_result(out_string: string, err_string: string) -> EVMResult:
+--  r: *EVMResult
+--  r.stdout <- out_string
+--  r.stderr <- err_string
+--  <- r
+
+--func custom_num(number: i64) -> i64:
+--  num: *i64
+--  num <<- number
+--  <- num[0]
+
+
+func get_service_id_try(node: string, services: []FunctionAddress) -> string:
+  res: *string
+  for service <- services try:
+    if service.peer_id == node:
+      res <<- service.service_id
+  <- res[0]
+
+func get_service_id_par(node: string, services: []FunctionAddress) -> string:
+  res: *string
+  for service <- services par:
+    if service.peer_id == node:
+      res <<- service.service_id
+  <- res[0]
+
+-- func get_block_number(providers: []Provider, nodes: []string, services: []FunctionAddress) -> []string:
+func get_block_number(providers: []Provider, nodes: []string, services: []FunctionAddress) -> []EVMResult:
+  -- result: *string
+  result: *EVMResult
+  for node <- nodes par:
+    for provider <- providers par:
+      on node:
+        service_id <- get_service_id_no_try(node, services)
+        MultiProviderQuery service_id
+        try:
+        -- res <- get_block_number(provider.url)
+        -- result <<- (provider.name, node, res)
+          result <- MultiProviderQuery.get_block_number(provider)
+        -- catch e:
+           -- result <- custom_result(e)
+  <- result
+
+
+
+   

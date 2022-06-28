@@ -1,0 +1,13 @@
+aqua remote deploy_service \
+  --addr krasnodar-05 \
+  --config-path configs/deployment_cfg.json \
+  --service multi-provider-query \
+  --sk Bl/RLGRT4SafZyzYVXK4QufvRKTTVn+3kpNsAzDeEQU= \
+  --log-level off
+Going to upload a module...
+Going to upload a module...
+Now time to make a blueprint...
+Blueprint id:
+2d09fa0c29ccf8e00bac853554e9edbbd94ac13efbb5349982449c95381f76c4
+And your service id is:
+"ba0da956-294e-496f-bf47-893ab3224b13"
