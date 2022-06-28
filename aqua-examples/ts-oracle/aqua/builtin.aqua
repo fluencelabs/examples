@@ -171,10 +171,10 @@ service Dist("dist"):
     --  logger_enabled     - Defines whether Marine should provide a special host log_utf8_string function for this module
     --  preopened_files    - Files available for this module. Module can access only files from this list
     --  envs               - environment variables available for this module
-    --  mapped_dirs        - Directory mapping, e.g. ["/sites", "./web/data"] so all
+    --  mapped_dirs        - Directory mapping, e.g. [["/sites", "./web/data"]] so all
     --                       reads & writes to /sites will actually to go ./web/data
     --  mounted_binaries   - Mapping of host binaries available to call from module,
-    --                       e.g. ["curl", "/usr/bin/curl"] will allow module to
+    --                       e.g. [["curl", "/usr/bin/curl"]] will allow module to
     --                       call /usr/bin/curl binary as function 'curl'
     --  logging_mask       - Binary mask to enable & disable logging targets. Targets are
     --                       configured in WasmLoggerBuilder::with_target_map
