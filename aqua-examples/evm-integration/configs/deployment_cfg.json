@@ -15,5 +15,15 @@
         "logger_enabled": true
       }
     ]
+  },
+  "simple-quorum": {
+    "modules": [
+      {
+        "name": "simple-quorum",
+        "path": "./artifacts/simple_quorum.wasm",
+        "max_heap_size": "1 MiB",
+        "logger_enabled": true
+      }
+    ]
   }
 }
