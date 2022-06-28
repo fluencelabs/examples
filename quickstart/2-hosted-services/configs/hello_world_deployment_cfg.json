@@ -4,7 +4,7 @@
       {
         "name": "hello_world",
         "path": "./artifacts/hello_world.wasm",
-        "logger_enabled": [true]
+        "logger_enabled": true
       }
     ]
   }

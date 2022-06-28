@@ -4,7 +4,7 @@
       {
         "name": "ts_oracle",
         "path": "./artifacts/ts_oracle.wasm",
-        "logger_enabled": [true]
+        "logger_enabled": true
       }
     ]
   }

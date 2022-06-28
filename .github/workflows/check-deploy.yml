@@ -46,7 +46,7 @@ jobs:
         with:
           node-version: 16
 
-      - run: npm install -g @fluencelabs/aqua@0.6.4-283
+      - run: npm install -g @fluencelabs/aqua@0.7.4-320
 
       - name: "Wait for aqua-ipfs service to start"
         run: |
@@ -66,26 +66,22 @@ jobs:
         run: |
           set -o errexit -o nounset -o pipefail
 
-          set -x
           NODE="/ip4/127.0.0.1/tcp/4310/ws/p2p/12D3KooWKEprYXUXqoV5xSBeyqrWLpQLLH4PXfvVkDJtmcqmh5V3"
           SERVICE_ID=`./deploy.sh $NODE`
           INPUT=$GITHUB_WORKSPACE/.github/deploy.aqua
 
-          RESULT=$(aqua run --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'call(service_id)' -d '{"service_id": "'$SERVICE_ID'"}' --input $INPUT)
-          # RESULT=$(echo $RESULT | sed -e 's/Your peerId: [a-zA-Z0-9]*//g')
+          RESULT=$(aqua run --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= -f 'call(service_id)' -d '{"service_id": "'$SERVICE_ID'"}' --input $INPUT | jq -r)
 
-          EXPECTED_PEER_ID=$(echo -e "$RESULT" | sed -n '1p' | grep -o '12D3.*')
-          RESULT_PEER_ID=$(echo -e "$RESULT" | sed -n '2p' | tr -d \")
+          EXPECTED_PEER_ID=$(echo -e "$RESULT" | sed -n '1p')
+          RESULT_PEER_ID=$(echo -e "$RESULT" | sed -n '3p')
           if [ "$EXPECTED_PEER_ID" != "$RESULT_PEER_ID" ]; then
             echo "Expected $EXPECTED_PEER_ID, got $RESULT_PEER_ID"
             exit 1
           fi
 
-          RESULT_SERVICE_ID=$(echo -e "$RESULT" | sed -n '3p')
+          RESULT_SERVICE_ID=$(echo -e "$RESULT" | sed -n '2p')
           if [ "$SERVICE_ID" != "$RESULT_SERVICE_ID" ]; then
             echo "Expected $SERVICE_ID, got $RESULT_SERVICE_ID"
             exit 1
           fi
-
-           remove --addr $NODE --sk qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo= --id "$SERVICE_ID"
         working-directory: marine-examples/call_parameters

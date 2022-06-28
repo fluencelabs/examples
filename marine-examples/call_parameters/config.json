@@ -4,7 +4,7 @@
       {
         "name": "call_parameters",
         "path": "./artifacts/call_parameters.wasm",
-        "logger_enabled": [true]
+        "logger_enabled": true
       }
     ]
   }
