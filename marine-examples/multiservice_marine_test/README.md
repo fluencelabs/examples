@@ -58,9 +58,6 @@ Minimal supported versions
   sdk: 0.6.0
   interface-types: 0.20.0
 
-New version is available! 0.16.1 -> 0.16.2
-To update run: cargo +nightly install mrepl
-
 app service was created with service id = 9e26fb88-2e71-411a-8eed-fa2b92fbffaf
 elapsed time 232.38238ms
 
@@ -91,9 +88,6 @@ Welcome to the Marine REPL (version 0.16.1)
 Minimal supported versions
   sdk: 0.6.0
   interface-types: 0.20.0
-
-New version is available! 0.16.1 -> 0.16.2
-To update run: cargo +nightly install mrepl
 
 app service was created with service id = 63df6150-3aee-4b10-b5ee-80bbbfa293ad
 elapsed time 97.517844ms
