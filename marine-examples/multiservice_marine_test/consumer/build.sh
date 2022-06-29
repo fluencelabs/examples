@@ -4,7 +4,14 @@
 cargo update --aggressive
 marine build --release
 
-rm artifacts/* || true
-mkdir -p artifacts
+ARTIFACTS="artifacts"
+
+if [ -d "$ARTIFACTS" ]; then
+    rm ${ARTIFACTS}/* || true
+else
+    mkdir -p "$ARTIFACTS"
+fi
+
+
 
 cp target/wasm32-wasi/release/consumer.wasm artifacts/
