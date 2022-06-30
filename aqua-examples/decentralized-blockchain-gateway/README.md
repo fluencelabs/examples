@@ -31,15 +31,15 @@ A large number of EVM nodes are hosted by centralized providers such as [Alchemy
   * no need to sign up or need for an API key
   * is a light client limiting historic queries
   * for Ethereum mainnet, our uri is: https://main-light.eth.linkpool.io
-  * does not work with "Accept: application/json"  but only  "Content-Type: application/json" header 
+  * does not work with "Accept: application/json"  but only  "Content-Type: application/json" header
 
-## Oracleizing Hosting Provider Responses
+## Decentralizing Blockchain APIs
 
-Centralized hosted nodes introduce at best a single point of failure and at worst, a nefarious actor creating havoc with your DApp. Hence, a centralized source of truth easily negates the benefits of the decentralized backend. Without giving up all of the convenience and cost savings of hosted blochchain nodes, we can route identical requests to multiple hosted providers and determine, against some subjective metric, the acceptability of the responses. That is, we [oracleize](https://en.wikipedia.org/wiki/Blockchain_oracle) hosted provider responses. See Figure 1.
+Centralized hosted nodes introduce at best a single point of failure and at worst, a nefarious actor creating havoc with your DApp. Hence, a centralized source of truth easily negates the benefits of the decentralized backend. Without giving up all of the convenience and cost savings of hosted blochchain nodes, we can route identical requests to multiple hosted providers and determine, against some subjective metric, the acceptability of the responses. That is, we decentralize hosted provider responses. See Figure 1.
 
 ```mermaid
     sequenceDiagram
-    title: Figure 1: Stylize Oracle Over Multiple Host Providers
+    title: Figure 1: Stylize Decentralized Blockahinn APIs
 
     participant C as Client
     participant R  as Relay node
@@ -311,6 +311,7 @@ aqua remote deploy_service \
   --service multi-provider-query \
   --sk <SECRET KEY> \ 
   --log-level off
+
 Going to upload a module...
 Going to upload a module...
 Now time to make a blueprint...
@@ -495,7 +496,6 @@ In order to be able to apply a threshold decision like the 2/3 rule, we first ne
 
 ```rust
 // simple-quorum/sar/main.rs
-#[marine]
 pub struct EVMResult {
     pub provider: String,
     pub stdout: String,
@@ -504,7 +504,7 @@ pub struct EVMResult {
 
 #[marine]
 #[derive(Default, Debug)]
-pub struct Oracle {
+pub struct Quorum {
     pub n: u32,
     pub mode: u64,
     pub freq: u32,
@@ -512,9 +512,9 @@ pub struct Oracle {
 }
 
 #[marine]
-pub fn point_estimate(data: Vec<EVMResult>, min_points: u32) -> Oracle {
+pub fn point_estimate(data: Vec<EVMResult>, min_points: u32) -> Quorum {
     if data.len() < min_points as usize {
-        return Oracle {
+        return Quorum {
             err_str: format!(
                 "Expected at least {} points but only got {}.",
                 min_points,
@@ -525,7 +525,7 @@ pub fn point_estimate(data: Vec<EVMResult>, min_points: u32) -> Oracle {
     }
 
     if data.len() < 1 {
-        return Oracle {
+        return Quorum {
             err_str: format!("Expected at least one timestamp."),
             ..<_>::default()
         };
@@ -533,7 +533,7 @@ pub fn point_estimate(data: Vec<EVMResult>, min_points: u32) -> Oracle {
 
     let (freq, mode) = mode(data.iter());
 
-    Oracle {
+    Quorum {
         n: data.len() as u32,
         mode,
         freq,
@@ -542,7 +542,7 @@ pub fn point_estimate(data: Vec<EVMResult>, min_points: u32) -> Oracle {
 }
 ```
 
-Basically, our oracle service returns the block height with the most frequencies, which we can then compare to our quorum threshold. Let's deploy our service:
+Basically, our decentralized blockchain API service returns the block height with the most frequencies, which we can then compare to our quorum threshold. Let's deploy our service:
 
 ```bash
 aqua remote deploy_service \
@@ -551,19 +551,20 @@ aqua remote deploy_service \
   --service simple-quorum \
   --sk <Your Secret Key> \
   --log-level off
+
 Going to upload a module...
 Now time to make a blueprint...
 Blueprint id:
-750535a2c26feadd6fe985f430b9cf4f41c552973261c8ce22481ff8984f3b73
+c0fef4419f43f9d552a9405e16363bc3feb59f0effedd3ff2733cbb855db05f0
 And your service id is:
-"8e2c0464-b066-4a53-95d5-8dc116b92909"
+"366e3fdd-0d8d-4f8f-bae6-e2e541a17550"
 ```
 
 Next, we update our Aqua script and run the new workflow:
 
 ```aqua
 -- aqua/multi_provider.aqua
-func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService) -> Oracle:
+func get_block_height_raw_quorum(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService) -> Oracle:
   result: *EVMResult
   result2: *string
   oracle: *Oracle
@@ -588,24 +589,54 @@ func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress
   <- oracle[0]
 ```
 
-In essence, we are building on our prior work and piping the array of EVMResults in the SimpleQuorum service to arrive at the oracle. Again, with `aqua cli`:
+In essence, we are building on our prior work and piping the array of EVMResults in the SimpleQuorum service to arrive at the quorum. Again, with `aqua cli`:
 
 ```bash
 aqua run \
   --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
   -i aqua \
-  -f 'get_block_height_oracle(arg1, arg2, arg3)' \
-  --data '{"arg1": [{"name":"infura", "url":"https://mainnet.infura.io/v3/0cc023286cae4ab886598ecd14e256fd"},
-                    {"name":"alchemy","url":"https://eth-mainnet.alchemyapi.io/v2/2FLlm9t-xOm0CbGx-ORr81li1yD_cKP6"}, 
-                    {"name":"link", "url":"https://main-light.eth.linkpool.io"}], 
-          "arg2": [{"peer_id":"12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "service_id":"d9124884-3c42-43d6-9a1f-1b645d073c3f"},
-                   {"peer_id":"12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA", "service_id":"3c321110-b069-42c6-b5e0-aed73d976a60"},
-                   {"peer_id":"12D3KooWMMGdfVEJ1rWe1nH1nehYDzNEHhg5ogdfiGk88AupCMnf", "service_id":"84d4d018-0c13-4d6d-8c11-599a3919911c"}],
-          "arg3": {"peer_id":"12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA", "service_id":"8e2c0464-b066-4a53-95d5-8dc116b92909"}}'
-
+  -f 'get_block_height_raw_quorum(arg1, arg2, arg3)' \
+  --data-path aqua/quorum_params.json
 ```
 
-which returns our Oracle struct:
+Before we turn to the result, note that we replaced an increasingly hard to maintain inline `--data` representation with a much more manageable json file for our function parameters:
+
+```json
+// aqua/quorum_params.json
+{
+  "arg1": [
+    {
+      "name": "infura",
+      "url": "https://mainnet.infura.io/v3/0cc023286cae4ab886598ecd14e256fd"
+    },
+    {
+      "name": "alchemy",
+      "url": "https://eth-mainnet.alchemyapi.io/v2/2FLlm9t-xOm0CbGx-ORr81li1yD_cKP6"
+    },
+    { "name": "link", "url": "https://main-light.eth.linkpool.io" }
+  ],
+  "arg2": [
+    {
+      "peer_id": "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",
+      "service_id": "d9124884-3c42-43d6-9a1f-1b645d073c3f"
+    },
+    {
+      "peer_id": "12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",
+      "service_id": "3c321110-b069-42c6-b5e0-aed73d976a60"
+    },
+    {
+      "peer_id": "12D3KooWMMGdfVEJ1rWe1nH1nehYDzNEHhg5ogdfiGk88AupCMnf",
+      "service_id": "84d4d018-0c13-4d6d-8c11-599a3919911c"
+    }
+  ],
+  "arg3": {
+    "peer_id": "12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",
+    "service_id": "366e3fdd-0d8d-4f8f-bae6-e2e541a17550"
+  }
+}
+```
+
+which returns our Quorum struct:
 
 ```bash
 {
@@ -616,14 +647,14 @@ which returns our Oracle struct:
 }
 ```
 
-So we have three (3) providers called from three (3) service instances, leaving us to reasonably expect nine responses and ideally none equal responses. First, we can add a threshold to out Aqua script to determine an *acceptable* point value against a threshold. Foe example:
+So we have three (3) providers called from three (3) service instances, leaving us to reasonably expect nine responses and not necessarily all the same. One possible way to handle the overall confidence in a result is to add a threshold value to our Aqua script to determine an *acceptable* quorum level for a point value. For example:
 
 ```aqua
-func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService, t_quorum: f64) -> Oracle, bool:
+func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService, t_quorum: f64) -> Quorum, bool:
   result: *EVMResult
   result2: *string
-  oracle: *Oracle
-  quorum: *bool
+  quorum: *Quorum
+  is_quorum: *bool
 
   min_points = 3  -- minimum points we want in order to calculate an oracle 
 
@@ -642,27 +673,20 @@ func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress
   
     on q_addr.peer_id:
       SimpleQuorum q_addr.service_id
-      oracle <-SimpleQuorum.point_estimate(result, min_points)
-      quorum <- SimpleQuorum.is_quorum(oracle[0].freq, oracle[0].n, t_quorum)
+      quorum <-SimpleQuorum.point_estimate(result, min_points)
+      is_quorum <- SimpleQuorum.is_quorum(quorum[0].freq, quorum[0].n, t_quorum)
 
-  <- oracle[0], quorum[0]
-
+  <- quorum[0], is_quorum[0]
 ```
 
-The updates Aqua workflow now returns the highest frequency response and a boolean comparing the relative frequency ratio to some threshold value -- 0.66 in our example below:
+The updated Aqua workflow now returns the highest frequency response and a boolean comparing the relative frequency ratio to some threshold value -- 0.66 in our example below:
 
 ```bash
 aqua run \
   --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
   -i aqua \
   -f 'get_block_height_quorum(arg1, arg2, arg3, 0.66)' \
-  --data '{"arg1": [{"name":"infura", "url":"https://mainnet.infura.io/v3/0cc023286cae4ab886598ecd14e256fd"},
-                    {"name":"alchemy","url":"https://eth-mainnet.alchemyapi.io/v2/2FLlm9t-xOm0CbGx-ORr81li1yD_cKP6"},
-                    {"name":"link", "url":"https://main-light.eth.linkpool.io"}],
-          "arg2": [{"peer_id":"12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "service_id":"d9124884-3c42-43d6-9a1f-1b645d073c3f"},
-                   {"peer_id":"12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA", "service_id":"3c321110-b069-42c6-b5e0-aed73d976a60"},
-                   {"peer_id":"12D3KooWMMGdfVEJ1rWe1nH1nehYDzNEHhg5ogdfiGk88AupCMnf", "service_id":"84d4d018-0c13-4d6d-8c11-599a3919911c"}],
-          "arg3": {"peer_id":"12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA", "service_id":"b348351e-485c-4424-b0a9-3e4304ce9431"}}'
+  --data-path aqua/quorum_params.json
 
 [
 {
@@ -683,8 +707,8 @@ We developed a model to decentralize blockchain APIs for our DApps and implement
 
 Along our journey, we pretty much touched on every possible chokepoint and discussed what a feasible approach to a quorum might look like. However, we made a couple significant omissions:
 
-* we trusted the Fluence nodes, which is not necessarily the right course of action. If you don't trust the Fluence nodes, you can expand on our work by running each providers set across multiple nodes end then compare the results sets across nodes, for example. We are very much looking forward to your PR!
+* we trusted the Fluence nodes, which is not necessarily the right course of action. If you don't trust the Fluence nodes, you can expand on this tutorial by running each providers set across multiple nodes and then compare the results sets across nodes, for example. We are very much looking forward to your PR!
 * we are satisfied with a probabilistic true-false quorum, which may be enough for a lot of use cases. However, we can expand our analysis to introduce learning over response (failure) attributes to the process to develop trust weights for each provider. That might allow us to use smaller subsets of providers for each call and run "test" requests outside of our workflow to update provider trust weights and then just pick the most trusted providers at "run time." Ditto for Fluence providers. Again, we are looking forward to your PRs.
-* we only used the Ethereum mainnet options for the provider requests. Please run it with other hosted blockchain solutions, such as Polygon PoS, and let us know if things don't work out in the Issues.
+* we only used the Ethereum mainnet options for the provider requests. Please run it with other hosted blockchain solutions, such as Polygon PoS. If things don't work out, let us know in Issues.
 
-Thank you for making it all the way to end and we hope that this little tutorial not only helped you learn a bit more about Fluence and Aqua but also provided a reminder on just how vigilant DApp developers need to be to be deserving of the *D*.
+Thank you for making it all the way to end and we hope that this little tutorial not only helped you learn a bit more about Fluence and Aqua but also provided a reminder on just how vigilant DApp developers need to be to use the *D* in their Apps.
