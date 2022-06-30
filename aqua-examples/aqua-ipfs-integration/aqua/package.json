@@ -22,7 +22,7 @@
     "author": "Fluence Labs",
     "license": "MIT",
     "dependencies": {
-        "@fluencelabs/aqua-ipfs": "^0.5.2",
+        "@fluencelabs/aqua-ipfs": "^0.5.5",
         "@fluencelabs/fluence": "^0.23.0",
         "@fluencelabs/fluence-network-environment": "1.0.13",
         "ipfs-http-client": "^56.0.3",
