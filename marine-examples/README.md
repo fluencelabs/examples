@@ -740,7 +740,7 @@ After that IDEs will provide code completion for `marine_test_env`. In order to 
 
 ## Deploying Services
 
-In each of the examples we created modules and services configurations and tested and inspected them with the Marine REPL. Feels like we're all dressed up and nowhere to go. In this section we briefly discuss how to deploy our modules and configurations to the network as services using the *Greeting* example.
+In each of the examples we created modules and services configurations and tested and inspected them with the Marine REPL. In this section we briefly discuss how to deploy our modules and configurations to the network as services using the *Greeting* example.
 
 Before we begin, you need to have the `aqua` tool installed. See the [Tools documentation](https://doc.fluence.dev/docs/knowledge_tools) for more information.
 
@@ -806,4 +806,8 @@ Your peerId: 12D3KooWBVzSqoQqFycENVhw7W5RY1UHwPCn6U9iHG2mbwuCuLq3
 "ec71a1fc-66d7-41f4-bff1-f9c07d361bd4"
 ```
 
-The (peer id, service id) tuple is going to be useful once you start putting the service to work with, say, [Aqua](https://doc.fluence.dev/aqua-book/) and you should hold on the data for future use. Also, you can look up your service on the [Fluence Dashboard](https://dash.fluence.dev/blueprint/8d210ec2b83e4c661c71820b79f02d99908794e8af8034b465762f61682bc43b). For more detailed information regarding the Fluence solution see the [Fluence documentation](https://doc.fluence.dev) and if you have any questions, comments or suggestions for improvements, please open an Issue or PR.
+The (peer id, service id) tuple is going to be useful once you start putting the service to work with, say, [Aqua](https://doc.fluence.dev/aqua-book/) and you should hold on the data for future use. Also, you can look up your service on the [Fluence Dashboard](https://dash.fluence.dev/blueprint/8d210ec2b83e4c661c71820b79f02d99908794e8af8034b465762f61682bc43b).
+
+For more detailed information regarding Marine please refer to the [Marine Book](https://doc.fluence.dev/marine-book/).
+
+For more detailed information regarding the Fluence solution see the [Fluence documentation](https://doc.fluence.dev) and if you have any questions, comments or suggestions for improvements, please open an Issue or PR.
