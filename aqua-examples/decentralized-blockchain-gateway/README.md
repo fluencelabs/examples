@@ -33,6 +33,15 @@ A large number of EVM nodes are hosted by centralized providers such as [Alchemy
   * for Ethereum mainnet, our uri is: https://main-light.eth.linkpool.io
   * does not work with "Accept: application/json"  but only  "Content-Type: application/json" header
 
+If you are looking for another multi-blockchain API provider, checkout [BEWARELAABS API](https://bwarelabs.com/blockchain-api). Sticking with the Ethereum mainnet and the [`eth_blockNumber`](https://docs.bwarelabs.com/api-docs/ethereum-api/rpc/eth_blocknumber-method) method, we get the expected result:
+
+```json
+    "jsonrpc":"2.0",
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": "0x...."
+```
+
 ## Decentralizing Blockchain APIs
 
 Centralized hosted nodes introduce at best a single point of failure and at worst, a nefarious actor creating havoc with your DApp. Hence, a centralized source of truth easily negates the benefits of the decentralized backend. Without giving up all of the convenience and cost savings of hosted blochchain nodes, we can route identical requests to multiple hosted providers and determine, against some subjective metric, the acceptability of the responses. That is, we decentralize hosted provider responses. See Figure 1.
