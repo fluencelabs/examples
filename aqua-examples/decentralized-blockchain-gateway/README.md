@@ -679,7 +679,7 @@ In this case, all response values are of the same magnitude, which is encouragin
 
 ## Summary
 
-We developed a model to decentralize EVM hosting providers for our DApps and implemented a stylized solution with Fluence and Aqua. Specifically, we queried multiple centralized hosted EVM providers using the open Ethereum JSON-RPC API and settled on pulling the `latest` block as an indicator of reliability and "liveness" as opposed to, say, (stale) caches, unreachability or nefarious behavior.
+We developed a model to decentralize blockchain APIs for our DApps and implemented a stylized solution with Fluence and Aqua. Specifically, we queried multiple centralized hosted EVM providers using the open Ethereum JSON-RPC API and settled on pulling the `latest` block as an indicator of reliability and "liveness" as opposed to, say, (stale) caches, unreachability or nefarious behavior.
 
 Along our journey, we pretty much touched on every possible chokepoint and discussed what a feasible approach to a quorum might look like. However, we made a couple significant omissions:
 

@@ -31,7 +31,7 @@ fn mode<'a>(data: impl ExactSizeIterator<Item = &'a EVMResult>) -> (u32, u64) {
                 .entry(
                     match serde_json::from_str::<serde_json::Value>(&value.stdout) {
                         Ok(r) => r["block-height"].as_u64().unwrap(),
-                        Err(e) => 0 as u64,
+                        Err(_e) => 0 as u64,
                     },
                 )
                 .or_insert(0) += 1;
@@ -65,7 +65,7 @@ pub struct EVMResult {
 
 #[marine]
 #[derive(Default, Debug)]
-pub struct Oracle {
+pub struct Quorum {
     pub n: u32,
     pub mode: u64,
     pub freq: u32,
@@ -73,9 +73,9 @@ pub struct Oracle {
 }
 
 #[marine]
-pub fn point_estimate(data: Vec<EVMResult>, min_points: u32) -> Oracle {
+pub fn point_estimate(data: Vec<EVMResult>, min_points: u32) -> Quorum {
     if data.len() < min_points as usize {
-        return Oracle {
+        return Quorum {
             err_str: format!(
                 "Expected at least {} points but only got {}.",
                 min_points,
@@ -86,7 +86,7 @@ pub fn point_estimate(data: Vec<EVMResult>, min_points: u32) -> Oracle {
     }
 
     if data.len() < 1 {
-        return Oracle {
+        return Quorum {
             err_str: format!("Expected at least one timestamp."),
             ..<_>::default()
         };
@@ -94,7 +94,7 @@ pub fn point_estimate(data: Vec<EVMResult>, min_points: u32) -> Oracle {
 
     let (freq, mode) = mode(data.iter());
 
-    Oracle {
+    Quorum {
         n: data.len() as u32,
         mode,
         freq,
