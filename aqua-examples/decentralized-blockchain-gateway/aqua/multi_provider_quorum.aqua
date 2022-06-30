@@ -1,0 +1,159 @@
+data FunctionAddress:
+  peer_id: string
+  service_id: string
+
+data ProviderInfo:
+  name: string
+  url: string
+
+data EVMResult:
+  provider: string
+  stdout: string
+  stderr: string
+
+service MyOp("op"):
+  array_length(providers: []ProviderInfo) -> i64
+  identity(x: i64) -> f64
+
+service MyOp2("op"):
+  array_length(providers: []FunctionAddress) -> i64
+
+service MultiProviderQuery("service-id"):
+  get_block_number(provider: ProviderInfo) -> EVMResult   
+
+
+func get_block_heights(providers: []ProviderInfo, addrs: []FunctionAddress) -> []EVMResult:
+  result: *EVMResult
+  result2: *string
+  n <- MyOp.array_length(providers)
+  n2 <- MyOp2.array_length(addrs)
+
+  if n > 0:
+    for addr <- addrs par:
+      on addr.peer_id:
+        MultiProviderQuery addr.service_id
+        for provider <- providers:
+          result <- MultiProviderQuery.get_block_number(provider)
+          result2 <<- provider.name
+        -- join result[n2-1]
+    join result[n*n2-1]
+  <- result
+
+
+func get_block_height(providers: []ProviderInfo, addr: FunctionAddress) ->[]EVMResult:
+  result: *EVMResult
+  n <- MyOp.array_length(providers)
+  
+  if n > 0:
+    on addr.peer_id:
+      MultiProviderQuery addr.service_id
+      for provider <- providers:
+        result <- MultiProviderQuery.get_block_number(provider)
+      join result[n]
+  <- result
+
+
+func provider_test(providers: []ProviderInfo) -> []string:
+  result: *string
+  n <- MyOp.array_length(providers)
+  
+  if n > 0:
+    for provider <- providers:
+      result <<- provider.name
+    join result[n-1]
+  <- result
+
+data QuorumService:
+  peer_id: string
+  service_id: string
+
+data Quorum:
+    n: u32
+    mode: u64
+    freq: u32
+    err_str: string
+
+service SimpleQuorum("service-id"):
+  point_estimate(data: []EVMResult, min_points: u32) -> Quorum
+  is_quorum(x:u64, y:u64, threshold:f64) -> bool
+
+func get_block_height_raw_quorum(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService) -> Quorum:
+  result: *EVMResult
+  result2: *string
+  quorum: *Quorum
+  
+  n <- MyOp.array_length(providers)
+  n2 <- MyOp2.array_length(addrs)
+
+  if n > 0:
+    for addr <- addrs par:
+      on addr.peer_id:
+        MultiProviderQuery addr.service_id
+        for provider <- providers:
+          result <- MultiProviderQuery.get_block_number(provider)
+          result2 <<- provider.name
+        -- join result[n2-1]
+    join result[n*n2-1]
+  
+    on q_addr.peer_id:
+      SimpleQuorum q_addr.service_id
+      quorum <-SimpleQuorum.point_estimate(result, 3)
+
+  <- quorum[0]
+
+
+-- func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService, t_quorum: i64) -> Oracle, u32:
+func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService, t_quorum: f64) -> Quorum, bool:
+  result: *EVMResult
+  result2: *string
+  quorum: *Quorum
+  is_quorum: *bool
+
+  min_points = 3  -- minimum points we want in order to calculate an oracle 
+
+  n <- MyOp.array_length(providers)
+  n2 <- MyOp2.array_length(addrs)
+
+  if n > 0:
+    for addr <- addrs par:
+      on addr.peer_id:
+        MultiProviderQuery addr.service_id
+        for provider <- providers:
+          result <- MultiProviderQuery.get_block_number(provider)
+          result2 <<- provider.name
+        -- join result[n2-1]
+    join result[n*n2-1]
+  
+    on q_addr.peer_id:
+      SimpleQuorum q_addr.service_id
+      quorum <-SimpleQuorum.point_estimate(result, min_points)
+      is_quorum <- SimpleQuorum.is_quorum(quorum[0].freq, quorum[0].n, t_quorum)
+
+  <- quorum[0], is_quorum[0]
+
+
+func get_block_height_quorum_exceptions(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService) -> Quorum, EVMResult:
+  result: *EVMResult
+  result2: *string
+  quorum: *Quorum
+  
+  n <- MyOp.array_length(providers)
+  n2 <- MyOp2.array_length(addrs)
+
+  if n > 0:
+    for addr <- addrs par:
+      on addr.peer_id:
+        MultiProviderQuery addr.service_id
+        for provider <- providers:
+          result <- MultiProviderQuery.get_block_number(provider)
+          result2 <<- provider.name
+        -- join result[n2-1]
+    join result[n*n2-1]
+  
+    on q_addr.peer_id:
+      SimpleQuorum q_addr.service_id
+      quorum <-SimpleQuorum.point_estimate(result, 3)
+
+
+
+  <- quorum[0], result[0]
