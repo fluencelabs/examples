@@ -1,4 +1,4 @@
-# EVM Integration Examples
+# Explorations In Decentralizing Blockchain Gateways 
 
 ## Overview
 
