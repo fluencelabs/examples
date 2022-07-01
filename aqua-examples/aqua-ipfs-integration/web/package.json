@@ -54,7 +54,7 @@
         "@types/serve-handler": "^6.1.1",
         "@types/jest-environment-puppeteer": "^4.4.1",
         "@types/puppeteer": "^5.4.4",
-        "node-sass": "^6.0.1",
+        "sass": "1.53.0",
         "jest-puppeteer": "^6.0.2",
         "serve": "^13.0.2",
         "ts-jest": "^27.1.3"
