@@ -34,21 +34,14 @@ A large number of EVM nodes are hosted by centralized providers such as [Alchemy
   * does not work with "Accept: application/json"  but only  "Content-Type: application/json" header
 
 If you are looking for another multi-blockchain API provider, checkout [BEWARELAABS API](https://bwarelabs.com/blockchain-api). Sticking with the Ethereum mainnet and the [`eth_blockNumber`](https://docs.bwarelabs.com/api-docs/ethereum-api/rpc/eth_blocknumber-method) method, we get the expected result:
-
-```json
-    "jsonrpc":"2.0",
-    "id": 1,
-    "jsonrpc": "2.0",
-    "result": "0x...."
-```
-
-## Decentralizing Blockchain APIs
+### Decentralizing Blockchain APIs
 
 Centralized hosted nodes introduce at best a single point of failure and at worst, a nefarious actor creating havoc with your DApp. Hence, a centralized source of truth easily negates the benefits of the decentralized backend. Without giving up all of the convenience and cost savings of hosted blochchain nodes, we can route identical requests to multiple hosted providers and determine, against some subjective metric, the acceptability of the responses. That is, we decentralize hosted provider responses. See Figure 1.
 
+**Figure 1: Stylize Decentralized Blockahinn APIs**
+
 ```mermaid
     sequenceDiagram
-    title: Figure 1: Stylize Decentralized Blockahinn APIs
 
     participant C as Client
     participant R  as Relay node
@@ -366,7 +359,7 @@ And your service id is:
 "84d4d018-0c13-4d6d-8c11-599a3919911c"
 ```
 
-If you deploy the services, you're service ids are different, of course. Also, feel free to use different peers. Just with your keys, make sure you keep the (peer id, service id) in a safe place for future use. Now that we have our services deployed, it's time to create our Aqua script.
+If you deploy the services, your service ids are different, of course. Also, feel free to use different peers. Just as with your keys, make sure you keep the (peer id, service id) in a safe place for future use. Now that we have our services deployed, it's time to create our Aqua script.
 
 ### Aqua
 
@@ -551,7 +544,36 @@ pub fn point_estimate(data: Vec<EVMResult>, min_points: u32) -> Quorum {
 }
 ```
 
-Basically, our decentralized blockchain API service returns the block height with the most frequencies, which we can then compare to our quorum threshold. Let's deploy our service:
+Basically, our decentralized blockchain API service returns the block height with the most frequencies, which we can then compare to our quorum threshold. See Figure 2.
+
+**Figure 2: Stylized Topology Overview**
+
+```mermaid
+
+    stateDiagram
+
+        InfuraGateway --> Node_12D3K_25CtE: get_block_number()
+        AlchemyGateway --> Node_12D3K_25CtE: ...
+        LinkGateway --> Node_12D3K_25CtE: ...
+        
+        InfuraGateway --> Node_12D3K_o5CWA: ...
+        AlchemyGateway --> Node_12D3K_o5CWA: get_block_number()
+        LinkGateway --> Node_12D3K_o5CWA: ...
+
+        InfuraGateway --> Node_12D3K_pCMnf: ...
+        AlchemyGateway --> Node_12D3K_pCMnf: ...
+        LinkGateway --> Node_12D3K_pCMnf: get_block_number()
+
+        Node_12D3K_25CtE --> QuorumNode_12D3K_o5CWA: point_estimate()
+        Node_12D3K_o5CWA --> QuorumNode_12D3K_o5CWA: point_estimate()
+        Node_12D3K_pCMnf --> QuorumNode_12D3K_o5CWA: point_estimate()
+
+        QuorumNode_12D3K_o5CWA --> PointEstimate: is_quorum?
+```
+
+
+
+Let's deploy our service:
 
 ```bash
 aqua remote deploy_service \
