@@ -38,7 +38,7 @@ If you are looking for another multi-blockchain API provider, checkout [BEWARELA
 
 Centralized hosted nodes introduce at best a single point of failure and at worst, a nefarious actor creating havoc with your DApp. Hence, a centralized source of truth easily negates the benefits of the decentralized backend. Without giving up all of the convenience and cost savings of hosted blochchain nodes, we can route identical requests to multiple hosted providers and determine, against some subjective metric, the acceptability of the responses. That is, we decentralize hosted provider responses. See Figure 1.
 
-**Figure 1: Stylize Decentralized Blockahinn APIs**
+**Figure 1: Stylize Decentralized Blockchain APIs**
 
 ```mermaid
     sequenceDiagram
