@@ -2,11 +2,11 @@
   "arg1": [
     {
       "name": "infura",
-      "url": "https://mainnet.infura.io/v3/Your API KEY>"
+      "url": "https://mainnet.infura.io/v3/<Your API KEY>"
     },
     {
       "name": "alchemy",
-      "url": "https://eth-mainnet.alchemyapi.io/v2/Your API KEY>"
+      "url": "https://eth-mainnet.alchemyapi.io/v2/<Your API KEY>"
     },
     { "name": "link", "url": "https://main-light.eth.linkpool.io" }
   ],
