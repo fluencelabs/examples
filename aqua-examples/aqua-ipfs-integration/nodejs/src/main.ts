@@ -34,7 +34,7 @@ export async function main(environment: Node[]) {
         console.log('📘 uploading .wasm to node %s', providerHost.multiaddr);
         const firstThing = await globSource('../service/artifacts/', 'process_files.wasm').next();
         const fileCandidate = await firstThing.value
-        if(typeof fileCandidate === 'undefined') {
+        if(fileCandidate === undefined) {
             throw new Error("Couldn't read process_files.wasm");
         }
         let { file, swarmAddr, rpcAddr } = await provideFile(fileCandidate, providerClient);
