@@ -13,7 +13,6 @@
         "@types/node": "^12.20.16",
         "@types/react": "^17.0.14",
         "@types/react-dom": "^17.0.9",
-        "ipfs-http-client": "^50.1.2",
         "multiaddr": "^10.0.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
@@ -25,7 +24,7 @@
     "scripts": {
         "postinstall": "copy-marine public",
         "start": "react-scripts start",
-        "build": "react-scripts build",
+        "build": "react-scripts build && copy-marine public",
         "test": "jest --config=jest.config.js",
         "_test": "react-scripts test",
         "eject": "react-scripts eject"
@@ -54,7 +53,7 @@
         "@types/serve-handler": "^6.1.1",
         "@types/jest-environment-puppeteer": "^4.4.1",
         "@types/puppeteer": "^5.4.4",
-        "node-sass": "^6.0.1",
+        "sass": "1.53.0",
         "jest-puppeteer": "^6.0.2",
         "serve": "^13.0.2",
         "ts-jest": "^27.1.3"

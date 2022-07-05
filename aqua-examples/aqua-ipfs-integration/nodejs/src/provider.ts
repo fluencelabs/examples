@@ -1,12 +1,13 @@
 import { create, CID } from 'ipfs-http-client';
-import { AddResult } from 'ipfs-core-types/src/root';
+import type { AddResult } from 'ipfs-core-types/src/root';
+import type { ImportCandidate } from 'ipfs-core-types/src/utils';
 import { Multiaddr, protocols } from 'multiaddr';
 
 import { FluencePeer } from '@fluencelabs/fluence';
 import { get_external_api_multiaddr, get_external_swarm_multiaddr } from '@fluencelabs/ipfs-execution-aqua';
 
 export async function provideFile(
-    source: any,
+    source: ImportCandidate,
     provider: FluencePeer,
 ): Promise<{ file: AddResult; swarmAddr: string; rpcAddr: string }> {
     const relayPeerId = provider.getStatus().relayPeerId!;
