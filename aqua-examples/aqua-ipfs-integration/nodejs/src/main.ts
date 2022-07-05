@@ -32,8 +32,12 @@ export async function main(environment: Node[]) {
     try {
         await providerClient.start({ connectTo: providerHost });
         console.log('📘 uploading .wasm to node %s', providerHost.multiaddr);
-        let path = globSource('../service/artifacts/process_files.wasm');
-        let { file, swarmAddr, rpcAddr } = await provideFile(path, providerClient);
+        const firstThing = await globSource('../service/artifacts/', 'process_files.wasm').next();
+        const fileCandidate = await firstThing.value
+        if(typeof fileCandidate === 'undefined') {
+            throw new Error("Couldn't read process_files.wasm");
+        }
+        let { file, swarmAddr, rpcAddr } = await provideFile(fileCandidate, providerClient);
         console.log('📗 swarmAddr', swarmAddr);
         console.log('📗 rpcAddr', rpcAddr);
 
