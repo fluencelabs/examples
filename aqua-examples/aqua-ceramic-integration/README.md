@@ -158,7 +158,7 @@ max_heap_size = "50 KiB"
 logger_enabled = true
 
 [module.mounted_binaries]
-ceramic = "/xxx/yyy/.nvm/versions/node/v14.16.0/bin/ceramic"   # <--replace with your path to curl on LOCAL machine
+ceramic = "/xxx/yyy/.nvm/versions/node/v14.16.0/bin/ceramic"   # <--replace with your path to ceramic on LOCAL machine
 ```
 
 In our case, we are using two local binaries, `curl` and `ceramic` and we need the local path for each binary, which you get with `which curl` and `which ceramic`, respectively. **Make sure you update the binary paths with your paths**.
@@ -241,7 +241,7 @@ Looks like our services are working and ready for deployment to the `stage` netw
 aqua remote deploy_service \
      --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
      --config-path configs/ceramic_adapter_deploy_cfg.json \
-     --service ceramic-service
+     --service ceramic-service \
      --sk <your secret key>
 ```
 
