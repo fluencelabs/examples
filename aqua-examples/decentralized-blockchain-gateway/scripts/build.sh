@@ -3,20 +3,21 @@
 mkdir -p artifacts
 rm -f artifacts/*.wasm
 
+cd wasm-modules
+
 cd curl-adapter
 cargo update --aggressive
 marine build --release
-cp target/wasm32-wasi/release/curl_adapter.wasm ../artifacts/
-
+cp target/wasm32-wasi/release/curl_adapter.wasm ../../artifacts/
 
 cd ../multi-provider-query
 cargo update --aggressive
 marine build --release
-cp target/wasm32-wasi/release/multi_provider_query.wasm ../artifacts/
+cp target/wasm32-wasi/release/multi_provider_query.wasm ../../artifacts/
 
 cd ../simple-quorum
 cargo update --aggressive
 marine build --release
-cp target/wasm32-wasi/release/simple_quorum.wasm ../artifacts/
+cp target/wasm32-wasi/release/simple_quorum.wasm ../../artifacts/
 
 cd ..
