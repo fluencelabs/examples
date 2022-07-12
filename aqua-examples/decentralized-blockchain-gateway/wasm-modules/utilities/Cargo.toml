@@ -1,0 +1,25 @@
+[package]
+name = "utilities"
+version = "0.1.0"
+authors = ["boneyard93501 <4523011+boneyard93501@users.noreply.github.com>"]
+edition = "2018"
+description = "utilities, a Marine wasi module"
+license = "Apache-2.0"
+
+[[bin]]
+name = "utilities"
+path = "src/main.rs"
+
+[dependencies]
+marine-rs-sdk = { version = "0.6.15", features = ["logger"] }
+log = "0.4.14"
+serde_json = "1.0.81"
+serde = "1.0.137"
+streaming-stats = "0.2.3"
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.6.0"
+
+[dev]
+[profile.release]
+opt-level = "s"
