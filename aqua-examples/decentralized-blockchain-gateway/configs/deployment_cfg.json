@@ -25,5 +25,32 @@
         "logger_enabled": true
       }
     ]
+  },
+  "ipfs-package": {
+    "modules": [
+      {
+        "name": "ipfs_adapter",
+        "path": "./artifacts/ipfs_adapter.wasm",
+        "max_heap_size": "2 MiB",
+        "mounted_binaries": [["ipfs", "/usr/bin/ipfs"]],
+        "logger_enabled": true
+      },
+      {
+        "name": "ipfs_cli",
+        "path": "./artifacts/ipfs_cli.wasm",
+        "max_heap_size": "2 MiB",
+        "logger_enabled": true
+      }
+    ]
+  },
+  "utilities": {
+    "modules": [
+      {
+        "name": "utilities",
+        "path": "./artifacts/utilities.wasm",
+        "max_heap_size": "2 MiB",
+        "logger_enabled": true
+      }
+    ]
   }
 }
