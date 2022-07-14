@@ -876,7 +876,7 @@ Since IPFS makes all data public and actually encrypting and eventually decrypti
 
 * [service addresses](./parameters/service_addrs.json)
 * [quorum service address](./parameters/quorum_addrs.json)
-* [utility service address](./parameters/utility_addrs.json]) 
+* [utility service address](./parameters/utility_addrs.json) 
 
 Matching service granularity to IPFS document content may make sense if we want to minimize updates due to service changes. However, we could have as easily put all the function addresses into one IPFS file. Regardless, let push our content to IPFS.
 
