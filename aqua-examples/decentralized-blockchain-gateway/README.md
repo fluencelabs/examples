@@ -102,7 +102,7 @@ we expect the following result:
 
 Ok, let's create a Wasm service we can use to query multiple providers. Keep the curl command in mind as we'll need to use curl from our Wasm to make the provider call.
 
-`cd` into the `multi-provider-query` directory and have a look at `src/main.rs`:
+`cd` into the `wasm-modules/multi-provider-query` directory and have a look at `src/main.rs`:
 
 ```rust
 // src/main.rs
@@ -192,7 +192,7 @@ fn get_curl_response(curl_cmd: Vec<String>) -> RpcResponse {
 
 Of course, other providers may provide even other response patterns and it is up to you to make the necessary adjustments. You may think the convenience of vendor lock-in doesn't look too bad right about now but trust yourself, it is a big risk and cost.
 
-At this point we're good to go and compile our code to Wasm:
+At this point we're good to go, returning to the project root and compile our code to Wasm:
 
 ```bash
 ./scripts/build.sh
@@ -201,7 +201,7 @@ At this point we're good to go and compile our code to Wasm:
 which should put `curl_adapter.wasm` and `multi_provider_query.wasm` in the `artifacts` directory. Before we deploy or service to one or more peers, let's check it out locally using the `marine` REPL:
 
 ```bash
-cd ../  # assuming your are still in the multi-provider-query directory
+cd ../../  # assuming your are still in the multi-provider-query directory
 marine repl configs/Config.toml
 
 Welcome to the Marine REPL (version 0.16.2)
@@ -311,7 +311,7 @@ aqua remote deploy_service \
   --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
   --config-path configs/deployment_cfg.json \
   --service multi-provider-query \
-  --sk <SECRET KEY> \ 
+  --sk <SECRET KEY> \
   --log-level off
 
 Going to upload a module...
@@ -327,10 +327,11 @@ And your service id is:
 Ok, one down, two to go:
 
 ```bash
+aqua remote deploy_service \
   --addr /dns4/stage.fluence.dev/tcp/19005/wss/p2p/12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA \
   --config-path configs/deployment_cfg.json \
   --service multi-provider-query \
-  --sk <SECRET KEY> \ 
+  --sk <SECRET KEY> \
   --log-level off
 Going to upload a module...
 Going to upload a module...
@@ -348,7 +349,7 @@ and
   --addr /dns4/stage.fluence.dev/tcp/19003/wss/p2p/12D3KooWMMGdfVEJ1rWe1nH1nehYDzNEHhg5ogdfiGk88AupCMnf \
   --config-path configs/deployment_cfg.json \
   --service multi-provider-query \
-  --sk <SECRET KEY> \ 
+  --sk <SECRET KEY> \
   --log-level off
 Going to upload a module...
 Going to upload a module...
@@ -798,6 +799,24 @@ on %init_peer_id% via u_addr.peer_id:
 
 In order to use print, it is imperative to know that this method only works on the initiating peer. Since we are on a different peer, `u_addr.peer_id`, we need to affect a topological change to the initiating peer `init_peer_id` by topological moving via the current peer, `u_addr.peer_id`. However, we don't want to leave the primary peer, so we implement the print method as a `co`routine. Using the co-routine allows us to proceed without having to create a global variable `deviations`. Alternatively, we can use the method in (5) instead of the co print, which may be more useful for the actual processing of results.
 
+So, we're going to deploy our utility service first:
+
+```
+aqua remote deploy_service \
+  --addr /dns4/stage.fluence.dev/tcp/19005/wss/p2p/12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA \
+  --config-path configs/deployment_cfg.json \
+  --service utilities \
+  --sk BvsS6Ch9eH3VNhHS8HzC4HT0Hz0VJCN7wxI+5mPjaQ0= \
+  --log-level off
+
+Going to upload a module...
+Now time to make a blueprint...
+Blueprint id:
+e9c93f4040ae1cf3c5c8a7aa2914e4a00cc3c9c446ca765392630f2738e3a4ad
+And your service id is:
+"ea75efe8-52da-4741-9228-605ab78c7092"
+```
+
 Let's have look what running our new Aqua function looks like:
 
 ```aqua
@@ -857,7 +876,7 @@ Since IPFS makes all data public and actually encrypting and eventually decrypti
 
 * [service addresses](./parameters/service_addrs.json)
 * [quorum service address](./parameters/quorum_addrs.json)
-* [utility service address](./parameters/utility_addrs.json]) 
+* [utility service address](./parameters/utility_addrs.json) 
 
 Matching service granularity to IPFS document content may make sense if we want to minimize updates due to service changes. However, we could have as easily put all the function addresses into one IPFS file. Regardless, let push our content to IPFS.
 
@@ -877,14 +896,14 @@ func get_maddr(node: string) -> string:
 We can use Aqua to upload our files or *ipfs cli*. Using the cli:
 
 ```bash
-ipfs --api "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae" add configs/quorum_addrs.json
+ipfs --api "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae" add parameters/quorum_addrs.json
 added QmYBmsXK3wXePw2kdByZR93tuD5JubpMo6VciHcRcZQVhq quorum_addrs.json
 
 
-ipfs --api "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae" add configs/service_addrs.json
+ipfs --api "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae" add parameters/service_addrs.json
 added QmeTdUt3QXiaz9S3LAesUUKfKRZEG5K6uxTKgmFsaEYfCj service_addrs.json
 
-ipfs --api "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae" add configs/utility_addrs.json
+ipfs --api "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae" add parameters/utility_addrs.json
 added QmcTkpEa9Ff9eWJxf4nAKJeCF9ufvUKD6E2jotB1QwhQhk utility_addrs.json
 ```
 
