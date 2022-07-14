@@ -10,19 +10,19 @@
     },
     { "name": "link", "url": "https://main-light.eth.linkpool.io" }
   ],
-  "quorum_args": {
+  "quorum_cid": {
     "cid": "QmYBmsXK3wXePw2kdByZR93tuD5JubpMo6VciHcRcZQVhq",
     "multiaddr": "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae"
   },
-  "service_args": {
+  "services_cid": {
     "cid": "QmeTdUt3QXiaz9S3LAesUUKfKRZEG5K6uxTKgmFsaEYfCj",
     "multiaddr": "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae"
   },
-  "utility_args": {
+  "utility_cid": {
     "cid": "QmcTkpEa9Ff9eWJxf4nAKJeCF9ufvUKD6E2jotB1QwhQhk",
     "multiaddr": "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae"
   },
-  "arg4": {
+  "ipfs_args": {
     "peer_id": "12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",
     "service_id": "c679e0f1-3159-41d7-a317-e7495ca9c3f5"
   }
