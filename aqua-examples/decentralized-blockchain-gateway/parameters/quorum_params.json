@@ -1,0 +1,35 @@
+{
+  "arg1": [
+    {
+      "name": "infura",
+      "url": "https://mainnet.infura.io/v3/<YOUR API KEY>"
+    },
+    {
+      "name": "alchemy",
+      "url": "https://eth-mainnet.g.alchemy.com/v2/<YOUR API KEY>"
+    },
+    { "name": "link", "url": "https://main-light.eth.linkpool.io" }
+  ],
+  "arg2": [
+    {
+      "peer_id": "12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",
+      "service_id": "d9124884-3c42-43d6-9a1f-1b645d073c3f"
+    },
+    {
+      "peer_id": "12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",
+      "service_id": "3c321110-b069-42c6-b5e0-aed73d976a60"
+    },
+    {
+      "peer_id": "12D3KooWMMGdfVEJ1rWe1nH1nehYDzNEHhg5ogdfiGk88AupCMnf",
+      "service_id": "84d4d018-0c13-4d6d-8c11-599a3919911c"
+    }
+  ],
+  "arg3": {
+    "peer_id": "12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",
+    "service_id": "366e3fdd-0d8d-4f8f-bae6-e2e541a17550"
+  },
+  "arg4": {
+    "peer_id": "12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",
+    "service_id": "ea75efe8-52da-4741-9228-605ab78c7092"
+  }
+}
