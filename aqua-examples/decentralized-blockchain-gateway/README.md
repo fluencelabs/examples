@@ -1189,9 +1189,9 @@ With the expected quroum and deviant report:
 },
 true
 ]
-```
+``
 
-In this section we rather explicitly illustrated how to use IPFS documents via CIDs to provide function arguments. The motivation to do so arises from a) the immutability of CIDs bringing realiable resussability and provability to paramters for a variety of use cases, including Marine service "pinning" and b) lay a foundation to pipe much more complex  (linked) data models as succint, immutable function arguemnts. We'll need another tutorial for that!
+In this section we rather explicitly illustrated how to use IPFS documents via CIDs to provide function arguments. The motivation to do so arises from a) the immutability of CIDs bringing realiable resussability and provability to paramters for a variety of use cases, including Marine service "pinning" and b) lay a foundation to pipe much more complex (linked) data models as succint, immutable function arguemnts. We'll need another tutorial for that!
 
 ## Summary
 
