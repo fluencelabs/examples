@@ -47,7 +47,6 @@ func ts_oracle_with_consensus(tolerance: u32, threshold: f64, err_value:u64, nod
         if status! != "success":
           res <<- err_value
           dead_peers <<- n
-        --Op.noop()
     
     join res[Op.array_length(nodes) - Op.array_length(dead_peers) -1]
   
