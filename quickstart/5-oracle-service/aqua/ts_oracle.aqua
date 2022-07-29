@@ -15,7 +15,6 @@ service MyOp("op"):
 service MyOpBool("op"):
     identity(b: bool)
 
-
 data Consensus:
   n: u32
   consensus_ts: u64
