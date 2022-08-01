@@ -6,4 +6,4 @@ edition = "2018"
 
 
 [dependencies]
-marine-rs-sdk = { version = "=0.6.10" }
+marine-rs-sdk = { version = "=0.7.0" }
