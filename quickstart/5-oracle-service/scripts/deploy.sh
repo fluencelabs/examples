@@ -1,9 +1,7 @@
 #!/usr/bin/env bash -o errexit -o nounset -o pipefail
 
 function is_installed {
-      if command -v "$1" >/dev/null 2>&1; then
-         echo "${1} is installed"
-      else
+      if ! command -v "$1" >/dev/null 2>&1; then
          echo "${1} not found, please install it"
          echo "exiting..."
          exit 1
@@ -15,7 +13,7 @@ is_installed aqua
 
 echo "generating keys..."
 
-SK=$(aqua key create | jq -r ."secretKey")
+SK=$(aqua key create | jq -r ".secretKey")
 
 echo "deploying the service..."
 
