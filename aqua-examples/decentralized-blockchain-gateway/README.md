@@ -34,45 +34,38 @@ A large number of EVM nodes are hosted by centralized providers such as [Alchemy
   * does not work with "Accept: application/json"  but only  "Content-Type: application/json" header
 
 If you are looking for another multi-blockchain API provider, checkout [BEWARELAABS API](https://bwarelabs.com/blockchain-api). Sticking with the Ethereum mainnet and the [`eth_blockNumber`](https://docs.bwarelabs.com/api-docs/ethereum-api/rpc/eth_blocknumber-method) method, we get the expected result:
-
-```json
-    "jsonrpc":"2.0",
-    "id": 1,
-    "jsonrpc": "2.0",
-    "result": "0x...."
-```
-
-## Decentralizing Blockchain APIs
+### Decentralizing Blockchain APIs
 
 Centralized hosted nodes introduce at best a single point of failure and at worst, a nefarious actor creating havoc with your DApp. Hence, a centralized source of truth easily negates the benefits of the decentralized backend. Without giving up all of the convenience and cost savings of hosted blochchain nodes, we can route identical requests to multiple hosted providers and determine, against some subjective metric, the acceptability of the responses. That is, we decentralize hosted provider responses. See Figure 1.
 
+**Figure 1: Stylize Decentralized Blockchain APIs**
+
 ```mermaid
     sequenceDiagram
-    title: Figure 1: Stylize Decentralized Blockahinn APIs
 
     participant C as Client
     participant R  as Relay node
-    participant Pi as P2P Network
+    participant Pi as Peers
 
     loop for some nodes
-        C -> Pi: Deploy provider adapter
-        Pi -> C: Deployed provider service metadata  
+        C ->> Pi: Deploy provider adapter
+        Pi ->> C: Deployed provider service metadata  
     end
     
-    C -> Pi: Deploy quorum service to one node
-    Pi -> C: Deployed quorum service metadata  
+    C ->> Pi: Deploy quorum service to one node
+    Pi ->> C: Deployed quorum service metadata  
 
 
     par for all provider urls
-        R -> Pi: JSON-RPC Request
-        Pi -> R: JSON-RPC Response
+        R ->> Pi: JSON-RPC Request
+        Pi ->> R: JSON-RPC Response
     end
     
-    R -> Pi: Evaluate JSON-RPC responses
-    Pi -> R: Accept or Reject provider(s) or provider responses
+    R ->> Pi: Evaluate JSON-RPC responses
+    Pi ->> R: Accept or Reject provider(s) or provider responses
 
     opt data to client peer
-        R -> C: provider responses, quorum, etc.
+        R ->> C: provider responses, quorum, etc.
     end
 ```
 
@@ -109,7 +102,7 @@ we expect the following result:
 
 Ok, let's create a Wasm service we can use to query multiple providers. Keep the curl command in mind as we'll need to use curl from our Wasm to make the provider call.
 
-`cd` into the `multi-provider-query` directory and have a look at `src/main.rs`:
+`cd` into the `wasm-modules/multi-provider-query` directory and have a look at `src/main.rs`:
 
 ```rust
 // src/main.rs
@@ -199,7 +192,7 @@ fn get_curl_response(curl_cmd: Vec<String>) -> RpcResponse {
 
 Of course, other providers may provide even other response patterns and it is up to you to make the necessary adjustments. You may think the convenience of vendor lock-in doesn't look too bad right about now but trust yourself, it is a big risk and cost.
 
-At this point we're good to go and compile our code to Wasm:
+At this point we're good to go, returning to the project root and compile our code to Wasm:
 
 ```bash
 ./scripts/build.sh
@@ -208,7 +201,7 @@ At this point we're good to go and compile our code to Wasm:
 which should put `curl_adapter.wasm` and `multi_provider_query.wasm` in the `artifacts` directory. Before we deploy or service to one or more peers, let's check it out locally using the `marine` REPL:
 
 ```bash
-cd ../  # assuming your are still in the multi-provider-query directory
+cd ../../  # assuming your are still in the multi-provider-query directory
 marine repl configs/Config.toml
 
 Welcome to the Marine REPL (version 0.16.2)
@@ -318,7 +311,7 @@ aqua remote deploy_service \
   --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
   --config-path configs/deployment_cfg.json \
   --service multi-provider-query \
-  --sk <SECRET KEY> \ 
+  --sk <SECRET KEY> \
   --log-level off
 
 Going to upload a module...
@@ -334,10 +327,11 @@ And your service id is:
 Ok, one down, two to go:
 
 ```bash
+aqua remote deploy_service \
   --addr /dns4/stage.fluence.dev/tcp/19005/wss/p2p/12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA \
   --config-path configs/deployment_cfg.json \
   --service multi-provider-query \
-  --sk <SECRET KEY> \ 
+  --sk <SECRET KEY> \
   --log-level off
 Going to upload a module...
 Going to upload a module...
@@ -355,7 +349,7 @@ and
   --addr /dns4/stage.fluence.dev/tcp/19003/wss/p2p/12D3KooWMMGdfVEJ1rWe1nH1nehYDzNEHhg5ogdfiGk88AupCMnf \
   --config-path configs/deployment_cfg.json \
   --service multi-provider-query \
-  --sk <SECRET KEY> \ 
+  --sk <SECRET KEY> \
   --log-level off
 Going to upload a module...
 Going to upload a module...
@@ -366,7 +360,7 @@ And your service id is:
 "84d4d018-0c13-4d6d-8c11-599a3919911c"
 ```
 
-If you deploy the services, you're service ids are different, of course. Also, feel free to use different peers. Just with your keys, make sure you keep the (peer id, service id) in a safe place for future use. Now that we have our services deployed, it's time to create our Aqua script.
+If you deploy the services, your service ids are different, of course. Also, feel free to use different peers. Just as with your keys, make sure you keep the (peer id, service id) in a safe place for future use. Now that we have our services deployed, it's time to create our Aqua script.
 
 ### Aqua
 
@@ -435,8 +429,8 @@ aqua run \
   --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
   -i aqua \
   -f 'get_block_heights(arg1, arg2)' \
-  --data '{"arg1": [{"name":"infura", "url":"https://mainnet.infura.io/v3/0cc023286cae4ab886598ecd14e256fd"},
-                    {"name":"alchemy","url":"https://eth-mainnet.alchemyapi.io/v2/2FLlm9t-xOm0CbGx-ORr81li1yD_cKP6"},
+  --data '{"arg1": [{"name":"infura", "url":"https://mainnet.infura.io/v3/<YOUR API  KEY>"},
+                    {"name":"alchemy","url":"https://eth-mainnet.alchemyapi.io/v2/<YOUR API KEY>"},
                     {"name":"link", "url":"https://main-light.eth.linkpool.io"}],
           "arg2": [{"peer_id":"12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE", "service_id":"d9124884-3c42-43d6-9a1f-1b645d073c3f"},
                    {"peer_id":"12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA", "service_id":"3c321110-b069-42c6-b5e0-aed73d976a60"},
@@ -551,7 +545,36 @@ pub fn point_estimate(data: Vec<EVMResult>, min_points: u32) -> Quorum {
 }
 ```
 
-Basically, our decentralized blockchain API service returns the block height with the most frequencies, which we can then compare to our quorum threshold. Let's deploy our service:
+Basically, our decentralized blockchain API service returns the block height with the most frequencies, which we can then compare to our quorum threshold. See Figure 2.
+
+**Figure 2: Stylized Topology Overview**
+
+```mermaid
+
+    stateDiagram
+
+        InfuraGateway --> Node_12D3K_25CtE: get_block_number()
+        AlchemyGateway --> Node_12D3K_25CtE: ...
+        LinkGateway --> Node_12D3K_25CtE: ...
+        
+        InfuraGateway --> Node_12D3K_o5CWA: ...
+        AlchemyGateway --> Node_12D3K_o5CWA: get_block_number()
+        LinkGateway --> Node_12D3K_o5CWA: ...
+
+        InfuraGateway --> Node_12D3K_pCMnf: ...
+        AlchemyGateway --> Node_12D3K_pCMnf: ...
+        LinkGateway --> Node_12D3K_pCMnf: get_block_number()
+
+        Node_12D3K_25CtE --> QuorumNode_12D3K_o5CWA: join_response()
+        Node_12D3K_o5CWA --> QuorumNode_12D3K_o5CWA: join_response()
+        Node_12D3K_pCMnf --> QuorumNode_12D3K_o5CWA: join_response()
+
+        QuorumNode_12D3K_o5CWA --> PointEstimate: mode, is_quorum?
+```
+
+
+
+Let's deploy our service:
 
 ```bash
 aqua remote deploy_service \
@@ -709,6 +732,466 @@ true
 ```
 
 In this case, all response values are of the same magnitude, which is encouraging, and we have a quorum against the 0.66 threshold value.
+
+Of course, this may not always be the case but if it is, we probably want more information than just the summary stats. In order to do that, we can expand on or Aqua script:
+
+```aqua
+-- aqua/multi_provider_quorum.aqua
+func get_block_height_quorum_with_mapper(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService, u_addr: FunctionAddress, t_quorum: f64) -> Quorum, bool:
+  result: *EVMResult
+  quorum: *Quorum
+  is_quorum: *bool
+
+  min_points = 3  -- minimum points we want in order to calculate an oracle 
+ 
+  n <- MyOp.array_length(providers)
+  n2 <- MyOp2.array_length(addrs)
+
+  if n > 0:
+    for addr <- addrs par:
+      on addr.peer_id:
+        MultiProviderQuery addr.service_id
+        for provider <- providers:
+          result <- MultiProviderQuery.get_block_number(provider)
+          -- result2 <<- provider.name
+        -- join result[n2-1]
+    -- join result[n-1]
+    join result[n*n2-2]
+
+    on q_addr.peer_id:
+      SimpleQuorum q_addr.service_id
+      quorum <-SimpleQuorum.point_estimate(result, min_points)
+      if quorum[0].mode == 0:
+        is_quorum <<- false
+      else:
+        is_quorum <- SimpleQuorum.is_quorum(quorum[0].freq, quorum[0].n, t_quorum)
+    
+    --< new section to deal with quroum deviations
+    deviations: *EVMResult
+    n_dev = 1
+    if quorum[0].freq != quorum[0].n:
+      on u_addr.peer_id:
+        Utilities u_addr.service_id
+        for res <- result:
+          v <- Utilities.kv_to_u64(res.stdout, "block-height")     --< (1) this is a new service, see wasm-modules/utilities
+          if v != quorum[0].mode:                                  --  (2)
+            deviations <<- res                                     --  (3)
+            on %init_peer_id% via u_addr.peer_id:
+              co ConsoleEVMResult.print(res)                       --< (4) placeholder for future processing of divergent responses
+          Math.add(n_dev, 1)
+    -- ConsoleEVMResults.print(deviations)                         --  (5)
+  <- quorum[0], is_quorum[0]
+```
+
+We introduce a new post-quorum section, see above, which kicks in if the "point estimate" count (mode) doesn't equal the number of (expected) responses, n. We
+
+* introduce a [utility service](./wasm-modules/utilities/), to extract the block-height from the response string (1)
+* cycle through the responses to find the deviants (2) (note: this could be more efficiently accomplished with a service especially when n gets large)
+* collect the deviants (3)
+* print the collection (4)
+
+There a few things that warrant additional explanations:
+
+```aqua
+on %init_peer_id% via u_addr.peer_id:
+  co ConsoleEVMResult.print(res)
+```
+
+In order to use print, it is imperative to know that this method only works on the initiating peer. Since we are on a different peer, `u_addr.peer_id`, we need to affect a topological change to the initiating peer `init_peer_id` by topological moving via the current peer, `u_addr.peer_id`. However, we don't want to leave the primary peer, so we implement the print method as a `co`routine. Using the co-routine allows us to proceed without having to create a global variable `deviations`. Alternatively, we can use the method in (5) instead of the co print, which may be more useful for the actual processing of results.
+
+So, we're going to deploy our utility service first:
+
+```
+aqua remote deploy_service \
+  --addr /dns4/stage.fluence.dev/tcp/19005/wss/p2p/12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA \
+  --config-path configs/deployment_cfg.json \
+  --service utilities \
+  --sk BvsS6Ch9eH3VNhHS8HzC4HT0Hz0VJCN7wxI+5mPjaQ0= \
+  --log-level off
+
+Going to upload a module...
+Now time to make a blueprint...
+Blueprint id:
+e9c93f4040ae1cf3c5c8a7aa2914e4a00cc3c9c446ca765392630f2738e3a4ad
+And your service id is:
+"ea75efe8-52da-4741-9228-605ab78c7092"
+```
+
+Let's have look what running our new Aqua function looks like:
+
+```aqua
+ aqua run \
+  --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
+  -i aqua \
+  -f 'get_block_height_quorum_with_mapper(arg1, arg2, arg3, arg4, 0.66)' \
+  --data-path parameters/quorum_params_with_api.json \
+  --log-level "aquavm=off"
+{
+  "provider": "link",
+  "stderr": "",
+  "stdout": "{\"block-height\":15123421}"
+}
+{
+  "provider": "link",
+  "stderr": "",
+  "stdout": "{\"block-height\":15123424}"
+}
+{
+  "provider": "link",
+  "stderr": "",
+  "stdout": "{\"block-height\":15123421}"
+}
+[
+{
+  "err_str": "",
+  "freq": 6,
+  "mode": 15123431,
+  "n": 9
+},
+true
+]
+```
+
+In this case, three of the nine responses differed from the rest. With our new sub-routine, we print out the deviant responses. Of course, printing the deviants is only a placeholder for "real" processing, e.g., updating a reference count of responses.
+
+
+### CIDs As Aqua Function Arguments
+
+So far, we used function parameters in Aqua as you probably have done a million times. However, that's not the only way. In fact, we can use (IPFS) CIDs as function arguments. Such an approach opens up a lot of opportunities when it comes to safely preserving or sharing parameter sets, passing more complex data models with a single string, etc.
+
+For example, we can change:
+
+```aqua
+func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService, u_addr: FunctionAddress, t_quorum: f64) -> Quorum, bool:
+```
+
+to something like this:
+
+```aqua
+alias CID: string
+func get_block_height_quorum(providers: []ProviderInfo, addrs: CID, q_addr: CID, u_addr: CID, t_quorum: CID, multiaddr: string) -> Quorum, bool:
+```
+
+Since IPFS makes all data public and actually encrypting and eventually decrypting data seems like a lot of overhead, we may keep the providers (arg1) in our *quorum_params.json* as is but upload the remaining params to IPFS. So our IPFS candidates as:
+
+* [service addresses](./parameters/service_addrs.json)
+* [quorum service address](./parameters/quorum_addrs.json)
+* [utility service address](./parameters/utility_addrs.json) 
+
+Matching service granularity to IPFS document content may make sense if we want to minimize updates due to service changes. However, we could have as easily put all the function addresses into one IPFS file. Regardless, let push our content to IPFS.
+
+how to get the IPFS sidecar multiaddr:
+
+```aqua
+-- aqua snippet to get multiaddr for IPFS sidecar to specified peer id 
+import "@fluencelabs/aqua-ipfs/ipfs.aqua"
+
+func get_maddr(node: string) -> string:
+    on node:
+        res <- Ipfs.get_external_api_multiaddr()
+    <- res.multiaddr
+
+```
+
+We can use Aqua to upload our files or *ipfs cli*. Using the cli:
+
+```bash
+ipfs --api "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae" add parameters/quorum_addrs.json
+added QmYBmsXK3wXePw2kdByZR93tuD5JubpMo6VciHcRcZQVhq quorum_addrs.json
+
+
+ipfs --api "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae" add parameters/service_addrs.json
+added QmeTdUt3QXiaz9S3LAesUUKfKRZEG5K6uxTKgmFsaEYfCj service_addrs.json
+
+ipfs --api "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae" add parameters/utility_addrs.json
+added QmcTkpEa9Ff9eWJxf4nAKJeCF9ufvUKD6E2jotB1QwhQhk utility_addrs.json
+```
+
+Let's do a quick spot check:
+
+```bash
+ipfs --api "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae" cat QmcTkpEa9Ff9eWJxf4nAKJeCF9ufvUKD6E2jotB1QwhQhk
+
+[
+  {
+    "peer_id": "12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",
+    "service_id": "ea75efe8-52da-4741-9228-605ab78c7092"
+  }
+]
+```
+
+Woo hoo!! All dressed up and nowhere to go ... just yet. Let's change that. In order to be able to deal with IPFS documents, we need to be able to interact with IPFS from Aqua. We could write a [custom IPFS adapter](./wasm-module/ipfs-adapter) and [custom IPFS processing module](./wasm-module/ipfs-cli) or use Fluence's builtin [IPFS integration with Aqua](https://doc.fluence.dev/aqua-book/libraries/aqua-ipfs) library. If we use the latter, we don't have to implement and deploy our own ipfs adapter service(s) and don't have to manage the associated function addresses. However, the Fluence IPFS library is geared toward file management, which means that we need to write and maintain a file processing service, which still leaves us with service management chores. So let's write and deploy a super-light ipfs adapter based on the ipfs cli[cat](https://docs.ipfs.io/reference/cli/#ipfs-cat) command.
+
+Our Ipfs adapter mirrors the [curl adapter](./wasm-modules/curl-adapter/) since it also uses a host-provided binary: `ipfs`.
+
+```rust
+// wasm-modules/ipfs-adapter/src/main.rs
+use marine_rs_sdk::{marine, module_manifest, MountedBinaryResult};
+
+module_manifest!();
+
+fn main() {}
+
+#[marine]
+pub fn ipfs_request(cmd: Vec<String>) -> MountedBinaryResult {
+    ipfs(cmd)
+}
+
+#[marine]
+#[link(wasm_import_module = "host")]
+extern "C" {
+    pub fn ipfs(cmd: Vec<String>) -> MountedBinaryResult;
+}
+```
+
+Nothing new here, we link to the host's binary and wrap the command into an exposed (wasm) function `ipfs_request` which any other linked modules can use. In order to get the real lifting done, [we need a bit more](./wasm-modules/ipfs-cli/):
+
+```rust
+// wasm-module/ipfs-cli
+use marine_rs_sdk::{marine, module_manifest, MountedBinaryResult};
+use serde::{Deserialize, Serialize};
+use serde_json;
+
+module_manifest!();
+
+fn main() {}
+
+#[marine]
+pub struct ProviderInfo {
+    pub url: String,
+}
+
+#[marine]
+pub struct IpfsResult {
+    pub stdout: String,
+    pub stderr: String,
+}
+
+#[marine]
+#[derive(Deserialize, Serialize, Debug)]
+pub struct FuncAddr {
+    peer_id: String,
+    service_id: String,
+}
+
+impl FuncAddr {
+    pub fn new(peer_id: &str, service_id: &str) -> Self {
+        FuncAddr {
+            peer_id: peer_id.to_string(),
+            service_id: service_id.to_string(),
+        }
+    }
+}
+
+#[marine]
+pub fn params_from_cid(multiaddr: String, cid: String) -> Vec<FuncAddr> {
+    let ipfs_cmd = vec!["--api".to_string(), multiaddr, "cat".to_string(), cid];
+
+    let ipfs_response = ipfs_request(ipfs_cmd);
+    let stdout = String::from_utf8(ipfs_response.stdout).unwrap();
+    let stderr = String::from_utf8(ipfs_response.stderr).unwrap();
+
+    if stderr.len() > 0 {
+        return vec![FuncAddr::new("", "")];
+    }
+
+    match serde_json::from_str(&stdout) {
+        Ok(r) => r,
+        Err(e) => {
+            vec![FuncAddr::new("", "")]
+        }
+    }
+}
+
+#[marine]
+#[link(wasm_import_module = "ipfs_adapter")]
+extern "C" {
+    pub fn ipfs_request(cmd: Vec<String>) -> MountedBinaryResult;
+}
+```
+
+`params_from_cid` takes the multiaddr and cid to execute the `ipfs cat` command using our ipfs adapter. Once we get have our IPFS document, we turn it into an array of `FuncAddr`s with some minimal error management -- feel free to improve on that. Let's test it in the Marine Repl before we deploy it:
+
+```bash
+2> call ipfs_cli params_from_cid ["/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae", "QmeTdUt3QXiaz9S3LAesUUKfKRZEG5K6uxTKgmFsaEYfCj"]
+result: Array([Object({"peer_id": String("12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE"), "service_id": String("d9124884-3c42-43d6-9a1f-1b645d073c3f")}), Object({"peer_id": String("12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA"), "service_id": String("3c321110-b069-42c6-b5e0-aed73d976a60")}), Object({"peer_id": String("12D3KooWMMGdfVEJ1rWe1nH1nehYDzNEHhg5ogdfiGk88AupCMnf"), "service_id": String("84d4d018-0c13-4d6d-8c11-599a3919911c")})])
+ elapsed time: 461.663758ms
+```
+
+Looks like all works as intendend and we're ready to deploy (to one host):
+
+```bash
+aqua remote deploy_service \
+  --addr /dns4/stage.fluence.dev/tcp/19005/wss/p2p/12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA \
+  --config-path configs/deployment_cfg.json \
+  --service ipfs-package \
+  --sk <YOUR SECRET KEY> \
+  --log-level off
+Going to upload a module...
+Going to upload a module...
+Now time to make a blueprint...
+Blueprint id:
+d5af120f9290d705065836431a23dbb15dfd32ebbc7e46cfaa0610f2913a7466
+And your service id is:
+"c679e0f1-3159-41d7-a317-e7495ca9c3f5"
+```
+
+Let's do a quick test to see things work as planned with Aqua:
+
+```aqua
+-- aqua/ipfs_test.aqua
+data FunctionAddress:
+  peer_id: string
+  service_id: string
+
+service IpfsCli("service-is"):
+  params_from_cid(multiaddr: string, cid: string) -> []FunctionAddress
+
+func check_utility_addrs(cid: CID, multiaddr: string, ipfs_node: string, ipfs_service_id: string) []FunctionAddress:
+  on ipfs_node:
+    IpfsCli ipfs_service_id
+    func_addrs <- IpfsCli.params_from_cid(multiaddr, cid)
+  <- func_addrs
+```
+
+Ready to run:
+
+```bash
+aqua run \
+  --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
+  -i aqua/ipfs_test.aqua \
+  -f 'check_utility_addrs("QmcTkpEa9Ff9eWJxf4nAKJeCF9ufvUKD6E2jotB1QwhQhk", "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae", "12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA", "c679e0f1-3159-41d7-a317-e7495ca9c3f5")' \
+  --log-level "aquavm=off"
+[
+  {
+    "peer_id": "12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",
+    "service_id": "ea75efe8-52da-4741-9228-605ab78c7092"
+  }
+]
+```
+
+Ok, so all works as intended and, as previosuly discussed, the function address parameters for the ipfs service stick out like a sore thumb. Of course we can still use a parameter file to keep things neat and managable, we update our (parameter) [data file](./parameters/quorum_mixed_params.json) and include the IPFS document references:
+
+```json
+{
+  "provider_args": [
+    {
+      "name": "infura",
+      "url": "https://mainnet.infura.io/v3/<YOUR API KEY>"
+    },
+    {
+      "name": "alchemy",
+      "url": "https://eth-mainnet.g.alchemy.com/v2/<YOUR API KEY>"
+    },
+    { "name": "link", "url": "https://main-light.eth.linkpool.io" }
+  ],
+  "quorum_cid": {
+    "cid": "QmYBmsXK3wXePw2kdByZR93tuD5JubpMo6VciHcRcZQVhq",
+    "multiaddr": "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae"
+  },
+  "services_cid": {
+    "cid": "QmeTdUt3QXiaz9S3LAesUUKfKRZEG5K6uxTKgmFsaEYfCj",
+    "multiaddr": "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae"
+  },
+  "utility_cid": {
+    "cid": "QmcTkpEa9Ff9eWJxf4nAKJeCF9ufvUKD6E2jotB1QwhQhk",
+    "multiaddr": "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1TukxyrwXTMuYPJ3cotbM1Ae"
+  },
+  "ipfs_args": {
+    "peer_id": "12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",
+    "service_id": "c679e0f1-3159-41d7-a317-e7495ca9c3f5"
+  }
+}
+```
+
+ Let's update our Aqua multi-provider function with a mix of "raw" parameters and IPFS parameter documents:
+
+ ```aqua
+func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: IpfsObj, quorum_cid: IpfsObj, utility_cid: IpfsObj, ipfs_service: FunctionAddress, t_quorum: f64) -> Quorum, bool:
+--func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: IpfsObj, quorum_cid: IpfsObj, utility_cid: IpfsObj, ipfs_service: FunctionAddress, t_quorum: f64) -> []FunctionAddress,[]FunctionAddress,[]FunctionAddress:
+  result: *EVMResult
+  quorum: *Quorum
+  is_quorum: *bool
+
+  min_points = 3  -- minimum points we want in order to calculate an oracle 
+
+  on ipfs_service.peer_id:                                                             --< IPFS document conversion to []FunctionAddress
+    IpfsCli ipfs_service.service_id
+    addrs <- IpfsCli.params_from_cid(services_cid.multiaddr, services_cid.cid)
+    q_addrs <- IpfsCli.params_from_cid(quorum_cid.multiaddr, quorum_cid.cid)
+    u_addrs <- IpfsCli.params_from_cid(utility_cid.multiaddr, utility_cid.cid)
+
+   n <- MyOp.array_length(providers)
+  n2 <- MyOp2.array_length(addrs)
+
+  if n > 0:
+    for addr <- addrs par:
+      on addr.peer_id:
+        MultiProviderQuery addr.service_id
+        for provider <- providers:
+          result <- MultiProviderQuery.get_block_number(provider)
+    join result[n*n2-2]
+
+    on q_addrs[0].peer_id:
+      SimpleQuorum q_addrs[0].service_id
+      quorum <-SimpleQuorum.point_estimate(result, min_points)
+      if quorum[0].mode == 0:
+        is_quorum <<- false
+      else:
+        is_quorum <- SimpleQuorum.is_quorum(quorum[0].freq, quorum[0].n, t_quorum)
+    
+    deviations: *EVMResult
+    n_dev = 1
+    if quorum[0].freq != quorum[0].n:
+      on u_addrs[0].peer_id:
+        Utilities u_addrs[0].service_id
+        for res <- result:
+          v <- Utilities.kv_to_u64(res.stdout, "block-height")
+          if v != quorum[0].mode:
+            deviations <<- res
+            on %init_peer_id% via u_addrs[0].peer_id:
+              co ConsoleEVMResult.print(res)
+          Math.add(n_dev, 1)
+  <- quorum[0], is_quorum[0]
+
+ ```
+
+ Aside from updating our function signature, we add the subroutine processing the various IPFS documents into the necessary `FunctionAddress` structs and, where needed, index the resulting arrays through out the rest of the code. And now we are ready to run it:
+
+```bash
+ aqua run \
+  --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
+  -i aqua/multi_provider_quorum.aqua \
+  -f 'get_block_height_quorum_with_cid(provider_args, services_cid, quorum_cid, utility_cid, ipfs_args, 0.66)' \
+  --data-path parameters/quorum_mixed_params.json \
+  --log-level "aquavm=off"
+```
+
+With the expected quroum and deviant report:
+
+```bash
+{
+  "provider": "link",
+  "stderr": "",
+  "stdout": "{\"block-height\":15124490}"
+}
+{
+  "provider": "link",
+  "stderr": "",
+  "stdout": "{\"block-height\":15124490}"
+}
+[
+{
+  "err_str": "",
+  "freq": 7,
+  "mode": 15124491,
+  "n": 9
+},
+true
+]
+``
+
+In this section we rather explicitly illustrated how to use IPFS documents via CIDs to provide function arguments. The motivation to do so arises from a) the immutability of CIDs bringing realiable resussability and provability to paramters for a variety of use cases, including Marine service "pinning" and b) lay a foundation to pipe much more complex (linked) data models as succint, immutable function arguemnts. We'll need another tutorial for that!
 
 ## Summary
 

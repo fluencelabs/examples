@@ -5,6 +5,6 @@ authors = ["boneyard93501 <4523011+boneyard93501@users.noreply.github.com>"]
 edition = "2018"
 
 [dependencies]
-marine-rs-sdk = { version = "=0.6.10", features = ["logger"] }
+marine-rs-sdk = { version = "=0.7.0", features = ["logger"] }
 log = "0.4.8"
 serde_json = "1.0.64"

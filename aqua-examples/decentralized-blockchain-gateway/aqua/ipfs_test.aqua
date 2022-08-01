@@ -1,0 +1,13 @@
+-- aqua/ipfs_test.aqua
+data FunctionAddress:
+  peer_id: string
+  service_id: string
+
+service IpfsCli("service-is"):
+  params_from_cid(multiaddr: string, cid: string) -> []FunctionAddress
+
+func check_utility_addrs(cid: string, multiaddr: string, ipfs_node: string, ipfs_service_id: string) -> []FunctionAddress:
+  on ipfs_node:
+    IpfsCli ipfs_service_id
+    func_addrs <- IpfsCli.params_from_cid(multiaddr, cid)
+  <- func_addrs

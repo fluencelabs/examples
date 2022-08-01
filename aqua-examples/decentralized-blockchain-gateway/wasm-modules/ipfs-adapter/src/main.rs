@@ -21,20 +21,12 @@ module_manifest!();
 fn main() {}
 
 #[marine]
-pub struct ProviderInfo {
-    pub url: String,
+pub fn ipfs_request(cmd: Vec<String>) -> MountedBinaryResult {
+    ipfs(cmd)
 }
 
 #[marine]
-pub struct EVMResult {
-    pub stdout: String,
-    pub stderr: String,
+#[link(wasm_import_module = "host")]
+extern "C" {
+    pub fn ipfs(cmd: Vec<String>) -> MountedBinaryResult;
 }
-
-#[marine]
-fn count_providers(providers: Vec<ProviderInfo>) -> u64 {
-    providers.len() as u64
-}
-
-#[marine]
-fn provider_results(results: Vec<EVMResult>) {}

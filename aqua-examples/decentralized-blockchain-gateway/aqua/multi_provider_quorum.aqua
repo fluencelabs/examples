@@ -1,3 +1,7 @@
+import "@fluencelabs/aqua-lib/math.aqua"
+import "@fluencelabs/aqua-ipfs/ipfs-api.aqua"
+import "@fluencelabs/aqua-ipfs/ipfs.aqua"
+
 data FunctionAddress:
   peer_id: string
   service_id: string
@@ -20,6 +24,13 @@ service MyOp2("op"):
 
 service MultiProviderQuery("service-id"):
   get_block_number(provider: ProviderInfo) -> EVMResult   
+
+service Utilities("service_id"):
+  kv_to_u64(kv: string, k: string) -> u64
+
+service Console("run-console"):
+    print(msg: string)
+
 
 
 func get_block_heights(providers: []ProviderInfo, addrs: []FunctionAddress) -> []EVMResult:
@@ -63,9 +74,10 @@ func provider_test(providers: []ProviderInfo) -> []string:
     join result[n-1]
   <- result
 
-data QuorumService:
-  peer_id: string
-  service_id: string
+alias QuorumService: FunctionAddress
+-- data QuorumService:
+--   peer_id: string
+--  service_id: string
 
 data Quorum:
     n: u32
@@ -102,10 +114,41 @@ func get_block_height_raw_quorum(providers: []ProviderInfo, addrs: []FunctionAdd
   <- quorum[0]
 
 
--- func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService, t_quorum: i64) -> Oracle, u32:
+service ConsoleEVMResults("run-console"):
+    print(result :[]EVMResult)
+
+service ConsoleEVMResult("run-console"):
+    print(result :EVMResult)
+
+service ConsoleQuorum("run-console"):
+    print(quorum :[]Quorum)
+
 func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService, t_quorum: f64) -> Quorum, bool:
   result: *EVMResult
-  result2: *string
+  quorum: *Quorum
+  is_quorum: *bool
+  min_points = 3  -- minimum points we want in order to calculate an oracle 
+
+  n <- MyOp.array_length(providers)
+  n2 <- MyOp2.array_length(addrs)
+
+  if n > 0:
+    for addr <- addrs par:
+      on addr.peer_id:
+        MultiProviderQuery addr.service_id
+        for provider <- providers:
+          result <- MultiProviderQuery.get_block_number(provider)
+    join result[n*n2-2]
+ 
+    on q_addr.peer_id:
+      SimpleQuorum q_addr.service_id
+      quorum <-SimpleQuorum.point_estimate(result, min_points)
+      is_quorum <- SimpleQuorum.is_quorum(quorum[0].freq, quorum[0].n, t_quorum)
+    
+  <- quorum[0], is_quorum[0]
+
+func get_block_height_quorum_with_mapper(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService, u_addr: FunctionAddress, t_quorum: f64) -> Quorum, bool:
+  result: *EVMResult
   quorum: *Quorum
   is_quorum: *bool
 
@@ -120,24 +163,57 @@ func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress
         MultiProviderQuery addr.service_id
         for provider <- providers:
           result <- MultiProviderQuery.get_block_number(provider)
-          result2 <<- provider.name
+          -- result2 <<- provider.name
         -- join result[n2-1]
-    join result[n*n2-1]
-  
+    -- join result[n-1]
+    join result[n*n2-2]
+
     on q_addr.peer_id:
       SimpleQuorum q_addr.service_id
       quorum <-SimpleQuorum.point_estimate(result, min_points)
-      is_quorum <- SimpleQuorum.is_quorum(quorum[0].freq, quorum[0].n, t_quorum)
-
+      if quorum[0].mode == 0:
+        is_quorum <<- false
+      else:
+        is_quorum <- SimpleQuorum.is_quorum(quorum[0].freq, quorum[0].n, t_quorum)
+    
+    deviations: *EVMResult
+    n_dev = 1
+    if quorum[0].freq != quorum[0].n:
+      on u_addr.peer_id:
+        Utilities u_addr.service_id
+        for res <- result:
+          v <- Utilities.kv_to_u64(res.stdout, "block-height")
+          if v != quorum[0].mode:
+            deviations <<- res
+            on %init_peer_id% via u_addr.peer_id:
+              co ConsoleEVMResult.print(res)             --< placeholder for future processing of divergent responses
+          Math.add(n_dev, 1)
+    -- ConsoleEVMResults.print(deviations)
   <- quorum[0], is_quorum[0]
 
+data IpfsObj:
+  cid: string
+  multiaddr: string
 
-func get_block_height_quorum_exceptions(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService) -> Quorum, EVMResult:
+service IpfsCli("service-is"):
+  params_from_cid(multiaddr: string, cid: string) -> []FunctionAddress
+
+
+func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: IpfsObj, quorum_cid: IpfsObj, utility_cid: IpfsObj, ipfs_service: FunctionAddress, t_quorum: f64) -> Quorum, bool:
+--func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: IpfsObj, quorum_cid: IpfsObj, utility_cid: IpfsObj, ipfs_service: FunctionAddress, t_quorum: f64) -> []FunctionAddress,[]FunctionAddress,[]FunctionAddress:
   result: *EVMResult
-  result2: *string
   quorum: *Quorum
-  
-  n <- MyOp.array_length(providers)
+  is_quorum: *bool
+
+  min_points = 3  -- minimum points we want in order to calculate an oracle 
+
+  on ipfs_service.peer_id:
+    IpfsCli ipfs_service.service_id
+    addrs <- IpfsCli.params_from_cid(services_cid.multiaddr, services_cid.cid)
+    q_addrs <- IpfsCli.params_from_cid(quorum_cid.multiaddr, quorum_cid.cid)
+    u_addrs <- IpfsCli.params_from_cid(utility_cid.multiaddr, utility_cid.cid)
+
+   n <- MyOp.array_length(providers)
   n2 <- MyOp2.array_length(addrs)
 
   if n > 0:
@@ -146,14 +222,28 @@ func get_block_height_quorum_exceptions(providers: []ProviderInfo, addrs: []Func
         MultiProviderQuery addr.service_id
         for provider <- providers:
           result <- MultiProviderQuery.get_block_number(provider)
-          result2 <<- provider.name
-        -- join result[n2-1]
-    join result[n*n2-1]
-  
-    on q_addr.peer_id:
-      SimpleQuorum q_addr.service_id
-      quorum <-SimpleQuorum.point_estimate(result, 3)
+    join result[n*n2-2]
+
+    on q_addrs[0].peer_id:
+      SimpleQuorum q_addrs[0].service_id
+      quorum <-SimpleQuorum.point_estimate(result, min_points)
+      if quorum[0].mode == 0:
+        is_quorum <<- false
+      else:
+        is_quorum <- SimpleQuorum.is_quorum(quorum[0].freq, quorum[0].n, t_quorum)
+    
+    deviations: *EVMResult
+    n_dev = 1
+    if quorum[0].freq != quorum[0].n:
+      on u_addrs[0].peer_id:
+        Utilities u_addrs[0].service_id
+        for res <- result:
+          v <- Utilities.kv_to_u64(res.stdout, "block-height")
+          if v != quorum[0].mode:
+            deviations <<- res
+            on %init_peer_id% via u_addrs[0].peer_id:
+              co ConsoleEVMResult.print(res)
+          Math.add(n_dev, 1)
+  <- quorum[0], is_quorum[0]
 
 
-
-  <- quorum[0], result[0]

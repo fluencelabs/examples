@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-use marine_rs_sdk::{marine, module_manifest, WasmLoggerBuilder};
+use marine_rs_sdk::{marine, module_manifest};
+use serde_json;
 
 module_manifest!();
 
-pub fn main() {
-    WasmLoggerBuilder::new().build().unwrap();
-}
+fn main() {}
 
 #[marine]
-pub struct CustomResult {
-    stdout: String,
-    stderr: String,
-    provider_name: String,
-    error: bool,
+fn kv_to_u64(kv_string: String, k: String) -> u64 {
+    let obj: serde_json::Value = serde_json::from_str(&kv_string).unwrap();
+    obj[&k].as_u64().unwrap()
 }
-
-#[marine]
-pub fn to_struct(name: String, stdout: String, stderr: String) -> String {}

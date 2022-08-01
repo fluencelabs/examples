@@ -13,5 +13,5 @@ serde = {version = "1.0.0" }
 serde_json = {version = "1.0.62"}
 cuckoofilter = {version="0.5.0", features=["serde_support"] }
 log = "0.4"
-marine-rs-sdk = { version = "0.6.10", features = ["logger"] }
+marine-rs-sdk = { version = "0.7.0", features = ["logger"] }
 flate2 = "1.0.20"

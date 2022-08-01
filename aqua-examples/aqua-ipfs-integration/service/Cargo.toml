@@ -11,7 +11,7 @@ name = "process_files"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = { version = "0.6.14", features = ["logger"] }
+marine-rs-sdk = { version = "0.7.0", features = ["logger"] }
 log = "0.4.14"
 rand = "0.8.4"
 

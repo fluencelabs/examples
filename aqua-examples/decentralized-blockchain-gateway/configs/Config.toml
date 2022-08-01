@@ -2,19 +2,38 @@ modules_dir = "artifacts/"
 
 [[module]]
 name = "curl_adapter"
-max_heap_size = "128 MiB"
+max_heap_size = "2 MiB"
 logger_enabled = true
 
 [module.mounted_binaries]
 curl = "/usr/bin/curl"
 
 [[module]]
+name = "ipfs_adapter"
+max_heap_size = "2 MiB"
+logger_enabled = true
+
+[module.mounted_binaries]
+ipfs = "/usr/local/bin/ipfs"
+
+[[module]]
 name = "multi_provider_query"
-max_heap_size = "10 KiB"
+max_heap_size = "2 MiB"
 logger_enabled = true
 
 
 [[module]]
 name = "simple_quorum"
-max_heap_size = "10 KiB"
+max_heap_size = "2 MiB"
+logger_enabled = true
+
+
+[[module]]
+name = "ipfs_cli"
+max_heap_size = "2 MiB"
+logger_enabled = true
+
+[[module]]
+name = "utilities"
+max_heap_size = "2 MiB"
 logger_enabled = true
