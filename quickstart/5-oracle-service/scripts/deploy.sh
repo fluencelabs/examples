@@ -20,7 +20,7 @@ SK=$(aqua key create | jq -r ."secretKey")
 echo "deploying the service..."
 
 aqua remote deploy_service \
-     --addr /dns4/kras-09.fluence.dev/tcp/19001/wss/p2p/12D3KooWD7CvsYcpF9HE9CCV9aY3SJ317tkXVykjtZnht2EbzDPm \
+     --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
      --config-path configs/ts_oracle_deploy_cfg.json \
      --sk ${SK} \
      --service ts-oracle \
