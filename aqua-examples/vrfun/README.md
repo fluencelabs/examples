@@ -2,7 +2,7 @@
 
 ## Overview
 
-A [Verifiable Random Function](https://people.csail.mit.edu/silvio/Selected%20Scientific%20Papers/Pseudo%20Randomness/Verifiable_Random_Functions.pdf) (VRF) is a pseudorandom function that provides proofs that its outputs were constructed in a verifiable manner. While the proof is constructed with both public and private, i.e., the requesters private key, data, the verification only requires public data. Not surprisingly, VRFs play an important role in trustless systems, such as blockchain protocols and, of course, the Fluence network. We are implementing [EC VRF](https://github.com/Silur/ECVRF), which uses ED25519, as a Marine Wasm off-chain service callable from Aqua.
+A [Verifiable Random Function](https://people.csail.mit.edu/silvio/Selected%20Scientific%20Papers/Pseudo%20Randomness/Verifiable_Random_Functions.pdf) (VRF) is a pseudorandom function that provides proofs that its outputs were constructed in a verifiable manner. While the proof is constructed with both public and private, i.e., the requesters private key, data, the verification only requires public data. Not surprisingly, VRFs play an important role in trustless systems, such as blockchain protocols and, of course, the Fluence network. We are implementing [ECVRF](https://github.com/Silur/ECVRF), which uses ED25519, as a Marine Wasm off-chain service callable from Aqua.
 
 **Note:**
 
@@ -99,6 +99,8 @@ which results in:
 
 * an output and
 * a [proof](https://docs.rs/ecvrf/0.4.3/ecvrf/struct.VrfProof.html)
+
+where the output the is the VRF hash.
 
 For some input data provided by the user, e.g.,  ` [222, 173, 190, 239]`, we call the `vrf_proof` function like so:
 
