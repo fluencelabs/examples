@@ -153,7 +153,7 @@ which gives us the expected but nevertheless reassuring:
 }
 ```
 
-If you change any of the verification parameters, such as the input parameter, the verification fails. For example, change `"payload_arg": [222, 173, 190, 239]` to `"payload_arg": [222, 173, 190, 240]`:
+If you change any of the verification parameters, such as the input parameter, the verification fails. For example, change `"payload_arg": [222, 173, 190, 239]` to `"bad_payload_arg": [222, 173, 190, 240]`:
 
 ```bash
  aqua run \
