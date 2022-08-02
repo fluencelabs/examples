@@ -1,4 +1,4 @@
-# Verifiable Random Function With Marine
+# Verifiable Random Function With Marine And Aqua
 
 ## Overview
 
