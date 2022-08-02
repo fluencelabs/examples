@@ -1,0 +1,24 @@
+[package]
+name = "vrfun"
+version = "0.1.5"
+authors = ["boneyard93501 <4523011+boneyard93501@users.noreply.github.com>"]
+edition = "2018"
+description = "vrfun, a Marine wasi module"
+license = "Apache-2.0"
+
+[[bin]]
+name = "vrfun"
+path = "src/main.rs"
+
+[dependencies]
+marine-rs-sdk = { version = "0.6.15", features = ["logger"] }
+log = "0.4.14"
+ecvrf = "0.4.3"
+zeroize = "1.5.7"
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.6.0"
+
+[dev]
+[profile.release]
+opt-level = "s"

@@ -1,0 +1,13 @@
+{
+  "services": [
+    {
+      "peer_id": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+      "service_id": "83f5250b-22f4-4e43-a83d-652d52aa8bd0"
+    },
+
+    {
+      "peer_id": "12D3KooWEFFCZnar1cUJQ3rMWjvPQg6yMV2aXWs2DkJNSRbduBWn",
+      "service_id": "114809b8-e4f8-4e4e-8b6e-0f8510a5075e"
+    }
+  ]
+}

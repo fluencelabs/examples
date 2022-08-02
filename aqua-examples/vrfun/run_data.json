@@ -1,0 +1,26 @@
+{
+  "args": [
+    {
+      "peer_id": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+      "service_id": "751c137d-37ea-4e57-ad22-518f6ee1900b"
+    },
+    {
+      "peer_id": "12D3KooWEFFCZnar1cUJQ3rMWjvPQg6yMV2aXWs2DkJNSRbduBWn",
+      "service_id": "132b1b5d-295d-402c-af23-678367c53c33"
+    }
+  ],
+  "proof_arg": {
+    "peer_id": "12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+    "service_id": "751c137d-37ea-4e57-ad22-518f6ee1900b"
+  },
+  "verify_arg": {
+    "peer_id": "12D3KooWEFFCZnar1cUJQ3rMWjvPQg6yMV2aXWs2DkJNSRbduBWn",
+    "service_id": "132b1b5d-295d-402c-af23-678367c53c33"
+  },
+  "sk_arg": [
+    212, 121, 73, 159, 75, 48, 235, 54, 173, 48, 2, 126, 229, 150, 255, 74, 94,
+    250, 152, 39, 169, 90, 240, 80, 245, 152, 11, 153, 11, 109, 187, 3
+  ],
+  "no_sk_arg": [],
+  "payload_arg": [222, 173, 190, 239]
+}

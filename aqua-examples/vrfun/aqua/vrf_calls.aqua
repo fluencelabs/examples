@@ -1,0 +1,49 @@
+
+data FuncAddr:
+    peer_id: string
+    service_id: string
+
+data ProofResult:
+  pk: []u8
+  proof: []u8
+  output: []u8
+  stderr: string
+
+data VerificationResult:
+  verified: bool
+  stderr: string
+
+data KeyPair:
+    pk: []u8
+    sk: []u8
+
+service Vrfun("service-id"):
+  verify_vrf(pk: []u8, payload: []u8, output: []u8, proof: []u8) -> VerificationResult
+  vrf_proof(payload: []u8, sk: []u8) -> ProofResult
+  gen_keys() -> KeyPair
+
+func get_keys(service: FuncAddr) -> KeyPair:
+  on service.peer_id:
+    Vrfun service.service_id
+    res <- Vrfun.gen_keys()
+  <- res
+
+
+func vrf_proof(service: FuncAddr, payload: []u8, sk:[]u8) -> ProofResult:
+  on service.peer_id:
+    Vrfun service.service_id
+    proof <- Vrfun.vrf_proof(payload, sk)
+  <- proof
+
+
+func vrf_verify(service: FuncAddr, payload: []u8, proof:ProofResult) -> VerificationResult:
+    on service.peer_id:
+        Vrfun service.service_id
+        verification <- Vrfun.verify_vrf(proof.pk, payload, proof.output, proof.proof)
+    <- verification
+
+
+func vrf_roundtrip(services: []FuncAddr, payload: []u8, sk: []u8) -> bool, ProofResult:
+  proof_result <- vrf_proof(services[0], payload, sk)
+  verification <- vrf_verify(services[1], payload, proof_result)
+  <- verification.verified, proof_result

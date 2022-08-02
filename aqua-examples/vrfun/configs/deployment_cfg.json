@@ -1,0 +1,11 @@
+{
+  "vrfun": {
+    "name": "vrfun",
+    "modules": [
+      {
+        "name": "vrfun",
+        "path": "./artifacts/vrfun.wasm"
+      }
+    ]
+  }
+}
