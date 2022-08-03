@@ -3,6 +3,7 @@
   "extends": [
     "config:base"
   ],
+  "ignorePaths": ["archived/**"],
   "packageRules": [
     {
       "matchPackagePatterns": ["*"],
