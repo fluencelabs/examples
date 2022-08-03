@@ -19,7 +19,7 @@ nanorand = { version = "0.7.0", default-features = false, features = [
 ] }
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.4.1"
+marine-rs-sdk-test = "0.7.0"
 
 [dev]
 [profile.release]
