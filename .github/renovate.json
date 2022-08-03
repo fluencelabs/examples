@@ -4,6 +4,7 @@
     "config:base"
   ],
   "ignorePaths": ["archived/**"],
+  "ignoreUnstable": true,
   "packageRules": [
     {
       "matchPackagePatterns": ["*"],
