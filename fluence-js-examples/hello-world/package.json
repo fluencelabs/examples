@@ -15,7 +15,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@fluencelabs/aqua": "0.7.2-314",
+        "@fluencelabs/aqua": "0.7.4-336",
         "@fluencelabs/aqua-lib": "0.5.2",
         "chokidar-cli": "^3.0.0",
         "ts-node": "^10.6.0",
