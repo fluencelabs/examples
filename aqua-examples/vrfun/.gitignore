@@ -1,5 +1,4 @@
 debug/
 target/
-Cargo.lock
 **/*.bk
 **/*.bak
