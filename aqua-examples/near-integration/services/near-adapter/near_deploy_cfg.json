@@ -1,0 +1,18 @@
+{
+  "near-adapter": {
+    "name": "near-adapter",
+    "modules": [
+      {
+        "name": "curl_adapter",
+        "path": "./artifacts/curl_adapter.wasm",
+        "mounted_binaries": [["curl", "/usr/bin/curl"]],
+        "logger_enabled": true
+      },
+      {
+        "name": "near_rpc_services",
+        "path": "./artifacts/near_rpc_services.wasm",
+        "logger_enabled": true
+      }
+    ]
+  }
+}

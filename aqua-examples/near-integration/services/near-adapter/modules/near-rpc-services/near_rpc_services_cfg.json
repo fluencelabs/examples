@@ -1,0 +1,5 @@
+{
+  "name": "near_rpc_services",
+  "mem_page_count": 10,
+  "logger_enabled": true
+}

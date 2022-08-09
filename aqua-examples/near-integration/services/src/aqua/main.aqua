@@ -1,3 +1,8 @@
+module Main
+import App from "deployed.app.aqua"
+
+export App, node_s
+
 data Result:
   stderr: string
   stdout: string
@@ -22,6 +27,12 @@ service NearRpcServices:
   view_account(network_id: string, account_id: string) -> Result
   view_account_structured(network_id: string, account_id: string) -> VAResult
 
+func node_s(network_id: string) -> Result:
+    services <- App.services()
+    on services.nearAdapter.default!.peerId:
+        NearRpcServices services.nearAdapter.default!.serviceId
+        res <- NearRpcServices.node_status(network_id)
+    <- res
 
 func node_status(network_id: string, node: string, service_id: string) -> Result: 
     on node:
@@ -35,16 +46,36 @@ func view_account(network_id: string, account_id: string, node: string, service_
         res <- NearRpcServices.view_account(network_id, account_id)
     <- res
 
+func view_account_s(network_id: string, account_id: string) -> Result:
+    services <- App.services()
+    on services.nearAdapter.default!.peerId:
+        NearRpcServices services.nearAdapter.default!.serviceId
+        res <- NearRpcServices.view_account(network_id, account_id)
+    <- res
+
 func view_account_structured(network_id: string, account_id: string, node: string, service_id: string) -> VAResult:
   on node:
     NearRpcServices service_id
         res <- NearRpcServices.view_account_structured(network_id, account_id)
     <- res
 
+func view_account_structured_s(network_id: string, account_id: string) -> VAResult:
+    services <- App.services()
+    on services.nearAdapter.default!.peerId:
+        NearRpcServices services.nearAdapter.default!.serviceId
+        res <- NearRpcServices.view_account_structured(network_id, account_id)
+    <- res
 
 func account_balance(network_id: string, account_id: string, node: string, service_id: string) -> string:
   on node:
     NearRpcServices service_id
+        res <- NearRpcServices.view_account_structured(network_id, account_id)
+    <- res.stdout.amount
+
+func account_balance_s(network_id: string, account_id: string) -> string:
+    services <- App.services()
+    on services.nearAdapter.default!.peerId:
+        NearRpcServices services.nearAdapter.default!.serviceId
         res <- NearRpcServices.view_account_structured(network_id, account_id)
     <- res.stdout.amount
 
@@ -53,3 +84,10 @@ func tx_status(network_id: string, tx_id: string, account_id: string, receipt: b
     NearRpcServices service_id
     res <- NearRpcServices.tx_status(network_id, tx_id, account_id, receipt)
   <- res
+
+func tx_status_s(network_id: string, tx_id: string, account_id: string, receipt: bool) -> Result:
+    services <- App.services()
+    on services.nearAdapter.default!.peerId:
+        NearRpcServices services.nearAdapter.default!.serviceId
+        res <- NearRpcServices.tx_status(network_id, tx_id, account_id, receipt)
+    <- res

@@ -63,7 +63,38 @@ async function main() {
     // ...
 ```
 
-For the complete implementation details, see `src/index.ts`. Before we test our code, please note that in this implementation the wallet credentials are presumed to be in the `~/.near-credentials` directory of the machine/system that runs the Fluence Signing Node. For *testnet* wallets, see https://wallet.testnet.near.org/ and https://docs.near.org/docs/develop/basics/create-account, to get started.
+For the complete implementation details, see `src/index.ts`. Before we test our code, please note that in this implementation the wallet credentials are presumed to be in the `~/.near-credentials` directory of the machine/system that runs the Fluence Signing Node.
+
+For *testnet* wallets, see https://wallet.testnet.near.org/ and https://docs.near.org/docs/develop/basics/create-account, to get started.
+
+If you haven't setup Near locally, go to the [Near documentation](https://docs.near.org/tools/near-cli), install the `near` CLI as described in [its github repo](https://github.com/near/near-cli):
+
+```
+npm install -g near-cli
+```
+
+Login using the `near` CLI with the following command:
+
+```
+near login
+```
+
+You'll get the output:
+
+```
+Please authorize at least one account at the URL above.
+
+Which account did you authorize for use with NEAR CLI?
+Enter it here (if not redirected automatically):
+Logged in as [ <your-user-id>.testnet ] with public key [ ed25519:<you-key... ] successfully
+```
+
+Upon a successful login you should have a [local credentials](https://docs.near.org/tools/near-cli#access-key-location):
+
+```
+ls ~/.near-credentials/testnet
+<your-user-id>.testnet.json
+```
 
 Note the implementations of `account_state` and `get_balance`, which follow the same implementation pattern discussed above but actually do not require account or wallet access.
 
@@ -270,7 +301,7 @@ In order to create a NEAR Wasm adapter, we wrap whatever functionality we need f
 
 ### Creating And Deploying NEAR Wasm Services
 
-In the `services` directory, you find a minimal Wasm adapter for [NEAR RPC API](https://docs.near.org/docs/api/rpc) to get you started. Since we are connecting to on-chain resources via JSON-RPC, we need our service module to have access to [cUrl](https://doc.fluence.dev/docs/tutorials_tutorials/curl-as-a-service), which we provide with the [cUrl adapter](../near-integration/services/curl-adapter/):
+In the `services/near-adapter/modules` directory, you find a minimal WASM adapter `near-rpc-services` for [NEAR RPC API](https://docs.near.org/docs/api/rpc) to get you started. Since we are connecting to on-chain resources via JSON-RPC, we need our service module to have access to [cUrl](https://doc.fluence.dev/docs/tutorials_tutorials/curl-as-a-service), which we provide with the [cUrl adapter](../near-integration/services/near-adapter/modules/curl-adapter/):
 
 ```rust
 // src/main.rs
@@ -308,23 +339,22 @@ pub fn node_status(network_id: String) -> Result {
 
 Note that we use the `Result` struct to capture the curl response. 
 
-Assuming you compiled the code with `./scripts/build.sh`, we can interact with the `node_status` in `mrepl`. Open the REPL with `mrepl configs/Config.toml` and:
+We can interact with the `node_status` in REPL. Open the REPL with `fluence service repl nearAdapter` and:
 
 ```bash
-mrepl configs/Config.toml
-Welcome to the Marine REPL (version 0.9.1)
+fluence service repl nearAdapter
+Making sure service and modules are downloaded and built... done
+Welcome to the Marine REPL (version 0.18.0)
 Minimal supported versions
   sdk: 0.6.0
   interface-types: 0.20.0
 
-app service was created with service id = e9ecced7-521c-4dd7-b205-61c8da3be0da
-elapsed time 91.995618ms
+app service was created with service id = e5ae9c3e-60f8-4ae7-b434-6f8085246c1d
+elapsed time 326.464043ms
 
 1> call near_rpc_services node_status ["testnet"]
-result: Object({"stderr": String("  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100    68    0     0  100    68      0    110 --:--:-- --:--:-- --:--:--   110\r100  5384  100  5316  100    68   8091    103 --:--:-- --:--:-- --:--:--  8182\n"), "stdout": String("{\"jsonrpc\":\"2.0\",\"result\":{\"version\":{\"version\":\"1.23.0-rc.1\",\"build\":\"crates-0.10.0-70-g93e8521c9\"},\"chain_id\":\"testnet\",\"protocol_version\":49,\"latest_protocol_version\":49,
-<snip>
-\"latest_state_root\":\"CfxNRB5SNAiCmsMLbyAi7LD6YRVak7BH8REbumeg5GvD\",\"latest_block_time\":\"2021-12-08T09:20:24.293798434Z\",\"syncing\":false,\"earliest_block_hash\":\"CTBCW2Xm1xHeVKs3R5ZSULmVPc8Gj5tVVmH6HDrwRAeF\",\"earliest_block_height\":74004638,\"earliest_block_time\":\"2021-12-06T08:48:52.331327624Z\"},\"validator_account_id\":null},\"id\":\"dontcare\"}")})
- elapsed time: 666.350943ms
+result: Object({"stderr": String(""), "stdout": String("{\"jsonrpc\":\"2.0\",\"result\":{\"chain_id\":\"testnet\",\"latest_protocol_version\":55,\"protocol_version\":54,\"rpc_addr\":\"0.0.0.0:4040\",\"sync_info\":{\"earliest_block_hash\":\"87rXaRN96eVGijmoxXMvKm9XAas1RedpHgh5ifaMfQne\",\"earliest_block_height\":96939089,\"earliest_block_time\":\"2022-08-07T05:20:29.139629926Z\",\"epoch_id\":\"9fvV3KdWb71CtFj6shiFrAgBfq4Zqk16reWBXSGRhgZy\",\"epoch_start_height\":97111890,\"latest_block_hash\":\"Dn6Q8cPogGmGj3m15t2e1c6hgbrBpmd8yrjegX5GU2Nb\",\"latest_block_height\":97136216,\"latest_block_time\":\"2022-08-09T10:12:28.971640387Z\",\"latest_state_root\":\"HBRDv6dEYwv1WEiwTDwPHzXBLmFG5c19YVqHGADH5gM7\",\"syncing\":false},\"validator_account_id\":null,\"validators\":[{\"account_id\":\"legends.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"node1\",\"is_slashed\":false},{\"account_id\":\"node0\",\"is_slashed\":false},{\"account_id\":\"node2\",\"is_slashed\":false},{\"account_id\":\"node3\",\"is_slashed\":false},{\"account_id\":\"staked.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"masternode24.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"01node.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"p2p.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"nodeasy.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"chorusone.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"sweden.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"foundryusa.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"chorus-one.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"ni.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"cryptogarik.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"pathrocknetwork.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"stakely_v2.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"aurora.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"freshtest.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"solidstate.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"namdokmai.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"blockscope.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"leadnode.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"stakesstone.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"al3c5.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"grassets.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"basilisk-stake.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"shurik.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"dsrvlabs.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"projecttent.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"lavenderfive.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"zetsi.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"tayang.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"everstake.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"infiniteloop.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"infstones.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"moonlet.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"g2.pool.devnet\",\"is_slashed\":false},{\"account_id\":\"pennyvalidators.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"kiln.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"ibb.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"twintest1.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"bee1stake.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"bgpntx.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"lastnode.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"omnistake_v5.factory01.littlefarm.testnet\",\"is_slashed\":false},{\"account_id\":\"gettingnear.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"domanodes.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"stakingfacilities.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"kuutamo.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"gargoyle.pool.f863973.m0\",\"is_slashed\":false}],\"version\":{\"build\":\"crates-0.14.0-148-g5228fb106\",\"rustc_version\":\"1.61.0\",\"version\":\"1.28.0-rc.3\"}},\"id\":\"dontcare\"}")})
+ elapsed time: 539.529855ms
 
 2>
 ...
@@ -338,13 +368,13 @@ data Result:
     stderr: string
     stdout: string
 
-service RPCService:
-    node_status(network_id: string, block_ref:string) -> Result
+service NearRpcServices:
+    node_status(network_id: string) -> Result
 
-func rpc_foo(network_id: string, block_ref:string, node_string, service_id: string ) -> string: 
+func rpc_foo(network_id: string, node: string, service_id: string) -> string: 
     on node:
-        RPCService service_id
-        res <- RPCService.node_status(network_id, block_ref)
+        NearRpcServices service_id
+        res <- NearRpcServices.node_status(network_id)
         if res.stderr:
             result <<- "call failed"
         else:
@@ -352,66 +382,63 @@ func rpc_foo(network_id: string, block_ref:string, node_string, service_id: stri
         <- result
 ```
 
-Before we can use our Fluence NEAR adapter, we need to deploy our Wasm modules to one or more host peers. We can do that with [Aqua CLI](https://doc.fluence.dev/aqua-book/aqua-cli):
+Before we can use our Fluence NEAR adapter, we need to deploy our Wasm modules to one or more host peers. We can do that with [Fluence CLI](https://github.com/fluencelabs/fluence-cli#fluence-deploy):
 
 ```bash
-aqua remote deploy_service \
-     --addr /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
-     --config-path configs/near_deploy_cfg.json \
-     --service near-adapter
+fluence deploy
 ```
 
-Which gives us the deployment information:
+Fluence will make sure that all required services are in place, can be either downloaded or built. It gives us the deployment confirmation:
 
 ```bash
-Your peerId: 12D3KooWNg9YAJWzSRC5Wt2U38beXWAZQfZc2xxqVLVogRkSYKiv
-"Going to upload a module..."
-2022.02.07 01:58:44 [INFO] created ipfs client to /ip4/164.90.164.229/tcp/5001
-2022.02.07 01:58:44 [INFO] connected to ipfs
-2022.02.07 01:58:45 [INFO] file uploaded
-"Going to upload a module..."
-2022.02.07 01:58:45 [INFO] created ipfs client to /ip4/164.90.164.229/tcp/5001
-2022.02.07 01:58:46 [INFO] connected to ipfs
-2022.02.07 01:58:49 [INFO] file uploaded
-"Now time to make a blueprint..."
-"Blueprint id:"
-"24b026f9b1b3f189d7998f875c0eb0c3394e546ee248ea292a27a555d3643774"
-"And your service id is:"
-"b39eb93d-0e7b-478c-976f-2e5b05ec02fb"
+Making sure all services are downloaded... done
+Making sure all modules are downloaded and built... done
+Going to deploy project described in <path-to-examples>/examples/aqua-examples/near-integration/services/fluence.yaml
+Deploying:
+  service: nearAdapter
+  deployId: default
+  on: 12D3KooWR4cv1a8tv7pps4HH6wePNaK6gf1Hww5wcCMzeWxyNw51
+... done
+Compiling <path-to-examples>/examples/aqua-examples/near-integration/services/.fluence/aqua/deployed.app.aqua... done
 ```
 
-Please note the node id, "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi", and service id "b39eb93d-0e7b-478c-976f-2e5b05ec02fb" for future use in our Aqua. Let's have a look at our aqua script in 'aqua/near_adapter_demo.aqua`:
+
+Please note the helper generated in Aqua by the CLI "deployed.app.aqua" for future use in our Aqua. Let's have a look at our aqua script in 'src/aqua/main.aqua`:
 
 ```aqua
--- aqua/near_adapter_demo_aqua
-func node_status(network_id: string, node: string, service_id: string) -> Result: 
-    on node:
-        NearRpcServices service_id
+-- aqua/main.aqua
+func node_s(network_id: string) -> Result:
+    services <- App.services()
+    on services.nearAdapter.default!.peerId:
+        NearRpcServices services.nearAdapter.default!.serviceId
         res <- NearRpcServices.node_status(network_id)
     <- res
 ```
 
-Which we can run with the `aqua cli`:
+Which we can run with the `fluence` CLI:
 
 ```bash
-aqua run \
-    -i aqua/near_adapter_demo.aqua \
-    -a /dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi \
-    -f 'node_status("testnet", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi", "b39eb93d-0e7b-478c-976f-2e5b05ec02fb")'
+fluence run -f 'node_s("testnet")'
 ```
 
 Which results in the following output:
 
 ```bash
-Your peerId: 12D3KooWMWt2xWsqZxF3sEcBajsDRVARziKdyqkCoDXKeqYMnawm
+Running:
+  function: node_s("testnet")
+  relay: /dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf
+... done
+
+Result:
+
 {
   "stderr": "",
-  "stdout": "{\"jsonrpc\":\"2.0\",\"result\":{\"version\":{\"version\":\"1.24.0-rc.2\",\"build\":\"crates-0.11.0-72-g6c5199f3b\"},\"chain_id\":\"testnet\",\"protocol_version\":51,\"latest_protocol_version\":51,\"rpc_addr\":\"0.0.0.0:4040\",\"validators\":[{\"account_id\":\"node1\",\"is_slashed\":false},{\"account_id\":\"node0\",\"is_slashed\":false},{\"account_id\":\"node2\",\"is_slashed\":false},{\"account_id\":\"node3\",\"is_slashed\":false},{\"account_id\":\"staked.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"masternode24.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"01node.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"p2p.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"legends.<snip>
-  \"latest_block_height\":81641688,\"latest_state_root\":\"4yNrvAWtpEEAzCigEsYLriY4KG9gECDebrUk3b8EBAk1\",\"latest_block_time\":\"2022-02-07T08:02:25.995190071Z\",\"syncing\":false,\"earliest_block_hash\":\"H3nLmP5PPLSCX863ipiMSRZaBAsBKhXUkAsSzuaBJJYJ\",\"earliest_block_height\":81395663,\"earliest_block_time\":\"2022-02-05T08:47:02.279368896Z\"},\"validator_account_id\":null},\"id\":\"dontcare\"}"
+  "stdout": "{\"jsonrpc\":\"2.0\",\"result\":{\"chain_id\":\"testnet\",\"latest_protocol_version\":55,\"protocol_version\":54,\"rpc_addr\":\"0.0.0.0:4040\",\"sync_info\":{\"earliest_block_hash\":\"87rXaRN96eVGijmoxXMvKm9XAas1RedpHgh5ifaMfQne\",\"earliest_block_height\":96939089,\"earliest_block_time\":\"2022-08-07T05:20:29.139629926Z\",\"epoch_id\":\"9fvV3KdWb71CtFj6shiFrAgBfq4Zqk16reWBXSGRhgZy\",\"epoch_start_height\":97111890,\"latest_block_hash\":\"2DcwXKkZf175VExkDpryH73p99rHQjdu54u4Y5vfambK\",\"latest_block_height\":97136905,\"latest_block_time\":\"2022-08-09T10:30:51.592058687Z\",\"latest_state_root\":\"AmXivm3DbmRqU9fYQe6tDuC3ujz2UbdeYNeLmSRrxzsZ\",\"syncing\":false},\"validator_account_id\":null,\"validators\":[{\"account_id\":\"legends.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"node1\",\"is_slashed\":false},{\"account_id\":\"node0\",\"is_slashed\":false},{\"account_id\":\"node2\",\"is_slashed\":false},{\"account_id\":\"node3\",\"is_slashed\":false},{\"account_id\":\"staked.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"masternode24.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"01node.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"p2p.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"nodeasy.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"chorusone.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"sweden.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"foundryusa.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"chorus-one.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"ni.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"cryptogarik.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"pathrocknetwork.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"stakely_v2.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"aurora.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"freshtest.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"solidstate.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"namdokmai.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"blockscope.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"leadnode.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"stakesstone.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"al3c5.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"grassets.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"basilisk-stake.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"shurik.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"dsrvlabs.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"projecttent.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"lavenderfive.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"zetsi.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"tayang.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"everstake.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"infiniteloop.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"infstones.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"moonlet.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"g2.pool.devnet\",\"is_slashed\":false},{\"account_id\":\"pennyvalidators.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"kiln.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"ibb.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"twintest1.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"bee1stake.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"bgpntx.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"lastnode.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"omnistake_v5.factory01.littlefarm.testnet\",\"is_slashed\":false},{\"account_id\":\"gettingnear.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"domanodes.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"stakingfacilities.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"kuutamo.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"gargoyle.pool.f863973.m0\",\"is_slashed\":false}],\"version\":{\"build\":\"crates-0.14.0-148-g5228fb106\",\"rustc_version\":\"1.61.0\",\"version\":\"1.28.0-rc.3\"}},\"id\":\"dontcare\"}"
 }
+
 ```
 
-Give the already implemented `view_account` and `tx_status` functions a try or add more methods from the RPC API -- we are looking forward to your pull requests.
+Give the already implemented `view_account_s` and `tx_status_s` functions a try or add more methods from the RPC API -- we are looking forward to your pull requests.
 
 ### Summary
 
