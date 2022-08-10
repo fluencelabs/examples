@@ -140,7 +140,7 @@ Which produces output similar to:
 > near-signing-node@0.1.0 start
 > node -r ts-node/register src/index.ts
 
-PeerId:  12D3KooWLCaFtoq9uu1jFg38uZXU4fNAkcL5X3xoQu6UqFxRFavU
+PeerId:  12D3KooWRfvdqfDXw4yLnYLpHLrMm56M3G1nAbti4fDdEhgr5gp2
 Relay id:  12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi
 ctrl-c to exit
 ```
@@ -148,144 +148,217 @@ ctrl-c to exit
 Please take note of the **relay id** and **peer id** for use in your client peer. In order to call the `account_state` method, open a new terminal window and navigate to the `~/examples/aqua-examples/near-integration/near-signing-node` directory and execute:
 
 ```bash
-aqua run \
-    -i aqua -a "/dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi"  \
-    -f 'account_state("testnet", "<your account>", "lame_password", "<peer id>", "relay id")'
+fluence run \
+    -i aqua -f 'account_state("testnet", "<your-account>", "lame_password", "<your-peer-id>", "<your-relay-id>")'
 ```
 
-*Replace* `<your account>` with your testnet account and `<peer id>` and `<relay id>` with the values provided by your peer output as discussed above. Once you've done that, the output should be similar to:
+*Replace* `<your-account>` with your Near testnet account and `<your-peer-id>` and `<your-relay-id>` with the values provided by your peer output as discussed above. Once you've done that, the output should be similar to:
 
 ```bash
-Your peerId: 12D3KooWJYGtESBvtLiCyY1XUrXR5WYBtfAU697SqVnwi5XmqkqW
-[
-  {
-    "amount": "199998727964846286399080000",
-    "block_hash": "5Ves5ocsxmUSbsh6ZF5wutLiZSsPgm43H4H4zVDkacnA",
-    "block_height": 74936860,
-    "code_hash": "11111111111111111111111111111111",
-    "locked": "0",
-    "storage_paid_at": 0,
-    "storage_usage": 674
-  }
-]
+Running:
+  function: account_state("testnet", "<your-account-id>", "lame_password", "12D3KooWRfvdqfDXw4yLnYLpHLrMm56M3G1nAbti4fDdEhgr5gp2", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi")
+  relay: /dns4/kras-06.fluence.dev/tcp/19001/wss/p2p/12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr
+... done
+
+Result:
+
+{
+  "amount": "199999827797124999999980000",
+  "block_hash": "6MKaFMkDMqcZrG8toTdAhoqLXrxMJL1JmHWQDnshcstF",
+  "block_height": 97232435,
+  "code_hash": "11111111111111111111111111111111",
+  "locked": "0",
+  "storage_paid_at": 0,
+  "storage_usage": 346
+}
 ```
 
 Similarly, we can call our `send_money` service with Aqua:
 
 ```aqua
- aqua run \
+fluence run \
     -i aqua \
-    -a "/dns4/kras-04.fluence.dev/tcp/19001/wss/p2p/12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi" \
-    -f 'send_money("testnet", "<from account>", "<to account>", "10000", "lame_password", "<peer id>", "<relay id>")'
+    -f 'send_money("testnet", "<your-from-account>", "<your-to-account>", "10000", "lame_password", "<your-peer-id>", "<your-relay-id>")'
+
 ```
 
-Replace the <`from`> and <`to`> account placeholders with your respective testnet wallets and the `peer id` and `relay id` with the values provided by your peer. Executing above Aqua statement produces a transaction receipt similar to the one below:
+Replace the <`you-from-account`> and <`your-to-account`> account placeholders with your respective testnet wallets and the `your-peer-id` and `your-relay-id` with the values provided by your peer. Executing above Aqua statement produces a transaction receipt similar to the one below:
 
 ```bash
+Running:
+  function: send_money("testnet", "<you-from-account>", "<you-from-account>", "10000", "lame_password", "12D3KooWRfvdqfDXw4yLnYLpHLrMm56M3G1nAbti4fDdEhgr5gp2", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi")
+  relay: /dns4/kras-03.fluence.dev/tcp/19001/wss/p2p/12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE
+... done
 
-Your peerId: 12D3KooWG8yhYea2x8LiWWruLqRyrbHNAyq6oAj5jkjDLZe21YK1
-[
-  {
-    "receipts_outcome": [
-      {
-        "block_hash": "7ZgHzMZsSirCxmJJ9tJJuHGjZBs1eG2tFWpYMBjYn9X1",
-        "id": "7viub5UekSHHYi8ovEt5TuQNgtqZSgPx6EgUutv5i561",
-        "outcome": {
-          "executor_id": "<from account>",
-          "gas_burnt": 223182562500,
-          "logs": [],
-          "metadata": {
-            "gas_profile": [],
-            "version": 1
-          },
-          "receipt_ids": [
-            "E5ajp367DHvZcitj6eZ9nCE6rSYUmZi2njg9LnkdbZvM"
-          ],
-          "status": {
-            "SuccessValue": ""
-          },
-          "tokens_burnt": "22318256250000000000"
-        },
-        "proof": [
-          {
-            "direction": "Right",
-            "hash": "AD7yhCufivqSZHRuTuqATFjjhkY9AiBHPGSqLvmADKJh"
-          },
-          {
-            "direction": "Right",
-            "hash": "3fiJCKaok6BVoKMrgBHTedJWbeNU5nNJzpN82Kxjyw94"
-          }
-        ]
-      },
-      {
-        "block_hash": "14EVqK6jpkKbkozEbdf5WrpxGAqzfq78kqj7Gv9smLBs",
-        "id": "E5ajp367DHvZcitj6eZ9nCE6rSYUmZi2njg9LnkdbZvM",
-        "outcome": {
-          "executor_id": "<to account>",
-          "gas_burnt": 223182562500,
-          "logs": [],
-          "metadata": {
-            "gas_profile": [],
-            "version": 1
-          },
-          "receipt_ids": [],
-          "status": {
-            "SuccessValue": ""
-          },
-          "tokens_burnt": "0"
-        },
-        "proof": [
-          {
-            "direction": "Left",
-            "hash": "7cnaRc9PjGPHXd3fLngDQy8XQhmKtQXTPdrbq8Aas2Ti"
-          }
-        ]
-      }
-    ],
-    "status": {
-      "SuccessValue": ""
-    },
-    "transaction": {
-      "actions": [
-        {
-          "Transfer": {
-            "deposit": "10000"
-          }
-        }
-      ],
-      "hash": "3bmedi7erFPpwEWWgQHuMppoorvzed8x7w5mttofCVQw",
-      "nonce": 74253069000003,
-      "public_key": "ed25519:632DzcF3w7SLXJzDRcFdSHUBY2De8LECfJ9kCC4yERuj",
-      "receiver_id": "<to account>",
-      "signature": "ed25519:5zmMLczayMnnykBdn9MM3hUCWigZM5JgfAyT1E7mu7a4RNzPq9uahAKiGs1JWxNCor6zGHNbX8cpQYC59axxFtjR",
-      "signer_id": "<from account>"
-    },
-    "transaction_outcome": {
-      "block_hash": "J4gEefXV6FM1crRxxQbHhhVWpuPdPHnEAx5Kb5coCDdj",
-      "id": "3bmedi7erFPpwEWWgQHuMppoorvzed8x7w5mttofCVQw",
+Result:
+
+{
+  "receipts_outcome": [
+    {
+      "block_hash": "EzB5BiTVyqzJjqbTzRRKfQ2qWdj48F5vArVwtdwDmNaG",
+      "id": "FmhBQNgwtvaJUxTEbPhqfsUSjuwjcYw4iLsb1LLsKDDH",
       "outcome": {
-        "executor_id": "<from account>",
+        "executor_id": "<your-to-account>",
         "gas_burnt": 223182562500,
         "logs": [],
         "metadata": {
-          "gas_profile": null,
+          "gas_profile": [],
           "version": 1
         },
         "receipt_ids": [
-          "7viub5UekSHHYi8ovEt5TuQNgtqZSgPx6EgUutv5i561"
+          "9Q5mKcBgnoN1cM47nfwBRiN6vUoZa4vPhn6boyXZitNd"
         ],
         "status": {
-          "SuccessReceiptId": "7viub5UekSHHYi8ovEt5TuQNgtqZSgPx6EgUutv5i561"
+          "SuccessValue": ""
         },
         "tokens_burnt": "22318256250000000000"
       },
+      "proof": [
+        {
+          "direction": "Left",
+          "hash": "EA96udAi8vcAdLHnbKPHTW4qKHnMXhJ4zjD4csETYk9r"
+        },
+        {
+          "direction": "Right",
+          "hash": "CNtBo5A3Sma7RrK2J9ntTq7p3v7fxS8zYmdXYWDCfscT"
+        }
+      ]
+    },
+    {
+      "block_hash": "4WX1AZ9VSJDzjv1j6uHqNcz4W7iqz6XyiCqj7wpGn6h1",
+      "id": "9Q5mKcBgnoN1cM47nfwBRiN6vUoZa4vPhn6boyXZitNd",
+      "outcome": {
+        "executor_id": "<your-from-account>",
+        "gas_burnt": 223182562500,
+        "logs": [],
+        "metadata": {
+          "gas_profile": [],
+          "version": 1
+        },
+        "receipt_ids": [],
+        "status": {
+          "SuccessValue": ""
+        },
+        "tokens_burnt": "0"
+      },
       "proof": []
     }
+  ],
+  "status": {
+    "SuccessValue": ""
+  },
+  "transaction": {
+    "actions": [
+      {
+        "Transfer": {
+          "deposit": "10000"
+        }
+      }
+    ],
+    "hash": "2cCxw5RGTqD9UCwqth3Pe3FhRcYkqRimnzyhYWCBKjjA",
+    "nonce": 96699860000005,
+    "public_key": "ed25519:82CcWWRM9scav5hbqUVL4JZsBwagqFvjZrLDbaoiE9pr",
+    "receiver_id": "<your-to-account>",
+    "signature": "ed25519:2cmhrzp4PeKPcXE1vUW89krdTcdsApY3h6TT7CshWdrZMBLUjfJQF6pijzYcFUhpwArNQwDmD9GkVep9gYJTb4Hd",
+    "signer_id": "<your-from-account>"
+  },
+  "transaction_outcome": {
+    "block_hash": "DhS6KZzK9PdCqot2k4hewfAWkc7nQ9mnZM91XKZdVRkQ",
+    "id": "2cCxw5RGTqD9UCwqth3Pe3FhRcYkqRimnzyhYWCBKjjA",
+    "outcome": {
+      "executor_id": "<your-from-account>",
+      "gas_burnt": 223182562500,
+      "logs": [],
+      "metadata": {
+        "gas_profile": null,
+        "version": 1
+      },
+      "receipt_ids": [
+        "FmhBQNgwtvaJUxTEbPhqfsUSjuwjcYw4iLsb1LLsKDDH"
+      ],
+      "status": {
+        "SuccessReceiptId": "FmhBQNgwtvaJUxTEbPhqfsUSjuwjcYw4iLsb1LLsKDDH"
+      },
+      "tokens_burnt": "22318256250000000000"
+    },
+    "proof": []
   }
-]
+}
 ```
 
-You can use the [Testnet Explorer](https://explorer.near.org/) to further investigate the token transfer you just executed.
+It's rather convenient to call the `account_state` and `send_money` functions. However, there's still a couple of things we need to remember and use such as `<your-peer-id>` and `<your-relay-id>`. As a matter of fact we can simplify a method call, and `--json-service` param of the `fluence` CLI comes in handy.
+
+Upon the Near signing node start, it creates a JSON file with its peer id and relay id information we can use with the `fluence` CLI and in our Aqua code.
+
+The `js-services.json` looks like:
+
+```json
+{
+  "name": "JsService",
+  "serviceId": "JsService",
+  "functions": [
+    {
+      "name": "get",
+      "result": {
+        "peerId": "12D3KooWRfvdqfDXw4yLnYLpHLrMm56M3G1nAbti4fDdEhgr5gp2",
+        "relayPeerId": "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi"
+      }
+    }
+  ]
+}
+```
+
+And the corresponding Aqua code for `send_money_s` looks slightly different and doesn't require `node` and `relay` parameters that were required for the previous `send_money` implementation.
+
+```aqua
+-- near_signing_node.aqua
+func send_money_s(network_id:string, account_id:string, receiver_id:string, amount:string, password: string) -> string:
+    services <- JsService.get()
+    on services.peerId via services.relayPeerId:
+        res <- NearSignerApi.send_money(network_id, account_id, receiver_id, amount, password)
+    <- res
+```
+
+Those parameters are available thru the `js-services.json` and the following definitions in our Aqua code:
+
+```aqua
+-- near_signing_node.aqua
+data Services:
+    peerId: string
+    relayPeerId: string
+
+service JsService("JsService"):
+    get: -> Services
+```
+
+Considering all the above, the `send_money_s` call looks like:
+
+```bash
+fluence run \
+    -i aqua \
+    -f 'send_money_s("testnet", "<your-from-account>", "<your-to-account>", "10000", "lame_password")' --json-service js-services.json
+```
+
+The similar approach can be used for the `account_state` with its updated implementation `account_state_s`:
+
+```aqua
+-- near_signing_node.aqua
+func account_state_s(network_id:string, account_id:string, password: string) -> string:
+    services <- JsService.get()
+    on services.peerId via services.relayPeerId:
+        res <- NearSignerApi.account_state(network_id, account_id, password)
+    <- res
+```
+
+And we can call the `account_state_s` in a similar fashion as we've done for the `send_mone_s`:
+
+```bash
+fluence run \
+  -i aqua \
+  -f 'account_state_s("testnet", "<your-account-id>", "lame_password")' --json-service js-services.json
+```
+
+You can use the [Testnet Explorer](https://explorer.near.org/) to further investigate the token transfer you executed.
 
 ### Summary
 
