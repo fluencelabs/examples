@@ -476,7 +476,7 @@ Compiling <path-to-examples>/examples/aqua-examples/near-integration/services/.f
 ```
 
 
-Please note the helper generated in Aqua by the CLI "deployed.app.aqua" for future use in our Aqua. Let's have a look at our aqua script in 'src/aqua/main.aqua`:
+Please note the helper generated in Aqua by the CLI "deployed.app.aqua" for future use in our Aqua. Let's have a look at our aqua script in `src/aqua/main.aqua`:
 
 ```aqua
 -- aqua/main.aqua
