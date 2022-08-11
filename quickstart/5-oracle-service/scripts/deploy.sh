@@ -1,4 +1,7 @@
-#!/usr/bin/env bash -o errexit -o nounset -o pipefail
+#!/usr/bin/env bash
+
+set -o errexit -o nounset -o pipefail
+
 
 function is_installed {
       if ! command -v "$1" >/dev/null 2>&1; then
