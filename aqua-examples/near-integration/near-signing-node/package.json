@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node -r ts-node/register src/index.ts",
-    "compile-aqua": "aqua -i aqua/ -o src/_aqua",
+    "compile-aqua": "fluence aqua -i aqua/ -o src/_aqua",
     "watch-aqua": "chokidar \"**/*.aqua\" -c \"npm run compile-aqua\""
   },
   "author": "",

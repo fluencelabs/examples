@@ -3,6 +3,14 @@
 
 We provide integration examples for both a [Fluence JS](https://github.com/fluencelabs/fluence-js) node based on the [NEAR API JS](https://docs.near.org/docs/api/javascript-library) and distributed [Wasm services](https://github.com/fluencelabs/marine) wrapping the [NEAR RPC API](https://docs.near.org/docs/api/rpc). A [NEAR CLI](https://docs.near.org/docs/tools/near-cli) integration is planned for the near future.
 
+## Prerequisites
+
+Please make sure you have the latest Fluence CLI installed by running the following command:
+
+```bash
+npm install -g @fluencelabs/cli
+```
+
 ## Fluence JS NEAR Signing Peer
 
 Signing transactions and messages is a critical operation both on- and off-chain and an integral part of most Web3 workflows. In Fluence's open, permissionless peer-to-peer network maintaining data privacy is a challenge. For example, passing the password for a keyfile or the private key itself is quite risky: while a peer-to-peer communication channel is end-to-end encrypted, the "end" of the channel is the node hosting the target service. Hence, a node can easily eavesdrop on decrypted traffic and abscond with your password or key and presumably, your funds. Of course, you can run your own node to eliminate such exploits. Rather than run a full-fledged Rust node for a limited scope requirement, a more advantageous solution might be to implement a Fluence Signing Node (FSN) with Node JS and Fluence JS, which is exactly what we have done for this example. While a Fluence JS peer does not allow for the hosting of arbitrary services at this point, it does allow to easily wrap the NEAR JS SDK and expose whatever interfaces you want to be used/composed with Aqua.
@@ -120,11 +128,13 @@ Which produces output similar to:
 
 ```bash
 > near-signing-node@0.1.0 compile-aqua
-> aqua -i aqua/ -o src/_aqua
+> fluence aqua -i aqua/ -o src/_aqua
 
-2021.12.14 00:22:34 [INFO] Aqua Compiler 0.5.0-SNAPSHOT
-2021.12.14 00:22:34 [INFO] Result /Users/bebo/localdev/examples/aqua-examples/near-integration/near-signing-node/src/_aqua/near_signing_node.ts: compilation OK (3 functions, 1 services)
-2021.12.14 00:22:34 [INFO] Result /Users/bebo/localdev/examples/aqua-examples/near-integration/near-signing-node/src/_aqua/near_demo.ts: compilation OK (2 functions, 1 services)
+Compiling
+... done
+2022.08.12 14:11:24:024 main INFO aqua.AquaCli.main:133
+    Aqua Compiler 0.7.4-332
+Result <path-to-examples>/aqua-examples/near-integration/near-signing-node/src/_aqua/near_signing_node.ts: compilation OK (4 functions, 2 services)
 ```
 
 You can check the generated Typescript and AIR code in the `src/_aqua` directory. With our setup complete, let's start the peer:
@@ -412,7 +422,7 @@ pub fn node_status(network_id: String) -> Result {
 
 Note that we use the `Result` struct to capture the curl response. 
 
-We can interact with the `node_status` in REPL. Open the REPL with `fluence service repl nearAdapter` and:
+We can interact with the `node_status` in REPL. Please make sure you are in the `near-integration/services` directory. Open the REPL with `fluence service repl nearAdapter` and get the following output:
 
 ```bash
 fluence service repl nearAdapter
@@ -461,7 +471,7 @@ Before we can use our Fluence NEAR adapter, we need to deploy our Wasm modules t
 fluence deploy
 ```
 
-Fluence will make sure that all required services are in place, can be either downloaded or built. It gives us the deployment confirmation:
+Fluence will make sure that all required services and modules are in place, can be either downloaded or built. It gives us the deployment confirmation:
 
 ```bash
 Making sure all services are downloaded... done
