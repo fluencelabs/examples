@@ -1,6 +1,6 @@
 module Main
 
-export account_state, send_money, NearSignerApi, account_state_s, send_money_s, JsService
+export account_state, send_money, NearSignerApi, account_state_view, transfer_money, JsService
 
 data Services:
     peerId: string
@@ -23,7 +23,7 @@ service NearSignerApi("near"):
     send_money(network_id: string, account_id: string, receiver_id:string, amount:string, password: string) -> string
     get_balance(network_id: string, account_id: string, password: string) -> string
 
-func account_state_s(network_id:string, account_id:string, password: string) -> string:
+func account_state_view(network_id:string, account_id:string, password: string) -> string:
     services <- JsService.get()
     on services.peerId via services.relayPeerId:
         res <- NearSignerApi.account_state(network_id, account_id, password)
@@ -34,7 +34,7 @@ func account_state(network_id:string, account_id:string, password: string, node:
         res <- NearSignerApi.account_state(network_id, account_id, password)
     <- res
 
-func send_money_s(network_id:string, account_id:string, receiver_id:string, amount:string, password: string) -> string:
+func transfer_money(network_id:string, account_id:string, receiver_id:string, amount:string, password: string) -> string:
     services <- JsService.get()
     on services.peerId via services.relayPeerId:
         res <- NearSignerApi.send_money(network_id, account_id, receiver_id, amount, password)

@@ -5,6 +5,40 @@ We provide integration examples for both a [Fluence JS](https://github.com/fluen
 
 ## Prerequisites
 
+In our examples we're using the Aqua CLI `aqua` and [Marine tooling](https://doc.fluence.dev/marine-book/marine-tooling-reference) (the [Marine REPL](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-repl) `mrepl` and [Marine CLI](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-cli) `marine`).
+
+The Aqua CLI `aqua` enables management of Aqua development and includes:
+
+- **Compiler** converting Aqua code to either JavaScript/TypeScript handlers wrapping Aqua Intermediary Representation (AIR), or pure AIR;
+
+- **Client peer**, a one-shot client peer over the compiled Aqua code specified allowing you to quickly and effectively test Aqua code against deployed services on the network;
+
+- **Utilities** helping in various development and operations workflows such as a keypair creation (ed25519-based), module distribution (deploying and removing services), environment listing showsing a list of peers for a specific Fluence network (`krasnodar`, `stage` or `testnet`).
+
+The Marine tooling `mrepl` and `marine`:
+
+- **Marine REPL** which wraps a local Marine runtime to allow developers to interact with Wasm module interfaces and business logic locally;
+
+- **Marine CLI** allows developers to build Marine modules and examine various info.
+
+The Fluence CLI `fluence` aims to provide you with the improved unified developer experience while having the same functionality available with the Aqua CLI and Marine tooling:
+
+- Complile Aqua code;
+
+- Project generation for an easy start;
+
+- Build and debug Marine modules using REPL;
+
+- Download compiled WASM modules;
+
+- Deploy and remove services;
+
+- Aqua code wrapper generation for deployed services;
+
+- Setup environment by installing all the prerequisites and dependencies (Aqua and Marine tooling, Rust, WASM compile target)
+
+Under the hood the Fluence CLI leverages all the tooling available (both Aqua and Marine).
+
 Please make sure you have the latest Fluence CLI installed by running the following command:
 
 ```bash
@@ -42,7 +76,7 @@ Note that we added additional parameters to our `sendMoney` implementation: *nea
 sendMoney(receiverId: string, amount: BN)
 ```
 
-Once we compile Aqua with the `npm run compile aqua` command, which writes the Typescript output into the `/src/_aqua` dir, we can then use the generated code, see `src/_aqua/near_signing_node.ts`, to implement our `sendMoney` service and any of ther other interfaces specified in Fluence JS, which essentially follows the [NEAR example](https://docs.near.org/docs/api/naj-quick-reference#send-tokens):  
+Once we compile Aqua with the `npm run compile aqua` command, which writes the Typescript output into the `/src/_aqua` dir, we can then use the generated code, see `src/_aqua/near_signing_node.ts`, to implement our `sendMoney` service and any of the other interfaces specified in Fluence JS, which essentially follows the [NEAR example](https://docs.near.org/docs/api/naj-quick-reference#send-tokens):
 
 ```typescript
 // index.ts
@@ -94,14 +128,14 @@ Please authorize at least one account at the URL above.
 
 Which account did you authorize for use with NEAR CLI?
 Enter it here (if not redirected automatically):
-Logged in as [ <your-user-id>.testnet ] with public key [ ed25519:<you-key... ] successfully
+Logged in as [ <near-account>.testnet ] with public key [ ed25519:<your-key... ] successfully
 ```
 
 Upon a successful login you should have a [local credentials](https://docs.near.org/tools/near-cli#access-key-location):
 
 ```
 ls ~/.near-credentials/testnet
-<your-user-id>.testnet.json
+<near-account>.testnet.json
 ```
 
 Note the implementations of `account_state` and `get_balance`, which follow the same implementation pattern discussed above but actually do not require account or wallet access.
@@ -159,14 +193,14 @@ Please take note of the **relay id** and **peer id** for use in your client peer
 
 ```bash
 fluence run \
-    -i aqua -f 'account_state("testnet", "<your-account>", "lame_password", "<your-peer-id>", "<your-relay-id>")'
+    -i aqua -f 'account_state("testnet", "<near-account>", "lame_password", "<your-peer-id>", "<your-relay-id>")'
 ```
 
-*Replace* `<your-account>` with your Near testnet account and `<your-peer-id>` and `<your-relay-id>` with the values provided by your peer output as discussed above. Once you've done that, the output should be similar to:
+*Replace* `<near-account>` with your Near testnet account and `<your-peer-id>` and `<your-relay-id>` with the values provided by your peer output as discussed above. Once you've done that, the output should be similar to:
 
 ```bash
 Running:
-  function: account_state("testnet", "<your-account-id>", "lame_password", "12D3KooWRfvdqfDXw4yLnYLpHLrMm56M3G1nAbti4fDdEhgr5gp2", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi")
+  function: account_state("testnet", "<near-account>", "lame_password", "12D3KooWRfvdqfDXw4yLnYLpHLrMm56M3G1nAbti4fDdEhgr5gp2", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi")
   relay: /dns4/kras-06.fluence.dev/tcp/19001/wss/p2p/12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr
 ... done
 
@@ -183,20 +217,22 @@ Result:
 }
 ```
 
+In the output above listed the called function (`account_state`) with its arguments as well as the relay used for the call. So, you can observe the context of the function call. And there's a result of the call, of course. In our case it displays [the basic insformation](https://docs.near.org/tools/near-api-js/account#state) for our Near account.
+
 Similarly, we can call our `send_money` service with Aqua:
 
 ```aqua
 fluence run \
     -i aqua \
-    -f 'send_money("testnet", "<your-from-account>", "<your-to-account>", "10000", "lame_password", "<your-peer-id>", "<your-relay-id>")'
+    -f 'send_money("testnet", "<near-from-account>", "<near-to-account>", "10000", "lame_password", "<your-peer-id>", "<your-relay-id>")'
 
 ```
 
-Replace the <`you-from-account`> and <`your-to-account`> account placeholders with your respective testnet wallets and the `your-peer-id` and `your-relay-id` with the values provided by your peer. Executing above Aqua statement produces a transaction receipt similar to the one below:
+Replace the <`near-from-account`> and <`near-to-account`> account placeholders with your respective testnet wallets and the `your-peer-id` and `your-relay-id` with the values provided by your peer. Executing above Aqua statement produces a transaction receipt similar to the one below:
 
 ```bash
 Running:
-  function: send_money("testnet", "<you-from-account>", "<you-from-account>", "10000", "lame_password", "12D3KooWRfvdqfDXw4yLnYLpHLrMm56M3G1nAbti4fDdEhgr5gp2", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi")
+  function: send_money("testnet", "<near-from-account>", "<near-to-account>", "10000", "lame_password", "12D3KooWRfvdqfDXw4yLnYLpHLrMm56M3G1nAbti4fDdEhgr5gp2", "12D3KooWFEwNWcHqi9rtsmDhsYcDbRUCDXH84RC4FW6UfsFWaoHi")
   relay: /dns4/kras-03.fluence.dev/tcp/19001/wss/p2p/12D3KooWJd3HaMJ1rpLY1kQvcjRPEvnDwcXrH8mJvk7ypcZXqXGE
 ... done
 
@@ -208,7 +244,7 @@ Result:
       "block_hash": "EzB5BiTVyqzJjqbTzRRKfQ2qWdj48F5vArVwtdwDmNaG",
       "id": "FmhBQNgwtvaJUxTEbPhqfsUSjuwjcYw4iLsb1LLsKDDH",
       "outcome": {
-        "executor_id": "<your-to-account>",
+        "executor_id": "<near-to-account>",
         "gas_burnt": 223182562500,
         "logs": [],
         "metadata": {
@@ -238,7 +274,7 @@ Result:
       "block_hash": "4WX1AZ9VSJDzjv1j6uHqNcz4W7iqz6XyiCqj7wpGn6h1",
       "id": "9Q5mKcBgnoN1cM47nfwBRiN6vUoZa4vPhn6boyXZitNd",
       "outcome": {
-        "executor_id": "<your-from-account>",
+        "executor_id": "<near-from-account>",
         "gas_burnt": 223182562500,
         "logs": [],
         "metadata": {
@@ -268,15 +304,15 @@ Result:
     "hash": "2cCxw5RGTqD9UCwqth3Pe3FhRcYkqRimnzyhYWCBKjjA",
     "nonce": 96699860000005,
     "public_key": "ed25519:82CcWWRM9scav5hbqUVL4JZsBwagqFvjZrLDbaoiE9pr",
-    "receiver_id": "<your-to-account>",
+    "receiver_id": "<near-to-account>",
     "signature": "ed25519:2cmhrzp4PeKPcXE1vUW89krdTcdsApY3h6TT7CshWdrZMBLUjfJQF6pijzYcFUhpwArNQwDmD9GkVep9gYJTb4Hd",
-    "signer_id": "<your-from-account>"
+    "signer_id": "<near-from-account>"
   },
   "transaction_outcome": {
     "block_hash": "DhS6KZzK9PdCqot2k4hewfAWkc7nQ9mnZM91XKZdVRkQ",
     "id": "2cCxw5RGTqD9UCwqth3Pe3FhRcYkqRimnzyhYWCBKjjA",
     "outcome": {
-      "executor_id": "<your-from-account>",
+      "executor_id": "<near-from-account>",
       "gas_burnt": 223182562500,
       "logs": [],
       "metadata": {
@@ -318,18 +354,20 @@ The `js-services.json` looks like:
 }
 ```
 
-And the corresponding Aqua code for `send_money_s` looks slightly different and doesn't require `node` and `relay` parameters that were required for the previous `send_money` implementation.
+And the corresponding Aqua code for `transfer_money` looks slightly different: instead of using the function signature to pass the `node` and `relay` arguments, we're now injecting the values with `JsService.get()` into the function body:
 
 ```aqua
 -- near_signing_node.aqua
-func send_money_s(network_id:string, account_id:string, receiver_id:string, amount:string, password: string) -> string:
-    services <- JsService.get()
-    on services.peerId via services.relayPeerId:
-        res <- NearSignerApi.send_money(network_id, account_id, receiver_id, amount, password)
+func transfer_money(network_id:string, account_id:string, receiver_id:string, amount:string, password: string) -> string:
+    services <- JsService.get()  -- step 1
+    on services.peerId via services.relayPeerId: -- step 2
+        res <- NearSignerApi.send_money(network_id, account_id, receiver_id, amount, password) -- step 3
     <- res
 ```
 
-Those parameters are available thru the `js-services.json` and the following definitions in our Aqua code:
+On the step 1 using the defined function `get()` of the `JsService` service we get the information about our service (its peer id and relay id) which is wrapped in the `Services` data structure. On step 2 we specify, that the next block should be executed on our JS peer with the id we got on the 1st step (so we extract it using `services.peerId`) which we connect to thru a relay with the `services.relayPeerId` relay id. On the 3rd step we call the Near API service wrapper using `NearSignerApi.send_money` to call the corresponding NEAR API function `sendMoney`.
+
+Those parameters values we injected in the function body are available thru the `js-services.json` and the following definitions in our Aqua code:
 
 ```aqua
 -- near_signing_node.aqua
@@ -341,38 +379,38 @@ service JsService("JsService"):
     get: -> Services
 ```
 
-Considering all the above, the `send_money_s` call looks like:
+Considering all the above, the `transfer_money` call looks like:
 
 ```bash
 fluence run \
     -i aqua \
-    -f 'send_money_s("testnet", "<your-from-account>", "<your-to-account>", "10000", "lame_password")' --json-service js-services.json
+    -f 'transfer_money("testnet", "<near-from-account>", "<near-to-account>", "10000", "lame_password")' --json-service js-services.json
 ```
 
-The similar approach can be used for the `account_state` with its updated implementation `account_state_s`:
+The similar approach can be used for the `account_state` with its updated implementation `account_state_view`:
 
 ```aqua
 -- near_signing_node.aqua
-func account_state_s(network_id:string, account_id:string, password: string) -> string:
+func account_state_view(network_id:string, account_id:string, password: string) -> string:
     services <- JsService.get()
     on services.peerId via services.relayPeerId:
         res <- NearSignerApi.account_state(network_id, account_id, password)
     <- res
 ```
 
-And we can call the `account_state_s` in a similar fashion as we've done for the `send_mone_s`:
+And we can call the `account_state_view` in a similar fashion as we've done for the `transfer_money`:
 
 ```bash
 fluence run \
   -i aqua \
-  -f 'account_state_s("testnet", "<your-account-id>", "lame_password")' --json-service js-services.json
+  -f 'account_state_view("testnet", "<near-account>", "lame_password")' --json-service js-services.json
 ```
 
 You can use the [Testnet Explorer](https://explorer.near.org/) to further investigate the token transfer you executed.
 
 ### Summary
 
-In this section, we implemented a basic Fluence peer that outlines an approach to shield our NEAR wallet keys from other network participants and to implement singing related functionality, such as the `send_money` token transfer method. Additional methods, such as the more generic `sign transaction` and `deploy contract` can be easily implemented this way and we are looking forward to your pull requests. Also note, that our simple string return can be vastly improved by adding the appropriate *interfaces*.
+In this section, we implemented a basic Fluence peer that outlines an approach to shield our NEAR wallet keys from other network participants and to implement singing related functionality, such as the `transfer_money` token transfer method. Additional methods, such as the more generic `sign transaction` and `deploy contract` can be easily implemented this way and we are looking forward to your pull requests. Also note, that our simple string return can be vastly improved by adding the appropriate *interfaces*.
 
 In the next section, we briefly discuss how a variety of NEAR methods can be implemented as distributed, hosted services for easy deployment, re-use and scalability.
 
@@ -436,7 +474,11 @@ app service was created with service id = e5ae9c3e-60f8-4ae7-b434-6f8085246c1d
 elapsed time 326.464043ms
 
 1> call near_rpc_services node_status ["testnet"]
-result: Object({"stderr": String(""), "stdout": String("{\"jsonrpc\":\"2.0\",\"result\":{\"chain_id\":\"testnet\",\"latest_protocol_version\":55,\"protocol_version\":54,\"rpc_addr\":\"0.0.0.0:4040\",\"sync_info\":{\"earliest_block_hash\":\"87rXaRN96eVGijmoxXMvKm9XAas1RedpHgh5ifaMfQne\",\"earliest_block_height\":96939089,\"earliest_block_time\":\"2022-08-07T05:20:29.139629926Z\",\"epoch_id\":\"9fvV3KdWb71CtFj6shiFrAgBfq4Zqk16reWBXSGRhgZy\",\"epoch_start_height\":97111890,\"latest_block_hash\":\"Dn6Q8cPogGmGj3m15t2e1c6hgbrBpmd8yrjegX5GU2Nb\",\"latest_block_height\":97136216,\"latest_block_time\":\"2022-08-09T10:12:28.971640387Z\",\"latest_state_root\":\"HBRDv6dEYwv1WEiwTDwPHzXBLmFG5c19YVqHGADH5gM7\",\"syncing\":false},\"validator_account_id\":null,\"validators\":[{\"account_id\":\"legends.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"node1\",\"is_slashed\":false},{\"account_id\":\"node0\",\"is_slashed\":false},{\"account_id\":\"node2\",\"is_slashed\":false},{\"account_id\":\"node3\",\"is_slashed\":false},{\"account_id\":\"staked.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"masternode24.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"01node.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"p2p.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"nodeasy.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"chorusone.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"sweden.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"foundryusa.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"chorus-one.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"ni.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"cryptogarik.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"pathrocknetwork.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"stakely_v2.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"aurora.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"freshtest.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"solidstate.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"namdokmai.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"blockscope.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"leadnode.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"stakesstone.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"al3c5.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"grassets.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"basilisk-stake.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"shurik.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"dsrvlabs.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"projecttent.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"lavenderfive.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"zetsi.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"tayang.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"everstake.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"infiniteloop.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"infstones.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"moonlet.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"g2.pool.devnet\",\"is_slashed\":false},{\"account_id\":\"pennyvalidators.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"kiln.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"ibb.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"twintest1.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"bee1stake.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"bgpntx.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"lastnode.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"omnistake_v5.factory01.littlefarm.testnet\",\"is_slashed\":false},{\"account_id\":\"gettingnear.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"domanodes.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"stakingfacilities.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"kuutamo.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"gargoyle.pool.f863973.m0\",\"is_slashed\":false}],\"version\":{\"build\":\"crates-0.14.0-148-g5228fb106\",\"rustc_version\":\"1.61.0\",\"version\":\"1.28.0-rc.3\"}},\"id\":\"dontcare\"}")})
+result: Object({"stderr": String(""), "stdout": String("{\"jsonrpc\":\"2.0\",\"result\":{\"chain_id\":\"testnet\",\"latest_protocol_version\":55,\"protocol_version\":54,\"rpc_addr\":\"0.0.0.0:4040\",\"sync_info\":{\"earliest_block_hash\":\"87rXaRN96eVGijmoxXMvKm9XAas1RedpHgh5ifaMfQne\",\"earliest_block_height\":96939089,\"earliest_block_time\":\"2022-08-07T05:20:29.139629926Z\",\"epoch_id\":\"9fvV3KdWb71CtFj6shiFrAgBfq4Zqk16reWBXSGRhgZy\",\"epoch_start_height\":97111890,\"latest_block_hash\":\"Dn6Q8cPogGmGj3m15t2e1c6hgbrBpmd8yrjegX5GU2Nb\",\"latest_block_height\":97136216,\"latest_block_time\":\"2022-08-09T10:12:28.971640387Z\",\"latest_state_root\":\"HBRDv6dEYwv1WEiwTDwPHzXBLmFG5c19YVqHGADH5gM7\",\"syncing\":false},\"validator_account_id\":null,\"validators\":[{\"account_id\":\"legends.pool.f863973.m0\",\"is_slashed\":false},
+...
+...
+...
+{\"account_id\":\"kuutamo.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"gargoyle.pool.f863973.m0\",\"is_slashed\":false}],\"version\":{\"build\":\"crates-0.14.0-148-g5228fb106\",\"rustc_version\":\"1.61.0\",\"version\":\"1.28.0-rc.3\"}},\"id\":\"dontcare\"}")})
  elapsed time: 539.529855ms
 
 2>
@@ -476,21 +518,38 @@ Fluence will make sure that all required services and modules are in place, can 
 ```bash
 Making sure all services are downloaded... done
 Making sure all modules are downloaded and built... done
-Going to deploy project described in <path-to-examples>/examples/aqua-examples/near-integration/services/fluence.yaml
+
+Going to deploy services described in <path-to-examples>/examples/aqua-examples/near-integration/services/fluence.yaml:
+
+nearAdapter:
+  get: ./near-adapter
+  deploy:
+    - deployId: default
+
+
+? Do you want to deploy all of these services? Yes
 Deploying:
   service: nearAdapter
   deployId: default
-  on: 12D3KooWR4cv1a8tv7pps4HH6wePNaK6gf1Hww5wcCMzeWxyNw51
+  on: 12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS
 ... done
 Compiling <path-to-examples>/examples/aqua-examples/near-integration/services/.fluence/aqua/deployed.app.aqua... done
+
+Currently deployed services listed in <path-to-examples>/examples/aqua-examples/near-integration/services/.fluence/app.yaml:
+
+nearAdapter:
+  default:
+    - blueprintId: ef2c354407c29317657c47403630a0217601934f4ceda58b7642ef8985a983df
+      serviceId: 5bc6970c-1f7a-4e24-bc93-519dd4c40daf
+      peerId: 12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS
+
 ```
 
-
-Please note the helper generated in Aqua by the CLI `deployed.app.aqua` for future use in our Aqua. Let's have a look at our aqua script in `src/aqua/main.aqua`:
+Please note the helper generated in Aqua by the CLI `.fluence/aqua/deployed.app.aqua` for future use in our Aqua. Let's have a look at our aqua script in `./src/aqua/main.aqua`:
 
 ```aqua
 -- aqua/main.aqua
-func node_s(network_id: string) -> Result:
+func node_report(network_id: string) -> Result:
     services <- App.services()
     on services.nearAdapter.default!.peerId:
         NearRpcServices services.nearAdapter.default!.serviceId
@@ -501,14 +560,14 @@ func node_s(network_id: string) -> Result:
 Which we can run with the `fluence` CLI:
 
 ```bash
-fluence run -f 'node_s("testnet")'
+fluence run -f 'node_report("testnet")'
 ```
 
 Which results in the following output:
 
 ```bash
 Running:
-  function: node_s("testnet")
+  function: node_report("testnet")
   relay: /dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf
 ... done
 
@@ -516,12 +575,16 @@ Result:
 
 {
   "stderr": "",
-  "stdout": "{\"jsonrpc\":\"2.0\",\"result\":{\"chain_id\":\"testnet\",\"latest_protocol_version\":55,\"protocol_version\":54,\"rpc_addr\":\"0.0.0.0:4040\",\"sync_info\":{\"earliest_block_hash\":\"87rXaRN96eVGijmoxXMvKm9XAas1RedpHgh5ifaMfQne\",\"earliest_block_height\":96939089,\"earliest_block_time\":\"2022-08-07T05:20:29.139629926Z\",\"epoch_id\":\"9fvV3KdWb71CtFj6shiFrAgBfq4Zqk16reWBXSGRhgZy\",\"epoch_start_height\":97111890,\"latest_block_hash\":\"2DcwXKkZf175VExkDpryH73p99rHQjdu54u4Y5vfambK\",\"latest_block_height\":97136905,\"latest_block_time\":\"2022-08-09T10:30:51.592058687Z\",\"latest_state_root\":\"AmXivm3DbmRqU9fYQe6tDuC3ujz2UbdeYNeLmSRrxzsZ\",\"syncing\":false},\"validator_account_id\":null,\"validators\":[{\"account_id\":\"legends.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"node1\",\"is_slashed\":false},{\"account_id\":\"node0\",\"is_slashed\":false},{\"account_id\":\"node2\",\"is_slashed\":false},{\"account_id\":\"node3\",\"is_slashed\":false},{\"account_id\":\"staked.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"masternode24.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"01node.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"p2p.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"nodeasy.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"chorusone.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"sweden.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"foundryusa.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"chorus-one.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"ni.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"cryptogarik.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"pathrocknetwork.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"stakely_v2.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"aurora.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"freshtest.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"solidstate.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"namdokmai.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"blockscope.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"leadnode.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"stakesstone.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"al3c5.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"grassets.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"basilisk-stake.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"shurik.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"dsrvlabs.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"projecttent.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"lavenderfive.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"zetsi.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"tayang.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"everstake.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"infiniteloop.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"infstones.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"moonlet.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"g2.pool.devnet\",\"is_slashed\":false},{\"account_id\":\"pennyvalidators.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"kiln.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"ibb.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"twintest1.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"bee1stake.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"bgpntx.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"lastnode.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"omnistake_v5.factory01.littlefarm.testnet\",\"is_slashed\":false},{\"account_id\":\"gettingnear.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"domanodes.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"stakingfacilities.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"kuutamo.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"gargoyle.pool.f863973.m0\",\"is_slashed\":false}],\"version\":{\"build\":\"crates-0.14.0-148-g5228fb106\",\"rustc_version\":\"1.61.0\",\"version\":\"1.28.0-rc.3\"}},\"id\":\"dontcare\"}"
+  "stdout": "{\"jsonrpc\":\"2.0\",\"result\":{\"chain_id\":\"testnet\",\"latest_protocol_version\":55,\"protocol_version\":54,\"rpc_addr\":\"0.0.0.0:4040\",\"sync_info\":{\"earliest_block_hash\":\"87rXaRN96eVGijmoxXMvKm9XAas1RedpHgh5ifaMfQne\",\"earliest_block_height\":96939089,\"earliest_block_time\":\"2022-08-07T05:20:29.139629926Z\",\"epoch_id\":\"9fvV3KdWb71CtFj6shiFrAgBfq4Zqk16reWBXSGRhgZy\",\"epoch_start_height\":97111890,\"latest_block_hash\":\"2DcwXKkZf175VExkDpryH73p99rHQjdu54u4Y5vfambK\",\"latest_block_height\":97136905,\"latest_block_time\":\"2022-08-09T10:30:51.592058687Z\",\"latest_state_root\":\"AmXivm3DbmRqU9fYQe6tDuC3ujz2UbdeYNeLmSRrxzsZ\",\"syncing\":false},\"validator_account_id\":null,\"validators\":[{\"account_id\":\"legends.pool.f863973.m0\",\"is_slashed\":false},
+  ...
+  ...
+  ...
+  {\"account_id\":\"stakingfacilities.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"kuutamo.pool.f863973.m0\",\"is_slashed\":false},{\"account_id\":\"gargoyle.pool.f863973.m0\",\"is_slashed\":false}],\"version\":{\"build\":\"crates-0.14.0-148-g5228fb106\",\"rustc_version\":\"1.61.0\",\"version\":\"1.28.0-rc.3\"}},\"id\":\"dontcare\"}"
 }
 
 ```
 
-Give the already implemented `view_account_s` and `tx_status_s` functions a try or add more methods from the RPC API -- we are looking forward to your pull requests.
+Give the already implemented `view_account_report` and `tx_status_report` functions a try or add more methods from the RPC API -- we are looking forward to your pull requests.
 
 ### Summary
 
