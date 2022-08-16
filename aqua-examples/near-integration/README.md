@@ -3,7 +3,7 @@
 
 We provide integration examples for both a [Fluence JS](https://github.com/fluencelabs/fluence-js) node based on the [NEAR API JS](https://docs.near.org/docs/api/javascript-library) and distributed [Wasm services](https://github.com/fluencelabs/marine) wrapping the [NEAR RPC API](https://docs.near.org/docs/api/rpc). A [NEAR CLI](https://docs.near.org/docs/tools/near-cli) integration is planned for the near future.
 
-## Prerequisites
+## Tooling
 
 In our examples we're using the Aqua CLI `aqua` and [Marine tooling](https://doc.fluence.dev/marine-book/marine-tooling-reference) (the [Marine REPL](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-repl) `mrepl` and [Marine CLI](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-cli) `marine`).
 
@@ -38,6 +38,8 @@ The Fluence CLI `fluence` aims to provide you with the improved unified develope
 - Setup environment by installing all the prerequisites and dependencies (Aqua and Marine tooling, Rust, WASM compile target)
 
 Under the hood the Fluence CLI leverages all the tooling available (both Aqua and Marine).
+
+## Prerequisites
 
 Please make sure you have the latest Fluence CLI installed by running the following command:
 
