@@ -230,7 +230,7 @@ fluence run \
 
 ```
 
-Replace the <`near-from-account`> and <`near-to-account`> account placeholders with your respective testnet wallets and the `your-peer-id` and `your-relay-id` with the values provided by your peer. Executing above Aqua statement produces a transaction receipt similar to the one below:
+Replace the `near-from-account` and `near-to-account` account placeholders with your respective testnet wallets and the `your-peer-id` and `your-relay-id` with the values provided by your peer. Executing above Aqua statement produces a transaction receipt similar to the one below:
 
 ```bash
 Running:
@@ -515,7 +515,7 @@ Before we can use our Fluence NEAR adapter, we need to deploy our Wasm modules t
 fluence deploy
 ```
 
-Fluence will make sure that all required services and modules are in place, can be either downloaded or built. It gives us the deployment confirmation:
+The `fluence` CLI will make sure that all required services and modules are in place, can be either downloaded or built. It gives us the deployment confirmation:
 
 ```bash
 Making sure all services are downloaded... done
@@ -547,7 +547,7 @@ nearAdapter:
 
 ```
 
-Please note the helper generated in Aqua by the CLI `.fluence/aqua/deployed.app.aqua` for future use in our Aqua. Let's have a look at our aqua script in `./src/aqua/main.aqua`:
+Please note the helper generated in Aqua by the CLI in the `.fluence/aqua/deployed.app.aqua` file for future use in our Aqua. Let's have a look at our Aqua script in `./src/aqua/main.aqua`:
 
 ```aqua
 -- aqua/main.aqua
