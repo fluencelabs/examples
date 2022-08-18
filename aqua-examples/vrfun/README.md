@@ -229,5 +229,5 @@ Which provides a ED25519 keypair in bytes:
 
 ## Summary
 
-We provide a Marine Wasm wrapper and corresponding Aqua implementation around the *ECVRF* ED25519 Rust project. As a low-cost, off-chain source of pseudorandomness, Fluence users, and especially Marine Wasm developers, do not need to rely on (trustless) peers to provide randomness. Moreover, developers may anchor output and proof on-chain for immutable references and off-chain, or even on-chain, verification.
+We provide a Marine Wasm wrapper and corresponding Aqua implementation around the *ECVRF* ED25519 Rust project. As a low-cost, off-chain source of pseudorandomness, Fluence users, and especially Marine Wasm developers, do not need to rely on (trustless) peers to provide randomness. Moreover, developers may anchor the provided randomness and proof on-chain for immutable references and off-chain, or even on-chain, verification. In the case of Fluence WASM, it may make sense to use VRF to provable pseudorandom generate seeds for PRNG initiations.
 
