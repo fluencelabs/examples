@@ -2,12 +2,12 @@
 
 ## Overview
 
-A [Verifiable Random Function](https://people.csail.mit.edu/silvio/Selected%20Scientific%20Papers/Pseudo%20Randomness/Verifiable_Random_Functions.pdf) (VRF) is a pseudorandom function that provides proofs that its outputs were constructed in a verifiable manner. While the proof is constructed with both public and private, i.e., the requesters private key, data, the verification only requires public data. Not surprisingly, VRFs play an important role in trustless systems, such as blockchain protocols and, of course, the Fluence network. We are implementing [ECVRF](https://github.com/Silur/ECVRF), which uses ED25519, as a Marine Wasm off-chain service callable from Aqua.
+A [Verifiable Random Function](https://people.csail.mit.edu/silvio/Selected%20Scientific%20Papers/Pseudo%20Randomness/Verifiable_Random_Functions.pdf) (VRF) is a pseudorandom function that provides proofs that its outputs were constructed in a verifiable manner. While the proof is constructed with both public and private data, i.e., private key, the verification only requires the public data. Not surprisingly, VRFs play an important role in trustless systems, such as blockchain protocols and, of course, the Fluence network. We are implementing [ECVRF](https://github.com/Silur/ECVRF), which uses ED25519, as a Marine Wasm off-chain service callable from Aqua.
 
 **Note:**
 
-* **the [ECVRF](https://github.com/Silur/ECVRF) crate is provided under a GPL-3.0 [License](./LICENSE). Hence, this sub-repo is also made available under a GPL-3.0 license.**
-* **the [ECVRF](https://github.com/Silur/ECVRF) crate has not undergone a security audit. Tread With Care!**
+* **the [ECVRF](https://github.com/Silur/ECVRF) crate is provided under a GPL-3.0 [License](./LICENSE). Hence, this repo is also made available under a GPL-3.0 license.**
+* **neither the [ECVRF](https://github.com/Silur/ECVRF) crate nor this repo have not undergone a security audit. Tread With Care!**
 
 ## Getting to Services
 
@@ -175,7 +175,7 @@ and the verification fails:
 ```
 
 
-In addition to the core `proof` and `verify` functions, a `vrf_rountrip` function for a test run is available. Moreover, we also provide a (ed25519) key generation function for convenience purposes. In general, **you should not rely on a (untrusted) peer to generate your secret key** and instead use some client side tool, e.g., openssl, to create and manage your ED25519 keypair(s).
+In addition to the core `proof` and `verify` functions, a `vrf_rountrip` function for a test run is available. Moreover, we also provide a (ed25519) key generation function for convenience purposes. In general, **you should not rely on a (untrusted) peer to generate or otherwise handle your secret key** and instead use some client side tool, e.g., openssl, to create and manage your ED25519 keypair(s). Moreover, since the private key is required to create the VRF (and proof), even with a trusted peer, it might be best to work with [ephemeral](https://en.wikipedia.org/wiki/Ephemeral_key) key pairs.
 
 ```rust
 // src/main.rs
