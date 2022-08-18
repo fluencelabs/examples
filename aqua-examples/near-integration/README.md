@@ -3,41 +3,9 @@
 
 We provide integration examples for both a [Fluence JS](https://github.com/fluencelabs/fluence-js) node based on the [NEAR API JS](https://docs.near.org/docs/api/javascript-library) and distributed [Wasm services](https://github.com/fluencelabs/marine) wrapping the [NEAR RPC API](https://docs.near.org/docs/api/rpc). A [NEAR CLI](https://docs.near.org/docs/tools/near-cli) integration is planned for the near future.
 
-## Tooling
+In our examples we've been using the [Aqua CLI](https://doc.fluence.dev/aqua-book/aqua-cli) `aqua` and [Marine tooling](https://doc.fluence.dev/marine-book/marine-tooling-reference) (the [Marine REPL](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-repl) `mrepl` and [Marine CLI](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-cli) `marine`).
 
-In our examples we're using the Aqua CLI `aqua` and [Marine tooling](https://doc.fluence.dev/marine-book/marine-tooling-reference) (the [Marine REPL](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-repl) `mrepl` and [Marine CLI](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-cli) `marine`).
-
-The Aqua CLI `aqua` enables management of Aqua development and includes:
-
-- **Compiler** converting Aqua code to either JavaScript/TypeScript handlers wrapping Aqua Intermediary Representation (AIR), or pure AIR;
-
-- **Client peer**, a one-shot client peer over the compiled Aqua code specified allowing you to quickly and effectively test Aqua code against deployed services on the network;
-
-- **Utilities** helping in various development and operations workflows such as a keypair creation (ed25519-based), module distribution (deploying and removing services), environment listing showsing a list of peers for a specific Fluence network (`krasnodar`, `stage` or `testnet`).
-
-The Marine tooling `mrepl` and `marine`:
-
-- **Marine REPL** which wraps a local Marine runtime to allow developers to interact with Wasm module interfaces and business logic locally;
-
-- **Marine CLI** allows developers to build Marine modules and examine various info.
-
-The Fluence CLI `fluence` aims to provide you with the improved unified developer experience while having the same functionality available with the Aqua CLI and Marine tooling:
-
-- Complile Aqua code;
-
-- Project generation for an easy start;
-
-- Build and debug Marine modules using REPL;
-
-- Download compiled WASM modules;
-
-- Deploy and remove services;
-
-- Aqua code wrapper generation for deployed services;
-
-- Setup environment by installing all the prerequisites and dependencies (Aqua and Marine tooling, Rust, WASM compile target)
-
-Under the hood the Fluence CLI leverages all the tooling available (both Aqua and Marine).
+For the purpose of this tutorial, we'll be using Fluence's new `fluence` CLI tool, which unifies the CLIs you have already been using, e.g., the `aqua` CLI and Marine tooling CLIs (`marine` and `mrepl`), and brings additional features such as project template generation, wrapper generation for deployed services, project dependencies install. See the [Fluence CLI docs](https://github.com/fluencelabs/fluence-cli#readme) for more information.
 
 ## Prerequisites
 
@@ -89,8 +57,7 @@ async send_money(network_id: string, account_id: string, receiver_id: string, am
         const config = get_config(network_id, this._keyStore);
         const near = await network_connect(config);
         let account = await near.account(account_id);
-        let tx_receipt = await account.sendMoney(receiver_id, amount)
-        // return Promise.resolve(tx_receipt);
+        let tx_receipt = await account.sendMoney(receiver_id, amount);
         let result = Promise.resolve(tx_receipt);
         return result;
     }
@@ -219,7 +186,7 @@ Result:
 }
 ```
 
-In the output above listed the called function (`account_state`) with its arguments as well as the relay used for the call. So, you can observe the context of the function call. And there's a result of the call, of course. In our case it displays [the basic insformation](https://docs.near.org/tools/near-api-js/account#state) for our Near account.
+In the output above listed the called function (`account_state`) with its arguments as well as the relay used for the call. So, you can observe the context of the function call. And there's a result of the call, of course. In our case it displays [the basic information](https://docs.near.org/tools/near-api-js/account#state) for our Near account.
 
 Similarly, we can call our `send_money` service with Aqua:
 

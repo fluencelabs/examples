@@ -35,8 +35,7 @@ class NearSigner implements NearSignerApiDef {
         const config = get_config(network_id, this._keyStore);
         const near = await network_connect(config);
         let account = await near.account(account_id);
-        let tx_receipt = await account.sendMoney(receiver_id, amount)
-        // return Promise.resolve(tx_receipt);
+        let tx_receipt = await account.sendMoney(receiver_id, amount);
         let result = Promise.resolve(tx_receipt);
         return result;
     }
