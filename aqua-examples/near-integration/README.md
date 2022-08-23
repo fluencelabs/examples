@@ -1,7 +1,7 @@
 # NEAR + Fluence + Aqua Integrations
 ## Overview
 
-We provide integration examples for both a [Fluence JS](https://github.com/fluencelabs/fluence-js) node based on the [NEAR API JS](https://docs.near.org/docs/api/javascript-library) and distributed [Wasm services](https://github.com/fluencelabs/marine) wrapping the [NEAR RPC API](https://docs.near.org/docs/api/rpc). A [NEAR CLI](https://docs.near.org/docs/tools/near-cli) integration is planned for the near future.
+We provide integration examples for both a [Fluence JS](https://github.com/fluencelabs/fluence-js) peer based on the [NEAR API JS](https://docs.near.org/docs/api/javascript-library) and distributed [Wasm services](https://github.com/fluencelabs/marine) wrapping the [NEAR RPC API](https://docs.near.org/docs/api/rpc). A [NEAR CLI](https://docs.near.org/docs/tools/near-cli) integration is planned for the near future.
 
 In our examples we've been using the [Aqua CLI](https://doc.fluence.dev/aqua-book/aqua-cli) `aqua` and [Marine tooling](https://doc.fluence.dev/marine-book/marine-tooling-reference) (the [Marine REPL](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-repl) `mrepl` and [Marine CLI](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-cli) `marine`).
 
@@ -186,7 +186,7 @@ Result:
 }
 ```
 
-In the output above listed the called function (`account_state`) with its arguments as well as the relay used for the call. So, you can observe the context of the function call. And there's a result of the call, of course. In our case it displays [the basic information](https://docs.near.org/tools/near-api-js/account#state) for our Near account.
+In the output above listed the called function (`account_state`) with its arguments as well as the relay used for the call. So, you can observe the context of the function call. And there's a result of the call, of course. In our case it displays [the basic information](https://docs.near.org/tools/near-api-js/account#state) for our Near account described in [AccountView Interface](https://near.github.io/near-api-js/interfaces/providers_provider.accountview.html).
 
 Similarly, we can call our `send_money` service with Aqua:
 
