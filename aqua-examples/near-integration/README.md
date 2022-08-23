@@ -5,7 +5,7 @@ We provide integration examples for both a [Fluence JS](https://github.com/fluen
 
 In our examples we've been using the [Aqua CLI](https://doc.fluence.dev/aqua-book/aqua-cli) `aqua` and [Marine tooling](https://doc.fluence.dev/marine-book/marine-tooling-reference) (the [Marine REPL](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-repl) `mrepl` and [Marine CLI](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-cli) `marine`).
 
-For the purpose of this tutorial, we'll be using Fluence's new `fluence` CLI tool, which unifies the CLIs you have already been using, e.g., the `aqua` CLI and Marine tooling CLIs (`marine` and `mrepl`), and brings additional features such as project template generation, wrapper generation for deployed services, project dependencies install. See the [Fluence CLI docs](https://github.com/fluencelabs/fluence-cli#readme) for more information.
+For the purpose of this tutorial, we'll be using Fluence's new `fluence` CLI tool, which wraps the CLIs you have already been using, e.g., the `aqua` CLI and Marine tooling CLIs (`marine` and `mrepl`), and brings additional features such as project template generation, wrapper generation for deployed services, project dependencies install. See the [Fluence CLI docs](https://github.com/fluencelabs/fluence-cli#readme) for more information.
 
 ## Prerequisites
 
