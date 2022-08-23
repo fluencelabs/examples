@@ -63,8 +63,7 @@ async send_money(network_id: string, account_id: string, receiver_id: string, am
     }
 ```
 
-
-Just like in the **quickstart example**, we implement the `send_money` method for the `class NearSigner implements NearSignerApiDef` class, where `NearSignerApiDef` is generated code from the Aqua compilation and which we register (as an exposed service) in `async main` like so:
+We implement the `send_money` method for the `class NearSigner implements NearSignerApiDef` class, where `NearSignerApiDef` is generated code from the Aqua compilation and which we register (as an exposed service) in `async main` like so:
 
 ```typescript
 // index.ts
