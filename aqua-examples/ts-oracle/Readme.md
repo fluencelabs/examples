@@ -206,7 +206,7 @@ func ts_oracle(min_points: u32) -> Oracle:
   <- oracle                                             -- and return to initiating peer
 ```
 
-We can run our Aqua `ts_oracle` script against the deployed processing service to get our oracle point estimate using `fluence run`:
+We can run our Aqua `ts_oracle` function against the deployed processing service to get our oracle point estimate using `fluence run`:
 
 ```bash
  fluence run \
