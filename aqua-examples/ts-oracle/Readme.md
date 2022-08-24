@@ -6,6 +6,8 @@ Getting accurate timestamps can be problematic in various contexts including blo
 
 **Note: The timestamps are currently** **not** **signed by the nodes. But that could be easily addressed.**
 
+For this tutorial, we'll be using Fluence's new `fluence` CLI tool, which wraps the CLIs you have already been using, e.g., the `aqua` CLI and Marine tooling CLIs (`marine` and `mrepl`), and brings additional features such as project template generation, wrapper generation for deployed services, project dependencies install. See the [Fluence CLI docs](https://github.com/fluencelabs/fluence-cli#readme) for more information.
+
 ### Fluence Solution
 
 Fluence provides an open Web3 protocol, framework and associated tooling to develop and host applications, interfaces and backends on permissionless peer-to-peer networks. An integral part of the Fluence solution is the Aquamarine stack comprised of Aqua and Marine. Aqua is a new programming language and paradigm purpose-built to program distributed networks and compose applications from distributed services. For more information on Aqua, see
@@ -232,7 +234,7 @@ Result:
 }
 ```
 
-Alternatively, we can run the `ts_getter` functions just for the timestamps:
+Alternatively, we can run the `ts_getter` function just for the timestamps:
 
 ```bash
 fluence run \
