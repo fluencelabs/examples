@@ -1,0 +1,45 @@
+module Main
+
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import App from "deployed.app.aqua"
+
+export App, ts_getter, ts_oracle
+
+data Oracle:
+    n: u32
+    mode: u64
+    freq: u32
+    err_str: string
+    raw_data: []u64
+
+service TSOracle("service-id"):
+    point_estimate: []u64, u32 -> Oracle
+
+func ts_getter() -> []u64:
+  rtt = 1000 -- millis
+  msg = "timeout"
+  res: *u64
+
+  services <- App.services()
+  
+  on services.tsOracle.default!.peerId:
+    k <- Op.string_to_b58(services.tsOracle.default!.peerId)
+    nodes <- Kademlia.neighborhood(k, nil, nil)
+    if Op.array_length(nodes) > 0:
+      for n <- nodes par:
+        on n:
+          try:
+            res <- Peer.timestamp_ms()
+      -- whether we get res from all the nodes or rtt milliseconds passed, return res
+      join res[Op.array_length(nodes) - 1]
+      par Peer.timeout(rtt, msg)
+
+  <- res
+
+func ts_oracle(min_points: u32) -> Oracle:
+  services <- App.services()
+  res <- ts_getter()
+  on services.tsOracle.default!.peerId:
+    TSOracle services.tsOracle.default!.serviceId
+    oracle <- TSOracle.point_estimate(res, min_points)
+  <- oracle

@@ -93,7 +93,7 @@ mod tests {
         assert_eq!(freq, 3);
     }
 
-    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
+    #[marine_test(config_path = "../Config.toml", modules_dir = "../target/wasm32-wasi/release/")]
     fn test_point_estimate_good(ts_oracle: marine_test_env::ts_oracle::ModuleInterface) {
         let data = vec![1u64, 1u64, 3u64, 3u64, 3u64, 5u64];
         let min_points = 2u32;
@@ -102,7 +102,7 @@ mod tests {
         assert_eq!(res.freq, 3u32);
     }
 
-    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
+    #[marine_test(config_path = "../Config.toml", modules_dir = "../target/wasm32-wasi/release/")]
     fn test_point_estimate_bad(ts_oracle: marine_test_env::ts_oracle::ModuleInterface) {
         let data = vec![1u64, 1u64, 3u64, 3u64, 3u64, 5u64];
         let n = data.len();
@@ -117,7 +117,7 @@ mod tests {
         );
     }
 
-    #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
+    #[marine_test(config_path = "../Config.toml", modules_dir = "../target/wasm32-wasi/release/")]
     fn test_point_estimate_bad_2(ts_oracle: marine_test_env::ts_oracle::ModuleInterface) {
         let data = vec![];
         let n = data.len();
