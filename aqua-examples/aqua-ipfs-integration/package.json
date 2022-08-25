@@ -10,8 +10,8 @@
     },
     "dependencies": {
         "ipfs-http-client": "^56.0.3",
-        "@fluencelabs/aqua": "0.7.4-336",
-        "@fluencelabs/fluence": "0.23.3",
+        "@fluencelabs/aqua": "0.7.5-340",
+        "@fluencelabs/fluence": "0.23.5",
         "typescript": "^4.6.3"
     },
     "engines": {

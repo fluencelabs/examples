@@ -15,7 +15,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@fluencelabs/aqua": "0.7.4-336",
+        "@fluencelabs/aqua": "0.7.5-340",
         "@types/jest": "^27.0.3",
         "chokidar-cli": "^3.0.0",
         "jest": "^27.4.0",
