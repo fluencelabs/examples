@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=.fluence/schemas/fluence.yaml.json
+
+# EXAMPLES:
+# services:
+#   someService: # Service name in camelCase
+#     get: https://github.com/fluencelabs/services/blob/master/adder.tar.gz?raw=true # URL or path
+#     deploy:
+#       - deployId: default # any unique string in camelCase. Used in aqua to access deployed service ids
+#         # You can access deployment info in aqua like this:
+#         # services <- App.services()
+#         # on services.someService.default!.peerId:
+#         peerId: MY_PEER # Peer id or peer id name to deploy on. Default: Random peer id is selected for each deploy
+#         count: 1 # How many times to deploy. Default: 1
+#         # overrideModules: # Override modules from service.yaml
+#         #   facade:
+#         #     get: ./relative/path # Override facade module
+# peerIds: # A map of named peerIds. Optional.
+#   MY_PEER: 12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS
+# relays: kras # Array of relay multi-addresses or keywords: kras, testnet, stage. Default: kras
+
+version: 1
+services:
+  nearAdapter:
+    get: ./near-adapter
+    deploy:
+      - deployId: default

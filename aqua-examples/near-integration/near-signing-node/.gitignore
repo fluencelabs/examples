@@ -48,3 +48,9 @@ package-lock.json
 # fluence
 
 src/_aqua/*
+# recommended by Fluence Labs:
+.fluence
+**/node_modules
+**/target/
+.vscode/settings.json
+.repl_history

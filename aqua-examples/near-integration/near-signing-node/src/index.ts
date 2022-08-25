@@ -35,8 +35,7 @@ class NearSigner implements NearSignerApiDef {
         const config = get_config(network_id, this._keyStore);
         const near = await network_connect(config);
         let account = await near.account(account_id);
-        let tx_receipt = await account.sendMoney(receiver_id, amount)
-        // return Promise.resolve(tx_receipt);
+        let tx_receipt = await account.sendMoney(receiver_id, amount);
         let result = Promise.resolve(tx_receipt);
         return result;
     }
@@ -128,11 +127,37 @@ async function main() {
         KeyPair: await FluenceKeyPair.fromEd25519SK(SeedArray)
     });
 
-    console.log("PeerId: ", Fluence.getStatus().peerId);
-    console.log("Relay id: ", Fluence.getStatus().relayPeerId);
+    const peerId = Fluence.getStatus().peerId;
+    const relayPeerId = Fluence.getStatus().relayPeerId;
+    console.log("PeerId: ", peerId);
+    console.log("Relay id: ", relayPeerId);
 
     registerNearSignerApi("near", new NearSigner());
 
+    const jsonServices = JSON.stringify(
+        {
+          name: "JsService",
+          serviceId: "JsService",
+          functions: [
+            {
+              name: "get",
+              result: {
+                peerId,
+                relayPeerId
+              },
+            },
+          ],
+        },
+        null,
+        2
+      )
+    // console.log("js-service.json: ", jsonServices)
+    var fs = require('fs');
+    fs.writeFileSync("js-services.json", jsonServices, function(err: any) {
+        console.log("Error occured while writing the JSON Object to the file.");
+        return console.log(err);
+    }
+    );
     console.log("ctrl-c to exit");
 
     // await Fluence.stop();

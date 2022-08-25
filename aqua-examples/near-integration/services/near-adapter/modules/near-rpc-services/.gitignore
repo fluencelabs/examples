@@ -1,0 +1,14 @@
+target/
+**/*.rs.bk
+.idea
+
+# MacOS misc file
+*.DS_Store
+
+# Wasm files
+*.wasm
+*.wat
+
+# REPL history files
+*.repl_history
+
