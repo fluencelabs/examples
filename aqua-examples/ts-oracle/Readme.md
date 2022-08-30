@@ -4,7 +4,7 @@
 
 Getting accurate timestamps can be problematic in various contexts including blockchains. Timestamp oracles can alleviate this concern by aggregating and processing a variety of timestamp sources into a point- or range-estimate. Of course, the acquisition of accurate timestamps not subject to manipulation is a critical attribute of a good oracle.  The Fluence peer-to-peer network offers a large number of independent nodes that can serve as timestamp sources from either Kademilia or TrustGraph neighborhoods.
 
-**Note: The timestamps are currently** **not** **signed by the nodes. But that could be easily addressed.**
+**Note: The timestamps are currently** **not** **signed by the peers. But that could be easily addressed.**
 
 For this tutorial, we'll be using Fluence's new `fluence` CLI tool, which wraps the CLIs you have already been using, e.g., the `aqua` CLI and Marine tooling CLIs (`marine` and `mrepl`), and brings additional features such as project template generation, wrapper generation for deployed services, project dependencies install. See the [Fluence CLI docs](https://github.com/fluencelabs/fluence-cli#readme) for more information.
 
@@ -25,7 +25,7 @@ Marine is a general-purpose Wasm runtime and toolkit, it allows developers to bu
 
 ### Setup
 
-In order to run the entire code base, Rust and Node are required. If necessary see [Install Rust](https://www.rust-lang.org/tools/install) and [NVM](https://github.com/nvm-sh/nvm) for details.
+In order to run the entire code base, Rust and Node.js are required. If necessary see [Install Rust](https://www.rust-lang.org/tools/install) and [NVM](https://github.com/nvm-sh/nvm) for details.
 
 Install the Fluence CLI by running the following command:
 
@@ -51,7 +51,7 @@ Minimal supported versions
 app service was created with service id = 5e21f219-0482-49d8-bc99-bd2c05bbfefa
 elapsed time 131.785135ms
 
-1> i
+1> interface
 Loaded modules interface:
 exported data types (combined from all modules):
 data Oracle:
@@ -71,7 +71,7 @@ result: Object({"err_str": String(""), "freq": Number(2), "mode": Number(1661345
 3> q
 ```
 
-On the 1st step, we explored our module interface and data using the `i` command, on the 2nd we made a call of the `point_estimate` function from the `ts_oracle` interface.
+On the 1st step, we explored our module interface and data using the `interface` command, on the 2nd we made a call of the `point_estimate` function from the `ts_oracle` interface.
 
 If you navigate to our module directory `ts-oracle/modules/ts-oracle`, you can also unit test the code with
 
@@ -186,6 +186,7 @@ func ts_getter() -> []u64:
           try:
             res <- Peer.timestamp_ms()
       -- whether we get res from all the nodes or rtt milliseconds passed, return res
+      -- using a race pattern to achieve that
       join res[Op.array_length(nodes) - 1]
       par Peer.timeout(rtt, msg)
 
@@ -206,6 +207,8 @@ func ts_oracle(min_points: u32) -> Oracle:
   <- oracle                                             -- and return to initiating peer
 ```
 
+Note that we use a [race pattern](https://doc.fluence.dev/aqua-book/language/flow/parallel#timeout-and-race-patterns) in the `ts_getter` function so we can limit the execution time of a part of our Aqua script where we collect timestamps. And in our `ts_oracle` function we access peer id and service id with `services.tsOracle.default!` which gives access to [the first element in the array](https://doc.fluence.dev/aqua-book/language/types#collection-types).
+
 We can run our Aqua `ts_oracle` function against the deployed processing service to get our oracle point estimate using `fluence run`:
 
 ```bash
@@ -214,7 +217,7 @@ We can run our Aqua `ts_oracle` function against the deployed processing service
     -f 'ts_oracle(5)'
 ```
 
-Please note that with `fluence run` we don't provide both the peer id and service id for our service. However, this information is used implicitly by the CLI tool, and is taken from definitions located in `.fluence/app.yaml` generated upon successful deployment.
+Please note that with `fluence run` we don't provide both the peer id and service id for our service. This information is fetched by the CLI tool, and is taken from definitions located in `.fluence/app.yaml` generated upon successful deployment.
 
 The run results in below but may be different for you:
 
@@ -267,7 +270,7 @@ Result:
 ]
 ```
 
-To do the housekeeping, we need to remove the service we deployed. It can be easily done with:
+For housekeeping purposes, we need to remove the service we deployed. It can be easily done with:
 
 ```bash
 fluence remove
