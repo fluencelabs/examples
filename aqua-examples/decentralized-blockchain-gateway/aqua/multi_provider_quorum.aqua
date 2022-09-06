@@ -35,9 +35,9 @@ service Console("run-console"):
 
 func get_block_heights(providers: []ProviderInfo, addrs: []FunctionAddress) -> []EVMResult:
   result: *EVMResult
-  result2: *string
+  
   n <- MyOp.array_length(providers)
-  n2 <- MyOp2.array_length(addrs)
+  m <- MyOp2.array_length(addrs)
 
   if n > 0:
     for addr <- addrs par:
@@ -45,9 +45,7 @@ func get_block_heights(providers: []ProviderInfo, addrs: []FunctionAddress) -> [
         MultiProviderQuery addr.service_id
         for provider <- providers:
           result <- MultiProviderQuery.get_block_number(provider)
-          result2 <<- provider.name
-        -- join result[n2-1]
-    join result[n*n2-1]
+    join result[n*m-1]
   <- result
 
 
