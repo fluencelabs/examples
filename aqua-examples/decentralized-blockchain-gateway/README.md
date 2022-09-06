@@ -628,7 +628,7 @@ aqua run \
   --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
   -i aqua \
   -f 'get_block_height_raw_quorum(arg1, arg2, arg3)' \
-  --data-path aqua/quorum_params.json
+  --data-path parameters/quorum_params.json
 ```
 
 Before we turn to the result, note that we replaced an increasingly hard to maintain inline `--data` representation with a much more manageable json file for our function parameters:
@@ -639,11 +639,11 @@ Before we turn to the result, note that we replaced an increasingly hard to main
   "arg1": [
     {
       "name": "infura",
-      "url": "https://mainnet.infura.io/v3/0cc023286cae4ab886598ecd14e256fd"
+      "url": "https://mainnet.infura.io/v3/<YOUR API KEY>"
     },
     {
       "name": "alchemy",
-      "url": "https://eth-mainnet.alchemyapi.io/v2/2FLlm9t-xOm0CbGx-ORr81li1yD_cKP6"
+      "url": "https://eth-mainnet.g.alchemy.com/v2/<YOUR API KEY>"
     },
     { "name": "link", "url": "https://main-light.eth.linkpool.io" }
   ],
@@ -664,6 +664,10 @@ Before we turn to the result, note that we replaced an increasingly hard to main
   "arg3": {
     "peer_id": "12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",
     "service_id": "366e3fdd-0d8d-4f8f-bae6-e2e541a17550"
+  },
+  "arg4": {
+    "peer_id": "12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",
+    "service_id": "ea75efe8-52da-4741-9228-605ab78c7092"
   }
 }
 ```
