@@ -722,7 +722,7 @@ aqua run \
   --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
   -i aqua \
   -f 'get_block_height_quorum(arg1, arg2, arg3, 0.66)' \
-  --data-path aqua/quorum_params.json
+  --data-path parameters/quorum_params.json
 
 [
 {
