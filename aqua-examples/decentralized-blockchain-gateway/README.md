@@ -828,7 +828,7 @@ Let's have look what running our new Aqua function looks like:
   --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
   -i aqua \
   -f 'get_block_height_quorum_with_mapper(arg1, arg2, arg3, arg4, 0.66)' \
-  --data-path parameters/quorum_params_with_api.json \
+  --data-path parameters/quorum_params.json \
   --log-level "aquavm=off"
 {
   "provider": "link",
@@ -1112,7 +1112,6 @@ Ok, so all works as intended and, as previosuly discussed, the function address 
 
  ```aqua
 func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: IpfsObj, quorum_cid: IpfsObj, utility_cid: IpfsObj, ipfs_service: FunctionAddress, t_quorum: f64) -> Quorum, bool:
---func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: IpfsObj, quorum_cid: IpfsObj, utility_cid: IpfsObj, ipfs_service: FunctionAddress, t_quorum: f64) -> []FunctionAddress,[]FunctionAddress,[]FunctionAddress:
   result: *EVMResult
   quorum: *Quorum
   is_quorum: *bool
@@ -1125,8 +1124,8 @@ func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: I
     q_addrs <- IpfsCli.params_from_cid(quorum_cid.multiaddr, quorum_cid.cid)
     u_addrs <- IpfsCli.params_from_cid(utility_cid.multiaddr, utility_cid.cid)
 
-   n <- MyOp.array_length(providers)
-  n2 <- MyOp2.array_length(addrs)
+  n <- MyOp.array_length(providers)
+  m <- MyOp2.array_length(addrs)
 
   if n > 0:
     for addr <- addrs par:
@@ -1134,7 +1133,7 @@ func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: I
         MultiProviderQuery addr.service_id
         for provider <- providers:
           result <- MultiProviderQuery.get_block_number(provider)
-    join result[n*n2-2]
+    join result[n*m-2]
 
     on q_addrs[0].peer_id:
       SimpleQuorum q_addrs[0].service_id
@@ -1167,7 +1166,7 @@ func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: I
   --addr /dns4/stage.fluence.dev/tcp/19004/wss/p2p/12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE \
   -i aqua/multi_provider_quorum.aqua \
   -f 'get_block_height_quorum_with_cid(provider_args, services_cid, quorum_cid, utility_cid, ipfs_args, 0.66)' \
-  --data-path parameters/quorum_mixed_params.json \
+  --data-path parameters/quorum_params.json \
   --log-level "aquavm=off"
 ```
 
