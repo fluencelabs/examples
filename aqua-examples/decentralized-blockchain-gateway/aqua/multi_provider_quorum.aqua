@@ -32,7 +32,6 @@ service Console("run-console"):
     print(msg: string)
 
 
-
 func get_block_heights(providers: []ProviderInfo, addrs: []FunctionAddress) -> []EVMResult:
   result: *EVMResult
   
@@ -73,9 +72,6 @@ func provider_test(providers: []ProviderInfo) -> []string:
   <- result
 
 alias QuorumService: FunctionAddress
--- data QuorumService:
---   peer_id: string
---  service_id: string
 
 data Quorum:
     n: u32
@@ -198,7 +194,6 @@ service IpfsCli("service-is"):
 
 
 func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: IpfsObj, quorum_cid: IpfsObj, utility_cid: IpfsObj, ipfs_service: FunctionAddress, t_quorum: f64) -> Quorum, bool:
---func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: IpfsObj, quorum_cid: IpfsObj, utility_cid: IpfsObj, ipfs_service: FunctionAddress, t_quorum: f64) -> []FunctionAddress,[]FunctionAddress,[]FunctionAddress:
   result: *EVMResult
   quorum: *Quorum
   is_quorum: *bool
@@ -211,8 +206,8 @@ func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: I
     q_addrs <- IpfsCli.params_from_cid(quorum_cid.multiaddr, quorum_cid.cid)
     u_addrs <- IpfsCli.params_from_cid(utility_cid.multiaddr, utility_cid.cid)
 
-   n <- MyOp.array_length(providers)
-  n2 <- MyOp2.array_length(addrs)
+  n <- MyOp.array_length(providers)
+  m <- MyOp2.array_length(addrs)
 
   if n > 0:
     for addr <- addrs par:
@@ -220,7 +215,7 @@ func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: I
         MultiProviderQuery addr.service_id
         for provider <- providers:
           result <- MultiProviderQuery.get_block_number(provider)
-    join result[n*n2-2]
+    join result[n*m-2]
 
     on q_addrs[0].peer_id:
       SimpleQuorum q_addrs[0].service_id
