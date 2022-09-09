@@ -10,8 +10,8 @@ name = "sqlite_test"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = "0.7.0"
+marine-rs-sdk = "0.7.1"
 marine-sqlite-connector = "0.5.1"
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.7.0"
+marine-rs-sdk-test = "0.7.1"
