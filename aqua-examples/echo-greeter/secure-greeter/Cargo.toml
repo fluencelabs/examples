@@ -9,5 +9,5 @@ name = "secure_greeter"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = { version="0.7.0", feature=["log"]}
+marine-rs-sdk = { version="0.7.1", feature=["log"]}
 log = "0.4.14"
