@@ -17,7 +17,7 @@ serde = { version = "1.0.132", default-features = false }
 serde_json = { version = "1.0.73", default-features = false }
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.7.1"
+marine-rs-sdk-test = "0.8.1"
 
 [dev]
 [profile.release]

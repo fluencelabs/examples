@@ -16,7 +16,7 @@ log = "0.4.14"
 rand = "0.8.4"
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.7.1"
+marine-rs-sdk-test = "0.8.1"
 
 [profile.release]
 opt-level = "s"
