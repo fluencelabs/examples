@@ -32,7 +32,7 @@
         "uint8arrays": "^2.1.5"
     },
     "devDependencies": {
-        "@fluencelabs/aqua": "0.7.6-345",
+        "@fluencelabs/aqua": "0.7.6-346",
         "@fluencelabs/aqua-lib": "0.6.0",
         "@types/jest": "^27.0.3",
         "jest": "^27.4.0",
