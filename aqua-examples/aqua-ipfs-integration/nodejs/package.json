@@ -24,7 +24,7 @@
     "author": "Fluence Labs",
     "license": "MIT",
     "dependencies": {
-        "@fluencelabs/fluence": "^0.25.0",
+        "@fluencelabs/fluence": "^0.26.0",
         "@fluencelabs/fluence-network-environment": "1.0.13",
         "@fluencelabs/ipfs-execution-aqua": "file:../aqua",
         "it-all": "^1.0.5",
@@ -32,7 +32,7 @@
         "uint8arrays": "^2.1.5"
     },
     "devDependencies": {
-        "@fluencelabs/aqua": "0.7.6-346",
+        "@fluencelabs/aqua": "0.7.6-347",
         "@fluencelabs/aqua-lib": "0.6.0",
         "@types/jest": "^27.0.3",
         "jest": "^27.4.0",
