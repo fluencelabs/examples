@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@fluencelabs/fluence": "0.26.3-snapshot",
+        "@fluencelabs/fluence": "0.26.0",
         "@fluencelabs/fluence-network-environment": "1.0.13",
         "@testing-library/jest-dom": "^5.14.1",
         "@testing-library/react": "^11.2.7",
@@ -52,7 +52,7 @@
         ]
     },
     "devDependencies": {
-        "@fluencelabs/aqua": "0.7.7-349",
+        "@fluencelabs/aqua": "0.7.6-347",
         "@fluencelabs/aqua-lib": "0.6.0",
         "@types/jest-environment-puppeteer": "^4.4.1",
         "@types/puppeteer": "^5.4.4",
