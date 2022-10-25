@@ -1,9 +1,9 @@
 # NEAR + Fluence + Aqua Integrations
 ## Overview
 
-We provide integration examples for both a [Fluence JS](https://github.com/fluencelabs/fluence-js) peer based on the [NEAR API JS](https://docs.near.org/docs/api/javascript-library) and distributed [Wasm services](https://github.com/fluencelabs/marine) wrapping the [NEAR RPC API](https://docs.near.org/docs/api/rpc). A [NEAR CLI](https://docs.near.org/docs/tools/near-cli) integration is planned for the near future.
+We provide integration examples for both a [Fluence JS](https://github.com/fluencelabs/fluence-js) peer based on the [NEAR API JS](https://docs.near.org/docs/api/javascript-library) and distributed [Wasm services](https://github.com/fluencelabs/marine) wrapping the [NEAR RPC API](https://docs.near.org/api/rpc/introduction). A [NEAR CLI](https://docs.near.org/docs/tools/near-cli) integration is planned for the near future.
 
-In our examples we've been using the [Aqua CLI](https://doc.fluence.dev/aqua-book/aqua-cli) `aqua` and [Marine tooling](https://doc.fluence.dev/marine-book/marine-tooling-reference) (the [Marine REPL](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-repl) `mrepl` and [Marine CLI](https://doc.fluence.dev/marine-book/marine-tooling-reference/marine-cli) `marine`).
+In our examples we've been using the [Aqua CLI](https://fluence.dev/docs/aqua-book/aqua-cli/) `aqua` and [Marine tooling](https://fluence.dev/docs/marine-book/marine-tooling-reference/) (the [Marine REPL](https://fluence.dev/docs/marine-book/marine-tooling-reference/marine-repl) `mrepl` and [Marine CLI](https://fluence.dev/docs/marine-book/marine-tooling-reference/marine-cli) `marine`).
 
 For the purpose of this tutorial, we'll be using Fluence's new `fluence` CLI tool, which wraps the CLIs you have already been using, e.g., the `aqua` CLI and Marine tooling CLIs (`marine` and `mrepl`), and brings additional features such as project template generation, wrapper generation for deployed services, project dependencies install. See the [Fluence CLI docs](https://github.com/fluencelabs/fluence-cli#readme) for more information.
 
@@ -22,13 +22,13 @@ Signing transactions and messages is a critical operation both on- and off-chain
 
 ### Implementing a Peer Node With Fluence JS and Aqua
 
-As discussed in the [documentation](https://doc.fluence.dev/docs/fluence-js/5_run_in_node), we can use [Fluence JS](https://github.com/fluencelabs/fluence-js) in a Node JS application resulting in a viable peer node of the Fluence p2p network. If you haven't, have a look at the documentation before you continue. To follow along the code below:
+As discussed in the [documentation](https://fluence.dev/docs/build/fluence-js/run-in-node), we can use [Fluence JS](https://github.com/fluencelabs/fluence-js) in a Node JS application resulting in a viable peer node of the Fluence p2p network. If you haven't, have a look at the documentation before you continue. To follow along the code below:
 
 ```bash
 cd near-signing-node
 ```
 
-In order to create our signing node, we wrap the [NEAR JS SDK](https://docs.near.org/docs/api/javascript-library) and, for a minimally viable experiment, expose the [sendMoney](https://near.github.io/near-api-js/classes/account.account-1.html#sendmoney) and a couple non-signing functions.
+In order to create our signing node, we wrap the [NEAR JS SDK](https://docs.near.org/docs/api/javascript-library) and, for a minimally viable experiment, expose the [sendMoney](https://near.github.io/near-api-js/classes/account_multisig.Account2FA#sendmoney) and a couple non-signing functions.
 
 In order to be able to expose `sendMoney` as an addressable service to Aqua, we need to implement the `sendMoney` interface and function in Aqua:
 
@@ -185,15 +185,14 @@ Result:
 }
 ```
 
-In the output above listed the called function (`account_state`) with its arguments as well as the relay used for the call. So, you can observe the context of the function call. And there's a result of the call, of course. In our case it displays [the basic information](https://docs.near.org/tools/near-api-js/account#state) for our Near account described in [AccountView Interface](https://near.github.io/near-api-js/interfaces/providers_provider.accountview.html).
+In the output above listed the called function (`account_state`) with its arguments as well as the relay used for the call. So, you can observe the context of the function call. And there's a result of the call, of course. In our case it displays [the basic information](https://docs.near.org/tools/near-api-js/account#state) for our Near account described in [AccountView Interface](https://near.github.io/near-api-js/interfaces/providers_provider.AccountView).
 
 Similarly, we can call our `send_money` service with Aqua:
 
-```aqua
+```sh
 fluence run \
     -i aqua \
     -f 'send_money("testnet", "<near-from-account>", "<near-to-account>", "10000", "lame_password", "<your-peer-id>", "<your-relay-id>")'
-
 ```
 
 Replace the `near-from-account` and `near-to-account` account placeholders with your respective testnet wallets and the `your-peer-id` and `your-relay-id` with the values provided by your peer. Executing above Aqua statement produces a transaction receipt similar to the one below:
@@ -386,11 +385,11 @@ In the next section, we briefly discuss how a variety of NEAR methods can be imp
 
 Operating your own node may not always be desireable for a variety of reasons ranging from costs to reuse to scalability and failover requirements. A core feature of the Fluence peer-to-peer network paradigm, of course, is the deployment of Wasm services to essentially any peer, given some hosting agreement, which allows for high portability as well as easy reuse and scalability as a "deploy and forget", low cost solution.  Even if the operation of a node is deemed necessary, as outlined in our Signing Node example above, it still may make sense to split services into a self-operated peer for signing-related activities and some hosted Wasm services otherwise. Of course, Aqua allows you to seamlessly compose any one of the (exposed) services regardless of the deployment approach.
 
-In order to create a NEAR Wasm adapter, we wrap whatever functionality we need from the [NEAR RPC API](https://docs.near.org/docs/api/rpc) in our Wasm module(s).
+In order to create a NEAR Wasm adapter, we wrap whatever functionality we need from the [NEAR RPC API](https://docs.near.org/api/rpc/introduction) in our Wasm module(s).
 
 ### Creating And Deploying NEAR Wasm Services
 
-In the `services/near-adapter/modules` directory, you find a minimal WASM adapter `near-rpc-services` for [NEAR RPC API](https://docs.near.org/docs/api/rpc) to get you started. Since we are connecting to on-chain resources via JSON-RPC, we need our service module to have access to [cUrl](https://doc.fluence.dev/docs/tutorials_tutorials/curl-as-a-service), which we provide with the [cUrl adapter](../near-integration/services/near-adapter/modules/curl-adapter/):
+In the `services/near-adapter/modules` directory, you find a minimal WASM adapter `near-rpc-services` for [NEAR RPC API](https://docs.near.org/api/rpc/introduction) to get you started. Since we are connecting to on-chain resources via JSON-RPC, we need our service module to have access to [cUrl](https://fluence.dev/docs/build/tutorials/curl-as-a-service), which we provide with the [cUrl adapter](../near-integration/services/near-adapter/modules/curl-adapter/):
 
 ```rust
 // src/main.rs
@@ -401,7 +400,7 @@ extern "C" {
 }
 ```
 
-Let's have a look at the implementation of the [`network status`](https://docs.near.org/docs/api/rpc/network#node-status) method, which provides a fairly extensive snapshot of the network at the time in inquiry. Our adapter, or wrapper, implementation needs to envelope the RPC [`status`](https://docs.near.org/docs/api/rpc/network#node-status) endpoint and requires only one parameter: the `network_id`', e.g., `testnet`:
+Let's have a look at the implementation of the [`network status`](https://docs.near.org/api/rpc/network#node-status) method, which provides a fairly extensive snapshot of the network at the time in inquiry. Our adapter, or wrapper, implementation needs to envelope the RPC [`status`](https://docs.near.org/api/rpc/network#node-status) endpoint and requires only one parameter: the `network_id`', e.g., `testnet`:
 
 ```rust
 // src.main.rs

@@ -7,7 +7,7 @@ Fluence provides an open Web3 protocol, framework and associated tooling to deve
 
 Fluence Developer Resources:
 
-* [Developer Documentation](https://doc.fluence.dev/docs/)
+* [Developer Documentation](https://fluence.dev/docs/build/introduction)
 
 Aqua Developer Resources:
 
@@ -130,7 +130,7 @@ where the Aqua script can be found in the `aqua-scripts` dirctory and the compil
 
 ## Service Development And Deployment
 
-**Prerequisites:** If you want to follow along, compile Wasm modules, create services and deploy service, you need Rust, Node and a few Fluence tools installed. Please see follow the [Setup](https://doc.fluence.dev/docs/tutorials_tutorials/recipes_setting_up) instructions.
+**Prerequisites:** If you want to follow along, compile Wasm modules, create services and deploy service, you need Rust, Node and a few Fluence tools installed. Please see follow the [Setup](https://fluence.dev/docs/build/tutorials/setting-up-your-environment) instructions.
 
 Applications are composed from one or more services available on one or more Fluence peer-to-peer nodes. Services are comprised of one or more Wasm modules providing a wide range of compute functionality and access to persistance, e.g. IPFS and SQLite. For the purpose of our objective, we need a service that can call on some API to source price quotes. In an ideal, production world, this would be calling on a large set of DEX contacts to obtain price pairs and, say, lquidity, over a particular window of time. For our purposes, we simplify the process and call on the [Coingecko API](https://www.coingecko.com/api/documentations/v3) and add a random jitter to each quote retrieved to give us some variance.
 

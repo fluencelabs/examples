@@ -15,4 +15,4 @@ cargo generate --git https://github.com/fluencelabs/marine-template
 
 Which will prompt you for the project name and then generate the project, which will be your directory name. `cd` into your new directory and run `./build.sh` to compile the supplied __greeting__ function to a Wasm file ready for Marine.
 
-Check out the [Fluence documentation](https://doc.fluence.dev/docs/) for more details on Marine and Aqua.
+Check out the [Fluence documentation](https://fluence.dev/docs/build/introduction) for more details on Marine and Aqua.

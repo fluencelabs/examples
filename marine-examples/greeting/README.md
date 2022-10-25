@@ -137,7 +137,7 @@ service Greeting:
   greeting(name: string) -> string
 ```
 
-It's our starting point that we need to extend a bit: define the `hello` function that calls our deployed service and [export](https://doc.fluence.dev/aqua-book/language/header#export) it using an `export`:
+It's our starting point that we need to extend a bit: define the `hello` function that calls our deployed service and [export](https://fluence.dev/docs/aqua-book/language/header/#export) it using an `export`:
 
 ```
 module Greeting declares *
@@ -169,7 +169,7 @@ where
 
 `addr` - is a relay peer;
 
-`input` - our [Aqua code](https://doc.fluence.dev/aqua-book/language) we run;
+`input` - our [Aqua code](https://fluence.dev/docs/aqua-book/language/) we run;
 
 `func` - a function call with parameters that initiates compute.
 
