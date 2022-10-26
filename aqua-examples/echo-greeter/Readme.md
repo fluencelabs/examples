@@ -4,7 +4,7 @@ In this example we illustrate the implementation and composition of two services
 
 ## Requirements
 
-To run the example in its entirety, you need to install a few tools. See [Setting Up](https://doc.fluence.dev/docs/tutorials_tutorials/recipes_setting_up) for details. For more developer resources see the [Developer Docs](https://doc.fluence.dev/docs/), [Aqua Book](https://doc.fluence.dev/aqua-book/) and the [Marine Examples](./../../marine-examples).
+To run the example in its entirety, you need to install a few tools. See [Setting Up](https://fluence.dev/docs/build/tutorials/setting-up-your-environment) for details. For more developer resources see the [Developer Docs](https://fluence.dev/docs/build/introduction), [Aqua Book](https://fluence.dev/docs/aqua-book/introduction) and the [Marine Examples](./../../marine-examples).
 
 ## Service Development And Deployment
 

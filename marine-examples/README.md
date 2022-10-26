@@ -2,7 +2,7 @@
 
 ## Overview
 
-Fluence services are composed from Wasm modules written in Rust and configuration files. The examples in this directory illustrate how to construct a variety of modules and services. See the [Setup Environment](https://doc.fluence.dev/docs/tutorials_tutorials/recipes_setting_up) section of the Fluence documentation to get.
+Fluence services are composed from Wasm modules written in Rust and configuration files. The examples in this directory illustrate how to construct a variety of modules and services. See the [Setup Environment](https://fluence.dev/docs/build/tutorials/setting-up-your-environment) section of the Fluence documentation to get.
 
 **Services** are logical constructs derived from Wasm modules and the associated linking and configuration data, which describe how modules are linked with each other and how they interact, if at all, with the outside world. The instantiation of a service from Wasm modules takes place on the peer-to-peer network, i.e. at the node level. More specifically, **blueprints** are json documents that provide the necessary information to build, i.e. link, a service from Wasm modules. See Figure 1 for a stylized representation of module and service creation.
 
@@ -132,7 +132,7 @@ test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 Now that we have a function service, we can deploy it to the network.
 
-For a detailed introduction to and review of Fluence, see the [documentation](https://doc.fluence.dev/docs/).
+For a detailed introduction to and review of Fluence, see the [documentation](https://fluence.dev/docs/build/introduction).
 
 ## Records Example
 
@@ -532,7 +532,7 @@ pub fn produce(data: Input) -> Data {
 }
 ```
 
-The only new thing here is `#[marine]` on a struct. This adds the structure into module interface and requires all the fields to be supported by default or be another `#[marine]` structure. There is more information about it in [docs](https://doc.fluence.dev/docs/knowledge_aquamarine/marine/marine-rs-sdk#function-export). 
+The only new thing here is `#[marine]` on a struct. This adds the structure into module interface and requires all the fields to be supported by default or be another `#[marine]` structure. There is more information about it in [docs](https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/export-functions). 
 
 Consumer:
 ```rust
@@ -742,7 +742,7 @@ After that IDEs will provide code completion for `marine_test_env`. In order to 
 
 In each of the examples we created modules and services configurations and tested and inspected them with the Marine REPL. In this section we briefly discuss how to deploy our modules and configurations to the network as services using the *Greeting* example.
 
-Before we begin, you need to have the `aqua` tool installed. See the [Tools documentation](https://doc.fluence.dev/docs/knowledge_tools) for more information.
+Before we begin, you need to have the `aqua` tool installed. See the [Tools documentation](https://fluence.dev/docs/build/tools) for more information.
 
 We use the `aqua remote deploy_service` command to do our bidding:
 
@@ -774,7 +774,7 @@ Options and flags:
         What service from the config file to deploy
 ```
 
-Aside from our modules and configuration, we also want to supply the peer id of the node we want to host our service. You can find all available nodes on the [Fluence Dashboard](https://dash.fluence.dev/nodes). Please note that for all of our examples we will use peer `12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA`. Alternatively, we can deploy to a local node -- see  [Deploy A Local Node](https://doc.fluence.dev/docs/tutorials_tutorials/tutorial_run_local_node) for instructions.
+Aside from our modules and configuration, we also want to supply the peer id of the node we want to host our service. You can find all available nodes on the [Fluence Dashboard](https://dash.fluence.dev/nodes). Please note that for all of our examples we will use peer `12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA`. Alternatively, we can deploy to a local node -- see  [Deploy A Local Node](https://fluence.dev/docs/build/tutorials/deploy-a-local-fluence-node) for instructions.
 
 To create our greeting service on peer `12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA`:
 
@@ -806,8 +806,8 @@ Your peerId: 12D3KooWBVzSqoQqFycENVhw7W5RY1UHwPCn6U9iHG2mbwuCuLq3
 "ec71a1fc-66d7-41f4-bff1-f9c07d361bd4"
 ```
 
-The (peer id, service id) tuple is going to be useful once you start putting the service to work with, say, [Aqua](https://doc.fluence.dev/aqua-book/) and you should hold on the data for future use. Also, you can look up your service on the [Fluence Dashboard](https://dash.fluence.dev/blueprint/8d210ec2b83e4c661c71820b79f02d99908794e8af8034b465762f61682bc43b).
+The (peer id, service id) tuple is going to be useful once you start putting the service to work with, say, [Aqua](https://fluence.dev/docs/aqua-book/introduction) and you should hold on the data for future use. Also, you can look up your service on the [Fluence Dashboard](https://dash.fluence.dev/blueprint/8d210ec2b83e4c661c71820b79f02d99908794e8af8034b465762f61682bc43b).
 
-For more detailed information regarding Marine please refer to the [Marine Book](https://doc.fluence.dev/marine-book/).
+For more detailed information regarding Marine please refer to the [Marine Book](https://fluence.dev/docs/marine-book/introduction).
 
-For more detailed information regarding the Fluence solution see the [Fluence documentation](https://doc.fluence.dev) and if you have any questions, comments or suggestions for improvements, please open an Issue or PR.
+For more detailed information regarding the Fluence solution see the [Fluence documentation](https://fluence.dev/) and if you have any questions, comments or suggestions for improvements, please open an Issue or PR.

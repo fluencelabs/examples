@@ -7,7 +7,7 @@ This example showcases 2 things:
 
 ## Learn about AquaIPFS
 
-See [Aqua Book](https://doc.fluence.dev/aqua-book/libraries/aqua-ipfs).
+See [Aqua Book](https://fluence.dev/docs/aqua-book/introduction).
 
 ## How to run & use this example
 

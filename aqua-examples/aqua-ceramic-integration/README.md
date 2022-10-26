@@ -10,7 +10,7 @@ In order to use services available outside the Fluence network, such as [IPFS](h
 
 In this example, we develop an adapter for the Ceramic [CLI API](https://developers.ceramic.network/build/cli/api/) with the goal of seamlessly integrating Ceramic services into Fluence peer-to-peer applications composed with Aqua. See Figure 1.
 
-Our adapter service mounts the Ceramic CLI with the [MountedBinaryResult](https://doc.fluence.dev/docs/knowledge_aquamarine/marine/marine-rs-sdk#mountedbinaryresult) interface requiring the availability of [Ceramic tools](https://developers.ceramic.network/build/cli/installation/) as a sidecar. In addition, a limited Ceramic HTTP API implementation is also available using the Marine [curl adapter](https://doc.fluence.dev/docs/tutorials_tutorials/curl-as-a-service). Since the HTTP API is limited and won't let users create streams, it is offered primarily for educational purposes, although it may be useful in scenarios where a ceramic daemon deployment is not feasible.
+Our adapter service mounts the Ceramic CLI with the [MountedBinaryResult](https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/mounted-binaries) interface requiring the availability of [Ceramic tools](https://developers.ceramic.network/build/cli/installation/) as a sidecar. In addition, a limited Ceramic HTTP API implementation is also available using the Marine [curl adapter](https://fluence.dev/docs/build/tutorials/curl-as-a-service). Since the HTTP API is limited and won't let users create streams, it is offered primarily for educational purposes, although it may be useful in scenarios where a ceramic daemon deployment is not feasible.
 
 **Please note that Ceramic binary access is currently only available at Fluence's `stage` network environment (`aqua config default_peers stage`) with path `/usr/bin/ceramic`.**
 
@@ -22,7 +22,7 @@ ToDos:
 - [X] Add use of Aqua demo
 - [X] Change fldist to aqua cli
 
-For another, comprehensive, end-to-end implementation of an adapter, see [Aqua IPFS Library](https://doc.fluence.dev/aqua-book/libraries/aqua-ipfs) and [Aqua IPFS demo](https://github.com/fluencelabs/examples/tree/main/aqua-examples/aqua-ipfs-integration).
+For another, comprehensive, end-to-end implementation of an adapter, see [Aqua IPFS Library](https://fluence.dev/docs/aqua-book/libraries/aqua-ipfs) and [Aqua IPFS demo](https://github.com/fluencelabs/examples/tree/main/aqua-examples/aqua-ipfs-integration).
 
 ## Ceramic CLI Adapter Module
 

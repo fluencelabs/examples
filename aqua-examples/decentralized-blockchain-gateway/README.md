@@ -11,7 +11,7 @@ In this tutorial, we illustrate how Fluence and Aqua can help DApp developers mi
 
 ## Setting Up
 
-If you haven't set up your Fluence and Aqua development environment, head over to the [setup docs](https://doc.fluence.dev/docs/tutorials_tutorials/recipes_setting_up); if you're not familiar with Fluence and Aqua, give the [developer docs](https://doc.fluence.dev) a gander.
+If you haven't set up your Fluence and Aqua development environment, head over to the [setup docs](https://fluence.dev/docs/build/tutorials/setting-up-your-environment); if you're not familiar with Fluence and Aqua, give the [developer docs](https://fluence.dev/) a gander.
 
 In addition to the Fluence setup, you ought to sign up for a few hosted (EVM) node providers with JSON-RPC access as discussed below.
 
@@ -924,7 +924,7 @@ ipfs --api "/ip4/161.35.222.178/tcp/5001/p2p/12D3KooWApmdAtFJaeybnXtf1mBz1Tukxyr
 ]
 ```
 
-Woo hoo!! All dressed up and nowhere to go ... just yet. Let's change that. In order to be able to deal with IPFS documents, we need to be able to interact with IPFS from Aqua. We could write a [custom IPFS adapter](./wasm-module/ipfs-adapter) and [custom IPFS processing module](./wasm-module/ipfs-cli) or use Fluence's builtin [IPFS integration with Aqua](https://doc.fluence.dev/aqua-book/libraries/aqua-ipfs) library. If we use the latter, we don't have to implement and deploy our own ipfs adapter service(s) and don't have to manage the associated function addresses. However, the Fluence IPFS library is geared toward file management, which means that we need to write and maintain a file processing service, which still leaves us with service management chores. So let's write and deploy a super-light ipfs adapter based on the ipfs cli[cat](https://docs.ipfs.io/reference/cli/#ipfs-cat) command.
+Woo hoo!! All dressed up and nowhere to go ... just yet. Let's change that. In order to be able to deal with IPFS documents, we need to be able to interact with IPFS from Aqua. We could write a [custom IPFS adapter](./wasm-module/ipfs-adapter) and [custom IPFS processing module](./wasm-module/ipfs-cli) or use Fluence's builtin [IPFS integration with Aqua](https://fluence.dev/docs/aqua-book/libraries/aqua-ipfs) library. If we use the latter, we don't have to implement and deploy our own ipfs adapter service(s) and don't have to manage the associated function addresses. However, the Fluence IPFS library is geared toward file management, which means that we need to write and maintain a file processing service, which still leaves us with service management chores. So let's write and deploy a super-light ipfs adapter based on the [ipfs cat](https://docs.ipfs.tech/reference/kubo/cli/#ipfs-cat) command.
 
 Our Ipfs adapter mirrors the [curl adapter](./wasm-modules/curl-adapter/) since it also uses a host-provided binary: `ipfs`.
 
