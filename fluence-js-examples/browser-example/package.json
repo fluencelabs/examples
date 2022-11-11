@@ -51,9 +51,9 @@
         ]
     },
     "devDependencies": {
-        "@fluencelabs/aqua": "0.7.7-362",
+        "@fluencelabs/aqua": "0.7.7-363",
         "@fluencelabs/aqua-lib": "0.6.0",
-        "@fluencelabs/fluence": "0.27.0",
+        "@fluencelabs/fluence": "0.27.1",
         "@types/jest-environment-puppeteer": "^4.4.1",
         "@types/puppeteer": "^5.4.4",
         "chokidar-cli": "^2.1.0",
