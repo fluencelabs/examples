@@ -41,7 +41,7 @@
     },
     "homepage": "git+https://github.com/fluencelabs/examples/aqua-examples/echo-greeter#readme",
     "devDependencies": {
-        "@fluencelabs/aqua": "0.7.7-363",
+        "@fluencelabs/aqua": "0.7.7-365",
         "@fluencelabs/aqua-lib": "0.6.0",
         "@types/jest": "^27.0.3",
         "chokidar-cli": "^3.0.0",
