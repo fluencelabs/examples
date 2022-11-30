@@ -1,0 +1,16 @@
+modules_dir = "../artifacts/"
+
+
+[[module]]
+name = "curl_adapter"
+max_heap_size = "512 KiB"
+logger_enabled = true
+
+[module.mounted_binaries]
+curl = "/usr/bin/curl"
+
+
+[[module]]
+name = "drand"
+max_heap_size = "256 KiB"
+logger_enabled = true

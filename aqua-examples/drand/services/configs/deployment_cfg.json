@@ -1,0 +1,11 @@
+{
+  "drand": {
+    "name": "drand",
+    "modules": [
+      {
+        "name": "drand",
+        "path": "./artifacts/drand.wasm"
+      }
+    ]
+  }
+}
