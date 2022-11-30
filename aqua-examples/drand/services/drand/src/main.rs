@@ -15,20 +15,13 @@
  */
 
 // use drand_verify::{derive_randomness, g1_from_fixed, verify};
+use drand_verify::{derive_randomness, g1_from_fixed, verify};
 use hex;
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::{marine, MountedBinaryResult};
 use serde::{Deserialize, Serialize};
 
 use std::convert::TryInto;
-
-mod points;
-mod randomness;
-mod verify;
-
-use points::g1_from_fixed;
-use randomness::derive_randomness;
-use verify::verify;
 
 module_manifest!();
 
