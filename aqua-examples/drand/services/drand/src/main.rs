@@ -325,29 +325,25 @@ mod tests {
 
     fn test_verify(drand: marine_test_env::drand::ModuleInterface) {
         // get chain hash
-        let chain_hash = drand.chains(URL.to_string(), true).stdout;
-        println!("verify-chain hash: {:?}", chain_hash);
+        let res = drand.chains(URL.to_string());
+        let chain_hash = &res.chains[0];
 
         // get public key for chain
-        let pk = drand.info(URL.to_string(), chain_hash.clone(), true).stdout;
-        println!("verify-pk: {:?}", chain_hash);
+        let res_info = drand.info(URL.to_string(), chain_hash.to_string());
 
         // get latest randomness
-        let res = drand
-            .randomness(URL.to_string(), chain_hash.clone(), "latest".to_owned())
-            .stdout;
-        println!("verify randomness: {:?}", res);
-
-        let randomness: Randomness = serde_json::from_str(&res).unwrap();
-        println!("verify randomness: {:?}", randomness);
+        let res_rand = drand.latest(URL.to_string(), chain_hash.to_string());
+        let randomness = &res_rand.randomness.randomness;
 
         // verify randomness
-        let res = drand.verify_bls(
-            pk,
-            randomness.round,
-            randomness.previous_signature,
-            randomness.signature,
+        let res_verify = drand.verify_bls(
+            res_info.info.public_key,
+            res_rand.randomness.round,
+            res_rand.randomness.previous_signature,
+            res_rand.randomness.signature,
         );
-        println!("verify: {:?}", res);
+
+        assert_eq!(randomness, &res_verify.randomness);
+        assert!(res_verify.verified);
     }
 }
