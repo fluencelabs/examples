@@ -28,30 +28,35 @@ module_manifest!();
 pub fn main() {}
 
 #[marine]
-#[derive(Deserialize, Serialize, Debug)]
-pub struct Chain {
-    pub hash: String,
+pub struct CResult {
+    pub chains: Vec<String>,
+    stderr: String,
 }
 
 #[marine]
 #[derive(Deserialize, Serialize, Debug)]
-pub struct Chains {
-    pub hashes: Vec<Chains>,
-}
-
-#[marine]
-pub struct DResult {
-    pub stderr: String,
-    pub stdout: String,
-}
-
-#[marine]
-#[derive(Deserialize, Serialize, Debug)]
-pub struct DInfo {
+pub struct Info {
     pub public_key: String,
     pub period: u64,
     pub genesis_time: u64,
     pub hash: String,
+}
+
+impl Info {
+    fn empty() -> Self {
+        Info {
+            public_key: "".to_owned(),
+            period: 0,
+            genesis_time: 0,
+            hash: "".to_owned(),
+        }
+    }
+}
+
+#[marine]
+pub struct IResult {
+    info: Info,
+    stderr: String,
 }
 
 #[marine]
@@ -63,125 +68,146 @@ pub struct Randomness {
     pub previous_signature: String,
 }
 
+impl Randomness {
+    fn empty() -> Self {
+        Randomness {
+            round: 0,
+            randomness: "".to_owned(),
+            signature: "".to_owned(),
+            previous_signature: "".to_owned(),
+        }
+    }
+}
+
 #[marine]
-pub fn chains(url: String, hash_chain: bool) -> DResult {
+pub struct RResult {
+    pub randomness: Randomness,
+    pub stderr: String,
+}
+
+#[marine]
+pub struct VResult {
+    verified: bool,
+    randomness: String,
+    stderr: String,
+}
+
+fn curl_cmd(url: String) -> Vec<String> {
+    vec![
+        "-X".to_string(),
+        "GET".to_string(),
+        "-H".to_string(),
+        "Accept: application/json".to_string(),
+        url,
+    ]
+}
+
+#[marine]
+pub fn chains(url: String) -> CResult {
     let url = format!("{}/chains", url);
-    let curl_cmd = vec![
-        "-X".to_string(),
-        "GET".to_string(),
-        "-H".to_string(),
-        "Accept: application/json".to_string(),
-        url,
-    ];
+    let curl_cmd = curl_cmd(url);
 
     let response = curl_request(curl_cmd);
     if response.error.len() > 0 {
-        return DResult {
+        return CResult {
             stderr: response.error.to_string(),
-            stdout: "".to_string(),
+            chains: vec![],
         };
     }
-    match String::from_utf8(response.clone().stdout) {
+
+    match String::from_utf8(response.stdout) {
         Ok(r) => {
-            let obj: Vec<String> = serde_json::from_str(&r).unwrap();
-            if !hash_chain {
-                DResult {
-                    stdout: r,
-                    stderr: "".to_owned(),
-                }
-            } else {
-                DResult {
-                    stdout: format!("{}", obj[0]),
-                    stderr: "".to_owned(),
-                }
+            let chains: Result<Vec<String>, serde_json::Error> = serde_json::from_str(&r);
+            match chains {
+                Ok(r) => CResult {
+                    chains: r,
+                    stderr: "".to_string(),
+                },
+                Err(e) => CResult {
+                    chains: vec![],
+                    stderr: e.to_string(),
+                },
             }
         }
-        Err(e) => DResult {
-            stdout: "".to_owned(),
+        Err(e) => CResult {
+            chains: vec![],
             stderr: e.to_string(),
         },
     }
 }
 
 #[marine]
-pub fn info(url: String, chain_hash: String, pub_key: bool) -> DResult {
+pub fn info(url: String, chain_hash: String) -> IResult {
     let url = format!("{}/{}/info", url, chain_hash);
-    let curl_cmd = vec![
-        "-X".to_string(),
-        "GET".to_string(),
-        "-H".to_string(),
-        "Accept: application/json".to_string(),
-        url,
-    ];
+    let curl_cmd = curl_cmd(url);
 
     let response = curl_request(curl_cmd);
     if response.error.len() > 0 {
-        return DResult {
+        return IResult {
             stderr: response.error.to_string(),
-            stdout: "".to_string(),
+            info: Info::empty(),
         };
     }
     match String::from_utf8(response.clone().stdout) {
-        Ok(r) => {
-            let obj: DInfo = serde_json::from_str(&r).unwrap();
-            if pub_key {
-                DResult {
-                    stdout: obj.public_key,
-                    stderr: "".to_owned(),
-                }
-            } else {
-                DResult {
-                    stdout: r,
-                    stderr: "".to_owned(),
-                }
-            }
-        }
-        Err(e) => DResult {
-            stdout: "".to_owned(),
+        Ok(r) => match serde_json::from_str(&r) {
+            Ok(o) => IResult {
+                info: o,
+                stderr: "".to_string(),
+            },
+            Err(e) => IResult {
+                info: Info::empty(),
+                stderr: e.to_string(),
+            },
+        },
+        Err(e) => IResult {
+            info: Info::empty(),
+            stderr: e.to_string(),
+        },
+    }
+}
+
+pub fn randomness(url: String) -> RResult {
+    let curl_cmd = curl_cmd(url);
+
+    let response = curl_request(curl_cmd);
+    if response.error.len() > 0 {
+        return RResult {
+            stderr: response.error.to_string(),
+            randomness: Randomness::empty(),
+        };
+    }
+    match String::from_utf8(response.clone().stdout) {
+        Ok(r) => match serde_json::from_str(&r) {
+            Ok(r) => RResult {
+                randomness: r,
+                stderr: "".to_string(),
+            },
+            Err(e) => RResult {
+                randomness: Randomness::empty(),
+                stderr: e.to_string(),
+            },
+        },
+        Err(e) => RResult {
+            randomness: Randomness::empty(),
             stderr: e.to_string(),
         },
     }
 }
 
 #[marine]
-pub fn randomness(url: String, chain_hash: String, round: String) -> DResult {
-    let mut uri: String;
-    if &round.to_lowercase() == "latest" {
-        uri = format!("{}/{}/public/latest", url, chain_hash);
-    } else {
-        let round = &round.parse::<u64>().unwrap();
-        uri = format!("{}/{}/public/{}", url, chain_hash, round);
-    }
-
-    let curl_cmd = vec![
-        "-X".to_string(),
-        "GET".to_string(),
-        "-H".to_string(),
-        "Accept: application/json".to_string(),
-        uri,
-    ];
-
-    let response = curl_request(curl_cmd);
-    if response.error.len() > 0 {
-        return DResult {
-            stderr: response.error.to_string(),
-            stdout: "".to_string(),
-        };
-    }
-    match String::from_utf8(response.clone().stdout) {
-        Ok(r) => DResult {
-            stdout: r,
-            stderr: "".to_owned(),
-        },
-        Err(e) => DResult {
-            stdout: "".to_owned(),
-            stderr: e.to_string(),
-        },
-    }
+pub fn latest(url: String, chain_hash: String) -> RResult {
+    let url = format!("{}/{}/public/latest", url, chain_hash);
+    randomness(url)
 }
 
 #[marine]
-pub fn verify_bls(pk: String, round: u64, prev_signature: String, signature: String) -> DResult {
+pub fn round(url: String, chain_hash: String, round: u64) -> RResult {
+    let url = format!("{}/{}/public/{}", url, chain_hash, round);
+    randomness(url)
+}
+
+#[marine]
+pub fn verify_bls(pk: String, round: u64, prev_signature: String, signature: String) -> VResult {
     let hex_pk: [u8; 48] = hex::decode(&pk).unwrap().as_slice().try_into().unwrap();
     let pk = g1_from_fixed(hex_pk).unwrap();
 
@@ -191,23 +217,26 @@ pub fn verify_bls(pk: String, round: u64, prev_signature: String, signature: Str
     let hex_psig = hex::decode(prev_signature).unwrap();
 
     match verify(&pk, round, &hex_psig, &hex_sig) {
-        Err(err) => DResult {
+        Err(err) => VResult {
             stderr: format!("Error during verification: {}", err),
-            stdout: "".to_string(),
+            verified: false,
+            randomness: "".to_string(),
         },
         Ok(valid) => {
             println!("ok verify");
             if valid {
-                println!("Verification succeeded");
+                // println!("Verification succeeded");
                 let randomness = derive_randomness(&hex_sig);
-                println!("Randomness: {}", hex::encode(&randomness));
-                DResult {
-                    stdout: hex::encode(&randomness),
+                // println!("Randomness: {}", hex::encode(&randomness));
+                VResult {
+                    verified: valid,
+                    randomness: hex::encode(&randomness),
                     stderr: "".to_string(),
                 }
             } else {
-                DResult {
-                    stdout: "".to_string(),
+                VResult {
+                    verified: false,
+                    randomness: "".to_string(),
                     stderr: format!("Verification failed"),
                 }
             }
@@ -223,22 +252,18 @@ extern "C" {
 
 #[cfg(test)]
 mod tests {
-    // use super::*;
-    use super::Randomness;
     use marine_rs_sdk_test::marine_test;
 
     const URL: &'static str = "https://api.drand.sh";
 
     #[marine_test(
-        config_path = "/Users/bebo/localdev/examples/aqua-examples/drand/services/configs/Config.toml",
-        modules_dir = "/Users/bebo/localdev/examples/aqua-examples/drand/services/artifacts/"
+        config_path = "../../configs/Config.toml",
+        modules_dir = "../../artifacts"
     )]
     fn test_chain(drand: marine_test_env::drand::ModuleInterface) {
-        let res = drand.chains(URL.to_string(), false);
-        assert_eq!(res.stderr.len(), 0);
-
-        let res = drand.chains(URL.to_string(), true);
-        assert_eq!(res.stderr.len(), 0);
+        let c_obj = drand.chains(URL.to_string());
+        assert_eq!(c_obj.stderr.len(), 0);
+        assert!(c_obj.chains.len() > 0);
     }
 
     #[marine_test(
@@ -256,7 +281,7 @@ mod tests {
         assert_eq!(res.stderr.len(), 0);
         assert!(res.stdout.len() > 0);
     }
-
+    /*
     #[marine_test(
         config_path = "/Users/bebo/localdev/examples/aqua-examples/drand/services/configs/Config.toml",
         modules_dir = "/Users/bebo/localdev/examples/aqua-examples/drand/services/artifacts/"
@@ -325,4 +350,5 @@ mod tests {
         // let h: [u8; 48] = hex!("868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31");
         println!("hex!: {:?}", PK_LEO_MAINNET);
     }
+    */
 }

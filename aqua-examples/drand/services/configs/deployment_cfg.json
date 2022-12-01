@@ -3,8 +3,16 @@
     "name": "drand",
     "modules": [
       {
+        "name": "curl_adapter",
+        "path": "./artifacts/curl_adapter.wasm",
+        "max_heap_size": "512 KiB",
+        "mounted_binaries": [["curl", "/usr/bin/curl"]],
+        "logger_enabled": true
+      },
+      {
         "name": "drand",
-        "path": "./artifacts/drand.wasm"
+        "path": "./artifacts/drand.wasm",
+        "max_heap_size": "1 MiB"
       }
     ]
   }
