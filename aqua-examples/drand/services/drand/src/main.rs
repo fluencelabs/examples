@@ -271,47 +271,58 @@ mod tests {
         modules_dir = "/Users/bebo/localdev/examples/aqua-examples/drand/services/artifacts/"
     )]
     fn test_info(drand: marine_test_env::drand::ModuleInterface) {
-        let chain_hash =
-            "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce".to_string();
-        let res = drand.info(URL.to_string(), chain_hash.clone(), false);
+        let res = drand.chains(URL.to_string());
+        let chain_hash = &res.chains[0];
+        let res = drand.info(URL.to_string(), chain_hash.to_string());
         assert_eq!(res.stderr.len(), 0);
-        assert!(res.stdout.len() > 0);
-
-        let res = drand.info(URL.to_string(), chain_hash, true);
-        assert_eq!(res.stderr.len(), 0);
-        assert!(res.stdout.len() > 0);
+        assert!(res.info.public_key.len() > 0);
+        assert!(res.info.genesis_time > 0);
+        assert!(res.info.period > 0);
+        assert!(res.info.hash.len() > 0 && &res.info.hash == chain_hash);
     }
-    /*
+
     #[marine_test(
         config_path = "/Users/bebo/localdev/examples/aqua-examples/drand/services/configs/Config.toml",
         modules_dir = "/Users/bebo/localdev/examples/aqua-examples/drand/services/artifacts/"
     )]
-    fn test_randomness(drand: marine_test_env::drand::ModuleInterface) {
-        let chain_hash =
-            "8990e7a9aaed2ffed73dbd7092123d6f289930540d7651336225dc172e51b2ce".to_string();
-        let res = drand.randomness(URL.to_string(), chain_hash.clone(), "latest".to_owned());
-        assert_eq!(res.stderr.len(), 0);
-        assert!(res.stdout.len() > 0);
+    fn test_latest(drand: marine_test_env::drand::ModuleInterface) {
+        let res = drand.chains(URL.to_string());
+        let chain_hash = &res.chains[0];
+        let res = drand.latest(URL.to_string(), chain_hash.to_string());
 
-        let rand_obj: Randomness = serde_json::from_str(&res.stdout).unwrap();
-        let prev_round = rand_obj.round - 1;
-        let res = drand.randomness(
-            URL.to_string(),
-            chain_hash.clone(),
-            format!("{}", prev_round),
+        assert_eq!(res.stderr.len(), 0);
+        assert!(res.randomness.round > 0);
+        assert!(res.randomness.randomness.len() > 0);
+        assert!(res.randomness.signature.len() > 0);
+        assert!(res.randomness.previous_signature.len() > 0);
+    }
+
+    #[marine_test(
+        config_path = "/Users/bebo/localdev/examples/aqua-examples/drand/services/configs/Config.toml",
+        modules_dir = "/Users/bebo/localdev/examples/aqua-examples/drand/services/artifacts/"
+    )]
+    fn test_round(drand: marine_test_env::drand::ModuleInterface) {
+        let round: u64 = 2483238;
+        let prev_round: u64 = round - 1;
+
+        let res = drand.chains(URL.to_string());
+        let chain_hash = &res.chains[0];
+        let res = drand.round(URL.to_string(), chain_hash.to_string(), round);
+        let prev_res = drand.round(URL.to_string(), chain_hash.to_string(), prev_round);
+
+        assert_eq!(res.stderr.len(), 0);
+        assert_eq!(prev_res.stderr.len(), 0);
+        assert_eq!(
+            res.randomness.previous_signature,
+            prev_res.randomness.signature
         );
-        assert_eq!(res.stderr.len(), 0);
-        assert!(res.stdout.len() > 0);
-
-        let prev_rand_obj: Randomness = serde_json::from_str(&res.stdout).unwrap();
-
-        assert_eq!(rand_obj.previous_signature, prev_rand_obj.signature);
     }
 
     #[marine_test(
         config_path = "/Users/bebo/localdev/examples/aqua-examples/drand/services/configs/Config.toml",
         modules_dir = "/Users/bebo/localdev/examples/aqua-examples/drand/services/artifacts/"
     )]
+
     fn test_verify(drand: marine_test_env::drand::ModuleInterface) {
         // get chain hash
         let chain_hash = drand.chains(URL.to_string(), true).stdout;
@@ -339,16 +350,4 @@ mod tests {
         );
         println!("verify: {:?}", res);
     }
-
-    #[test]
-    fn doodle() {
-        use hex_literal::hex;
-        const PK_LEO_MAINNET: [u8; 48] = hex!("868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31");
-        let pk = "868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31";
-        println!("hex : {:?}", hex::decode(pk).unwrap());
-
-        // let h: [u8; 48] = hex!("868f005eb8e6e4ca0a47c8a77ceaa5309a47978a7c71bc5cce96366b5d7a569937c529eeda66c7293784a9402801af31");
-        println!("hex!: {:?}", PK_LEO_MAINNET);
-    }
-    */
 }
