@@ -1,0 +1,91 @@
+
+data CResult:
+  chains: []string
+  stderr: string
+
+data Info:
+  public_key: string
+  period: u64
+  genesis_time: u64
+  hash: string
+
+data IResult:
+  info: Info
+  stderr: string
+
+data Randomness:
+  round: u64
+  randomness: string
+  signature: string
+  previous_signature: string
+
+data RResult:
+  randomness: Randomness
+  stderr: string
+
+data VResult:
+  verified: bool
+  randomness: string
+  stderr: string
+
+data ServiceAddress:
+  peer_id: string
+  service_id: string
+
+service Drand:
+  chains(url: string) -> CResult
+  info(url: string, chain_hash: string) -> IResult
+  latest(url: string, chain_hash: string) -> RResult
+  round(url: string, chain_hash: string, round: u64) -> RResult
+  verify_bls(pk: string, round: u64, prev_signature: string, signature: string) -> VResult
+
+
+
+-- https://drand.love/developer/http-api/#chains
+func chains(addr: ServiceAddress, url:string) -> CResult:
+  on addr.peer_id:
+    Drand addr.service_id
+    res <- Drand.chains(url)
+  <- res
+
+-- https://drand.love/developer/http-api/#chain-hash-info
+func info(addr: ServiceAddress, url:string, chain_hash: string) -> IResult:
+  on addr.peer_id:
+    Drand addr.service_id
+    res <- Drand.info(url, chain_hash)
+  <- res
+ 
+ --
+func latest(addr: ServiceAddress, url:string, chain_hash: string) -> RResult:
+  on addr.peer_id:
+    Drand addr.service_id
+    res <- Drand.latest(url, chain_hash)
+  <- res
+
+--
+func round(addr: ServiceAddress, url:string, chain_hash: string, round:u64) -> RResult:
+  on addr.peer_id:
+    Drand addr.service_id
+    res <- Drand.round(url, chain_hash, round)
+  <- res
+
+--
+func verify(addr: ServiceAddress, pk: string, round_idx:u64, prev_signature: string, signature: string) -> VResult:
+  on addr.peer_id:
+    Drand addr.service_id
+    res <- Drand.verify_bls(pk, round_idx, prev_signature, signature)
+  <- res
+
+--
+func roundtrip(addrs: []ServiceAddress, url:string, chain_hash: string) -> bool, string, string:
+  on addrs[0].peer_id:
+    Drand addrs[0].service_id
+    c_res <- Drand.chains(url)
+    i_res <- Drand.info(url, c_res.chains[0])
+    r_res <- Drand.latest(url, c_res.chains[0])
+  
+  on addrs[1].peer_id:
+    Drand addrs[1].service_id
+    v_res <- Drand.verify_bls(i_res.info.public_key, r_res.randomness.round, r_res.randomness.previous_signature, r_res.randomness.signature)
+  
+  <- v_res.verified, v_res.randomness, r_res.randomness.randomness
