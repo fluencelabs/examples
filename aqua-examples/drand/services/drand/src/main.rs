@@ -207,11 +207,10 @@ pub fn round(url: String, chain_hash: String, round: u64) -> RResult {
 }
 
 #[marine]
+// from: https://github.com/noislabs/drand-verify/blob/main/examples/drand_verify.rs
 pub fn verify_bls(pk: String, round: u64, prev_signature: String, signature: String) -> VResult {
     let hex_pk: [u8; 48] = hex::decode(&pk).unwrap().as_slice().try_into().unwrap();
     let pk = g1_from_fixed(hex_pk).unwrap();
-
-    println!("about to match verify");
 
     let hex_sig = hex::decode(signature).unwrap();
     let hex_psig = hex::decode(prev_signature).unwrap();
@@ -223,11 +222,8 @@ pub fn verify_bls(pk: String, round: u64, prev_signature: String, signature: Str
             randomness: "".to_string(),
         },
         Ok(valid) => {
-            println!("ok verify");
             if valid {
-                // println!("Verification succeeded");
                 let randomness = derive_randomness(&hex_sig);
-                // println!("Randomness: {}", hex::encode(&randomness));
                 VResult {
                     verified: valid,
                     randomness: hex::encode(&randomness),

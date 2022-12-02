@@ -3,7 +3,7 @@ name = "drand"
 version = "0.1.0"
 authors = ["boneyard93501 <4523011+boneyard93501@users.noreply.github.com>"]
 edition = "2018"
-description = "drand, a Marine wasi module"
+description = "Drand, a Marine wasi module"
 license = "Apache-2.0"
 
 [[bin]]
@@ -12,8 +12,6 @@ path = "src/main.rs"
 
 [dependencies]
 marine-rs-sdk = { version = "0.7.1", features = ["logger"] }
-# log = "0.4.14"
-# drand-verify = { version = "0.3.0", js = false, optional = false }
 drand-verify = { version = "0.3.0", js = false, optional = false }
 hex = "0.4.3"
 serde = "1.0.148"
