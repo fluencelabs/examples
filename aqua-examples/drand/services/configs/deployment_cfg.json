@@ -6,8 +6,7 @@
         "name": "curl_adapter",
         "path": "./artifacts/curl_adapter.wasm",
         "max_heap_size": "512 KiB",
-        "mounted_binaries": [["curl", "/usr/bin/curl"]],
-        "logger_enabled": true
+        "mounted_binaries": [["curl", "/usr/bin/curl"]]
       },
       {
         "name": "drand",
