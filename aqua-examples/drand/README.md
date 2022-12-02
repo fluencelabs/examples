@@ -1,17 +1,10 @@
 # League Of Entropy Drand
 
-WIP
-
-see: [drand](https://drand.love/)  and [drand -verify](https://crates.io/crates/drand-verify)
-
-
-
-
 ## Introduction
 
-Randomness is critical to many application ranging from statistical sampling to games to cryptography. Randomness is defined to be void of any predictability and sequential randomness should have no order. Yet, randomness is hard to come by and even more so in open, permissionless systems where we want not only randomness but verifiable randomness. In our [VRFun](../vrfun/README.md) example, we illustrate how [Verifiable Random Functions](https://people.csail.mit.edu/silvio/Selected%20Scientific%20Papers/Pseudo%20Randomness/Verifiable_Random_Functions.pdf) can be used to satisfy this requirement. However, using the implemented VRF requires the user to provide (a one-time) secret key introducing a significant, and in most cases untenable, element of trust.
+Randomness is critical to many application ranging from statistical sampling to games to cryptography. [Randomness](https://en.wikipedia.org/wiki/Randomness) is defined to be void of any predictability and sequential randomness should have no order. Yet, randomness is hard to come by to begin with and even more so in open, permissionless systems where we want not only randomness but verifiable randomness. In our [VRFun](../vrfun/) example, we illustrate how [Verifiable Random Functions](https://people.csail.mit.edu/silvio/Selected%20Scientific%20Papers/Pseudo%20Randomness/Verifiable_Random_Functions.pdf) can be used to satisfy this requirement. However, using the implemented VRF requires the user to provide (a one-time) secret key introducing a significant, and in most cases untenable, element of trust.
 
-[Drand](https://drand.love/), a verifiable randomness beacon provided by the [League of Entropy](https://en.wikipedia.org/wiki/League_of_entropy), provides randomness as a decentralized service and is already utilized by the likes of Filecoin in production environments. Since Drand can greatly help Fluence developers to introduce proper randomness into their applications, we provide Marine wrappers for both the Drand HTTP API and verification logic.
+[Drand](https://drand.love/), a verifiable randomness beacon provided by the [League of Entropy](https://en.wikipedia.org/wiki/League_of_entropy) every 30 seconds, provides randomness as a decentralized service and is already utilized by the likes of [Filecoin](https://spec.filecoin.io/libraries/drand/) in production environments. Since Drand can greatly help Fluence developers to introduce proper randomness into their applications, we provide Marine wrappers for both the Drand HTTP API and verification logic.
 
 For more details on Drand, including their security model, see their [documentation](https://drand.love/docs/).
 
@@ -19,9 +12,9 @@ For more details on Drand, including their security model, see their [documentat
 
 If you are new to Fluence or need a refresher on Marine and Aqua, please see the [developer docs](https://fluence.dev/docs/learn/overview).
 
-Wrapping the Drand HTTP API with Marine is straight forward and only requires the [curl module](./services/curl_adapter/) as a dependency to our [drand service](./services/drand). As you can see when inspecting [main.rs](./services/drand/src/main.rs), the service closely follows the Drand HTTP API with some adjustments made in the data structures. See the *test* section for usage examples.
+Wrapping the Drand HTTP API with Marine is straight forward and only requires the [curl module](./services/curl_adapter/) as a dependency to our [drand service](./services/drand). As you can see when inspecting [main.rs](./services/drand/src/main.rs), the service closely follows the Drand HTTP API with some adjustments made in the return data structures. See the *test* section for usage examples.
 
-You compile the service code with [build script](./services/scripts/build.sh), which places the Wasm files in the [artifacts](./services/artifacts/) directory. Once the Wasm modules are create, we can run the tests with the *cargo test* command in the [drand dir](./services/drand/). Recall that we are using the marine test sdk which requires the existence of the Wasm modules.
+You compile the service code with [build script](./services/scripts/build.sh), which places the Wasm files in the [artifacts](./services/artifacts/) directory. Once the Wasm modules are created, we can run the tests with the *cargo test* command in the [drand dir](./services/drand/). Recall that we are using the [marine test sdk](https://crates.io/crates/marine-rs-sdk-test), which requires the existence of the Wasm module(s).
 
 ```bash
 cargo +nightly test --release
@@ -38,7 +31,7 @@ test tests::test_verify ... ok
 test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.85s
 ```
 
-If you want, you can also interact with the various method via the local Marine Repl. In the [ dir](./sevices)
+If you want, you can also interact with the various method via the local Marine Repl. In the [ dir](./services)
 
 ```bash
 mrepl configs/Config.toml
@@ -128,7 +121,7 @@ true,
 ]
 ```
 
-which gives us back the verification state, true, and the randomness from both the *latest* getter and the *verify* result, which should be the same.
+which gives us back the verification state, true, and the randomness from both the *latest* getter and the *verify* result, which we expect to be the same.
 
 The second example, the *verified_randomness_plus* function, extends the previous example and explicitly gets the prior (to latest) round to validate the signature chain as an additional check. Recall,  *previous_ signature* at round<sub>t</sub> is the *signature* at round<sub>t-1<sub>:
 
@@ -147,4 +140,4 @@ aqua run \
 }
 ```
 
-And that's all there is to it. Happy Drand'ing!
+And that's all there is to it to bring verifiable randomness not only to your Fluence applications but also DApps.
