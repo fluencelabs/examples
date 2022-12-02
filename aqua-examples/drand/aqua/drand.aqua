@@ -77,15 +77,17 @@ func verify(addr: ServiceAddress, pk: string, round_idx:u64, prev_signature: str
   <- res
 
 --
-func roundtrip(addrs: []ServiceAddress, url:string, chain_hash: string) -> bool, string, string:
+func roundtrip(addrs: []ServiceAddress, url:string) -> bool, string, string:
   on addrs[0].peer_id:
     Drand addrs[0].service_id
     c_res <- Drand.chains(url)
     i_res <- Drand.info(url, c_res.chains[0])
     r_res <- Drand.latest(url, c_res.chains[0])
-  
+    -- <- true, "yes", "no"
   on addrs[1].peer_id:
     Drand addrs[1].service_id
     v_res <- Drand.verify_bls(i_res.info.public_key, r_res.randomness.round, r_res.randomness.previous_signature, r_res.randomness.signature)
   
   <- v_res.verified, v_res.randomness, r_res.randomness.randomness
+
+  
