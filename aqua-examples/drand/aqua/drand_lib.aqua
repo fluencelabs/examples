@@ -1,3 +1,4 @@
+module Drand declares *
 
 data CResult:
   chains: []string
@@ -55,39 +56,24 @@ func info(addr: ServiceAddress, url:string, chain_hash: string) -> IResult:
     res <- Drand.info(url, chain_hash)
   <- res
  
- --
+ -- https://drand.love/developer/http-api/#chain-hash-public-latest
 func latest(addr: ServiceAddress, url:string, chain_hash: string) -> RResult:
   on addr.peer_id:
     Drand addr.service_id
     res <- Drand.latest(url, chain_hash)
   <- res
 
---
+-- https://drand.love/developer/http-api/#chain-hash-public-round
 func round(addr: ServiceAddress, url:string, chain_hash: string, round:u64) -> RResult:
   on addr.peer_id:
     Drand addr.service_id
     res <- Drand.round(url, chain_hash, round)
   <- res
 
---
+-- https://github.com/noislabs/drand-verify/blob/main/examples/drand_verify.rs
 func verify(addr: ServiceAddress, pk: string, round_idx:u64, prev_signature: string, signature: string) -> VResult:
   on addr.peer_id:
     Drand addr.service_id
     res <- Drand.verify_bls(pk, round_idx, prev_signature, signature)
   <- res
 
---
-func roundtrip(addrs: []ServiceAddress, url:string) -> bool, string, string:
-  on addrs[0].peer_id:
-    Drand addrs[0].service_id
-    c_res <- Drand.chains(url)
-    i_res <- Drand.info(url, c_res.chains[0])
-    r_res <- Drand.latest(url, c_res.chains[0])
-    -- <- true, "yes", "no"
-  on addrs[1].peer_id:
-    Drand addrs[1].service_id
-    v_res <- Drand.verify_bls(i_res.info.public_key, r_res.randomness.round, r_res.randomness.previous_signature, r_res.randomness.signature)
-  
-  <- v_res.verified, v_res.randomness, r_res.randomness.randomness
-
-  

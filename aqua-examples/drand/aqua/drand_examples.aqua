@@ -1,0 +1,59 @@
+import "drand_lib.aqua"
+-- import "@fluencelabs/aqua-lib/math.aqua"
+
+
+-- get randomness from one peer/service  and verifiication and randomeness from another peer/service
+-- returns verification bool and the randomness from the initial reuqest peer and the verification peer, which should be the same
+func verified_randomness(addrs: []ServiceAddress, url:string) -> bool, string, string:
+  on addrs[0].peer_id:
+    Drand addrs[0].service_id
+    c_res <- Drand.chains(url)
+    i_res <- Drand.info(url, c_res.chains[0])
+    r_res <- Drand.latest(url, c_res.chains[0])
+
+  on addrs[1].peer_id:
+    Drand addrs[1].service_id
+    v_res <- Drand.verify_bls(i_res.info.public_key, r_res.randomness.round, r_res.randomness.previous_signature, r_res.randomness.signature)
+  
+  <- v_res.verified, v_res.randomness, r_res.randomness.randomness
+
+-- possible end use function that gets randomness from peer/service, gets the prior 
+-- round for signature matching from another peer/servive and verifies the latest randomness
+data Result:
+  success: bool
+  randomness: string
+  error: string
+
+service MyMath("math"):
+  -- careful with this
+  sub(x: u64, y: u64) -> u64
+
+func verified_randomness_plus(addrs: []ServiceAddress, url:string) -> Result:
+  result: *Result
+
+  on addrs[0].peer_id:
+    Drand addrs[0].service_id
+    c_res <- Drand.chains(url)
+    i_res <- Drand.info(url, c_res.chains[0])
+    r_res <- Drand.latest(url, c_res.chains[0])
+
+  on addrs[1].peer_id:
+    Drand addrs[1].service_id
+    prev_r_res <- Drand.round(url, c_res.chains[0],  MyMath.sub(r_res.randomness.round, 1))
+    v_res <- Drand.verify_bls(i_res.info.public_key, r_res.randomness.round, r_res.randomness.previous_signature, r_res.randomness.signature)
+
+  if r_res.randomness.previous_signature != prev_r_res.randomness.signature:
+    result <<- Result(success = false, randomness = "", error = "signatures don't match between latest and previous round")
+  else:
+    if v_res.randomness != r_res.randomness.randomness:
+      result <<- Result(success = false, randomness = "", error = "randomness doesn't match between latest request and verification")
+    else:
+      if v_res.verified:
+        result <<- Result(success = v_res.verified, randomness = v_res.randomness, error = "")
+      else:
+        result <<- Result(success = v_res.verified, randomness =  "", error = "verification failed for round ? and hash ?")
+  <- result[0]
+
+  
+
+  
