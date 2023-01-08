@@ -10,9 +10,6 @@ marine build --release
 
 ## Gives error
 ```
-/bin/zsh /Users/folex/Development/fluencelabs/examples/aqua-examples/decentralized-blockchain-gateway/wasm-modules/eth-rpc/test.sh
-    Finished release [optimized] target(s) in 0.20s
-Error: Can't find record with name='MountedBinaryResult', don't you forget to wrap it with #[marine]
-
-Process finished with exit code 1
+response is {"jsonrpc":"2.0","id":1,"result":[]}
+Accounts: Err(Decoder("Error(\"invalid type: map, expected a sequence\", line: 0, column: 0)"))
 ```
