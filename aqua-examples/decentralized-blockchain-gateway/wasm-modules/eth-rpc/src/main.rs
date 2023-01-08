@@ -1,10 +1,11 @@
 use jsonrpc_core::types::request::Call;
+use marine_rs_sdk::marine;
 use serde_json::Value;
+use tokio::runtime::Builder;
 use web3::futures::future::BoxFuture;
 use web3::helpers::CallFuture;
 use web3::types::Address;
 use web3::{RequestId, Transport};
-use tokio::runtime::Builder;
 
 #[derive(Debug, Clone)]
 struct Dummy;
@@ -31,7 +32,6 @@ pub fn main() -> web3::error::Result<()> {
 
     let rt = Builder::new_current_thread().build().unwrap();
 
-
     let web3 = web3::Web3::new(Dummy);
 
     let eth = web3.eth();
@@ -49,4 +49,22 @@ pub fn main() -> web3::error::Result<()> {
     }
 
     Ok(())
+}
+
+#[marine]
+pub fn call_dummy() {
+    main().unwrap()
+}
+
+#[cfg(test)]
+mod tests {
+    use marine_rs_sdk_test::marine_test;
+
+    #[marine_test(
+        config_path = "../tests_artifacts/Config.toml",
+        modules_dir = "../tests_artifacts"
+    )]
+    fn dummy(rpc: marine_test_env::eth_rpc::ModuleInterface) {
+        rpc.call_dummy();
+    }
 }
