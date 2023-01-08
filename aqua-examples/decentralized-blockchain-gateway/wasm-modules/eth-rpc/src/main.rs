@@ -1,12 +1,17 @@
 use jsonrpc_core::types::request::Call;
-use marine_rs_sdk::marine;
+use serde_json::json;
 use serde_json::Value;
 use tokio::runtime::Builder;
+use web3::{RequestId, Transport};
 use web3::futures::future::BoxFuture;
 use web3::helpers::CallFuture;
 use web3::types::Address;
-use web3::{RequestId, Transport};
-use serde_json::json;
+
+use marine_rs_sdk::marine;
+use marine_rs_sdk::MountedBinaryResult;
+use marine_rs_sdk::module_manifest;
+
+module_manifest!();
 
 #[derive(Debug, Clone)]
 struct Dummy;
@@ -50,10 +55,18 @@ pub fn call_get_accounts() -> Vec<Vec<u8>> {
     get_accounts().expect("error calling main")
 }
 
+#[marine]
+#[link(wasm_import_module = "curl_adapter")]
+extern "C" {
+    pub fn curl_request(cmd: Vec<String>) -> MountedBinaryResult;
+}
+
+
 #[cfg(test)]
 mod tests {
-    use marine_rs_sdk_test::marine_test;
     use web3::types::Address;
+
+    use marine_rs_sdk_test::marine_test;
 
     #[marine_test(
         config_path = "../tests_artifacts/Config.toml",
