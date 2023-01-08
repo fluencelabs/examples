@@ -12,3 +12,4 @@ modules_dir = "."
 [[module]]
 name = "eth-rpc"
 
+logger_enabled = true

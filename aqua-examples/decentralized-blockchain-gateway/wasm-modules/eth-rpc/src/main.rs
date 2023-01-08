@@ -6,6 +6,7 @@ use web3::futures::future::BoxFuture;
 use web3::helpers::CallFuture;
 use web3::types::Address;
 use web3::{RequestId, Transport};
+use serde_json::json;
 
 #[derive(Debug, Clone)]
 struct Dummy;
@@ -15,22 +16,23 @@ type FutResult = BoxFuture<'static, web3::error::Result<Value>>;
 impl Transport for Dummy {
     type Out = FutResult;
 
-    fn prepare(&self, _: &str, _: Vec<Value>) -> (RequestId, Call) {
-        todo!()
+    fn prepare(&self, method: &str, params: Vec<Value>) -> (RequestId, Call) {
+        let request = web3::helpers::build_request(1, method, params.clone());
+        (1, request)
     }
 
     fn send(&self, _: RequestId, _: Call) -> Self::Out {
-        Box::pin(async { Ok(Value::Null) })
+        Box::pin(async { Ok(json!(["0x407d73d8a49eeb85d32cf465507dd71d507100c1"])) })
     }
 }
+
+pub fn main() {}
 
 // #[tokio::main(flavor = "current_thread")]
 // flavor idea comes from https://github.com/rjzak/tokio-echo-test/blob/main/src/main.rs#L42
 // but seems to require additional tokio futures
-pub fn main() -> web3::error::Result<()> {
-    // let rt = Runtime::new().unwrap();
-
-    let rt = Builder::new_current_thread().build().unwrap();
+pub fn get_accounts() -> web3::error::Result<Vec<Vec<u8>>> {
+    let rt = Builder::new_current_thread().build()?;
 
     let web3 = web3::Web3::new(Dummy);
 
@@ -38,33 +40,28 @@ pub fn main() -> web3::error::Result<()> {
     println!("Calling accounts.");
     let accounts: CallFuture<Vec<Address>, FutResult> = eth.accounts();
     let accounts: web3::Result<Vec<Address>> = rt.block_on(accounts);
-    let mut accounts = accounts?;
     println!("Accounts: {:?}", accounts);
-    accounts.push("00a329c0648769a73afac7f9381e08fb43dbea72".parse().unwrap());
 
-    println!("Calling balance.");
-    for account in accounts {
-        let balance = rt.block_on(web3.eth().balance(account, None))?;
-        println!("Balance of {:?}: {}", account, balance);
-    }
-
-    Ok(())
+    Ok(accounts?.into_iter().map(|a: Address| a.as_bytes().to_vec()).collect())
 }
 
 #[marine]
-pub fn call_dummy() {
-    main().unwrap()
+pub fn call_get_accounts() -> Vec<Vec<u8>> {
+    get_accounts().expect("error calling main")
 }
 
 #[cfg(test)]
 mod tests {
     use marine_rs_sdk_test::marine_test;
+    use web3::types::Address;
 
     #[marine_test(
         config_path = "../tests_artifacts/Config.toml",
         modules_dir = "../tests_artifacts"
     )]
-    fn dummy(rpc: marine_test_env::eth_rpc::ModuleInterface) {
-        rpc.call_dummy();
+    fn get_accounts(rpc: marine_test_env::eth_rpc::ModuleInterface) {
+        let accounts = rpc.call_get_accounts();
+        let addr: Address = "0x407d73d8a49eeb85d32cf465507dd71d507100c1".parse().unwrap();
+        assert_eq!(accounts, vec![addr.as_bytes().to_vec()]);
     }
 }
