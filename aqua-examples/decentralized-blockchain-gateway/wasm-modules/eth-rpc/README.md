@@ -1,0 +1,3 @@
+```
+marine build --release
+```
