@@ -6,13 +6,15 @@ set -o pipefail
 
 cd "$(dirname "$0")"
 
-#rm -f /tmp/spell.sqlite
-
 mkdir -p tests_artifacts
 
-# build spell.wasm
+# build eth-rpc.wasm
 marine build --release
 cp ./target/wasm32-wasi/release/eth-rpc.wasm tests_artifacts/
+
+# build curl-adapter.wasm
+(cd ../curl-adapter; marine build --release)
+cp ../curl-adapter/target/wasm32-wasi/release/curl_adapter.wasm tests_artifacts/
 
 #if [[ ! -f "tests_artifacts/sqlite3.wasm" ]]; then
 #  # download SQLite 3
