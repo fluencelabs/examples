@@ -1,95 +1,29 @@
-use jsonrpc_core::Output;
-use jsonrpc_core::types::request::Call;
-use serde_json::json;
-use serde_json::Value;
+#![feature(try_blocks)]
+
+use marine_rs_sdk::{marine, MountedBinaryResult};
+use marine_rs_sdk::module_manifest;
 use tokio::runtime::Builder;
-use web3::futures::future::BoxFuture;
 use web3::helpers::CallFuture;
 use web3::types::Address;
-use web3::{RequestId, Transport};
 
-use marine_rs_sdk::module_manifest;
-use marine_rs_sdk::{marine, MountedBinaryResult};
+use crate::curl_transport::{CurlTransport, FutResult};
+
+pub mod curl_transport;
+pub mod eth_call;
+pub mod values;
+pub mod typed;
 
 module_manifest!();
-
-#[derive(Debug, Clone)]
-struct Dummy;
-
-type FutResult = BoxFuture<'static, web3::error::Result<Value>>;
-
-impl Transport for Dummy {
-    type Out = FutResult;
-
-    fn prepare(&self, method: &str, params: Vec<Value>) -> (RequestId, Call) {
-        let request = web3::helpers::build_request(1, method, params.clone());
-        (1, request)
-    }
-
-    fn send(&self, _: RequestId, call: Call) -> Self::Out {
-        if let Call::MethodCall(call) = call {
-            /*
-            curl --request POST \
-                 --url https://eth-mainnet.g.alchemy.com/v2/P8ZvwJbYKvGEdGFgIL7nsuwS18BKCYlR \
-                 --header 'accept: application/json' \
-                 --header 'content-type: application/json' \
-                 --data '
-            {
-                 "id": 1,
-                 "jsonrpc": "2.0",
-                 "method": "eth_accounts"
-            }
-            '
-            */
-            Box::pin(async move {
-                let json = json!(call).to_string();
-                let args = vec![
-                    "--request",
-                    "POST",
-                    "--url",
-                    "https://eth-mainnet.g.alchemy.com/v2/P8ZvwJbYKvGEdGFgIL7nsuwS18BKCYlR",
-                    "--header",
-                    "accept: application/json",
-                    "--header",
-                    "content-type: application/json",
-                    "--data",
-                    json.as_str(),
-                ];
-                let args = args.into_iter().map(|s| s.to_string()).collect();
-                let response = curl_request(args);
-                println!(
-                    "response is: \nstdout: {}\nstderr: {}",
-                    String::from_utf8(response.stdout.clone()).unwrap(),
-                    String::from_utf8(response.stderr.clone()).unwrap()
-                );
-
-                let response: Output =
-                    serde_json::from_value(serde_json::from_slice(response.stdout.as_slice())?)?;
-
-                let result = match response {
-                    Output::Success(jsonrpc_core::types::Success{ result, .. }) => result,
-                    Output::Failure(failure) => panic!("JSON RPC response was a failure {}", json!(failure).to_string())
-                };
-
-                println!("parsed result is {}", result.to_string());
-                Ok(result)
-            })
-        } else {
-            todo!()
-        }
-        // Box::pin(async { Ok(json!(["0x407d73d8a49eeb85d32cf465507dd71d507100c1"])) })
-    }
-}
 
 pub fn main() {}
 
 // #[tokio::main(flavor = "current_thread")]
 // flavor idea comes from https://github.com/rjzak/tokio-echo-test/blob/main/src/main.rs#L42
 // but seems to require additional tokio futures
-pub fn get_accounts() -> web3::error::Result<Vec<Vec<u8>>> {
+pub fn get_accounts(uri: String) -> web3::error::Result<Vec<Vec<u8>>> {
     let rt = Builder::new_current_thread().build()?;
 
-    let web3 = web3::Web3::new(Dummy);
+    let web3 = web3::Web3::new(CurlTransport::new(uri));
 
     let eth = web3.eth();
     println!("Calling accounts.");
@@ -105,7 +39,7 @@ pub fn get_accounts() -> web3::error::Result<Vec<Vec<u8>>> {
 
 #[marine]
 pub fn call_get_accounts() -> Vec<Vec<u8>> {
-    get_accounts().expect("error calling main")
+    get_accounts(String::new()).expect("error calling main")
 }
 
 #[marine]
@@ -116,9 +50,8 @@ extern "C" {
 
 #[cfg(test)]
 mod tests {
-    use web3::types::Address;
-
     use marine_rs_sdk_test::marine_test;
+    use web3::types::Address;
 
     #[marine_test(
         config_path = "../tests_artifacts/Config.toml",
