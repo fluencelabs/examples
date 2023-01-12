@@ -1,17 +1,19 @@
 #![feature(try_blocks)]
 
-use marine_rs_sdk::{marine, MountedBinaryResult};
 use marine_rs_sdk::module_manifest;
+use marine_rs_sdk::{marine, MountedBinaryResult};
 use tokio::runtime::Builder;
+use web3::api::Eth;
 use web3::helpers::CallFuture;
 use web3::types::Address;
+use web3::Web3;
 
 use crate::curl_transport::{CurlTransport, FutResult};
 
 pub mod curl_transport;
 pub mod eth_call;
-pub mod values;
 pub mod typed;
+pub mod values;
 
 module_manifest!();
 
@@ -23,7 +25,7 @@ pub fn main() {}
 pub fn get_accounts(uri: String) -> web3::error::Result<Vec<Vec<u8>>> {
     let rt = Builder::new_current_thread().build()?;
 
-    let web3 = web3::Web3::new(CurlTransport::new(uri));
+    let web3 = Web3::new(CurlTransport::new(uri));
 
     let eth = web3.eth();
     println!("Calling accounts.");
@@ -35,6 +37,22 @@ pub fn get_accounts(uri: String) -> web3::error::Result<Vec<Vec<u8>>> {
         .into_iter()
         .map(|a: Address| a.as_bytes().to_vec())
         .collect())
+}
+
+pub fn web3_call<Out: serde::de::DeserializeOwned, F: FnOnce(Eth<CurlTransport>) -> CallFuture<Out, FutResult>>(
+    uri: String,
+    call: F,
+) -> web3::error::Result<Out> {
+    let rt = Builder::new_current_thread()
+        .build()
+        .expect("error starting tokio runtime");
+
+    let web3 = Web3::new(CurlTransport::new(uri));
+
+    let result: CallFuture<Out, FutResult> = call(web3.eth());
+    let result: web3::error::Result<Out> = rt.block_on(result);
+
+    result
 }
 
 #[marine]

@@ -1,24 +1,27 @@
-use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::Arc;
 
-use jsonrpc_core::Output;
 use jsonrpc_core::types::request::Call;
+use jsonrpc_core::Output;
 use serde_json::json;
 use serde_json::Value;
-use web3::{RequestId, Transport};
 use web3::futures::future::BoxFuture;
+use web3::{RequestId, Transport};
 
 use crate::curl_request;
 
 pub type FutResult = BoxFuture<'static, web3::error::Result<Value>>;
 
 #[derive(Debug, Clone)]
-pub struct CurlTransport { pub uri: String, id: Arc<AtomicUsize> }
+pub struct CurlTransport {
+    pub uri: String,
+    id: Arc<AtomicUsize>,
+}
 impl CurlTransport {
     pub fn new(uri: String) -> Self {
         Self {
             uri,
-            id: Arc::new(AtomicUsize::new(0))
+            id: Arc::new(AtomicUsize::new(0)),
         }
     }
 
@@ -78,8 +81,11 @@ impl Transport for CurlTransport {
                     serde_json::from_value(serde_json::from_slice(response.stdout.as_slice())?)?;
 
                 let result = match response {
-                    Output::Success(jsonrpc_core::types::Success{ result, .. }) => result,
-                    Output::Failure(failure) => panic!("JSON RPC response was a failure {}", json!(failure).to_string())
+                    Output::Success(jsonrpc_core::types::Success { result, .. }) => result,
+                    Output::Failure(failure) => panic!(
+                        "JSON RPC response was a failure {}",
+                        json!(failure).to_string()
+                    ),
                 };
 
                 println!("parsed result is {}", result.to_string());
