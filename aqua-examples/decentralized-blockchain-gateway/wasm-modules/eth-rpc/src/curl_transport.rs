@@ -71,24 +71,45 @@ impl Transport for CurlTransport {
                 ];
                 let args = args.into_iter().map(|s| s.to_string()).collect();
                 let response = curl_request(args);
+
+                /*
                 println!(
-                    "response is: \nstdout: {}\nstderr: {}",
-                    String::from_utf8(response.stdout.clone()).unwrap(),
-                    String::from_utf8(response.stderr.clone()).unwrap()
+                    "response is: \nstdout: {:?}\nstderr: {:?}",
+                    String::from_utf8(response.stdout.clone()),
+                    String::from_utf8(response.stderr.clone())
                 );
+
+                println!("slice: {:?}", serde_json::from_value::<Output>(serde_json::from_slice(response.stdout.as_slice())?));
+                */
+
+                // FIX: if there's a bad uri, the panic kicks in here.
 
                 let response: Output =
                     serde_json::from_value(serde_json::from_slice(response.stdout.as_slice())?)?;
 
                 let result = match response {
                     Output::Success(jsonrpc_core::types::Success { result, .. }) => result,
-                    Output::Failure(failure) => panic!(
-                        "JSON RPC response was a failure {}",
-                        json!(failure).to_string()
-                    ),
+
+                    // no sure if that's enough vs the complete jsonrpc error msg
+                    Output::Failure(jsonrpc_core::types::Failure { error, .. }) => {
+                        serde_json::to_value(error.message).unwrap()
+                    } /*
+                      Output::Failure(failure) => panic!(
+                          "JSON RPC response was a failure {}",
+                          json!(failure).to_string()
+                      ),
+                      */
+                      /*
+                      Output::Failure(failure) => {
+                          let err = jsonrpc_core::types::error::Error.parse_error()
+                      }
+
+                      format!("JSON RPC response was a failure {}",
+                      json!(failure).to_string()),
+                      */
                 };
 
-                println!("parsed result is {}", result.to_string());
+                // println!("parsed result is {}", result.to_string());
                 Ok(result)
             })
         } else {
