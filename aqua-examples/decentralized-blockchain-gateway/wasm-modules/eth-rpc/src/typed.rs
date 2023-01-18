@@ -19,13 +19,13 @@ pub fn accounts(uri: String) -> Vec<JsonString> {
 }
 
 /// Get current block number
-// #[marine]
+#[marine]
 pub fn block_number(uri: String) -> U64Value {
     web3_call(uri, |w| w.block_number()).into()
 }
 
 /// Call a constant method of contract without changing the state of the blockchain.
-// #[marine]
+#[marine]
 pub fn call(uri: String, req: String, block: u64) -> BytesValue {
     let result: eyre::Result<Bytes> = try {
         let req: CallRequest = serde_json::from_str(&req)?;
