@@ -39,7 +39,10 @@ pub fn get_accounts(uri: String) -> web3::error::Result<Vec<Vec<u8>>> {
         .collect())
 }
 
-pub fn web3_call<Out: serde::de::DeserializeOwned, F: FnOnce(Eth<CurlTransport>) -> CallFuture<Out, FutResult>>(
+pub fn web3_call<
+    Out: serde::de::DeserializeOwned,
+    F: FnOnce(Eth<CurlTransport>) -> CallFuture<Out, FutResult>,
+>(
     uri: String,
     call: F,
 ) -> web3::error::Result<Out> {
@@ -56,8 +59,8 @@ pub fn web3_call<Out: serde::de::DeserializeOwned, F: FnOnce(Eth<CurlTransport>)
 }
 
 #[marine]
-pub fn call_get_accounts() -> Vec<Vec<u8>> {
-    get_accounts(String::new()).expect("error calling main")
+pub fn call_get_accounts(uri: String) -> Vec<Vec<u8>> {
+    get_accounts(uri).expect("error calling main")
 }
 
 #[marine]
@@ -69,14 +72,15 @@ extern "C" {
 #[cfg(test)]
 mod tests {
     use marine_rs_sdk_test::marine_test;
-    use web3::types::Address;
+    // use web3::types::Address;
 
     #[marine_test(
         config_path = "../tests_artifacts/Config.toml",
         modules_dir = "../tests_artifacts"
     )]
     fn get_accounts(rpc: marine_test_env::eth_rpc::ModuleInterface) {
-        let accounts = rpc.call_get_accounts();
+        let uri: String = std::fs::read_to_string("./infura_uri.txt").unwrap();
+        let accounts = rpc.call_get_accounts(uri);
         // let addr: Address = "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
         //     .parse()
         //     .unwrap();
