@@ -87,4 +87,18 @@ mod tests {
         // assert_eq!(accounts, vec![addr.as_bytes().to_vec()]);
         assert_eq!(accounts.len(), 0);
     }
+
+    #[marine_test(
+        config_path = "../tests_artifacts/Config.toml",
+        modules_dir = "../tests_artifacts"
+    )]
+    fn get_accounts_generic(rpc: marine_test_env::eth_rpc::ModuleInterface) {
+        let uri: String = std::fs::read_to_string("./infura_uri.txt").unwrap();
+        let method: String = "eth_accounts".into();
+        let json_args: Vec<String> = vec![];
+
+        let accounts = rpc.eth_call(uri, method, json_args);
+        println!("accounts: {:?}", accounts);
+        // assert_eq!(accounts.len(), 0);
+    }
 }
