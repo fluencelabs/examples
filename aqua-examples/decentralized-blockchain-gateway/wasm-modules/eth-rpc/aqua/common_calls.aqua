@@ -17,6 +17,11 @@ data Web3GasUsed:
     success: bool
     error: ?string
 
+data Web3EthCall:
+    result: ?string -- hex string
+    success: bool
+    error: ?string
+
 service ParseToWeb3Balances("json"):
     parse(s:string) -> Web3Balance
 
@@ -52,11 +57,11 @@ func eth_ getBalance(peerid: string, service_id: string, uri: string, rpc_params
 --     data: ?string -- hash of method signature and encoded params
 --func eth_estimateGas(peerid: string, service_id: string, uri: string, t_obj: TObject, nonce: u32) -> Web3GasUsed:
 -- the "easy" way: Vec<String>
-func eth_estimateGas(peerid: string, service_id: string, uri: string, rpc_params: Vec<String>, nonce: u32) -> Web3GasUsed:
+func eth_estimateGas(peerid: string, service_id: string, uri: string, rpc_params: []string, nonce: u32) -> Web3GasUsed:
     result: *Web3Gas
     on peerid:
         Web3Services service_id
-        gas <- Web3Services.call_eth_estimate_gas(uri, rpc_params, nonce)
+        res <- Web3Services.call_eth_estimate_gas(uri, rpc_params, nonce)
         if res.stdout.success==true:
             result.gas_used <- res.stdout.value
             result.success <<- true
@@ -64,3 +69,19 @@ func eth_estimateGas(peerid: string, service_id: string, uri: string, rpc_params
             result.success <<- false
             result.error <<- res.stdout.value
     <- result
+
+-- also a big intake object, e.g. https://docs.infura.io/infura/networks/ethereum/json-rpc-methods/eth_call
+-- easy way -- client serializes to []string 
+func eth_call(peerid: string, service_id: string, uri: string, rpc_params: []string, nonce: u32) -> Web3EthCall:
+    result: *Web3EthCall
+    on peerid:
+        Web3Services service_id
+        res <- Web3Services.call_eth_call(uri, rpc_params, nonce)
+        if res.stdout.success==true:
+            result.result <- res.stdout.value
+            result.success <<- true
+        else:
+            result.success <<- false
+            result.error <<- res.stdout.error      ---not sure if this is how Web3 does it if there is a Revert error, e.g. https://docs.infura.io/infura/networks/ethereum/json-rpc-methods/eth_call
+    <- result
+
