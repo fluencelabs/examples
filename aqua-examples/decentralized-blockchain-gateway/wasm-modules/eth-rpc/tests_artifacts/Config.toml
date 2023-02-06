@@ -1,0 +1,23 @@
+modules_dir = "."
+
+#[[module]]
+#name = "sqlite3"
+#mem_pages_count = 100
+#logger_enabled = false
+
+#[module.wasi]
+#preopened_files = ["/tmp"]
+#mapped_dirs = { "tmp" = "." }
+
+[[module]]
+name = "curl_adapter"
+max_heap_size = "2 MiB"
+logger_enabled = true
+
+[module.mounted_binaries]
+curl = "/usr/bin/curl"
+
+[[module]]
+name = "eth-rpc"
+
+logger_enabled = true

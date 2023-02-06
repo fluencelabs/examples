@@ -1,0 +1,66 @@
+
+-- https://www.jsonrpc.org/specification
+data RPCError:
+    code: i32
+    message: string
+    data: ?string
+
+data RPCResponse:
+    jsonrpc: string
+    result: string
+    error: ?RPCError
+    id: u32 
+
+data RPCResponse2:
+    value: string
+    success: bool
+    error: ?string
+
+data RPCResult:
+    stdout: RPCResponse  -- JSON-RPC result
+    stderr: string  -- curl error and other non json-rpc errors
+
+
+data RPCResult2:
+    stdout: RPCResponse2  -- JSON-RPC result
+    stderr: string  -- curl error and other non json-rpc errors
+
+
+data Web3Accounts:
+    accounts: []string
+
+service ParseToAccounts("json"):
+    parse(s:string) -> Web3Accounts
+
+service Web3Services("service-id"):
+    call_get_accounts() -> [][]u8
+    call_get_accounts_json() -> RPCResult
+    call_get_accounts_json_2() -> RPCResult2
+
+
+-- the bytestring return which allows you to do nothing until you convert
+-- the bytes using another service to be deployed and a pita to sort through
+-- error types
+func get_accounts(peerid: string, service_id: string) -> [][]u8:
+    on peerid:
+        Web3Services service_id
+        res <- Web3Services.call_get_accounts()
+    <- res
+
+func get_accounts_jstring(peerid: string, service_id: string) -> Web3Accounts:
+    on peerid:
+        Web3Services service_id
+        res <- Web3Services.call_get_accounts_json()
+        -- if not error ...
+        -- if not rpc error
+        accounts <- ParseToAccounts.parse(res.stdout.result)
+    <- accounts
+
+func get_accounts_jstring_2(peerid: string, service_id: string) -> Web3Accounts:
+    on peerid:
+        Web3Services service_id
+        res <- Web3Services.call_get_accounts_json_2()
+        -- if not error ....
+        if res.stdout.success == true:
+            accounts <- ParseToAccounts.parse(res.stdout.value)
+    <- accounts
