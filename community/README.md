@@ -12,7 +12,7 @@ Community members have been coding incredible peer-ro-pper applications and solu
 * [Web3](https://github.com/ntrotner/web3-exposed-to-fluence) is a Fluence and Aqua wrapper around [web3js](https://github.com/ChainSafe/web3.js), the "original" Ethereum SDK, for use with Aqua. See[documentation](https://github.com/ntrotner/web3-exposed-to-fluence/tree/main/src/aqua/doc) for detailed documentation and [tests](https://github.com/ntrotner/web3-exposed-to-fluence/tree/main/tests) for examples.
   * Uses Fluence JS
 
-* [Ethereum and Elasticsearch](https://github.com/Joera/gitcoin11-fluence) is a project aiming to use Wasm for a variety of uses in Web3 ecosystem using Fluence and Aqua possibly in response to DAO directives. THe project is WIP but chockfull of great examples on how to use Fluence and Aqua in a larger Web3 project.
+* [Ethereum and Elasticsearch](https://github.com/Joera/Public-Record-DAO) is a project aiming to use Wasm for a variety of uses in Web3 ecosystem using Fluence and Aqua possibly in response to DAO directives. THe project is WIP but chockfull of great examples on how to use Fluence and Aqua in a larger Web3 project.
   * Uses Marine Wasm
 
 * [Fluence Tronweb](https://github.com/visdauas/fluence-tronweb) is a wrapper around [TronWeb](https://github.com/tronprotocol/tronweb) -- a Javascript library for the [Tron network](https://tron.network/). Not only a great way to use Aqua to interact with all things Tron but laos a great starting point to build your own SDK wrapper.
