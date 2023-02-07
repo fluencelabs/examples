@@ -7,3 +7,5 @@
 version: 0
 cargo:
   marine: 0.12.5
+npm:
+  "@fluencelabs/aqua": 0.9.1-374

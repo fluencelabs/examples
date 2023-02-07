@@ -6,4 +6,4 @@
 
 version: 0
 type: rust
-name: curl-adapter
+name: curl_adapter

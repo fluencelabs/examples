@@ -10,14 +10,10 @@ dependencies:
   npm:
     "@fluencelabs/aqua-lib": 0.6.0
     "@fluencelabs/spell": 0.0.1
+    "@fluencelabs/aqua": 0.9.1-374
   cargo:
     marine: 0.12.5
     mrepl: 0.18.8
-  # services:
-  # ipfs-package:
-  #   get: ./configs/services/ipfs-package
-  #   deploy:
-  #     - deployId: default
 services:
   ipfs_package:
     get: ./configs/services/ipfs-package
@@ -33,5 +29,9 @@ services:
       - deployId: default
   utilities:
     get: configs/services/utilities
+    deploy:
+      - deployId: default
+  eth_rpc:
+    get: configs/services/eth-rpc
     deploy:
       - deployId: default

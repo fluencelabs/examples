@@ -6,4 +6,4 @@
 
 version: 0
 type: rust
-name: eth-rpc
+name: eth_rpc

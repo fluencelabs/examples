@@ -6,4 +6,4 @@
 
 version: 0
 type: rust
-name: multi-provider-query
+name: multi_provider_query
