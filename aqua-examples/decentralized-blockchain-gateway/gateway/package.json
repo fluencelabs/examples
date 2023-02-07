@@ -1,0 +1,24 @@
+{
+  "name": "gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "run": "node src/index.js",
+    "req": "node web3run.js"
+  },
+  "author": "Fluence Labs",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "debug": "^4.3.2",
+    "ethereum-tx-decoder": "^3.0.0",
+    "ethers": "^5.4.0",
+    "json-rpc-2.0": "1.4.2",
+    "web3": "1.8.2",
+    "@fluencelabs/fluence": "0.27.5",
+    "@fluencelabs/aqua-api": "0.9.3"
+  },
+  "devDependencies": {
+  }
+}
