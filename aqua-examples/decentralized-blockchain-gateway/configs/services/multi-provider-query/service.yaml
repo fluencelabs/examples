@@ -5,9 +5,9 @@
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/service.md
 
 version: 0
-name: frpc
+name: multi_provider_query
 modules:
   facade:
-    get: modules/aurora_connector
-  curl_adapter:
-    get: modules/curl_adapter/
+    get: ../../../wasm-modules/multi-provider-query
+  curl-adapter:
+    get: ../../../wasm-modules/curl-adapter

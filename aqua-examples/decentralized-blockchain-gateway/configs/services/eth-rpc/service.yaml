@@ -5,7 +5,9 @@
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/service.md
 
 version: 0
-name: simple_quorum
+name: eth_rpc
 modules:
   facade:
-    get: ../../../wasm-modules/simple-quorum
+    get: ../../../wasm-modules/eth-rpc
+  curl-adapter:
+    get: ../../../wasm-modules/curl-adapter

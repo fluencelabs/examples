@@ -6,8 +6,8 @@
 
 version: 0
 name: ipfs_package
-# modules:
-  # facade:
-  #   get: ../../wasm-modules/multi-provider-query
-  # curl_adapter:
-  #   get: ../../wasm-modules/curl-adapter
+modules:
+  facade:
+    get: ../../../wasm-modules/ipfs-cli
+  ipfs-adapter:
+    get: ../../../wasm-modules/ipfs-adapter

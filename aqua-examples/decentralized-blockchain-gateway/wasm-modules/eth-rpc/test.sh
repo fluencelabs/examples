@@ -22,4 +22,4 @@ cp ../curl-adapter/target/wasm32-wasi/release/curl_adapter.wasm tests_artifacts/
 #fi
 
 # run tests
-cargo nextest run get_transaction --release --no-fail-fast --nocapture
+cargo nextest run --release --no-fail-fast --nocapture

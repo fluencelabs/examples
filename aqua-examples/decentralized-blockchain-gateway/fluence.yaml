@@ -23,3 +23,15 @@ services:
     get: ./configs/services/ipfs-package
     deploy:
       - deployId: default
+  multi_provider_query:
+    get: configs/services/multi-provider-query
+    deploy:
+      - deployId: default
+  simple_quorum:
+    get: configs/services/simple-quorum
+    deploy:
+      - deployId: default
+  utilities:
+    get: configs/services/utilities
+    deploy:
+      - deployId: default

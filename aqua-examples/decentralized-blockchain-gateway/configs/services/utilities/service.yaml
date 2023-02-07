@@ -5,9 +5,7 @@
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/service.md
 
 version: 0
-name: frpc
+name: utilities
 modules:
   facade:
-    get: modules/aurora_connector
-  curl_adapter:
-    get: modules/curl_adapter/
+    get: ../../../wasm-modules/utilities
