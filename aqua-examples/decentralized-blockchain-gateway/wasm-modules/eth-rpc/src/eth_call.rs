@@ -1,3 +1,4 @@
+use eyre::eyre;
 use marine_rs_sdk::marine;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -13,11 +14,14 @@ pub fn eth_call(uri: String, method: &str, json_args: Vec<String>) -> JsonString
         let rt = Builder::new_current_thread().build()?;
 
         let args: Result<Vec<Value>, _> = json_args
-            .into_iter()
-            .map(|a| serde_json::from_str(&a))
+            .iter()
+            .map(|a| serde_json::from_str(a))
             .collect();
+        let args = args.map_err(|err| {
+            eyre!("Invalid arguments. Expected JSON serialized to string, got {json_args:?}: {err}")
+        })?;
         let transport = CurlTransport::new(uri);
-        let result = rt.block_on(transport.execute(method, args?))?;
+        let result = rt.block_on(transport.execute(method, args))?;
 
         result
     };
@@ -96,6 +100,36 @@ mod tests {
 
         let accounts = rpc.eth_call(uri, method, json_args);
         println!("all good: {:?}", accounts);
+
+        // println!("accounts: {:?}", accounts);
+        // assert_eq!(accounts.len(), 0);
+    }
+
+    #[marine_test(
+        config_path = "../tests_artifacts/Config.toml",
+        modules_dir = "../tests_artifacts"
+    )]
+    fn get_transaction(rpc: marine_test_env::eth_rpc::ModuleInterface) {
+        use serde_json::json;
+
+        let uri: String = "https://goerli.infura.io/v3/c48f3b538f154204ad53d04aa8990544".into();
+        let method: String = "eth_getTransactionByHash".into();
+        let json_args: Vec<String> =
+            vec![
+                json!("0x3ffaa16b93ef90b9385b6f6a140d8297c43b6551bf8e8b804d9eecff7bc1509f")
+                    .to_string(),
+            ];
+
+        let result = rpc.eth_call(uri.clone(), method.clone(), json_args);
+        assert!(result.success, "{}", result.error);
+        assert_eq!(result.value, "null", "{}", result.value);
+
+        let json_args: Vec<String> =
+            vec!["0x3ffaa16b93ef90b9385b6f6a140d8297c43b6551bf8e8b804d9eecff7bc1509f".into()];
+
+        let result = rpc.eth_call(uri, method, json_args);
+        assert!(!result.success);
+        assert!(result.error.starts_with("Invalid arguments. Expected JSON serialized to string"), "{}", result.error);
 
         // println!("accounts: {:?}", accounts);
         // assert_eq!(accounts.len(), 0);

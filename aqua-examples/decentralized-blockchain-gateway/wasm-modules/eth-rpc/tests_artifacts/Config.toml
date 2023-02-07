@@ -19,5 +19,4 @@ curl = "/usr/bin/curl"
 
 [[module]]
 name = "eth-rpc"
-
 logger_enabled = true
