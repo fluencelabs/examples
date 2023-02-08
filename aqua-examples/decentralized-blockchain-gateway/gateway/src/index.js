@@ -62,6 +62,8 @@ if (errors.length > 0) {
     process.exit(1)
 }
 
+console.log("Running server...")
+
 const route = "/"
 
 const methods = ['eth_accounts',
@@ -106,6 +108,7 @@ registerLogger(fluence, {
 })
 
 async function methodHandler(req, op) {
+    console.log(`Receiving request '${op}'`)
     const result = await call(fluence, ethRpcURI, op, req.map((s) => JSON.stringify(s)), serviceId)
 
     return JSON.parse(result.value)
@@ -137,3 +140,5 @@ app.post(route, (req, res) => {
 });
 
 app.listen(port);
+
+console.log("Server was started on port " + port)
