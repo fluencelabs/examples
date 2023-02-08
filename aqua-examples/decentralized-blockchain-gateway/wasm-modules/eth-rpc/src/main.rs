@@ -72,21 +72,6 @@ extern "C" {
 #[cfg(test)]
 mod tests {
     use marine_rs_sdk_test::marine_test;
-    // use web3::types::Address;
-
-    // #[marine_test(
-    //     config_path = "../tests_artifacts/Config.toml",
-    //     modules_dir = "../tests_artifacts"
-    // )]
-    // fn get_accounts(rpc: marine_test_env::eth_rpc::ModuleInterface) {
-    //     let uri: String = std::fs::read_to_string("./infura_uri.txt").unwrap();
-    //     let accounts = rpc.call_get_accounts(uri);
-    //     // let addr: Address = "0x407d73d8a49eeb85d32cf465507dd71d507100c1"
-    //     //     .parse()
-    //     //     .unwrap();
-    //     // assert_eq!(accounts, vec![addr.as_bytes().to_vec()]);
-    //     assert_eq!(accounts.len(), 0);
-    // }
 
     #[marine_test(
         config_path = "../tests_artifacts/Config.toml",
@@ -99,6 +84,5 @@ mod tests {
 
         let accounts = rpc.eth_call(uri, method, json_args);
         println!("accounts: {:?}", accounts);
-        // assert_eq!(accounts.len(), 0);
     }
 }

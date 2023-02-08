@@ -84,9 +84,6 @@ mod tests {
 
         let accounts = rpc.eth_call(uri, method, json_args);
         println!("bad method: {:?}", accounts);
-
-        // println!("accounts: {:?}", accounts);
-        // assert_eq!(accounts.len(), 0);
     }
 
     #[marine_test(
@@ -112,7 +109,7 @@ mod tests {
     fn get_transaction(rpc: marine_test_env::eth_rpc::ModuleInterface) {
         use serde_json::json;
 
-        let uri: String = "https://goerli.infura.io/v3/c48f3b538f154204ad53d04aa8990544".into();
+        let uri: String = todo!("put Goerli ETH RPC URL here");
         let method: String = "eth_getTransactionByHash".into();
         let json_args: Vec<String> =
             vec![
@@ -130,8 +127,5 @@ mod tests {
         let result = rpc.eth_call(uri, method, json_args);
         assert!(!result.success);
         assert!(result.error.starts_with("Invalid arguments. Expected JSON serialized to string"), "{}", result.error);
-
-        // println!("accounts: {:?}", accounts);
-        // assert_eq!(accounts.len(), 0);
     }
 }
