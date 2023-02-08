@@ -2,7 +2,7 @@
 set -o pipefail -o errexit -o nounset
 set -x
 
-MARINE_RELEASE="https://api.github.com/repos/fluencelabs/marine/releases/latest"
+MARINE_RELEASE="https://api.github.com/repos/fluencelabs/marine/releases/tag/marine-v0.12.6"
 OUT_DIR=/usr/local/bin
 
 # get metadata about release
