@@ -1,24 +1,30 @@
 {
-  "name": "gateway",
-  "version": "1.0.0",
+  "name": "@fluencelabs/aqua-eth-gateway",
+  "version": "0.0.7",
   "description": "",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
+    "run:example": "node src/index.js 3000 \"/dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf\" \"https://goerli.infura.io/v3/c48f3b538f154204ad53d04aa8990544\" \"d071085b-639c-4716-8bf3-d86b13210173\"",
     "run": "node src/index.js",
     "req": "node web3run.js"
   },
+  "bin": {
+    "aqua-eth-gateway": "src/index.js"
+  },
+  "files": [
+    "src/*",
+    "aqua/*",
+    "aqua-compiled/"
+  ],
   "author": "Fluence Labs",
   "license": "Apache-2.0",
   "dependencies": {
-    "debug": "^4.3.2",
-    "ethereum-tx-decoder": "^3.0.0",
-    "ethers": "^5.4.0",
     "json-rpc-2.0": "1.4.2",
     "web3": "1.8.2",
-    "@fluencelabs/fluence": "0.27.5",
-    "@fluencelabs/aqua-api": "0.9.3"
+    "@fluencelabs/fluence": "0.27.5"
   },
   "devDependencies": {
+    "@fluencelabs/aqua-api": "0.9.3"
   }
 }

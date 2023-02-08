@@ -6,10 +6,11 @@ data JsonString:
 service Logger("logger"):
   log(s: []string)
 
-service EthCaller("d071085b-639c-4716-8bf3-d86b13210173"):
+service EthCaller:
   eth_call(uri: string, method: string, json_args: []string) -> JsonString
 
-func call(uri: string, method: string, json_args: []string) -> JsonString:
+func call(uri: string, method: string, json_args: []string, serviceId: string) -> JsonString:
+  EthCaller serviceId
   on HOST_PEER_ID:
     res <- EthCaller.eth_call(uri, method, json_args)
   <- res

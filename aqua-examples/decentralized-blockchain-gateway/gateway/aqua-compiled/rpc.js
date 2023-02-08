@@ -58,7 +58,6 @@ export function registerEthCaller(...args) {
     registerService$$(
         args,
         {
-    "defaultServiceId" : "d071085b-639c-4716-8bf3-d86b13210173",
     "functions" : {
         "tag" : "labeledProduct",
         "fields" : {
@@ -133,10 +132,10 @@ export function call(...args) {
                          )
                          (call %init_peer_id% ("getDataSrv" "json_args") [] json_args)
                         )
-                        (call %init_peer_id% ("logger" "log") [json_args])
+                        (call %init_peer_id% ("getDataSrv" "serviceId") [] serviceId)
                        )
                        (xor
-                        (call -relay- ("d071085b-639c-4716-8bf3-d86b13210173" "eth_call") [uri method json_args] res)
+                        (call -relay- (serviceId "eth_call") [uri method json_args] res)
                         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
                        )
                       )
@@ -171,6 +170,10 @@ export function call(...args) {
                         "tag" : "scalar",
                         "name" : "string"
                     }
+                },
+                "serviceId" : {
+                    "tag" : "scalar",
+                    "name" : "string"
                 }
             }
         },

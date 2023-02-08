@@ -28,9 +28,7 @@ export function registerLogger(peer: FluencePeer, serviceId: string, service: Lo
 export interface EthCallerDef {
     eth_call: (uri: string, method: string, json_args: string[], callParams: CallParams$$<'uri' | 'method' | 'json_args'>) => { error: string; success: boolean; value: string; } | Promise<{ error: string; success: boolean; value: string; }>;
 }
-export function registerEthCaller(service: EthCallerDef): void;
 export function registerEthCaller(serviceId: string, service: EthCallerDef): void;
-export function registerEthCaller(peer: FluencePeer, service: EthCallerDef): void;
 export function registerEthCaller(peer: FluencePeer, serviceId: string, service: EthCallerDef): void;
        
 
@@ -41,6 +39,7 @@ export function call(
     uri: string,
     method: string,
     json_args: string[],
+    serviceId: string,
     config?: {ttl?: number}
 ): Promise<CallResult>;
 
@@ -49,6 +48,7 @@ export function call(
     uri: string,
     method: string,
     json_args: string[],
+    serviceId: string,
     config?: {ttl?: number}
 ): Promise<CallResult>;
 

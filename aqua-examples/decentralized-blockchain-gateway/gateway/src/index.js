@@ -1,18 +1,68 @@
+#!/usr/bin/env node
+
+"use strict";
+
+handleEPIPE(process.stderr)
+handleEPIPE(process.stdout)
+function handleEPIPE(stream) {
+    stream.on('error', onerror)
+    function onerror(err) {
+        if (err.code === 'EPIPE') {
+            stream._write = noopWrite
+            stream._writev = noopWritev
+            stream._read = noopRead
+            return stream.removeListener('error', onerror)
+        }
+        if (EE.listenerCount(stream, 'error') === 1) {
+            stream.removeListener('error', onerror)
+            stream.emit('error', err)
+        }
+    }
+}
+function noopWrite(chunk, enc, cb) {
+    cb()
+}
+function noopRead() {
+    this.push('')
+}
+function noopWritev(chunks, cb) {
+    cb()
+}
+
 import express from "express";
-import bodyParser from"body-parser";
+import bodyParser from "body-parser";
 import { JSONRPCServer } from "json-rpc-2.0";
-import {
-    Call, Aqua, Path
-} from "@fluencelabs/aqua-api/aqua-api.js";
 import { FluencePeer } from "@fluencelabs/fluence";
-import { callFunctionImpl } from "@fluencelabs/fluence/dist/internal/compilerSupport/v3impl/callFunction.js";
-import {registerLogger} from "../aqua-compiled/rpc.js";
+import {call, registerLogger} from "../aqua-compiled/rpc.js";
+
+var args = process.argv.slice(2);
+
+const port = args[0]
+const relay = args[1]
+const ethRpcURI = args[2]
+const serviceId = args[3]
+
+let errors = []
+if (!port) {
+    errors.push("Specify port")
+}
+if (!relay) {
+    errors.push("Specify Fluence peer address")
+}
+if (!ethRpcURI) {
+    errors.push("Specify uri to ethereum RPC")
+}
+if (!serviceId) {
+    errors.push("Specify id to ethereum Aqua service")
+}
+
+if (errors.length > 0) {
+    console.log("Example: aqua-eth-gateway <port> <fluence-addr> <eth-rpc-uri> <service-id>")
+    errors.forEach((err) => console.log(err))
+    process.exit(1)
+}
 
 const route = "/"
-const port = 3000
-const aquaPath = new Path("aqua/rpc.aqua")
-const relay = "/dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf"
-const infuraUri = "https://goerli.infura.io/v3/c48f3b538f154204ad53d04aa8990544"
 
 const methods = ['eth_accounts',
     'eth_blockNumber',
@@ -56,31 +106,10 @@ registerLogger(fluence, {
 })
 
 async function methodHandler(req, op) {
-
-    // console.log(req)
-
-    const args = {
-        // add as params
-        uri: infuraUri,
-        method: op,
-        // stringify all args to handle it in rust
-        args: req.map((s) => JSON.stringify(s))
-    }
-    const aquaCall = new Call("call(uri, method, args)", args, aquaPath)
-
-    const compilationResult = await Aqua.compile(aquaCall, [])
-    console.log(compilationResult.functionCall.funcDef)
-
-    const {funcDef, script} = compilationResult.functionCall
-
-    // console.log(script)
-
-    const result = await callFunctionImpl(funcDef, script, {}, fluence, args)
-    // console.log("json rpc req")
-    // console.log("result")
-    // console.log(result)
+    const result = await call(fluence, ethRpcURI, op, req.map((s) => JSON.stringify(s)), serviceId)
 
     return JSON.parse(result.value)
+
 }
 
 function addMethod(op) {
@@ -99,7 +128,6 @@ app.use(bodyParser.json());
 app.post(route, (req, res) => {
     const jsonRPCRequest = req.body;
     server.receive(jsonRPCRequest).then((jsonRPCResponse) => {
-        console.log(jsonRPCResponse)
         if (jsonRPCResponse) {
             res.json(jsonRPCResponse);
         } else {
