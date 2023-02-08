@@ -13,10 +13,8 @@ pub fn eth_call(uri: String, method: &str, json_args: Vec<String>) -> JsonString
     let result: eyre::Result<Value> = try {
         let rt = Builder::new_current_thread().build()?;
 
-        let args: Result<Vec<Value>, _> = json_args
-            .iter()
-            .map(|a| serde_json::from_str(a))
-            .collect();
+        let args: Result<Vec<Value>, _> =
+            json_args.iter().map(|a| serde_json::from_str(a)).collect();
         let args = args.map_err(|err| {
             eyre!("Invalid arguments. Expected JSON serialized to string, got {json_args:?}: {err}")
         })?;
@@ -126,6 +124,12 @@ mod tests {
 
         let result = rpc.eth_call(uri, method, json_args);
         assert!(!result.success);
-        assert!(result.error.starts_with("Invalid arguments. Expected JSON serialized to string"), "{}", result.error);
+        assert!(
+            result
+                .error
+                .starts_with("Invalid arguments. Expected JSON serialized to string"),
+            "{}",
+            result.error
+        );
     }
 }
