@@ -5,9 +5,9 @@ use web3::types::U64;
 
 #[marine]
 pub struct JsonString {
-    value: String,
-    success: bool,
-    error: String,
+    pub value: String,
+    pub success: bool,
+    pub error: String,
 }
 
 impl From<eyre::Result<Value>> for JsonString {
@@ -29,9 +29,9 @@ impl From<eyre::Result<Value>> for JsonString {
 
 #[marine]
 pub struct U64Value {
-    value: u64,
-    success: bool,
-    error: String,
+    pub value: u64,
+    pub success: bool,
+    pub error: String,
 }
 
 impl From<web3::error::Result<U64>> for U64Value {
@@ -53,9 +53,9 @@ impl From<web3::error::Result<U64>> for U64Value {
 
 #[marine]
 pub struct BytesValue {
-    value: Vec<u8>,
-    success: bool,
-    error: String,
+    pub value: Vec<u8>,
+    pub success: bool,
+    pub error: String,
 }
 
 impl From<eyre::Result<Bytes>> for BytesValue {

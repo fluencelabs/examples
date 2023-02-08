@@ -29,7 +29,12 @@ pub fn block_number(uri: String) -> U64Value {
 pub fn call(uri: String, req: String, block: u64) -> BytesValue {
     let result: eyre::Result<Bytes> = try {
         let req: CallRequest = serde_json::from_str(&req)?;
-        web3_call(uri, move |w| w.call(req, Some(BlockId::Number(BlockNumber::Number(block.into())))))?
+        web3_call(uri, move |w| {
+            w.call(
+                req,
+                Some(BlockId::Number(BlockNumber::Number(block.into()))),
+            )
+        })?
     };
 
     result.into()

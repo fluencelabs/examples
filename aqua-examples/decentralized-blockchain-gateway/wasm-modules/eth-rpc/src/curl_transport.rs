@@ -84,9 +84,20 @@ impl Transport for CurlTransport {
 
                 // FIX: if there's a bad uri, the panic kicks in here.
 
-                let response: Output =
-                    serde_json::from_value(serde_json::from_slice(response.stdout.as_slice())?)?;
+                if response.ret_code != 0 {
+                    let stdout = String::from_utf8_lossy(&response.stdout);
+                    let error = if response.error.is_empty() {
+                        stdout.to_string()
+                    } else {
+                        format!("error: {}\nstdout: {stdout}", response.error)
+                    };
+                    return Err(web3::error::Error::Transport(
+                        web3::error::TransportError::Message(format!("error: {}", error)),
+                    ));
+                }
 
+                let response = serde_json::from_slice(response.stdout.as_slice())?;
+                let response: Output = serde_json::from_value(response)?;
                 let result = match response {
                     Output::Success(jsonrpc_core::types::Success { result, .. }) => result,
 
