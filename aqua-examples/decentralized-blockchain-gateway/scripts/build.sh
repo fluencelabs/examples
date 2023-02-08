@@ -33,6 +33,6 @@ cp target/wasm32-wasi/release/utilities.wasm ../../artifacts/
 
 cd ../eth-rpc
 marine build --release
-cp target/wasm32-wasi/release/eth-rpc.wasm ../../artifacts/
+cp target/wasm32-wasi/release/eth_rpc.wasm ../../artifacts/
 
 cd ..
