@@ -5,7 +5,7 @@ mkdir -p service-packages/modules/multi_provider_query
 mkdir -p service-packages/modules/simple_quorum
 mkdir -p service-packages/modules/utilities
 mkdir -p service-packages/modules/curl_adapter
-# sh ./scripts/build.sh
+sh ./scripts/build.sh
 
 cd  service-packages
 
@@ -48,5 +48,4 @@ cp ../wasm-modules/utilities/module.yaml modules/utilities/
 tar -czf utilities_package.tar.gz service.yaml 
 rm service.yaml
 
-rm -r modules
-cd ../
+rm -rf modules
