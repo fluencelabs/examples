@@ -1,7 +1,15 @@
 {
   "name": "curl_adapter",
-  "mountedBinaries":
-    {
-      "curl": "/usr/bin/curl"
-    }
+  "mounted_binaries":
+  {
+    "curl": "/usr/bin/curl"
+  },
+  "mem_page_count": 1,
+  "preopened_files": [
+    "/tmp"
+  ],
+  "mapped_dirs": {
+    "tmp": "./tmp"
+  },
+  "logger_enabled": true
 }

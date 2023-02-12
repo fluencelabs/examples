@@ -1,0 +1,16 @@
+data JsonString:
+  value: string
+  success: bool
+  error: string
+
+service Logger("logger"):
+  log(s: []string)
+
+service EthCaller:
+  eth_call(uri: string, method: string, json_args: []string) -> JsonString
+
+func call(uri: string, method: string, json_args: []string, serviceId: string) -> JsonString:
+  EthCaller serviceId
+  on HOST_PEER_ID:
+    res <- EthCaller.eth_call(uri, method, json_args)
+  <- res

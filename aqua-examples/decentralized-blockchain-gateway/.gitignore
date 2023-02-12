@@ -4,3 +4,13 @@ target/
 Cargo.lock
 **/*.bk
 **/*.bak
+
+# recommended by Fluence Labs:
+.idea
+.fluence
+**/node_modules
+**/target/
+.repl_history
+.vscode/settings.json
+src/ts/src/aqua
+src/js/src/aqua

@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=.fluence/schemas/fluence-lock.yaml.json
+
+# Defines a lock file for Fluence Project dependencies. When dependencies are installed - their exact versions are saved here.
+
+# Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/fluence-lock.md
+
+version: 0
+cargo:
+  marine: 0.12.5
+npm:
+  "@fluencelabs/aqua": 0.9.4

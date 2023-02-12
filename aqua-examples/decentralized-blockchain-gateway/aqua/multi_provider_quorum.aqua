@@ -23,7 +23,7 @@ service MyOp2("op"):
   array_length(providers: []FunctionAddress) -> i64
 
 service MultiProviderQuery("service-id"):
-  get_block_number(provider: ProviderInfo) -> EVMResult   
+  get_block_number(provider: ProviderInfo) -> EVMResult
 
 service Utilities("service_id"):
   kv_to_u64(kv: string, k: string) -> u64
@@ -34,7 +34,7 @@ service Console("run-console"):
 
 func get_block_heights(providers: []ProviderInfo, addrs: []FunctionAddress) -> []EVMResult:
   result: *EVMResult
-  
+
   n <- MyOp.array_length(providers)
   m <- MyOp2.array_length(addrs)
 
@@ -51,7 +51,7 @@ func get_block_heights(providers: []ProviderInfo, addrs: []FunctionAddress) -> [
 func get_block_height(providers: []ProviderInfo, addr: FunctionAddress) ->[]EVMResult:
   result: *EVMResult
   n <- MyOp.array_length(providers)
-  
+
   if n > 0:
     on addr.peer_id:
       MultiProviderQuery addr.service_id
@@ -64,7 +64,7 @@ func get_block_height(providers: []ProviderInfo, addr: FunctionAddress) ->[]EVMR
 func provider_test(providers: []ProviderInfo) -> []string:
   result: *string
   n <- MyOp.array_length(providers)
-  
+
   if n > 0:
     for provider <- providers:
       result <<- provider.name
@@ -87,7 +87,7 @@ func get_block_height_raw_quorum(providers: []ProviderInfo, addrs: []FunctionAdd
   result: *EVMResult
   result2: *string
   quorum: *Quorum
-  
+
   n <- MyOp.array_length(providers)
   n2 <- MyOp2.array_length(addrs)
 
@@ -100,7 +100,7 @@ func get_block_height_raw_quorum(providers: []ProviderInfo, addrs: []FunctionAdd
           result2 <<- provider.name
         -- join result[n2-1]
     join result[n*n2-1]
-  
+
     on q_addr.peer_id:
       SimpleQuorum q_addr.service_id
       quorum <-SimpleQuorum.point_estimate(result, 3)
@@ -121,7 +121,7 @@ func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress
   result: *EVMResult
   quorum: *Quorum
   is_quorum: *bool
-  min_points = 3  -- minimum points we want in order to calculate an oracle 
+  min_points = 3  -- minimum points we want in order to calculate an oracle
 
   n <- MyOp.array_length(providers)
   n2 <- MyOp2.array_length(addrs)
@@ -133,12 +133,12 @@ func get_block_height_quorum(providers: []ProviderInfo, addrs: []FunctionAddress
         for provider <- providers:
           result <- MultiProviderQuery.get_block_number(provider)
     join result[n*n2-2]
- 
+
     on q_addr.peer_id:
       SimpleQuorum q_addr.service_id
       quorum <-SimpleQuorum.point_estimate(result, min_points)
       is_quorum <- SimpleQuorum.is_quorum(quorum[0].freq, quorum[0].n, t_quorum)
-    
+
   <- quorum[0], is_quorum[0]
 
 func get_block_height_quorum_with_mapper(providers: []ProviderInfo, addrs: []FunctionAddress, q_addr: QuorumService, u_addr: FunctionAddress, t_quorum: f64) -> Quorum, bool:
@@ -146,7 +146,7 @@ func get_block_height_quorum_with_mapper(providers: []ProviderInfo, addrs: []Fun
   quorum: *Quorum
   is_quorum: *bool
 
-  min_points = 3  -- minimum points we want in order to calculate an oracle 
+  min_points = 3  -- minimum points we want in order to calculate an oracle
 
   n <- MyOp.array_length(providers)
   n2 <- MyOp2.array_length(addrs)
@@ -169,7 +169,7 @@ func get_block_height_quorum_with_mapper(providers: []ProviderInfo, addrs: []Fun
         is_quorum <<- false
       else:
         is_quorum <- SimpleQuorum.is_quorum(quorum[0].freq, quorum[0].n, t_quorum)
-    
+
     deviations: *EVMResult
     n_dev = 1
     if quorum[0].freq != quorum[0].n:
@@ -198,7 +198,7 @@ func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: I
   quorum: *Quorum
   is_quorum: *bool
 
-  min_points = 3  -- minimum points we want in order to calculate an oracle 
+  min_points = 3  -- minimum points we want in order to calculate an oracle
 
   on ipfs_service.peer_id:
     IpfsCli ipfs_service.service_id
@@ -224,7 +224,7 @@ func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: I
         is_quorum <<- false
       else:
         is_quorum <- SimpleQuorum.is_quorum(quorum[0].freq, quorum[0].n, t_quorum)
-    
+
     deviations: *EVMResult
     n_dev = 1
     if quorum[0].freq != quorum[0].n:
@@ -238,5 +238,3 @@ func get_block_height_quorum_with_cid(providers: []ProviderInfo, services_cid: I
               co ConsoleEVMResult.print(res)
           Math.add(n_dev, 1)
   <- quorum[0], is_quorum[0]
-
-
