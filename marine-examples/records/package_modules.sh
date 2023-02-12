@@ -1,12 +1,12 @@
 
+mkdir -p module-exports/modules/facade
 mkdir -p module-exports/modules/pure
-mkdir -p module-exports/modules/effector
 
 sh ./build.sh
 
 cd module-exports
+cp ../facade/target/wasm32-wasi/release/records_facade.wasm modules/facade/
 cp ../pure/target/wasm32-wasi/release/records_pure.wasm modules/pure/
-cp ../effector/target/wasm32-wasi/release/records_effector.wasm modules/effector/
 
 file="service.yaml"
 cat > $file <<- EOF
@@ -14,11 +14,18 @@ version: 0
 name: records
 modules:
   pure:
-    get: modules/pure
+    get: modules/facade
   effector:
-    get: modules/effector
+    get: modules/pure
 EOF
 
+
+file="modules/facade/module.yaml"
+cat > $file <<- EOF
+version: 0
+name: facade
+loggerEnabled: true
+EOF
 
 file="modules/pure/module.yaml"
 cat > $file <<- EOF
@@ -27,20 +34,12 @@ name: pure
 loggerEnabled: true
 EOF
 
-file="modules/effector/module.yaml"
-cat > $file <<- EOF
-version: 0
-name: effector
-loggerEnabled: true
-EOF
-
 tar -czf records.tar.gz  modules service.yaml
 rm -r modules
 rm service.yaml
 
-cd ../pure
+cd ../facade
 cargo clean
 pwd
-cd ../effector
+cd ../pure
 cargo clean
-cd ..
