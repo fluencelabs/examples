@@ -10,6 +10,7 @@ Figure 1: Module And Service Creation With The Marine Toolchain
 
 ```mermaid
     stateDiagram
+    
     state "Rust Marine Code" as Code
     state "Build wasm32-wasi Module" as Build
     state "Test Wasm App With Cargo" as Test
@@ -26,6 +27,7 @@ Figure 1: Module And Service Creation With The Marine Toolchain
     Build --> Test
     Build --> Deploy
     Service --> Deploy
+
 ```
 
 Wasm modules can also be accessed locally through the Marine REPL and tested with `cargo test`.
