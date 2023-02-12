@@ -22,7 +22,7 @@
   "dependencies": {
     "json-rpc-2.0": "1.4.2",
     "web3": "1.8.2",
-    "@fluencelabs/fluence": "0.27.5"
+    "@fluencelabs/fluence": "0.28.0"
   },
   "devDependencies": {
     "@fluencelabs/aqua-api": "0.9.3"
