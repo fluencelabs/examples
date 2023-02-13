@@ -30,7 +30,7 @@ Figure 1: Module And Service Creation With The Marine Toolchain
 
 ```
 
-Wasm modules can also be accessed locally through the Marine REPL and tested with `cargo test`.
+Wasm modules can also be accessed locally through the Marine REPL and tested with `cargo test`. Moreover, most of the examples listed below have a packaging script providing modules in the archived format, i.e., tar.gz, for easy import into [flunce cli](https://github.com/fluencelabs/fluence-cli) projects.
 
 ## Greeting Example
 
