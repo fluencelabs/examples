@@ -1,0 +1,10 @@
+{
+  "default": {
+    "modules": [
+      {
+        "name": "hello_world",
+        "path": "/Users/bebo/localdev/raw-examples/aqua-examples/hello-world-with-cli/services/modules/hello_world/target/wasm32-wasi/release/hello_world.wasm"
+      }
+    ]
+  }
+}

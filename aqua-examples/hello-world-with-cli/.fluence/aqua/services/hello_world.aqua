@@ -1,0 +1,5 @@
+module HelloWorld declares *
+
+service HelloWorld:
+  hello_fluence() -> string
+  hello_world() -> string

@@ -1,0 +1,15 @@
+export App
+
+data ServiceIdsItem:
+  blueprintId: string
+  peerId: string
+  serviceId: string
+
+data Hello_worldDeploys:
+  default: []ServiceIdsItem
+
+data Services:
+  hello_world: Hello_worldDeploys
+
+service App("App"):
+  services: -> Services

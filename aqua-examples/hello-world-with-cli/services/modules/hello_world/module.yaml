@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../.fluence/schemas/module.yaml.json
+
+# Defines [Marine Module](https://fluence.dev/docs/build/concepts/#modules). For Fluence CLI, **module** - is a directory which contains this config and either a precompiled .wasm Marine module or a source code of the module written in Rust which can be compiled into a .wasm Marine module. You can use `fluence module new` command to generate a template for new module
+
+# Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/module.md
+
+version: 0
+type: rust
+name: hello_world

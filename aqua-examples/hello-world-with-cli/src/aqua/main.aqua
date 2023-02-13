@@ -1,0 +1,13 @@
+aqua Main
+
+-- import "@fluencelabs/aqua-lib/builtin.aqua"
+import App from "deployed.app.aqua"
+import HelloWorld from "services/hello_world.aqua"
+-- export App, hello_fluence
+
+func hello_fluence() -> string:
+    services <- App.services()
+    on services.hello_world.default!.peerId:
+        HelloWorld services.hello_world.default!.serviceId
+        res <- HelloWorld.hello_fluence()
+    <- res
