@@ -56,6 +56,9 @@ registerCounter(fluence, "counter", {
     }
 })
 
+const counterServiceId = config.counterServiceId  || 'counter'
+const counterPeerId = config.counterPeerId || fluence.getStatus().peerId
+
 async function methodHandler(req, method) {
     console.log(`Receiving request '${method}'`);
     let result;
@@ -63,7 +66,7 @@ async function methodHandler(req, method) {
         result = await randomLoadBalancingEth(fluence, config.providers, method, req.map((s) => JSON.stringify(s)), config.serviceId);
     } else if (config.mode === "round-robin") {
         console.log("peerId: " + fluence.getStatus().peerId)
-        result = await roundRobinEth(fluence, config.providers, method, req.map((s) => JSON.stringify(s)), config.serviceId, "counter", fluence.getStatus().peerId,
+        result = await roundRobinEth(fluence, config.providers, method, req.map((s) => JSON.stringify(s)), config.serviceId, counterServiceId, counterPeerId,
             config.serviceId);
     }
 

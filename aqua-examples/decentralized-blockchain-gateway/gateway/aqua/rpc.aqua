@@ -2,8 +2,6 @@ import "@fluencelabs/aqua-lib/builtin.aqua"
 
 export randomLoadBalancingEth, roundRobinEth, Counter, Logger
 
-
-
 data EthResult:
   value: string
   success: bool

@@ -6,5 +6,7 @@
   "mode": "round-robin",
   "relay": "/dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf",
   "serviceId": "25bf2293-7503-4a01-af00-d1b7d089ca37",
-  "port": 3000
+  "port": 3000,
+  "counterServiceId": null,
+  "counterPeerId": null
 }

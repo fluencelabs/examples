@@ -1,7 +1,8 @@
 import fs from 'fs';
 
-export const configHelp = "Config structure: { port, relay, serviceId, providers, mode}\n" +
-    "Where mode can be: 'random' (default) or 'round-robin'"
+export const configHelp = "Config structure: { port, relay, serviceId, providers, mode, counterServiceId?, counterPeerId?}\n" +
+    "Where 'mode' can be: 'random' (default) or 'round-robin',\n" +
+    "'counterServiceId' and 'counterPeerId' will use local service if undefined"
 
 export function readConfig(path) {
     const rawdata = fs.readFileSync(path);
