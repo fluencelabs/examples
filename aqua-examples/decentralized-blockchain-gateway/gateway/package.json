@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "run:example": "node src/index.js 3000 \"/dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf\" \"config.json\" \"25bf2293-7503-4a01-af00-d1b7d089ca37\"",
+    "run:example": "node src/index.js \"config.json\"",
     "run": "node src/index.js",
     "req": "node web3run.js"
   },
