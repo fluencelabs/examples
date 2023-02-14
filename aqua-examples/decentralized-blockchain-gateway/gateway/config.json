@@ -1,0 +1,6 @@
+{
+  "providers": [
+    "https://goerli.infura.io/v3/77214656b25f4cad9cd2540c6d40c301",
+    "https://goerli.infura.io/v3/c48f3b538f154204ad53d04aa8990544"
+  ]
+}

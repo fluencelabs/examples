@@ -2,65 +2,23 @@
 
 "use strict";
 
-handleEPIPE(process.stderr)
-handleEPIPE(process.stdout)
-function handleEPIPE(stream) {
-    stream.on('error', onerror)
-    function onerror(err) {
-        if (err.code === 'EPIPE') {
-            stream._write = noopWrite
-            stream._writev = noopWritev
-            stream._read = noopRead
-            return stream.removeListener('error', onerror)
-        }
-        if (EE.listenerCount(stream, 'error') === 1) {
-            stream.removeListener('error', onerror)
-            stream.emit('error', err)
-        }
-    }
-}
-function noopWrite(chunk, enc, cb) {
-    cb()
-}
-function noopRead() {
-    this.push('')
-}
-function noopWritev(chunks, cb) {
-    cb()
-}
-
 import express from "express";
 import bodyParser from "body-parser";
 import { JSONRPCServer } from "json-rpc-2.0";
 import { FluencePeer } from "@fluencelabs/fluence";
-import {call, registerLogger} from "../aqua-compiled/rpc.js";
+import {call, randomLoadBalancingEth, registerLogger} from "../aqua-compiled/rpc.js";
+import {readArguments} from "./arguments.js";
+import {readConfig} from "./config.js";
 
-var args = process.argv.slice(2);
+const args = readArguments(process.argv.slice(2))
 
-const port = args[0]
-const relay = args[1]
-const ethRpcURI = args[2]
-const serviceId = args[3]
-
-let errors = []
-if (!port) {
-    errors.push("Specify port")
-}
-if (!relay) {
-    errors.push("Specify Fluence peer address")
-}
-if (!ethRpcURI) {
-    errors.push("Specify uri to ethereum RPC")
-}
-if (!serviceId) {
-    errors.push("Specify id to ethereum Aqua service")
-}
-
-if (errors.length > 0) {
-    console.log("Example: aqua-eth-gateway <port> <fluence-addr> <eth-rpc-uri> <service-id>")
-    errors.forEach((err) => console.log(err))
+if (args.errors.length > 0) {
+    console.log(args.help)
+    args.errors.forEach((err) => console.log(err))
     process.exit(1)
 }
+
+const config = readConfig(args.configPath)
 
 console.log("Running server...")
 
@@ -130,18 +88,21 @@ const server = new JSONRPCServer();
 
 // initialize fluence client
 const fluence = new FluencePeer();
-await fluence.start({connectTo: relay})
+await fluence.start({connectTo: args.relay})
 
 // handler for logger
 registerLogger(fluence, {
     log: s => {
         console.log("log: " + s)
-    }
+    },
+    logCall: s => {
+        console.log("Call will be to : " + s)
+    },
 })
 
-async function methodHandler(req, op) {
-    console.log(`Receiving request '${op}'`)
-    const result = await call(fluence, ethRpcURI, op, req.map((s) => JSON.stringify(s)), serviceId)
+async function methodHandler(req, method) {
+    console.log(`Receiving request '${method}'`)
+    const result = await randomLoadBalancingEth(fluence, config.providers, method, req.map((s) => JSON.stringify(s)), args.serviceId)
 
     return JSON.parse(result.value)
 
@@ -171,6 +132,6 @@ app.post(route, (req, res) => {
     });
 });
 
-app.listen(port);
+app.listen(args.port);
 
-console.log("Server was started on port " + port)
+console.log("Server was started on port " + args.port)

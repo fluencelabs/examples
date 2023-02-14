@@ -1,11 +1,11 @@
 {
   "name": "@fluencelabs/aqua-eth-gateway",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "run:example": "node src/index.js 3000 \"/dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf\" \"https://goerli.infura.io/v3/c48f3b538f154204ad53d04aa8990544\" \"d071085b-639c-4716-8bf3-d86b13210173\"",
+    "run:example": "node src/index.js 3000 \"/dns4/kras-02.fluence.dev/tcp/19001/wss/p2p/12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf\" \"config.json\" \"25bf2293-7503-4a01-af00-d1b7d089ca37\"",
     "run": "node src/index.js",
     "req": "node web3run.js"
   },
@@ -15,7 +15,7 @@
   "files": [
     "src/*",
     "aqua/*",
-    "aqua-compiled/"
+    "aqua-compiled/*"
   ],
   "author": "Fluence Labs",
   "license": "Apache-2.0",

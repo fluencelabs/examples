@@ -43,6 +43,21 @@ export function registerLogger(...args) {
                 "codomain" : {
                     "tag" : "nil"
                 }
+            },
+            "logCall" : {
+                "tag" : "arrow",
+                "domain" : {
+                    "tag" : "labeledProduct",
+                    "fields" : {
+                        "s" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        }
+                    }
+                },
+                "codomain" : {
+                    "tag" : "nil"
+                }
             }
         }
     }
@@ -74,7 +89,7 @@ export function registerEthCaller(...args) {
                             "tag" : "scalar",
                             "name" : "string"
                         },
-                        "json_args" : {
+                        "jsonArgs" : {
                             "tag" : "array",
                             "type" : {
                                 "tag" : "scalar",
@@ -88,7 +103,7 @@ export function registerEthCaller(...args) {
                     "items" : [
                         {
                             "tag" : "struct",
-                            "name" : "JsonString",
+                            "name" : "EthResult",
                             "fields" : {
                                 "error" : {
                                     "tag" : "scalar",
@@ -113,7 +128,775 @@ export function registerEthCaller(...args) {
     );
 }
       
+
+
+
+
+export function registerCounter(...args) {
+    registerService$$(
+        args,
+        {
+    "defaultServiceId" : "counter",
+    "functions" : {
+        "tag" : "labeledProduct",
+        "fields" : {
+            "incrementAndReturn" : {
+                "tag" : "arrow",
+                "domain" : {
+                    "tag" : "nil"
+                },
+                "codomain" : {
+                    "tag" : "unlabeledProduct",
+                    "items" : [
+                        {
+                            "tag" : "scalar",
+                            "name" : "u32"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
+    );
+}
+      
+
+
+
+
+export function registerNumOp(...args) {
+    registerService$$(
+        args,
+        {
+    "defaultServiceId" : "op",
+    "functions" : {
+        "tag" : "labeledProduct",
+        "fields" : {
+            "identity" : {
+                "tag" : "arrow",
+                "domain" : {
+                    "tag" : "labeledProduct",
+                    "fields" : {
+                        "n" : {
+                            "tag" : "scalar",
+                            "name" : "u64"
+                        }
+                    }
+                },
+                "codomain" : {
+                    "tag" : "unlabeledProduct",
+                    "items" : [
+                        {
+                            "tag" : "scalar",
+                            "name" : "i64"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
+    );
+}
+      
 // Functions
+
+export function roundRobinEth(...args) {
+
+    let script = `
+                    (xor
+                     (seq
+                      (seq
+                       (seq
+                        (seq
+                         (seq
+                          (seq
+                           (seq
+                            (seq
+                             (seq
+                              (seq
+                               (seq
+                                (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                                (call %init_peer_id% ("getDataSrv" "uris") [] uris)
+                               )
+                               (call %init_peer_id% ("getDataSrv" "method") [] method)
+                              )
+                              (call %init_peer_id% ("getDataSrv" "jsonArgs") [] jsonArgs)
+                             )
+                             (call %init_peer_id% ("getDataSrv" "serviceId") [] serviceId)
+                            )
+                            (call %init_peer_id% ("getDataSrv" "counterServiceId") [] counterServiceId)
+                           )
+                           (call %init_peer_id% ("getDataSrv" "counterPeerId") [] counterPeerId)
+                          )
+                          (call -relay- ("op" "noop") [])
+                         )
+                         (xor
+                          (call counterPeerId (counterServiceId "incrementAndReturn") [] requestNumber)
+                          (seq
+                           (call -relay- ("op" "noop") [])
+                           (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+                          )
+                         )
+                        )
+                        (xor
+                         (seq
+                          (seq
+                           (call %init_peer_id% ("op" "array_length") [uris] array_length)
+                           (call %init_peer_id% ("math" "rem") [requestNumber array_length] rem)
+                          )
+                          (call %init_peer_id% ("logger" "logCall") [uris.$.[rem]!])
+                         )
+                         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+                        )
+                       )
+                       (xor
+                        (call -relay- (serviceId "eth_call") [uris.$.[rem]! method jsonArgs] res)
+                        (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+                       )
+                      )
+                      (xor
+                       (call %init_peer_id% ("callbackSrv" "response") [res])
+                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 4])
+                      )
+                     )
+                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 5])
+                    )
+    `
+    return callFunction$$(
+        args,
+        {
+    "functionName" : "roundRobinEth",
+    "arrow" : {
+        "tag" : "arrow",
+        "domain" : {
+            "tag" : "labeledProduct",
+            "fields" : {
+                "uris" : {
+                    "tag" : "array",
+                    "type" : {
+                        "tag" : "scalar",
+                        "name" : "string"
+                    }
+                },
+                "method" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                },
+                "jsonArgs" : {
+                    "tag" : "array",
+                    "type" : {
+                        "tag" : "scalar",
+                        "name" : "string"
+                    }
+                },
+                "serviceId" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                },
+                "counterServiceId" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                },
+                "counterPeerId" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                }
+            }
+        },
+        "codomain" : {
+            "tag" : "unlabeledProduct",
+            "items" : [
+                {
+                    "tag" : "struct",
+                    "name" : "EthResult",
+                    "fields" : {
+                        "error" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        },
+                        "success" : {
+                            "tag" : "scalar",
+                            "name" : "bool"
+                        },
+                        "value" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "names" : {
+        "relay" : "-relay-",
+        "getDataSrv" : "getDataSrv",
+        "callbackSrv" : "callbackSrv",
+        "responseSrv" : "callbackSrv",
+        "responseFnName" : "response",
+        "errorHandlingSrv" : "errorHandlingSrv",
+        "errorFnName" : "error"
+    }
+},
+        script
+    )
+}
+
+
+export function empty(...args) {
+
+    let script = `
+                    (xor
+                     (seq
+                      (seq
+                       (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                       (call %init_peer_id% ("json" "obj") ["error" "" "success" true "value" ""] EthResult_obj)
+                      )
+                      (xor
+                       (call %init_peer_id% ("callbackSrv" "response") [EthResult_obj])
+                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+                      )
+                     )
+                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+                    )
+    `
+    return callFunction$$(
+        args,
+        {
+    "functionName" : "empty",
+    "arrow" : {
+        "tag" : "arrow",
+        "domain" : {
+            "tag" : "labeledProduct",
+            "fields" : {
+                
+            }
+        },
+        "codomain" : {
+            "tag" : "unlabeledProduct",
+            "items" : [
+                {
+                    "tag" : "struct",
+                    "name" : "EthResult",
+                    "fields" : {
+                        "error" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        },
+                        "success" : {
+                            "tag" : "scalar",
+                            "name" : "bool"
+                        },
+                        "value" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "names" : {
+        "relay" : "-relay-",
+        "getDataSrv" : "getDataSrv",
+        "callbackSrv" : "callbackSrv",
+        "responseSrv" : "callbackSrv",
+        "responseFnName" : "response",
+        "errorHandlingSrv" : "errorHandlingSrv",
+        "errorFnName" : "error"
+    }
+},
+        script
+    )
+}
+
+
+export function randomLoadBalancing(...args) {
+
+    let script = `
+                    (xor
+                     (seq
+                      (seq
+                       (seq
+                        (seq
+                         (seq
+                          (seq
+                           (seq
+                            (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                            (call %init_peer_id% ("getDataSrv" "uris") [] uris)
+                           )
+                           (call %init_peer_id% ("getDataSrv" "method") [] method)
+                          )
+                          (call %init_peer_id% ("getDataSrv" "jsonArgs") [] jsonArgs)
+                         )
+                         (call %init_peer_id% ("getDataSrv" "serviceId") [] serviceId)
+                        )
+                        (xor
+                         (seq
+                          (seq
+                           (seq
+                            (seq
+                             (call %init_peer_id% ("peer" "timestamp_sec") [] timestamp_sec)
+                             (call %init_peer_id% ("op" "identity") [timestamp_sec] time)
+                            )
+                            (call %init_peer_id% ("op" "array_length") [uris] array_length)
+                           )
+                           (call %init_peer_id% ("math" "rem") [time array_length] rem)
+                          )
+                          (call %init_peer_id% ("logger" "logCall") [uris.$.[rem]!])
+                         )
+                         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+                        )
+                       )
+                       (xor
+                        (call %init_peer_id% ("callbackSrv" "callFunc") [uris.$.[rem]! method jsonArgs serviceId] init_call_res0)
+                        (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+                       )
+                      )
+                      (xor
+                       (call %init_peer_id% ("callbackSrv" "response") [init_call_res0])
+                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+                      )
+                     )
+                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 4])
+                    )
+    `
+    return callFunction$$(
+        args,
+        {
+    "functionName" : "randomLoadBalancing",
+    "arrow" : {
+        "tag" : "arrow",
+        "domain" : {
+            "tag" : "labeledProduct",
+            "fields" : {
+                "uris" : {
+                    "tag" : "array",
+                    "type" : {
+                        "tag" : "scalar",
+                        "name" : "string"
+                    }
+                },
+                "method" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                },
+                "jsonArgs" : {
+                    "tag" : "array",
+                    "type" : {
+                        "tag" : "scalar",
+                        "name" : "string"
+                    }
+                },
+                "serviceId" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                },
+                "callFunc" : {
+                    "tag" : "arrow",
+                    "domain" : {
+                        "tag" : "unlabeledProduct",
+                        "items" : [
+                            {
+                                "tag" : "scalar",
+                                "name" : "string"
+                            },
+                            {
+                                "tag" : "scalar",
+                                "name" : "string"
+                            },
+                            {
+                                "tag" : "array",
+                                "type" : {
+                                    "tag" : "scalar",
+                                    "name" : "string"
+                                }
+                            },
+                            {
+                                "tag" : "scalar",
+                                "name" : "string"
+                            }
+                        ]
+                    },
+                    "codomain" : {
+                        "tag" : "unlabeledProduct",
+                        "items" : [
+                            {
+                                "tag" : "struct",
+                                "name" : "EthResult",
+                                "fields" : {
+                                    "error" : {
+                                        "tag" : "scalar",
+                                        "name" : "string"
+                                    },
+                                    "success" : {
+                                        "tag" : "scalar",
+                                        "name" : "bool"
+                                    },
+                                    "value" : {
+                                        "tag" : "scalar",
+                                        "name" : "string"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "codomain" : {
+            "tag" : "unlabeledProduct",
+            "items" : [
+                {
+                    "tag" : "struct",
+                    "name" : "EthResult",
+                    "fields" : {
+                        "error" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        },
+                        "success" : {
+                            "tag" : "scalar",
+                            "name" : "bool"
+                        },
+                        "value" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "names" : {
+        "relay" : "-relay-",
+        "getDataSrv" : "getDataSrv",
+        "callbackSrv" : "callbackSrv",
+        "responseSrv" : "callbackSrv",
+        "responseFnName" : "response",
+        "errorHandlingSrv" : "errorHandlingSrv",
+        "errorFnName" : "error"
+    }
+},
+        script
+    )
+}
+
+
+export function randomLoadBalancingEth(...args) {
+
+    let script = `
+                    (xor
+                     (seq
+                      (seq
+                       (seq
+                        (seq
+                         (seq
+                          (seq
+                           (seq
+                            (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                            (call %init_peer_id% ("getDataSrv" "uris") [] uris)
+                           )
+                           (call %init_peer_id% ("getDataSrv" "method") [] method)
+                          )
+                          (call %init_peer_id% ("getDataSrv" "jsonArgs") [] jsonArgs)
+                         )
+                         (call %init_peer_id% ("getDataSrv" "serviceId") [] serviceId)
+                        )
+                        (xor
+                         (seq
+                          (seq
+                           (seq
+                            (seq
+                             (call %init_peer_id% ("peer" "timestamp_sec") [] timestamp_sec)
+                             (call %init_peer_id% ("op" "identity") [timestamp_sec] time)
+                            )
+                            (call %init_peer_id% ("op" "array_length") [uris] array_length)
+                           )
+                           (call %init_peer_id% ("math" "rem") [time array_length] rem)
+                          )
+                          (call %init_peer_id% ("logger" "logCall") [uris.$.[rem]!])
+                         )
+                         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+                        )
+                       )
+                       (xor
+                        (call -relay- (serviceId "eth_call") [uris.$.[rem]! method jsonArgs] res)
+                        (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+                       )
+                      )
+                      (xor
+                       (call %init_peer_id% ("callbackSrv" "response") [res])
+                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+                      )
+                     )
+                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 4])
+                    )
+    `
+    return callFunction$$(
+        args,
+        {
+    "functionName" : "randomLoadBalancingEth",
+    "arrow" : {
+        "tag" : "arrow",
+        "domain" : {
+            "tag" : "labeledProduct",
+            "fields" : {
+                "uris" : {
+                    "tag" : "array",
+                    "type" : {
+                        "tag" : "scalar",
+                        "name" : "string"
+                    }
+                },
+                "method" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                },
+                "jsonArgs" : {
+                    "tag" : "array",
+                    "type" : {
+                        "tag" : "scalar",
+                        "name" : "string"
+                    }
+                },
+                "serviceId" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                }
+            }
+        },
+        "codomain" : {
+            "tag" : "unlabeledProduct",
+            "items" : [
+                {
+                    "tag" : "struct",
+                    "name" : "EthResult",
+                    "fields" : {
+                        "error" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        },
+                        "success" : {
+                            "tag" : "scalar",
+                            "name" : "bool"
+                        },
+                        "value" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "names" : {
+        "relay" : "-relay-",
+        "getDataSrv" : "getDataSrv",
+        "callbackSrv" : "callbackSrv",
+        "responseSrv" : "callbackSrv",
+        "responseFnName" : "response",
+        "errorHandlingSrv" : "errorHandlingSrv",
+        "errorFnName" : "error"
+    }
+},
+        script
+    )
+}
+
+
+export function roundRobin(...args) {
+
+    let script = `
+                    (xor
+                     (seq
+                      (seq
+                       (seq
+                        (seq
+                         (seq
+                          (seq
+                           (seq
+                            (seq
+                             (seq
+                              (seq
+                               (seq
+                                (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                                (call %init_peer_id% ("getDataSrv" "uris") [] uris)
+                               )
+                               (call %init_peer_id% ("getDataSrv" "method") [] method)
+                              )
+                              (call %init_peer_id% ("getDataSrv" "jsonArgs") [] jsonArgs)
+                             )
+                             (call %init_peer_id% ("getDataSrv" "serviceId") [] serviceId)
+                            )
+                            (call %init_peer_id% ("getDataSrv" "counterServiceId") [] counterServiceId)
+                           )
+                           (call %init_peer_id% ("getDataSrv" "counterPeerId") [] counterPeerId)
+                          )
+                          (call -relay- ("op" "noop") [])
+                         )
+                         (xor
+                          (call counterPeerId (counterServiceId "incrementAndReturn") [] requestNumber)
+                          (seq
+                           (call -relay- ("op" "noop") [])
+                           (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+                          )
+                         )
+                        )
+                        (xor
+                         (seq
+                          (seq
+                           (call %init_peer_id% ("op" "array_length") [uris] array_length)
+                           (call %init_peer_id% ("math" "rem") [requestNumber array_length] rem)
+                          )
+                          (call %init_peer_id% ("logger" "logCall") [uris.$.[rem]!])
+                         )
+                         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+                        )
+                       )
+                       (xor
+                        (call %init_peer_id% ("callbackSrv" "callFunc") [uris.$.[rem]! method jsonArgs serviceId] init_call_res0)
+                        (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+                       )
+                      )
+                      (xor
+                       (call %init_peer_id% ("callbackSrv" "response") [init_call_res0])
+                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 4])
+                      )
+                     )
+                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 5])
+                    )
+    `
+    return callFunction$$(
+        args,
+        {
+    "functionName" : "roundRobin",
+    "arrow" : {
+        "tag" : "arrow",
+        "domain" : {
+            "tag" : "labeledProduct",
+            "fields" : {
+                "uris" : {
+                    "tag" : "array",
+                    "type" : {
+                        "tag" : "scalar",
+                        "name" : "string"
+                    }
+                },
+                "method" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                },
+                "jsonArgs" : {
+                    "tag" : "array",
+                    "type" : {
+                        "tag" : "scalar",
+                        "name" : "string"
+                    }
+                },
+                "serviceId" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                },
+                "counterServiceId" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                },
+                "counterPeerId" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                },
+                "callFunc" : {
+                    "tag" : "arrow",
+                    "domain" : {
+                        "tag" : "unlabeledProduct",
+                        "items" : [
+                            {
+                                "tag" : "scalar",
+                                "name" : "string"
+                            },
+                            {
+                                "tag" : "scalar",
+                                "name" : "string"
+                            },
+                            {
+                                "tag" : "array",
+                                "type" : {
+                                    "tag" : "scalar",
+                                    "name" : "string"
+                                }
+                            },
+                            {
+                                "tag" : "scalar",
+                                "name" : "string"
+                            }
+                        ]
+                    },
+                    "codomain" : {
+                        "tag" : "unlabeledProduct",
+                        "items" : [
+                            {
+                                "tag" : "struct",
+                                "name" : "EthResult",
+                                "fields" : {
+                                    "error" : {
+                                        "tag" : "scalar",
+                                        "name" : "string"
+                                    },
+                                    "success" : {
+                                        "tag" : "scalar",
+                                        "name" : "bool"
+                                    },
+                                    "value" : {
+                                        "tag" : "scalar",
+                                        "name" : "string"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "codomain" : {
+            "tag" : "unlabeledProduct",
+            "items" : [
+                {
+                    "tag" : "struct",
+                    "name" : "EthResult",
+                    "fields" : {
+                        "error" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        },
+                        "success" : {
+                            "tag" : "scalar",
+                            "name" : "bool"
+                        },
+                        "value" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "names" : {
+        "relay" : "-relay-",
+        "getDataSrv" : "getDataSrv",
+        "callbackSrv" : "callbackSrv",
+        "responseSrv" : "callbackSrv",
+        "responseFnName" : "response",
+        "errorHandlingSrv" : "errorHandlingSrv",
+        "errorFnName" : "error"
+    }
+},
+        script
+    )
+}
+
 
 export function call(...args) {
 
@@ -130,12 +913,12 @@ export function call(...args) {
                           )
                           (call %init_peer_id% ("getDataSrv" "method") [] method)
                          )
-                         (call %init_peer_id% ("getDataSrv" "json_args") [] json_args)
+                         (call %init_peer_id% ("getDataSrv" "jsonArgs") [] jsonArgs)
                         )
                         (call %init_peer_id% ("getDataSrv" "serviceId") [] serviceId)
                        )
                        (xor
-                        (call -relay- (serviceId "eth_call") [uri method json_args] res)
+                        (call -relay- (serviceId "eth_call") [uri method jsonArgs] res)
                         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
                        )
                       )
@@ -164,7 +947,7 @@ export function call(...args) {
                     "tag" : "scalar",
                     "name" : "string"
                 },
-                "json_args" : {
+                "jsonArgs" : {
                     "tag" : "array",
                     "type" : {
                         "tag" : "scalar",
@@ -182,7 +965,7 @@ export function call(...args) {
             "items" : [
                 {
                     "tag" : "struct",
-                    "name" : "JsonString",
+                    "name" : "EthResult",
                     "fields" : {
                         "error" : {
                             "tag" : "scalar",

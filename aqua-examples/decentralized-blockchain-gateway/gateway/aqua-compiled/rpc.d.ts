@@ -19,6 +19,7 @@ import {
 // Services
 export interface LoggerDef {
     log: (s: string[], callParams: CallParams$$<'s'>) => void | Promise<void>;
+    logCall: (s: string, callParams: CallParams$$<'s'>) => void | Promise<void>;
 }
 export function registerLogger(service: LoggerDef): void;
 export function registerLogger(serviceId: string, service: LoggerDef): void;
@@ -26,19 +27,134 @@ export function registerLogger(peer: FluencePeer, service: LoggerDef): void;
 export function registerLogger(peer: FluencePeer, serviceId: string, service: LoggerDef): void;
        
 export interface EthCallerDef {
-    eth_call: (uri: string, method: string, json_args: string[], callParams: CallParams$$<'uri' | 'method' | 'json_args'>) => { error: string; success: boolean; value: string; } | Promise<{ error: string; success: boolean; value: string; }>;
+    eth_call: (uri: string, method: string, jsonArgs: string[], callParams: CallParams$$<'uri' | 'method' | 'jsonArgs'>) => { error: string; success: boolean; value: string; } | Promise<{ error: string; success: boolean; value: string; }>;
 }
 export function registerEthCaller(serviceId: string, service: EthCallerDef): void;
 export function registerEthCaller(peer: FluencePeer, serviceId: string, service: EthCallerDef): void;
        
+export interface CounterDef {
+    incrementAndReturn: (callParams: CallParams$$<null>) => number | Promise<number>;
+}
+export function registerCounter(service: CounterDef): void;
+export function registerCounter(serviceId: string, service: CounterDef): void;
+export function registerCounter(peer: FluencePeer, service: CounterDef): void;
+export function registerCounter(peer: FluencePeer, serviceId: string, service: CounterDef): void;
+       
+export interface NumOpDef {
+    identity: (n: number, callParams: CallParams$$<'n'>) => number | Promise<number>;
+}
+export function registerNumOp(service: NumOpDef): void;
+export function registerNumOp(serviceId: string, service: NumOpDef): void;
+export function registerNumOp(peer: FluencePeer, service: NumOpDef): void;
+export function registerNumOp(peer: FluencePeer, serviceId: string, service: NumOpDef): void;
+       
 
 // Functions
+ 
+export type RoundRobinEthResult = { error: string; success: boolean; value: string; }
+export function roundRobinEth(
+    uris: string[],
+    method: string,
+    jsonArgs: string[],
+    serviceId: string,
+    counterServiceId: string,
+    counterPeerId: string,
+    config?: {ttl?: number}
+): Promise<RoundRobinEthResult>;
+
+export function roundRobinEth(
+    peer: FluencePeer,
+    uris: string[],
+    method: string,
+    jsonArgs: string[],
+    serviceId: string,
+    counterServiceId: string,
+    counterPeerId: string,
+    config?: {ttl?: number}
+): Promise<RoundRobinEthResult>;
+
+ 
+export type EmptyResult = { error: string; success: boolean; value: string; }
+export function empty(
+    config?: {ttl?: number}
+): Promise<EmptyResult>;
+
+export function empty(
+    peer: FluencePeer,
+    config?: {ttl?: number}
+): Promise<EmptyResult>;
+
+ 
+export type RandomLoadBalancingResult = { error: string; success: boolean; value: string; }
+export function randomLoadBalancing(
+    uris: string[],
+    method: string,
+    jsonArgs: string[],
+    serviceId: string,
+    callFunc: (arg0: string, arg1: string, arg2: string[], arg3: string, callParams: CallParams$$<'arg0' | 'arg1' | 'arg2' | 'arg3'>) => { error: string; success: boolean; value: string; } | Promise<{ error: string; success: boolean; value: string; }>,
+    config?: {ttl?: number}
+): Promise<RandomLoadBalancingResult>;
+
+export function randomLoadBalancing(
+    peer: FluencePeer,
+    uris: string[],
+    method: string,
+    jsonArgs: string[],
+    serviceId: string,
+    callFunc: (arg0: string, arg1: string, arg2: string[], arg3: string, callParams: CallParams$$<'arg0' | 'arg1' | 'arg2' | 'arg3'>) => { error: string; success: boolean; value: string; } | Promise<{ error: string; success: boolean; value: string; }>,
+    config?: {ttl?: number}
+): Promise<RandomLoadBalancingResult>;
+
+ 
+export type RandomLoadBalancingEthResult = { error: string; success: boolean; value: string; }
+export function randomLoadBalancingEth(
+    uris: string[],
+    method: string,
+    jsonArgs: string[],
+    serviceId: string,
+    config?: {ttl?: number}
+): Promise<RandomLoadBalancingEthResult>;
+
+export function randomLoadBalancingEth(
+    peer: FluencePeer,
+    uris: string[],
+    method: string,
+    jsonArgs: string[],
+    serviceId: string,
+    config?: {ttl?: number}
+): Promise<RandomLoadBalancingEthResult>;
+
+ 
+export type RoundRobinResult = { error: string; success: boolean; value: string; }
+export function roundRobin(
+    uris: string[],
+    method: string,
+    jsonArgs: string[],
+    serviceId: string,
+    counterServiceId: string,
+    counterPeerId: string,
+    callFunc: (arg0: string, arg1: string, arg2: string[], arg3: string, callParams: CallParams$$<'arg0' | 'arg1' | 'arg2' | 'arg3'>) => { error: string; success: boolean; value: string; } | Promise<{ error: string; success: boolean; value: string; }>,
+    config?: {ttl?: number}
+): Promise<RoundRobinResult>;
+
+export function roundRobin(
+    peer: FluencePeer,
+    uris: string[],
+    method: string,
+    jsonArgs: string[],
+    serviceId: string,
+    counterServiceId: string,
+    counterPeerId: string,
+    callFunc: (arg0: string, arg1: string, arg2: string[], arg3: string, callParams: CallParams$$<'arg0' | 'arg1' | 'arg2' | 'arg3'>) => { error: string; success: boolean; value: string; } | Promise<{ error: string; success: boolean; value: string; }>,
+    config?: {ttl?: number}
+): Promise<RoundRobinResult>;
+
  
 export type CallResult = { error: string; success: boolean; value: string; }
 export function call(
     uri: string,
     method: string,
-    json_args: string[],
+    jsonArgs: string[],
     serviceId: string,
     config?: {ttl?: number}
 ): Promise<CallResult>;
@@ -47,7 +163,7 @@ export function call(
     peer: FluencePeer,
     uri: string,
     method: string,
-    json_args: string[],
+    jsonArgs: string[],
     serviceId: string,
     config?: {ttl?: number}
 ): Promise<CallResult>;
