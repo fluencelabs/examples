@@ -55,7 +55,6 @@
         "@fluencelabs/aqua-lib": "0.6.0",
         "@types/jest-environment-puppeteer": "^4.4.1",
         "@types/puppeteer": "^5.4.4",
-        "chokidar-cli": "^2.1.0",
         "jest-puppeteer": "^6.0.2",
         "node-sass": "^6.0.1",
         "serve": "^13.0.2",
