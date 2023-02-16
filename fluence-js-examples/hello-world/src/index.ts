@@ -1,3 +1,3 @@
 import { main } from './main.js';
 
-main();
+main().catch((e) => console.error('error: ', e));
