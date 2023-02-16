@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@fluencelabs/fluence": "0.28.0",
-    "@fluencelabs/fluence-network-environment": "1.0.13",
+    "@fluencelabs/fluence-network-environment": "1.0.14",
     "@types/sqlite3": "^3.1.7",
     "near-api-js": "^0.43.1"
   }
