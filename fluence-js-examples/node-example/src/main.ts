@@ -1,6 +1,6 @@
 import '@fluencelabs/js-client.node';
 import { Fluence } from '@fluencelabs/js-client.api';
-import { randomKras } from '@fluencelabs/fluence-network-environment';
+import { kras } from '@fluencelabs/fluence-network-environment';
 import { registerCalc, CalcDef } from './_aqua/calc.js';
 
 class Calc implements CalcDef {
@@ -31,7 +31,7 @@ class Calc implements CalcDef {
     }
 }
 
-const relay = randomKras();
+const relay = kras[0];
 
 // generated with `npx aqua create_keypair`
 const skBase64 = 'tOpsT08fvYMnRypj3VtSoqWMN5W/AptKsP39yanlkg4=';
