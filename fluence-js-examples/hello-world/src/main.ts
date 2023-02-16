@@ -1,3 +1,4 @@
+import '@fluencelabs/js-client.node';
 import { Fluence } from '@fluencelabs/js-client.api';
 import { randomKras } from '@fluencelabs/fluence-network-environment';
 import { registerHelloWorld, sayHello, getRelayTime, tellFortune } from './_aqua/hello-world.js';
