@@ -60,4 +60,3 @@ cd ../curl_adapter
 cargo clean
 cd ../local_storage
 cargo clean
-cd ..
