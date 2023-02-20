@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
+use std::io::{self, Write};
 
 use marine_sqlite_connector;
 use marine_sqlite_connector::{State, Value};
@@ -23,6 +23,58 @@ use marine_sqlite_connector::{State, Value};
 module_manifest!();
 
 pub fn main() {}
+
+#[marine]
+pub fn sql_repl() {
+    let connection = marine_sqlite_connector::open(":memory:").unwrap();
+    let delimiter = ';';
+    println!("For exit type QUIT;");
+    loop {
+        print!("SQL> ");
+        io::stdout().flush().unwrap();
+
+        let mut input_lines = io::stdin().lines();
+        let mut sql_string: String = String::new();
+        while let Some(line) = input_lines.next() {
+            let l = line.unwrap();
+            let l_no_spaces = l.trim();
+            if let Some(pos) = l_no_spaces.find(delimiter) {
+                sql_string.push_str(&l_no_spaces[..pos]);
+                break;
+            }
+            sql_string.push_str(l_no_spaces);
+            sql_string.push(' ');
+        }
+
+        println!("{}", sql_string);
+        if let Some(first_word) = sql_string.split_whitespace().next() {
+            match first_word.to_uppercase().as_str() {
+                "SELECT" => {
+                    let mut cursor = connection.prepare(sql_string).unwrap().cursor();
+                    while let Some(row) = cursor.next().unwrap() {
+                        for column in row.iter() {
+                            match column {
+                                Value::Binary(_) => print!(
+                                    "bin {:}",
+                                    String::from_utf8_lossy(column.as_binary().unwrap())
+                                ),
+                                Value::Float(_) => print!("{} ", column.as_float().unwrap()),
+                                Value::Integer(_) => print!("{} ", column.as_integer().unwrap()),
+                                Value::String(_) => print!("{} ", column.as_string().unwrap()),
+                                Value::Null => print!("NULL "),
+                            }
+                        }
+                    }
+                    println!();
+                }
+                "QUIT" => break,
+                _ => connection.execute(sql_string).unwrap(),
+            };
+        }
+
+        println!();
+    }
+}
 
 #[marine]
 pub fn test1(age: i64) {
@@ -141,8 +193,6 @@ pub fn test_last_rowid() -> i64 {
 #[cfg(test)]
 mod tests {
     use marine_rs_sdk_test::marine_test;
-    use marine_rs_sdk_test::CallParameters;
-    use marine_rs_sdk_test::SecurityTetraplet;
 
     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
     fn test(sqlite_test: marine_test_env::sqlite_test::ModuleInterface) {
