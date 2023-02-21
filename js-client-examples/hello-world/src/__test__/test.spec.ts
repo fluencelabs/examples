@@ -1,4 +1,4 @@
-import { main } from '../main';
+import { main } from '../main.js';
 
 describe('smoke test', () => {
     it('should work', async () => {

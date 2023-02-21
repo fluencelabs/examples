@@ -1,0 +1,30 @@
+{
+    "name": "node-example",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "prestart": "npm run compile-aqua",
+        "prebuild": "npm run compile-aqua",
+        "start": "node --loader ts-node/esm ./src/index.ts",
+        "build": "tsc",
+        "test": "jest",
+        "compile-aqua": "fluence aqua -i ./aqua/ -o ./src/_aqua",
+        "watch-aqua": "fluence aqua -w -i ./aqua/ -o ./src/_aqua"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@fluencelabs/cli": "0.2.41",
+        "ts-node": "10.9.1",
+        "@types/jest": "29.4.0",
+        "jest": "29.4.1",
+        "ts-jest": "29.0.5"
+    },
+    "dependencies": {
+        "@fluencelabs/js-client.api": "0.11.2",
+        "@fluencelabs/js-client.node": "0.6.4",
+        "@fluencelabs/fluence-network-environment": "1.0.14"
+    }
+}

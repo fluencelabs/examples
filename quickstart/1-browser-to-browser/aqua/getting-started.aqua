@@ -6,5 +6,5 @@ service HelloPeer("HelloPeer"):
 
 func sayHello(targetPeerId: PeerId, targetRelayPeerId: PeerId) -> string:
     on targetPeerId via targetRelayPeerId:
-        res <- HelloPeer.hello(%init_peer_id%)
+        res <- HelloPeer.hello(INIT_PEER_ID)
     <- res

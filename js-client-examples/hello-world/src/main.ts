@@ -1,9 +1,10 @@
-import { Fluence } from '@fluencelabs/fluence';
-import { krasnodar } from '@fluencelabs/fluence-network-environment';
-import { registerHelloWorld, sayHello, getRelayTime, tellFortune } from './_aqua/hello-world';
+import '@fluencelabs/js-client.node';
+import { Fluence } from '@fluencelabs/js-client.api';
+import { randomKras } from '@fluencelabs/fluence-network-environment';
+import { registerHelloWorld, sayHello, getRelayTime, tellFortune } from './_aqua/hello-world.js';
 
 export async function main() {
-    await Fluence.start({ connectTo: krasnodar[0] });
+    await Fluence.connect(randomKras());
 
     registerHelloWorld({
         hello: (str) => {
@@ -25,5 +26,5 @@ export async function main() {
 
     console.log('The relay time is: ', new Date(relayTime).toLocaleString());
 
-    await Fluence.stop();
+    await Fluence.disconnect();
 }

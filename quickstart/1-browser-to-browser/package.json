@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@fluencelabs/fluence": "0.28.0",
+        "@fluencelabs/js-client.api": "0.11.2",
         "@fluencelabs/fluence-network-environment": "1.0.14",
         "@testing-library/jest-dom": "^5.14.1",
         "@testing-library/react": "^11.2.7",
@@ -20,7 +20,6 @@
         "web-vitals": "^1.1.2"
     },
     "scripts": {
-        "postinstall": "copy-marine public",
         "prestart": "npm run compile-aqua",
         "prebuild": "npm run compile-aqua",
         "start": "react-scripts start",
@@ -28,8 +27,8 @@
         "test": "jest --config=jest.config.js",
         "_test": "react-scripts test",
         "eject": "react-scripts eject",
-        "compile-aqua": "aqua -i ./aqua/ -o ./src/_aqua",
-        "watch-aqua": "chokidar \"**/*.aqua\" -c \"npm run compile-aqua\""
+        "compile-aqua": "fluence aqua -i ./aqua/ -o ./src/_aqua",
+        "watch-aqua": "fluence aqua -w -i ./aqua/ -o ./src/_aqua"
     },
     "eslintConfig": {
         "extends": [
@@ -52,13 +51,12 @@
         ]
     },
     "devDependencies": {
-        "@fluencelabs/aqua": "0.9.4",
+        "@fluencelabs/cli": "0.2.41",
         "@fluencelabs/aqua-lib": "0.6.0",
         "@types/jest-environment-puppeteer": "^4.4.1",
         "@types/puppeteer": "^5.4.4",
-        "chokidar-cli": "^2.1.0",
         "jest-puppeteer": "^6.0.2",
-        "node-sass": "^6.0.1",
+        "sass": "^1.58.3",
         "serve": "^13.0.2",
         "ts-jest": "^27.1.3"
     }
