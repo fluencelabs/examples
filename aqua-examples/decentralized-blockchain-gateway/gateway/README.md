@@ -28,13 +28,19 @@ where config is:
   "serviceId": "eth-rpc serviceId",
   "port": 3000,
   "counterServiceId": null,
-  "counterPeerId": null
+  "counterPeerId": null,
+  "quorumServiceId": null,
+  "quorumPeerId": null,
+  "quorumNumber": null
 }
 ```
 
 `counterServiceId` and `counterPeerId` is credentials to counter service for `round-robin` mode. Will be used local counter if undefined.
+`quorumServiceId` and `quorumPeerId` is credentials to counter service for `round-robin` mode. Will be used local counter if undefined.
+`quorumNumber` is `2` by default.
 
 ## Mode
 
 `random` - choose providers randomly
 `round-robin` - choose providers in circle order
+`quorum` - call all providers and choose the result that is the same from `>= quorumNumber` providers. Or return an error.
