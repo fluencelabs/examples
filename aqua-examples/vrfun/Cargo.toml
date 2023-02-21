@@ -17,7 +17,7 @@ ecvrf = "0.4.3"
 zeroize = "1.5.7"
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.8.1"
+marine-rs-sdk-test = "0.8.2"
 
 [dev]
 [profile.release]
