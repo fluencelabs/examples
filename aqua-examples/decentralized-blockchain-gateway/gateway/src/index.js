@@ -5,7 +5,8 @@
 import express from "express";
 import bodyParser from "body-parser";
 import {JSONRPCServer} from "json-rpc-2.0";
-import {FluencePeer} from "@fluencelabs/fluence";
+import {Fluence} from '@fluencelabs/js-client.api';
+import "@fluencelabs/js-client.node"
 import {randomLoadBalancingEth, registerCounter, registerLogger, roundRobinEth} from "../aqua-compiled/rpc.js";
 import {readArguments} from "./arguments.js";
 import {readConfig} from "./config.js";
@@ -34,11 +35,11 @@ const route = "/";
 const server = new JSONRPCServer();
 
 // initialize fluence client
-const fluence = new FluencePeer();
-await fluence.start({connectTo: config.relay});
+await Fluence.connect(config.relay);
+const peerId = (await Fluence.getClient()).getPeerId()
 
 // handler for logger
-registerLogger(fluence, {
+registerLogger({
     log: s => {
         console.log("log: " + s);
     },
@@ -48,7 +49,7 @@ registerLogger(fluence, {
 })
 
 let counter = 0;
-registerCounter(fluence, "counter", {
+registerCounter("counter", {
     incrementAndReturn: () => {
         counter++;
         console.log("Counter: " + counter)
@@ -57,16 +58,16 @@ registerCounter(fluence, "counter", {
 })
 
 const counterServiceId = config.counterServiceId  || 'counter'
-const counterPeerId = config.counterPeerId || fluence.getStatus().peerId
+const counterPeerId = config.counterPeerId || peerId
 
 async function methodHandler(req, method) {
     console.log(`Receiving request '${method}'`);
     let result;
     if (!config.mode || config.mode === "random") {
-        result = await randomLoadBalancingEth(fluence, config.providers, method, req.map((s) => JSON.stringify(s)), config.serviceId);
+        result = await randomLoadBalancingEth(config.providers, method, req.map((s) => JSON.stringify(s)), config.serviceId);
     } else if (config.mode === "round-robin") {
-        console.log("peerId: " + fluence.getStatus().peerId)
-        result = await roundRobinEth(fluence, config.providers, method, req.map((s) => JSON.stringify(s)), config.serviceId, counterServiceId, counterPeerId,
+        console.log("peerId: " + peerId)
+        result = await roundRobinEth(config.providers, method, req.map((s) => JSON.stringify(s)), config.serviceId, counterServiceId, counterPeerId,
             config.serviceId);
     }
 

@@ -44,7 +44,7 @@ func roundRobin(uris: []string, method: string, jsonArgs: []string, serviceId: s
     Counter counterServiceId
     requestNumber <- Counter.incrementAndReturn()
   on INIT_PEER_ID:
-    providerNumber = requestNumber % Op.array_length(uris)
+    providerNumber = requestNumber % uris.length
     Logger.logCall(uris[providerNumber])
   <- callFunc(uris[providerNumber], method, jsonArgs, serviceId)
 
