@@ -1,12 +1,12 @@
 [package]
-name = "record-effector"
+name = "record-facade"
 version = "0.1.0"
 authors = ["Fluence Labs"]
 edition = "2018"
 publish = false
 
 [[bin]]
-name = "records_effector"
+name = "records_facade"
 path = "src/main.rs"
 
 [dependencies]

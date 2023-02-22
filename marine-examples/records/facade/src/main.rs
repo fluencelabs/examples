@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#![allow(improper_ctypes)]
+
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 
@@ -24,20 +26,28 @@ module_manifest!();
 pub fn main() {}
 
 #[marine]
-pub fn mutate_struct(mut test_record: test_record::TestRecord) -> TestRecord {
-    test_record.field_0 = true;
-    test_record.field_1 = 1;
-    test_record.field_2 = 2;
-    test_record.field_3 = 3;
-    test_record.field_4 = 4;
-    test_record.field_5 = 5;
-    test_record.field_6 = 6;
-    test_record.field_7 = 7;
-    test_record.field_8 = 8;
-    test_record.field_9 = 9f32;
-    test_record.field_10 = 10f64;
-    test_record.field_11 = "field_11".to_string();
-    test_record.field_12 = vec![0x13, 0x37];
+pub fn invoke() -> TestRecord {
+    let test_record = TestRecord {
+        field_0: false,
+        field_1: 0,
+        field_2: 0,
+        field_3: 0,
+        field_4: 0,
+        field_5: 0,
+        field_6: 0,
+        field_7: 0,
+        field_8: 0,
+        field_9: 0f32,
+        field_10: 0f64,
+        field_11: String::new(),
+        field_12: Vec::new(),
+    };
 
-    test_record
+    mutate_struct(test_record)
+}
+
+#[marine]
+#[link(wasm_import_module = "records_pure")]
+extern "C" {
+    pub fn mutate_struct(test_record: TestRecord) -> TestRecord;
 }

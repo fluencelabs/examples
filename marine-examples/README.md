@@ -10,6 +10,7 @@ Figure 1: Module And Service Creation With The Marine Toolchain
 
 ```mermaid
     stateDiagram
+    
     state "Rust Marine Code" as Code
     state "Build wasm32-wasi Module" as Build
     state "Test Wasm App With Cargo" as Test
@@ -26,9 +27,10 @@ Figure 1: Module And Service Creation With The Marine Toolchain
     Build --> Test
     Build --> Deploy
     Service --> Deploy
+
 ```
 
-Wasm modules can also be accessed locally through the Marine REPL and tested with `cargo test`.
+Wasm modules can also be accessed locally through the Marine REPL and tested with `cargo test`. Moreover, most of the examples listed below have a packaging script providing modules in the archived format, i.e., tar.gz, for easy import into [fluence cli](https://github.com/fluencelabs/fluence-cli) projects.
 
 ## Greeting Example
 
