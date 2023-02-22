@@ -26,7 +26,7 @@
     },
     "dependencies": {
         "@fluencelabs/js-client.api": "0.11.3",
-        "@fluencelabs/js-client.node": "0.6.4",
+        "@fluencelabs/js-client.node": "0.6.5",
         "@fluencelabs/fluence-network-environment": "1.0.14"
     }
 }
