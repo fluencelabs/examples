@@ -18,4 +18,4 @@ npm start
 
 ## Learn more
 
-To learn more refer the [documentation page](http://localhost:3000/docs/build/js-client/js-client)
+To learn more refer the [documentation page](https://fluence.dev//docs/build/js-client/js-client)
