@@ -8,5 +8,5 @@ marine build --release
 mkdir -p artifacts
 rm -f artifacts/*.wasm
 cp target/wasm32-wasi/release/sqlite_test.wasm artifacts/
-wget https://github.com/fluencelabs/sqlite/releases/download/v0.15.0_w/sqlite3.wasm
+wget https://github.com/fluencelabs/sqlite/releases/download/v0.17.1_w/sqlite3.wasm
 mv sqlite3.wasm artifacts/
