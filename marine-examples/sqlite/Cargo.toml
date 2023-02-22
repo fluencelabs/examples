@@ -14,4 +14,4 @@ marine-rs-sdk = "0.7.1"
 marine-sqlite-connector = "0.5.1"
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.8.1"
+marine-rs-sdk-test = "0.8.2"
