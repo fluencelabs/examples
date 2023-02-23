@@ -11,5 +11,7 @@
   "counterPeerId": null,
   "quorumServiceId": null,
   "quorumPeerId": null,
-  "quorumNumber": 2
+  "quorumNumber": 2,
+  "quorumTimeout": null,
+  "requestTimeout": null
 }
