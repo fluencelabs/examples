@@ -1,6 +1,6 @@
 {
   "name": "@fluencelabs/aqua-eth-gateway",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "",
   "main": "src/index.js",
   "type": "module",
@@ -22,10 +22,9 @@
   "dependencies": {
     "json-rpc-2.0": "1.4.2",
     "web3": "1.8.2",
-    "@fluencelabs/fluence": "0.28.0"
-  },
-  "devDependencies": {
     "@fluencelabs/js-client.node": "0.6.5",
     "@fluencelabs/js-client.api": "0.11.3"
+  },
+  "devDependencies": {
   }
 }
