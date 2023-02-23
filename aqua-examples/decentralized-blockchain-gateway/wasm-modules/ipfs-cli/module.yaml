@@ -6,4 +6,4 @@
 
 version: 0
 type: rust
-name: ipfs_cli
+name: ipfs-cli

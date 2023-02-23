@@ -6,4 +6,4 @@
 
 version: 0
 type: rust
-name: simple_quorum
+name: simple-quorum

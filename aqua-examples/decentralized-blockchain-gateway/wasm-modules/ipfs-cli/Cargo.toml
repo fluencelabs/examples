@@ -7,7 +7,7 @@ description = "ipfs-cli, a Marine wasi module"
 license = "Apache-2.0"
 
 [[bin]]
-name = "ipfs_cli"
+name = "ipfs-cli"
 path = "src/main.rs"
 
 [dependencies]
@@ -18,7 +18,3 @@ serde = "1.0.137"
 
 [dev-dependencies]
 marine-rs-sdk-test = "0.8.2"
-
-[dev]
-[profile.release]
-opt-level = "s"
