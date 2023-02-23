@@ -31,13 +31,17 @@ where config is:
   "counterPeerId": null,
   "quorumServiceId": null,
   "quorumPeerId": null,
-  "quorumNumber": null
+  "quorumNumber": null,
+  "quorumTimeout": null,
+  "requestTimeout": null
 }
 ```
 
 `counterServiceId` and `counterPeerId` is credentials to counter service for `round-robin` mode. Will be used local counter if undefined.
 `quorumServiceId` and `quorumPeerId` is credentials to counter service for `round-robin` mode. Will be used local counter if undefined.
 `quorumNumber` is `2` by default.
+`quorumTimeout` is how long we will wait for all responses
+`requestTimeout` is how long we will wait for aqua request
 
 ## Mode
 

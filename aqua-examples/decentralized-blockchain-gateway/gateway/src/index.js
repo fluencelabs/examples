@@ -65,7 +65,7 @@ registerCounter("counter", {
 })
 
 function findSameResults(results, minNum) {
-    const resultCounts = results.filter((obj) => obj.success).map((obj) => obj.value).reduce(function(i, v, idx) {
+    const resultCounts = results.filter((obj) => obj.success).map((obj) => obj.value).reduce(function(i, v) {
         if (i[v] === undefined) {
             i[v] = 1
         } else {
@@ -106,19 +106,21 @@ const counterPeerId = config.counterPeerId || peerId
 const quorumServiceId = config.quorumServiceId  || 'quorum'
 const quorumPeerId = config.quorumPeerId || peerId
 const quorumNumber = config.quorumNumber || 2
+const quorumTimeout = config.quorumTimeout || 10000
+const requestTimeoutConfig = config.requestTimeout ? {ttl: config.requestTimeout} : null
 
 async function methodHandler(req, method) {
     console.log(`Receiving request '${method}'`);
     let result;
     if (!config.mode || config.mode === "random") {
-        result = await randomLoadBalancingEth(config.providers, method, req.map((s) => JSON.stringify(s)), config.serviceId);
+        result = await randomLoadBalancingEth(config.providers, method, req.map((s) => JSON.stringify(s)), config.serviceId, requestTimeoutConfig);
     } else if (config.mode === "round-robin") {
         console.log("peerId: " + peerId)
         result = await roundRobinEth(config.providers, method, req.map((s) => JSON.stringify(s)), config.serviceId, counterServiceId, counterPeerId,
-            config.serviceId);
+            config.serviceId, requestTimeoutConfig);
     } else if (config.mode === "quorum") {
-        result = await quorumEth(config.providers, config.quorumNumber, 5000, method, req.map((s) => JSON.stringify(s)), config.serviceId, quorumServiceId, quorumPeerId,
-            config.serviceId);
+        result = await quorumEth(config.providers, quorumNumber, quorumTimeout, method, req.map((s) => JSON.stringify(s)), config.serviceId, quorumServiceId, quorumPeerId,
+            config.serviceId, requestTimeoutConfig);
 
         if (result.error) {
             return {error: result.error, results: result.results}
