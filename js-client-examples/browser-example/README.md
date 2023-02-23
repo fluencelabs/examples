@@ -26,4 +26,4 @@ The browser window with `localhost:3000` should open
 
 ## Learn more
 
-To learn more refer the [documentation page](https://fluence.dev//docs/build/js-client/js-client)
+To learn more, refer to the [documentation page](https://fluence.dev//docs/build/js-client/js-client)
