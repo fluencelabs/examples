@@ -15,10 +15,6 @@ dependencies:
     marine: 0.12.5
     mrepl: 0.18.8
 services:
-  ipfs_package:
-    get: ./configs/services/ipfs-package
-    deploy:
-      - deployId: default
   multi_provider_query:
     get: configs/services/multi-provider-query
     deploy:
@@ -33,5 +29,9 @@ services:
       - deployId: default
   eth_rpc:
     get: configs/services/eth-rpc
+    deploy:
+      - deployId: default
+  ipfs_package:
+    get: configs/services/ipfs-package
     deploy:
       - deployId: default

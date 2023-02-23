@@ -7,7 +7,7 @@ description = "ipfs-adapter, a Marine wasi module"
 license = "Apache-2.0"
 
 [[bin]]
-name = "ipfs_adapter"
+name = "ipfs-adapter"
 path = "src/main.rs"
 
 [dependencies]
@@ -17,6 +17,3 @@ log = "0.4.14"
 [dev-dependencies]
 marine-rs-sdk-test = "0.8.2"
 
-[dev]
-[profile.release]
-opt-level = "s"

@@ -6,6 +6,6 @@
 
 version: 0
 type: rust
-name: ipfs_adapter
+name: ipfs-adapter
 mountedBinaries:
   ipfs: /usr/bin/ipfs

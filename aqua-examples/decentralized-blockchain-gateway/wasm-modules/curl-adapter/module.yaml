@@ -6,6 +6,6 @@
 
 version: 0
 type: rust
-name: curl_adapter
+name: curl-adapter
 mountedBinaries:
   curl: /usr/bin/curl

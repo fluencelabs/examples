@@ -1,10 +1,10 @@
 [package]
-name = "multi_provider_query"
+name = "multi-provider-query"
 version = "0.1.0"
 edition = "2018"
 
 [[bin]]
-name = "multi_provider_query"
+name = "multi-provider-query"
 path = "src/main.rs"
 
 [dependencies]

@@ -1,5 +1,5 @@
 [package]
-name = "curl_adapter"
+name = "curl-adapter"
 version = "0.1.0"
 authors = ["Fluence Labs"]
 edition = "2018"
@@ -7,7 +7,7 @@ publish = false
 
 [[bin]]
 path = "src/main.rs"
-name = "curl_adapter"
+name = "curl-adapter"
 
 [dependencies]
 marine-rs-sdk = "0.7.1"
