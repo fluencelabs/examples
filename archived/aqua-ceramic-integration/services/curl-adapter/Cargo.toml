@@ -1,0 +1,21 @@
+[package]
+name = "curl-adapter"
+version = "0.1.0"
+authors = ["Fluence Labs"]
+edition = "2018"
+publish = false
+
+[[bin]]
+path = "src/main.rs"
+name = "curl_adapter"
+
+[dependencies]
+marine-rs-sdk = { version = "0.7.1", features = ["logger"] }
+log = "0.4.14"
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.8.1"
+
+[dev]
+[profile.release]
+opt-level = "s"

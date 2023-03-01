@@ -1,0 +1,23 @@
+{
+  "ceramic-service": {
+    "name": "ceramic-service",
+    "modules": [
+      {
+        "name": "curl_adapter",
+        "path": "./artifacts/curl_adapter.wasm",
+        "mounted_binaries": [["curl", "/usr/bin/curl"]],
+        "preopened_files": null,
+        "mapped_dirs": null,
+        "logger_enabled": true
+      },
+      {
+        "name": "ceramic_adapter_custom",
+        "path": "./artifacts/ceramic_adapter_custom.wasm",
+        "mounted_binaries": [["ceramic", "/usr/bin/ceramic"]],
+        "preopened_files": null,
+        "mapped_dirs": null,
+        "logger_enabled": true
+      }
+    ]
+  }
+}
