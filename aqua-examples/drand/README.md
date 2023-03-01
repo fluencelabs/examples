@@ -1,5 +1,6 @@
 # League Of Entropy Drand
 
+> The build and deploy instructions as well as some of the Aqua code are outdated and the deployed services are no longer available. An updated version will be available soon.
 ## Introduction
 
 Randomness is critical to many application ranging from statistical sampling to games to cryptography. [Randomness](https://en.wikipedia.org/wiki/Randomness) is defined to be void of any predictability and sequential randomness should have no order. Yet, randomness is hard to come by to begin with and even more so in open, permissionless systems where we want not only randomness but verifiable randomness. In our [VRFun](../vrfun/) example, we illustrate how [Verifiable Random Functions](https://people.csail.mit.edu/silvio/Selected%20Scientific%20Papers/Pseudo%20Randomness/Verifiable_Random_Functions.pdf) can be used to satisfy this requirement. However, using the implemented VRF requires the user to provide (a one-time) secret key introducing a significant, and in most cases untenable, element of trust.

@@ -1,6 +1,6 @@
 # Price Oracle With Fluence And Aqua
 
-
+> The build and deploy instructions as well as some of the Aqua code are outdated and the deployed services are no longer available. An updated version will be available soon.
 ## About Fluence
 
 Fluence provides an open Web3 protocol, framework and associated tooling to develop and host applications, interfaces and backends on permissionless peer-to-peer networks. An integral part of the Fluence solution is the Aquamarine stack comprised of Aqua and Marine. Aqua is a new programming language and paradigm purpose-built to program distributed networks and compose applications from distributed services. Marine is a general purpose Wasm runtime and toolkit, allows developers to build distributed services that can be composed into distributed applications by Aqua.

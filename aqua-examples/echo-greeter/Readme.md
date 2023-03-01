@@ -1,5 +1,7 @@
 # Greeting Service
 
+> The build and deploy instructions as well as some of the Aqua code are outdated and the deployed services are no longer available. An updated version will be available soon.
+
 In this example we illustrate the implementation and composition of two services into a decentralized application with Aqua. Specifically, we use a hosted greeting, aka *hello world*, service as a consumer of the output of another hosted service with Aqua. For the purpose of this example let's call our upstream service *echo-service*, which simply echos inputs.  *Echo-service* can be viewed as a placeholder for, say, a database or formatting service.  
 
 ## Requirements

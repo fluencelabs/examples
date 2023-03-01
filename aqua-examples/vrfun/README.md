@@ -1,5 +1,6 @@
 # Verifiable Random Function With Marine And Aqua
 
+> The build and deploy instructions as well as some of the Aqua code are outdated and the deployed services are no longer available. An updated version will be available soon.
 ## Overview
 
 A [Verifiable Random Function](https://people.csail.mit.edu/silvio/Selected%20Scientific%20Papers/Pseudo%20Randomness/Verifiable_Random_Functions.pdf) (VRF) is a pseudorandom function that provides proofs that its outputs were constructed in a verifiable manner. While the proof is constructed with both public and private data, i.e., private key, the verification only requires the public data. Not surprisingly, VRFs play an important role in trustless systems, such as blockchain protocols and, of course, the Fluence network. We are implementing [ECVRF](https://github.com/Silur/ECVRF), which uses ED25519, as a Marine Wasm off-chain service callable from Aqua.

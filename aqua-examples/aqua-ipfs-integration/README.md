@@ -1,5 +1,7 @@
 # IPFS code execution example
 
+> The build and deploy instructions as well as some of the Aqua code are outdated and the deployed services are no longer available. An updated version will be available soon.
+
 This example showcases 2 things:
 
 1. how it's possible to store .wasm modules on IPFS, then deploy them to Fluence as a service
