@@ -1,8 +1,0 @@
-{
-  "name": "ceramic_adapter_custom",
-  "mountedBinaries": {
-    "ceramic": "/usr/bin/ceramic"
-  },
-  "max_heap_size": "100 KiB",
-  "logger_enabled": true
-}

@@ -1,8 +1,0 @@
-{
-  "name": "curl_adapter",
-  "mountedBinaries": {
-    "curl": "/usr/bin/curl"
-  },
-  "mem_page_count": 100,
-  "logger_enabled": true
-}
