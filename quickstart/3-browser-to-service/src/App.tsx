@@ -1,24 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.scss';
 
-import { Fluence } from '@fluencelabs/fluence';
-import { krasnodar } from '@fluencelabs/fluence-network-environment';
-import { registerHelloPeer, sayHello } from './_aqua/getting-started';
+import { Fluence } from '@fluencelabs/js-client.api';
+import type { ConnectionState } from '@fluencelabs/js-client.api';
+import { kras } from '@fluencelabs/fluence-network-environment';
+import { sayHello, registerHelloPeer } from './_aqua/getting-started';
 
-const relayNodes = [krasnodar[3], krasnodar[4], krasnodar[5]];
+const relayNodes = [kras[4], kras[5], kras[6]];
 
 function App() {
-    const [isConnected, setIsConnected] = useState<boolean>(false);
+    const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
+    const [peerInfo, setPeerInfo] = useState<{ peerId: string; relayPeerId: string } | null>(null);
     const [helloMessage, setHelloMessage] = useState<string | null>(null);
 
     const [peerIdInput, setPeerIdInput] = useState<string>('');
     const [relayPeerIdInput, setRelayPeerIdInput] = useState<string>('');
 
+    useEffect(() => {
+        Fluence.onConnectionStateChange((state) => {
+            console.log('Connection state changed to: ', state);
+            setConnectionState(state);
+
+            if (state === 'connected') {
+                Fluence.getClient().then((client) => {
+                    const peerId = client.getPeerId();
+                    const relayPeerId = client.getRelayPeerId();
+                    setPeerInfo({ peerId, relayPeerId });
+                });
+            }
+        });
+    }, []);
+
     const connect = async (relayPeerId: string) => {
         try {
-            await Fluence.start({ connectTo: relayPeerId });
-            setIsConnected(true);
+            await Fluence.connect(relayPeerId);
+
             // Register handler for this call in aqua:
             // HelloPeer.hello(%init_peer_id%)
             registerHelloPeer({
@@ -28,19 +45,21 @@ function App() {
                 },
             });
         } catch (err) {
-            console.log('Peer initialization failed', err);
+            console.log('Client could not connect', err);
         }
     };
 
     const helloBtnOnClick = async () => {
-        if (!isConnected) {
+        if (connectionState !== 'connected') {
             return;
         }
 
-        // Using aqua is as easy as calling a javascript funсtion
+        // Using aqua is as easy as calling a javascript function
         const res = await sayHello(peerIdInput, relayPeerIdInput);
         setHelloMessage(res);
     };
+
+    const isConnected = connectionState === 'connected';
 
     return (
         <div className="App">
@@ -49,20 +68,20 @@ function App() {
             </header>
 
             <div className="content">
+                <h1>{connectionState}</h1>
                 {isConnected ? (
                     <>
-                        <h1>Connected</h1>
                         <table>
                             <tbody>
                                 <tr>
                                     <td className="bold">Peer id:</td>
                                     <td className="mono">
-                                        <span id="peerId">{Fluence.getStatus().peerId!}</span>
+                                        <span id="peerId">{peerInfo?.peerId}</span>
                                     </td>
                                     <td>
                                         <button
                                             className="btn-clipboard"
-                                            onClick={() => copyToClipboard(Fluence.getStatus().peerId!)}
+                                            onClick={() => copyToClipboard(peerInfo?.peerId)}
                                         >
                                             <i className="gg-clipboard"></i>
                                         </button>
@@ -71,12 +90,12 @@ function App() {
                                 <tr>
                                     <td className="bold">Relay peer id:</td>
                                     <td className="mono">
-                                        <span id="relayId">{Fluence.getStatus().relayPeerId!}</span>
+                                        <span id="relayId">{peerInfo?.relayPeerId}</span>
                                     </td>
                                     <td>
                                         <button
                                             className="btn-clipboard"
-                                            onClick={() => copyToClipboard(Fluence.getStatus().relayPeerId!)}
+                                            onClick={() => copyToClipboard(peerInfo?.relayPeerId)}
                                         >
                                             <i className="gg-clipboard"></i>
                                         </button>
@@ -146,8 +165,10 @@ function App() {
     );
 }
 
-const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+const copyToClipboard = (text?: string) => {
+    if (text) {
+        navigator.clipboard.writeText(text);
+    }
 };
 
 export default App;

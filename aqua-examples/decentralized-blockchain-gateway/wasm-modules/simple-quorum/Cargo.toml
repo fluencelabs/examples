@@ -7,7 +7,7 @@ description = "simple-quorum, a Marine wasi module"
 license = "Apache-2.0"
 
 [[bin]]
-name = "simple_quorum"
+name = "simple-quorum"
 path = "src/main.rs"
 
 [dependencies]
@@ -18,8 +18,5 @@ serde = "1.0.137"
 streaming-stats = "0.2.3"
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.8.1"
+marine-rs-sdk-test = "0.8.2"
 
-[dev]
-[profile.release]
-opt-level = "s"

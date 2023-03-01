@@ -1,0 +1,87 @@
+data RPCResponse:
+    value: string
+    success: bool
+    error: ?string
+
+data RPCResult:
+    stdout: RPCResponse  -- JSON-RPC result
+    stderr: string  -- curl error and other non json-rpc errors
+
+data Web3Balance:
+    balance: ?string -- hex string bignum
+    success: bool
+    error: ?string
+
+data Web3GasUsed:
+    gas_used: ?string -- hex string
+    success: bool
+    error: ?string
+
+data Web3EthCall:
+    result: ?string -- hex string
+    success: bool
+    error: ?string
+
+service ParseToWeb3Balances("json"):
+    parse(s:string) -> Web3Balance
+
+-- e.g., https://docs.infura.io/infura/networks/ethereum/json-rpc-methods/eth_getbalance
+service Web3Services("service-id"):
+    call_eth_get_balance() -> RPCResult
+    call_eth_estimate_gas() -> RPCResult
+    call_eth_call() -> RPCResult
+
+-- rpc_params: account id, blockheight: ususally "latest"
+-- or we create a data struct and serialize it in aqua to []string
+func eth_ getBalance(peerid: string, service_id: string, uri: string, rpc_params: Vec<String>, nonce: u32) -> Web3Balance:
+    result: *Web3Balance
+    on peerid:
+        Web3Services service_id
+        res <- Web3Services.call_eth_get_balance(uri, rpc_params, nonce)
+        if res.stdout.success==true:
+            result.balance <- res.stdout.value
+            result.success <<- true
+        else:
+            result.success <<- false
+            result.error <<- res.stdout.value
+    <- result[0]
+
+-- here the data struct approach seems to make even more sense as we need the transaction call object:
+-- data TObject:
+--     from: ?[]u8 -- optional 20 bytes, address tx is sent from
+--     to: []u8 -- 20 bytes to address
+--     gas: ?string -- gas provided for execution of method haxadecimal
+--     gasPrice: ?string -- gasPrice used, hexadecimal
+--     maxFeesPerGase: ?string -- maximum fee in wei
+--     value: ?string -- value sent with tx, hexadecimal
+--     data: ?string -- hash of method signature and encoded params
+--func eth_estimateGas(peerid: string, service_id: string, uri: string, t_obj: TObject, nonce: u32) -> Web3GasUsed:
+-- the "easy" way: Vec<String>
+func eth_estimateGas(peerid: string, service_id: string, uri: string, rpc_params: []string, nonce: u32) -> Web3GasUsed:
+    result: *Web3Gas
+    on peerid:
+        Web3Services service_id
+        res <- Web3Services.call_eth_estimate_gas(uri, rpc_params, nonce)
+        if res.stdout.success==true:
+            result.gas_used <- res.stdout.value
+            result.success <<- true
+        else:
+            result.success <<- false
+            result.error <<- res.stdout.value
+    <- result
+
+-- also a big intake object, e.g. https://docs.infura.io/infura/networks/ethereum/json-rpc-methods/eth_call
+-- easy way -- client serializes to []string 
+func eth_call(peerid: string, service_id: string, uri: string, rpc_params: []string, nonce: u32) -> Web3EthCall:
+    result: *Web3EthCall
+    on peerid:
+        Web3Services service_id
+        res <- Web3Services.call_eth_call(uri, rpc_params, nonce)
+        if res.stdout.success==true:
+            result.result <- res.stdout.value
+            result.success <<- true
+        else:
+            result.success <<- false
+            result.error <<- res.stdout.error      ---not sure if this is how Web3 does it if there is a Revert error, e.g. https://docs.infura.io/infura/networks/ethereum/json-rpc-methods/eth_call
+    <- result
+

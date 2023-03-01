@@ -47,6 +47,7 @@ fn mode<'a>(data: impl ExactSizeIterator<Item = &'a EVMResult>) -> (u32, u64) {
     (*frequencies.get(&mode).unwrap(), *mode)
 }
 
+#[allow(unused)]
 fn mean<'a>(data: impl ExactSizeIterator<Item = &'a u64>) -> Option<f64> {
     let n = data.len() as u64;
     if n < 1 {

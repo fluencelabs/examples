@@ -1,0 +1,76 @@
+import "@fluencelabs/aqua-lib/builtin.aqua"
+
+export randomLoadBalancingEth, roundRobinEth, Counter, Logger
+
+data EthResult:
+  value: string
+  success: bool
+  error: string
+
+data QuorumResult:
+  value: string
+  results: []EthResult
+  error: string
+
+service Logger("logger"):
+  log(s: []string)
+  logCall(s: string)
+
+service NumOp("op"):
+  identity(n: u64) -> i64
+
+service Counter("counter"):
+  incrementAndReturn() -> u32
+
+service QuorumChecker("quorum"):
+  check(results: []EthResult, minResults: u32) -> QuorumResult
+
+func empty() -> EthResult:
+  <- EthResult(value = "", success = true, error = "")
+
+service EthCaller:
+  eth_call(uri: string, method: string, jsonArgs: []string) -> EthResult
+
+func call(uri: string, method: string, jsonArgs: []string, serviceId: string) -> EthResult:
+  EthCaller serviceId
+  on HOST_PEER_ID:
+    res <- EthCaller.eth_call(uri, method, jsonArgs)
+  <- res
+
+func randomLoadBalancing(uris: []string, method: string, jsonArgs: []string, serviceId: string, callFunc: string, string, []string, string -> EthResult) -> EthResult:
+  on INIT_PEER_ID:
+    time <- NumOp.identity(Peer.timestamp_sec())
+    providerNumber = time % Op.array_length(uris)
+    Logger.logCall(uris[providerNumber])
+  <- callFunc(uris[providerNumber], method, jsonArgs, serviceId)
+
+func randomLoadBalancingEth(uris: []string, method: string, jsonArgs: []string, serviceId: string) -> EthResult:
+  <- randomLoadBalancing(uris, method, jsonArgs, serviceId, call)
+
+func roundRobin(uris: []string, method: string, jsonArgs: []string, serviceId: string, counterServiceId: string, counterPeerId: string, callFunc: string, string, []string, string -> EthResult) -> EthResult:
+  on counterPeerId:
+    Counter counterServiceId
+    requestNumber <- Counter.incrementAndReturn()
+  on INIT_PEER_ID:
+    providerNumber = requestNumber % uris.length
+    Logger.logCall(uris[providerNumber])
+  <- callFunc(uris[providerNumber], method, jsonArgs, serviceId)
+
+func roundRobinEth(uris: []string, method: string, jsonArgs: []string, serviceId: string, counterServiceId: string, counterPeerId: string) -> EthResult:
+  <- roundRobin(uris, method, jsonArgs, serviceId, counterServiceId, counterPeerId, call)
+
+func quorum(uris: []string, quorumNumber: u32, timeout: u32, method: string, jsonArgs: []string, serviceId: string, quorumServiceId: string, quorumPeerId: string, 
+    callFunc: string, string, []string, string -> EthResult) -> QuorumResult:
+  results: *EthResult
+  on INIT_PEER_ID:
+    for uri <- uris par:
+      results <- callFunc(uri, method, jsonArgs, serviceId)
+  join results[uris.length - 1]
+  par Peer.timeout(timeout, "") 
+  on quorumPeerId:
+    Counter quorumServiceId
+    quorumResult <- QuorumChecker.check(results, quorumNumber)
+  <- quorumResult
+
+func quorumEth(uris: []string, quorumNumber: u32, timeout: u32, method: string, jsonArgs: []string, serviceId: string, quorumServiceId: string, quorumPeerId: string) -> QuorumResult:
+  <- quorum(uris, quorumNumber, timeout, method, jsonArgs, serviceId, quorumServiceId, quorumPeerId, call)

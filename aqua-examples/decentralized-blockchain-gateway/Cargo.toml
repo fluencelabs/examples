@@ -1,0 +1,13 @@
+[workspace]
+members = [
+  "wasm-modules/curl-adapter",
+  "wasm-modules/multi-provider-query",
+  "wasm-modules/simple-quorum",
+  "wasm-modules/utilities",
+  "wasm-modules/eth-rpc",
+  "wasm-modules/ipfs-adapter",
+  "wasm-modules/ipfs-cli"
+]
+
+[profile.release]
+opt-level = "s"

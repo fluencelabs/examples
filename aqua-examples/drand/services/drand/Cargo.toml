@@ -23,7 +23,7 @@ paired = "0.22.0"
 sha2 = "0.9.9"
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.8.1"
+marine-rs-sdk-test = "0.8.2"
 hex-literal = "0.3.4"
 
 [dev]

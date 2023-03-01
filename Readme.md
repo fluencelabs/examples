@@ -8,9 +8,6 @@ If you encounter a problem, please post an Issue or open a PR. If you want to co
 
 ## Resource Directory
 
-* The [Ceramic Integration](./aqua-examples/aqua-ceramic-integration/) provides an example Wasm adapter for the Ceramic [CLI API](https://developers.ceramic.network/build/cli/api/) and [HTTP API](https://developers.ceramic.network/build/http/api/).
-  * Rust Wasm, Aqua
-
 * The [IPFS Integration](./aqua-examples/aqua-ipfs-integration/) shows how to use the [aqua-ipfs](https://github.com/fluencelabs/aqua-ipfs) library to deploy single-module Wasm services to a Fluence node from a IPFS sidecar
   * Fluence JS, Aqua
 
