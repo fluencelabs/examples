@@ -1,0 +1,4 @@
+# yaml-language-server: $schema=../../../.fluence/schemas/module.yaml.json
+version: 0
+type: compiled
+name: sqlite3

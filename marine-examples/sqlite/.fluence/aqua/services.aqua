@@ -1,0 +1,6 @@
+service SqliteExample("sqlite_example"):
+  sql_repl()  
+  test1(age: i64)  
+  test2(age: i64)  
+  test3()  
+  test_last_rowid() -> i64

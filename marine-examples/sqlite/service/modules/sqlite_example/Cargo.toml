@@ -1,0 +1,15 @@
+[package]
+name = "sqlite_example"
+version = "0.1.0"
+edition = "2018"
+
+[[bin]]
+name = "sqlite_example"
+path = "src/main.rs"
+
+[dependencies]
+marine-rs-sdk = "0.7.1"
+marine-sqlite-connector = "0.8.0"
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.9.0"

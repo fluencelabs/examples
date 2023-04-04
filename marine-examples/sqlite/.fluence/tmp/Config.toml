@@ -1,0 +1,7 @@
+[[module]]
+name = "sqlite3"
+load_from = "/Users/bebo/localdev/examples/marine-examples/sqlite/service/modules/sqlite3/sqlite3.wasm"
+
+[[module]]
+name = "sqlite_example"
+load_from = "/Users/bebo/localdev/examples/marine-examples/sqlite/target/wasm32-wasi/release/sqlite_example.wasm"
