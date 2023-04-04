@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=.fluence/schemas/fluence.yaml.json
+
+# Defines Fluence Project, most importantly - what exactly you want to deploy and how. You can use `fluence init` command to generate a template for new Fluence project
+
+# Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/fluence.md
+
+version: 2
+aquaInputPath: src/aqua/main.aqua
+dependencies:
+  npm:
+    "@fluencelabs/aqua": 0.10.3
+    "@fluencelabs/aqua-lib": 0.6.0
+    "@fluencelabs/spell": 0.5.7
+    "@fluencelabs/registry": 0.8.2
+  cargo:
+    marine: 0.14.0
+    mrepl: 0.21.2
+workers:
+  defaultWorker:
+    services: [ url_downloader ]
+deals:
+  defaultWorker:
+    minWorkers: 1
+    targetWorkers: 3
+hosts:
+  defaultWorker:
+    peerIds:
+      - 12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr
+relays: kras
+services:
+  url_downloader:
+    get: service
