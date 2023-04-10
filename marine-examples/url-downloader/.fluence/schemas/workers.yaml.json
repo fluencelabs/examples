@@ -14,29 +14,6 @@
       "additionalProperties": {
         "type": "object",
         "properties": {
-          "installation_spells": {
-            "type": "array",
-            "description": "A list of installation spells",
-            "items": {
-              "type": "object",
-              "properties": {
-                "host_id": {
-                  "type": "string"
-                },
-                "spell_id": {
-                  "type": "string"
-                },
-                "worker_id": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "host_id",
-                "spell_id",
-                "worker_id"
-              ]
-            }
-          },
           "definition": {
             "type": "string"
           },
@@ -62,7 +39,6 @@
           }
         },
         "required": [
-          "installation_spells",
           "timestamp",
           "definition",
           "dealId",
@@ -80,6 +56,13 @@
       "additionalProperties": {
         "type": "object",
         "properties": {
+          "definition": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "ISO timestamp of the time when the worker was deployed"
+          },
           "installation_spells": {
             "type": "array",
             "description": "A list of installation spells",
@@ -103,21 +86,14 @@
               ]
             }
           },
-          "definition": {
-            "type": "string"
-          },
-          "timestamp": {
-            "type": "string",
-            "description": "ISO timestamp of the time when the worker was deployed"
-          },
           "relayId": {
             "type": "string"
           }
         },
         "required": [
-          "installation_spells",
           "timestamp",
           "definition",
+          "installation_spells",
           "relayId"
         ]
       },

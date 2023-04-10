@@ -5,7 +5,7 @@ import "@fluencelabs/registry/subnetwork.aqua"
 import Registry, Record from "@fluencelabs/registry/registry-service.aqua"
 import "@fluencelabs/spell/spell_service.aqua"
 
-export get_and_save, put, put_all, get, worker_n
+export get_and_save, put, put_all, put_workers, get_workers
 
 
 func getWorkers() -> []Record:
@@ -37,16 +37,35 @@ func put_all(file_name: string, file_content: []u8) -> []string:
           res <<- "failed to execute"
   <- res
 
-func put(file_name: string, file_content: []u8) -> string:
-  workers <- getWorkers()
-  w = workers[1]
-  on w.metadata.peer_id via w.metadata.relay_id:
-    res <- UrlDownloader.put(file_name, file_content)
-  <- res
-
 func get(file_name: string) -> []u8:
   workers <- getWorkers()
     w =  workers[5]
     on w.metadata.peer_id via w.metadata.relay_id:
     res <- UrlDownloader.get(file_name)
   <- res
+
+func put(file_name: string, file_content: []u8) -> string:
+  res: *string
+  workers <- getWorkers()
+  w = workers[1]
+  on w.metadata.peer_id via w.metadata.relay_id:
+    try:
+      res <- UrlDownloader.put(file_name, file_content)
+    catch e:
+      res <<- "nope"
+  <- res!
+
+func put_workers(file_name: string, file_content: []u8) -> string:
+  info <- getWorkersInfo()
+  spell = info.hosts.defaultWorker.installationSpells[0]
+  on spell.workerId via spell.hostId:
+    res <- UrlDownloader.put(file_name, file_content)
+  <- res
+
+func get_workers(file_name: string) -> []u8:
+  info <- getWorkersInfo()
+  spell = info.hosts.defaultWorker.installationSpells[0]
+  on spell.workerId via spell.hostId:
+    get <- UrlDownloader.get(file_name)
+  <- get
+

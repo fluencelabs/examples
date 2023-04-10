@@ -10,11 +10,11 @@ dependencies:
   npm:
     "@fluencelabs/aqua": 0.10.3
     "@fluencelabs/aqua-lib": 0.6.0
-    "@fluencelabs/spell": 0.5.7
-    "@fluencelabs/registry": 0.8.2
+    "@fluencelabs/spell": 0.5.9
+    "@fluencelabs/registry": 0.8.3
   cargo:
-    marine: 0.14.0
-    mrepl: 0.21.2
+    marine: 0.14.1
+    mrepl: 0.21.3
 workers:
   defaultWorker:
     services: [ url_downloader ]
@@ -25,8 +25,9 @@ deals:
 hosts:
   defaultWorker:
     peerIds:
-      - 12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr
-relays: kras
+      - 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE     #stage
+      # - 12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr     # kras
+relays: stage
 services:
   url_downloader:
     get: service
