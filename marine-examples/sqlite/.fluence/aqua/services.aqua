@@ -1,5 +1,6 @@
 service SqliteExample("sqlite_example"):
   sql_repl()  
+  stdout() -> string
   test1(age: i64)  
   test2(age: i64)  
   test3()  

@@ -8,10 +8,10 @@ version: 2
 aquaInputPath: src/aqua/main.aqua
 dependencies:
   npm:
-    "@fluencelabs/aqua": 0.10.2
+    "@fluencelabs/aqua": 0.10.3
     "@fluencelabs/aqua-lib": 0.6.0
-    "@fluencelabs/spell": 0.4.0
-    "@fluencelabs/registry": 0.7.1
+    "@fluencelabs/spell": 0.5.7
+    "@fluencelabs/registry": 0.8.3
   cargo:
     marine: 0.14.1
     mrepl: 0.21.3
