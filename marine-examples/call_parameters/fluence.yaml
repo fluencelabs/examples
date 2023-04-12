@@ -8,7 +8,7 @@ version: 2
 aquaInputPath: src/aqua/main.aqua
 workers:
   defaultWorker:
-    services: [ call_parameters ]
+    services: [call_parameters]
 deals:
   defaultWorker:
     minWorkers: 1
@@ -16,8 +16,9 @@ deals:
 hosts:
   defaultWorker:
     peerIds:
-      - 12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA
-relays: kras
+      - 12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA
+      # - 12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA
+relays: stage
 services:
   call_parameters:
     get: service
