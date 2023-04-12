@@ -7,7 +7,7 @@ use std::path::PathBuf;
 
 module_manifest!();
 
-const SITES_DIR: &str = "/sites/";
+const SITES_DIR: &str = "sites/";
 
 /// Log level can be changed by `RUST_LOG` env as well.
 pub fn main() {
@@ -20,9 +20,9 @@ pub fn put(name: String, file_content: Vec<u8>) -> String {
     log::info!("put called with file name {}\n", name);
     let rpc_tmp_filepath = format!("{}{}", SITES_DIR, name);
 
-    let result = fs::write(PathBuf::from(rpc_tmp_filepath.clone()), file_content);
+    let result = fs::write(PathBuf::from(rpc_tmp_filepath), file_content);
     if let Err(e) = result {
-        return format!("file can't be written: {}", e);
+        return format!("WTF WTF WTF: {}", e);
     }
 
     String::from("Ok")

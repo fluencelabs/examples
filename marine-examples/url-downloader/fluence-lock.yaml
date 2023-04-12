@@ -10,3 +10,5 @@ npm:
   "@fluencelabs/aqua-lib": 0.6.0
   "@fluencelabs/spell": 0.5.7
   "@fluencelabs/registry": 0.8.2
+cargo:
+  marine: 0.14.1

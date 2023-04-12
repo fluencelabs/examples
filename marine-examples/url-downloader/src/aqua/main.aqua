@@ -9,11 +9,12 @@ export get_and_save, put, put_all, get, worker_n
 
 
 func getWorkers() -> []Record:
-  workersInfo <- getWorkersInfo()
-  dealId = workersInfo.deals.defaultWorker.dealId
-  on HOST_PEER_ID:
-    workersOp <- resolveSubnetwork(dealId)
-  <- workersOp!
+  -- workersInfo <- getWorkersInfo()
+  -- dealId = workersInfo.deals.defaultWorker.dealId
+  -- on HOST_PEER_ID:
+  --   workersOp <- resolveSubnetwork(dealId)
+  -- <- workersOp!
+  <- []
 
 func worker_n() -> u32:
   workers <- getWorkers()
@@ -43,6 +44,14 @@ func put(file_name: string, file_content: []u8) -> string:
   on w.metadata.peer_id via w.metadata.relay_id:
     res <- UrlDownloader.put(file_name, file_content)
   <- res
+
+func put_workers(file_name: string, file_content: []u8) -> string, []u8:
+  info <- getWorkersInfo()
+  spell = info.hosts.defaultWorker.installationSpells[0]
+  on spell.workerId via spell.hostId:
+    res <- UrlDownloader.put(file_name, file_content)
+    get <- UrlDownloader.get(file_name)
+  <- res, get
 
 func get(file_name: string) -> []u8:
   workers <- getWorkers()

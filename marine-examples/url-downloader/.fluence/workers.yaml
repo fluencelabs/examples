@@ -5,12 +5,12 @@
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/workers.md
 
 version: 0
-deals:
+hosts:
   defaultWorker:
-    installation_spells: []
-    definition: bafkreihndikxxxvl6r2alrfzh7awwywiolyklkwxzmzoyfcolvlxho2zuy
-    timestamp: 2023-04-04T00:29:31.854Z
-    dealIdOriginal: "0xd0c75aEEA62bc0ABf16F5f01361277CC8287AB0E"
-    dealId: d0c75aeea62bc0abf16f5f01361277cc8287ab0e
-    chainNetwork: testnet
-    chainNetworkId: 80001
+    definition: bafkreic2hb3mqpqoapy6cb3ozzyvknds3jk5rvov5bty6zgdtegwg7j37i
+    installation_spells:
+      - host_id: 12D3KooWDcpWuyrMTDinqNgmXAuRdfd2mTdY9VoXZSAet2pDzh6r
+        spell_id: 05759fa5-5c23-4d1e-9a8f-512e866b363e
+        worker_id: 12D3KooWC99oo2UvyJU8b5oKQsRxBCSs9tbgeCvH9zP4Pt35Twtr
+    timestamp: 2023-04-12T17:15:00.700Z
+    relayId: 12D3KooWDcpWuyrMTDinqNgmXAuRdfd2mTdY9VoXZSAet2pDzh6r
