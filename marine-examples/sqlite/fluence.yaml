@@ -6,15 +6,6 @@
 
 version: 2
 aquaInputPath: src/aqua/main.aqua
-dependencies:
-  npm:
-    "@fluencelabs/aqua": 0.10.3
-    "@fluencelabs/aqua-lib": 0.6.0
-    "@fluencelabs/spell": 0.5.7
-    "@fluencelabs/registry": 0.8.3
-  cargo:
-    marine: 0.14.1
-    mrepl: 0.21.3
 workers:
   defaultWorker:
     services: [ sqlite_example ]
@@ -25,8 +16,11 @@ deals:
 hosts:
   defaultWorker:
     peerIds:
-      - 12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr
+      - 12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf
 relays: kras
 services:
   sqlite_example:
     get: service
+dependencies:
+  cargo:
+    mrepl: 0.21.3

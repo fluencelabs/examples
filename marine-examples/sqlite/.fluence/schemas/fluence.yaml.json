@@ -239,7 +239,7 @@
       "type": "object",
       "title": "Dependencies",
       "nullable": true,
-      "description": "A map of dependency versions",
+      "description": "(For advanced users) Overrides for the project dependencies",
       "properties": {
         "npm": {
           "type": "object",
