@@ -1,10 +1,10 @@
 [package]
-name = "sqlite_example"
+name = "sqlite_test"
 version = "0.1.0"
 edition = "2018"
 
 [[bin]]
-name = "sqlite_example"
+name = "sqlite_test"
 path = "src/main.rs"
 
 [dependencies]

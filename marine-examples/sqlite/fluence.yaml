@@ -8,7 +8,7 @@ version: 2
 aquaInputPath: src/aqua/main.aqua
 workers:
   defaultWorker:
-    services: [ sqlite_example ]
+    services: [ sqlite_test ]
 deals:
   defaultWorker:
     minWorkers: 1
@@ -16,11 +16,11 @@ deals:
 hosts:
   defaultWorker:
     peerIds:
-      - 12D3KooWHLxVhUQyAuZe6AHMB29P7wkvTNMn7eDMcsqimJYLKREf
+      - 12D3KooWFtf3rfCDAfWwt6oLZYZbDfn9Vn7bv7g6QjjQxUUEFVBt
 relays: kras
-services:
-  sqlite_example:
-    get: service
 dependencies:
   cargo:
     mrepl: 0.21.3
+services:
+  sqlite_test:
+    get: service

@@ -1,2 +1,2 @@
 [workspace]
-members = [ "service/modules/sqlite_example" ]
+members = [ "service/modules/sqlite_test" ]

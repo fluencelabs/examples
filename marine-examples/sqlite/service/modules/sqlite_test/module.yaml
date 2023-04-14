@@ -6,4 +6,4 @@
 
 version: 0
 type: rust
-name: sqlite_example
+name: sqlite_test

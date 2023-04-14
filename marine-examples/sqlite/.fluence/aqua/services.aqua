@@ -1,4 +1,4 @@
-service SqliteExample("sqlite_example"):
+service SqliteTest("sqlite_test"):
   sql_repl()  
   test1(age: i64)  
   test2(age: i64)  

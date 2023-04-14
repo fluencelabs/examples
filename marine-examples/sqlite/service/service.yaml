@@ -5,9 +5,9 @@
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/service.md
 
 version: 0
-name: sqlite_example
+name: sqlite_test
 modules:
   facade:
-    get: modules/sqlite_example
+    get: modules/sqlite_test
   sqlite3:
-    get: modules/sqlite3
+    get: https://github.com/fluencelabs/sqlite/releases/download/sqlite-wasm-v0.18.1/sqlite3.tar.gz
