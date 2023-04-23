@@ -1,52 +1,59 @@
-import "workers.aqua"
-import "services.aqua"
 import "@fluencelabs/aqua-lib/builtin.aqua"
 import "@fluencelabs/registry/subnetwork.aqua"
 import Registry, Record from "@fluencelabs/registry/registry-service.aqua"
 import "@fluencelabs/spell/spell_service.aqua"
 
-export get_and_save, put, put_all, get, worker_n
+import "workers.aqua"
+import "services.aqua"
 
+export put, get
+export put_workers, get_workers, get_and_save_workers
 
 func getWorkers() -> []Record:
   workersInfo <- getWorkersInfo()
   dealId = workersInfo.deals.defaultWorker.dealId
-  on HOST_PEER_ID:
-    workersOp <- resolveSubnetwork(dealId)
+  workersOp <- resolveSubnetwork(dealId)
   <- workersOp!
-
-func worker_n() -> u32:
-  workers <- getWorkers()
-  <- workers.length
-
-func get_and_save(url: string, fname: string) -> string:
-    workers <- getWorkers()
-    w =  workers[8]
-    on w.metadata.peer_id via w.metadata.relay_id:
-        res = UrlDownloader.get_n_save(url, fname)
-    <- res
-
-func put_all(file_name: string, file_content: []u8) -> []string:
-  res: *string
-  workers <- getWorkers()
-    for w <- workers:
-      on w.metadata.peer_id via w.metadata.relay_id:
-        try:
-          res <- UrlDownloader.put(file_name, file_content)
-        catch e:
-          res <<- "failed to execute"
-  <- res
 
 func put(file_name: string, file_content: []u8) -> string:
   workers <- getWorkers()
-  w = workers[1]
+  w = workers[0]
   on w.metadata.peer_id via w.metadata.relay_id:
     res <- UrlDownloader.put(file_name, file_content)
   <- res
 
+
 func get(file_name: string) -> []u8:
   workers <- getWorkers()
-    w =  workers[5]
-    on w.metadata.peer_id via w.metadata.relay_id:
+  w =  workers[0]
+  on w.metadata.peer_id via w.metadata.relay_id:
     res <- UrlDownloader.get(file_name)
+  <- res
+
+func get_and_save(url: string, fname: string) -> string:
+    workers <- getWorkers()
+    w =  workers[0]
+    on w.metadata.peer_id via w.metadata.relay_id:
+        res = UrlDownloader.get_n_save(url, fname)
+    <- res
+
+func put_workers(file_name: string, file_content: []u8) -> string:
+  info <- getWorkersInfo()
+  spell = info.hosts.defaultWorker.installationSpells[0]
+  on spell.workerId via spell.hostId:
+    res <- UrlDownloader.put(file_name, file_content)
+  <- res
+
+func get_workers(file_name: string) -> []u8:
+  info <- getWorkersInfo()
+  spell = info.hosts.defaultWorker.installationSpells[0]
+  on spell.workerId via spell.hostId:
+    res <- UrlDownloader.get(file_name)
+  <- res
+
+func get_and_save_workers(url: string, fname: string) -> string:
+  info <- getWorkersInfo()
+  spell = info.hosts.defaultWorker.installationSpells[0]
+  on spell.workerId via spell.hostId:
+      res = UrlDownloader.get_n_save(url, fname)
   <- res

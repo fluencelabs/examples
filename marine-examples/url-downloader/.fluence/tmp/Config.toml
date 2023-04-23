@@ -3,11 +3,8 @@ name = "local_storage"
 load_from = "/Users/bebo/localdev/examples/marine-examples/url-downloader/target/wasm32-wasi/release/local_storage.wasm"
 logger_enabled = true
 
-  [module.wasi]
-  preopened_files = [ "./tmp" ]
-
-    [module.wasi.mapped_dirs]
-    sites = "./tmp"
+[module.wasi.mapped_dirs]
+sites = "./tmp"
 
 [[module]]
 name = "curl_adapter"

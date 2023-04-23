@@ -5,12 +5,20 @@
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/workers.md
 
 version: 0
+hosts:
+  defaultWorker:
+    definition: bafkreicdordcic2qmd2pnacl5adffsuhwg4eleu4prcgaldjvzr6ds2f2m
+    installation_spells:
+      - host_id: 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE
+        spell_id: 039f4e06-923e-4a21-8814-8164fa9b137c
+        worker_id: 12D3KooWKsxVXgnpL4wrTts9d49jiNSEN1auaxotdMYa4HpFS66g
+    timestamp: 2023-04-23T07:00:05.549Z
+    relayId: 12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA
 deals:
   defaultWorker:
-    installation_spells: []
-    definition: bafkreihndikxxxvl6r2alrfzh7awwywiolyklkwxzmzoyfcolvlxho2zuy
-    timestamp: 2023-04-04T00:29:31.854Z
-    dealIdOriginal: "0xd0c75aEEA62bc0ABf16F5f01361277CC8287AB0E"
-    dealId: d0c75aeea62bc0abf16f5f01361277cc8287ab0e
+    definition: bafkreicdordcic2qmd2pnacl5adffsuhwg4eleu4prcgaldjvzr6ds2f2m
+    timestamp: 2023-04-23T07:01:18.682Z
+    dealIdOriginal: "0x9d7503E13Bc2d3430536e3d5D635D8172141d884"
+    dealId: 9d7503e13bc2d3430536e3d5d635d8172141d884
     chainNetwork: testnet
-    chainNetworkId: 80001
+    chainNetworkId: 1313161555

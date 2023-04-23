@@ -48,16 +48,7 @@
                   "nullable": true,
                   "required": [],
                   "title": "Volumes",
-                  "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file. (This property replaces the legacy \"mapped_dirs\" property so there is no need to duplicate the same paths in \"preopenedFiles\" dir)"
-                },
-                "preopenedFiles": {
-                  "type": "array",
-                  "title": "Preopened files",
-                  "description": "A list of files and directories that this module could access with WASI",
-                  "items": {
-                    "type": "string"
-                  },
-                  "nullable": true
+                  "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
                 },
                 "envs": {
                   "type": "object",
@@ -153,16 +144,7 @@
                         "nullable": true,
                         "required": [],
                         "title": "Volumes",
-                        "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file. (This property replaces the legacy \"mapped_dirs\" property so there is no need to duplicate the same paths in \"preopenedFiles\" dir)"
-                      },
-                      "preopenedFiles": {
-                        "type": "array",
-                        "title": "Preopened files",
-                        "description": "A list of files and directories that this module could access with WASI",
-                        "items": {
-                          "type": "string"
-                        },
-                        "nullable": true
+                        "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
                       },
                       "envs": {
                         "type": "object",
@@ -257,7 +239,7 @@
       "type": "object",
       "title": "Dependencies",
       "nullable": true,
-      "description": "A map of dependency versions",
+      "description": "(For advanced users) Overrides for the project dependencies",
       "properties": {
         "npm": {
           "type": "object",
@@ -463,6 +445,14 @@
         ]
       },
       "required": []
+    },
+    "aquaImports": {
+      "type": "array",
+      "description": "A list of path to be considered by aqua compiler to be used as imports. First dependency in the list has the highest priority. Priority of imports is considered in the following order: imports from --import flags, imports from aquaImports property in fluence.yaml, project's .fluence/aqua dir, npm dependencies from fluence.yaml, npm dependencies from user's .fluence/config.yaml, npm dependencies recommended by fluence",
+      "items": {
+        "type": "string"
+      },
+      "nullable": true
     }
   },
   "required": [
