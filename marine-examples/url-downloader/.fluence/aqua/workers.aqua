@@ -1,3 +1,14 @@
+data GetWorkersInfoDealsDefaultWorker:
+    definition: string
+    timestamp: string
+    dealIdOriginal: string
+    dealId: string
+    chainNetwork: string
+    chainNetworkId: u64
+
+data GetWorkersInfoDeals:
+    defaultWorker: GetWorkersInfoDealsDefaultWorker
+
 data GetWorkersInfoHostsDefaultWorkerInstallationSpells:
     hostId: string
     spellId: string
@@ -13,8 +24,8 @@ data GetWorkersInfoHosts:
     defaultWorker: GetWorkersInfoHostsDefaultWorker
 
 data GetWorkersInfo:
-    deals: ?u8
+    deals: GetWorkersInfoDeals
     hosts: GetWorkersInfoHosts
 
 func getWorkersInfo() -> GetWorkersInfo:
-    <- GetWorkersInfo(deals=nil,hosts=GetWorkersInfoHosts(defaultWorker=GetWorkersInfoHostsDefaultWorker(definition="bafkreif5aq3zpepaikdpqfpum625bn5mwdxtm25jcm6k2irzrioee7stvm",installationSpells=[GetWorkersInfoHostsDefaultWorkerInstallationSpells(hostId="12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",spellId="e2e4d57c-81c2-4949-b81a-34c27792e951",workerId="12D3KooWKsxVXgnpL4wrTts9d49jiNSEN1auaxotdMYa4HpFS66g")],timestamp="2023-04-10T21:16:43.758Z",relayId="12D3KooWMigkP4jkVyufq5JnDJL6nXvyjeaDNpRfEZqQhsG3sYCU")))
+    <- GetWorkersInfo(deals=GetWorkersInfoDeals(defaultWorker=GetWorkersInfoDealsDefaultWorker(definition="bafkreicdordcic2qmd2pnacl5adffsuhwg4eleu4prcgaldjvzr6ds2f2m",timestamp="2023-04-23T07:01:18.682Z",dealIdOriginal="0x9d7503E13Bc2d3430536e3d5D635D8172141d884",dealId="9d7503e13bc2d3430536e3d5d635d8172141d884",chainNetwork="testnet",chainNetworkId=1313161555)),hosts=GetWorkersInfoHosts(defaultWorker=GetWorkersInfoHostsDefaultWorker(definition="bafkreicdordcic2qmd2pnacl5adffsuhwg4eleu4prcgaldjvzr6ds2f2m",installationSpells=[GetWorkersInfoHostsDefaultWorkerInstallationSpells(hostId="12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE",spellId="039f4e06-923e-4a21-8814-8164fa9b137c",workerId="12D3KooWKsxVXgnpL4wrTts9d49jiNSEN1auaxotdMYa4HpFS66g")],timestamp="2023-04-23T07:00:05.549Z",relayId="12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA")))

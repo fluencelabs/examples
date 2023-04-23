@@ -1,0 +1,10 @@
+[[module]]
+name = "sqlite3"
+load_from = "/Users/bebo/localdev/examples/marine-examples/sqlite/.fluence/modules/sqlite3.tar.gz_d35d7a28b1a8a55e87df96578d70ad46/sqlite3.wasm"
+
+[module.wasi.mapped_dirs]
+sites = "./tmp"
+
+[[module]]
+name = "sqlite_test"
+load_from = "/Users/bebo/localdev/examples/marine-examples/sqlite/target/wasm32-wasi/release/sqlite_test.wasm"

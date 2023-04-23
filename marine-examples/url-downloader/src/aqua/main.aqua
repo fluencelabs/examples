@@ -1,11 +1,12 @@
-import "workers.aqua"
-import "services.aqua"
 import "@fluencelabs/aqua-lib/builtin.aqua"
 import "@fluencelabs/registry/subnetwork.aqua"
 import Registry, Record from "@fluencelabs/registry/registry-service.aqua"
 import "@fluencelabs/spell/spell_service.aqua"
 
-export get_and_save, put, put_all, put_workers, get_workers
+import "workers.aqua"
+import "services.aqua"
+
+export get_and_save, put, put_all, get, worker_n
 
 
 func getWorkers() -> []Record:
@@ -68,4 +69,3 @@ func get_workers(file_name: string) -> []u8:
   on spell.workerId via spell.hostId:
     get <- UrlDownloader.get(file_name)
   <- get
-

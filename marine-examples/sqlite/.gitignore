@@ -5,3 +5,12 @@
 **/**.bk
 /artifacts
 keypair.json
+
+# recommended by Fluence Labs:
+.idea
+.fluence
+**/node_modules
+**/target/
+.vscode/settings.json
+src/ts/src/aqua
+src/js/src/aqua
