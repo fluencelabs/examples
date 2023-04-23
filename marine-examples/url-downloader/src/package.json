@@ -1,0 +1,19 @@
+{
+  "name": "@fluencelabs/url-downloader",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "compile": "fluence aqua -i aqua/ -o aqua-compiled/ --js"
+  },
+  "bin": {},
+  "files": [
+    "src/*",
+    "aqua/*",
+    "aqua-compiled/*"
+  ],
+  "author": "Fluence Labs",
+  "license": "Apache-2.0",
+  "dependencies": {}
+}

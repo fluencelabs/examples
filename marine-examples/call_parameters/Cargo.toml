@@ -1,2 +1,2 @@
 [workspace]
-members = [ "service/modules/call_parameters" ]
+members = ["service/modules/call_parameters"]

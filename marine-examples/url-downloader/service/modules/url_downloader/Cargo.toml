@@ -1,0 +1,17 @@
+[package]
+name = "url_downloader"
+version = "0.1.0"
+edition = "2018"
+
+[[bin]]
+name = "url_downloader"
+path = "src/main.rs"
+
+[dependencies]
+marine-rs-sdk = { version = "0.7.1", features = ["logger"] }
+anyhow = "1.0.31"
+log = "0.4.8"
+
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.9.0"
