@@ -1,17 +1,2 @@
-[package]
-name = "wasm-sqlite-test"
-version = "0.1.0"
-authors = ["Fluence Labs"]
-edition = "2018"
-publish = false
-
-[[bin]]
-name = "sqlite_test"
-path = "src/main.rs"
-
-[dependencies]
-marine-rs-sdk = "0.7.1"
-marine-sqlite-connector = "0.5.1"
-
-[dev-dependencies]
-marine-rs-sdk-test = "0.9.1"
+[workspace]
+members = [ "service/modules/sqlite_test" ]

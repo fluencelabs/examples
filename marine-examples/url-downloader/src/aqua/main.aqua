@@ -1,0 +1,52 @@
+import "workers.aqua"
+import "services.aqua"
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/registry/subnetwork.aqua"
+import Registry, Record from "@fluencelabs/registry/registry-service.aqua"
+import "@fluencelabs/spell/spell_service.aqua"
+
+export get_and_save, put, put_all, get, worker_n
+
+
+func getWorkers() -> []Record:
+  workersInfo <- getWorkersInfo()
+  dealId = workersInfo.deals.defaultWorker.dealId
+  on HOST_PEER_ID:
+    workersOp <- resolveSubnetwork(dealId)
+  <- workersOp!
+
+func worker_n() -> u32:
+  workers <- getWorkers()
+  <- workers.length
+
+func get_and_save(url: string, fname: string) -> string:
+    workers <- getWorkers()
+    w =  workers[8]
+    on w.metadata.peer_id via w.metadata.relay_id:
+        res = UrlDownloader.get_n_save(url, fname)
+    <- res
+
+func put_all(file_name: string, file_content: []u8) -> []string:
+  res: *string
+  workers <- getWorkers()
+    for w <- workers:
+      on w.metadata.peer_id via w.metadata.relay_id:
+        try:
+          res <- UrlDownloader.put(file_name, file_content)
+        catch e:
+          res <<- "failed to execute"
+  <- res
+
+func put(file_name: string, file_content: []u8) -> string:
+  workers <- getWorkers()
+  w = workers[1]
+  on w.metadata.peer_id via w.metadata.relay_id:
+    res <- UrlDownloader.put(file_name, file_content)
+  <- res
+
+func get(file_name: string) -> []u8:
+  workers <- getWorkers()
+    w =  workers[5]
+    on w.metadata.peer_id via w.metadata.relay_id:
+    res <- UrlDownloader.get(file_name)
+  <- res

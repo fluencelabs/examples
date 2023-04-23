@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=schemas/workers.yaml.json
+
+# A result of app deployment. This file is created automatically after successful deployment using `fluence workers deploy` command
+
+# Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/workers.md
+
+version: 0
+deals:
+  defaultWorker:
+    installation_spells: []
+    definition: bafkreihndikxxxvl6r2alrfzh7awwywiolyklkwxzmzoyfcolvlxho2zuy
+    timestamp: 2023-04-04T00:29:31.854Z
+    dealIdOriginal: "0xd0c75aEEA62bc0ABf16F5f01361277CC8287AB0E"
+    dealId: d0c75aeea62bc0abf16f5f01361277cc8287ab0e
+    chainNetwork: testnet
+    chainNetworkId: 80001

@@ -1,0 +1,4 @@
+service UrlDownloader("url_downloader"):
+  get(file_name: string) -> []u8
+  get_n_save(url: string, file_name: string) -> string
+  put(file_name: string, file_content: []u8) -> string
