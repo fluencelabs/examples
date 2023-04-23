@@ -22,7 +22,10 @@ use marine_rs_sdk::marine;
      use marine_rs_sdk_test::CallParameters;
      use marine_rs_sdk_test::SecurityTetraplet;
  
-     #[marine_test(config_path = "../Config.toml", modules_dir = "../artifacts")]
+     #[marine_test(
+        config_path = "../../../../.fluence/tmp/Config.toml", 
+        modules_dir = "../../target/wasm32-wasi/release"
+    )]
      fn empty_string(call_parameters: marine_test_env::call_parameters::ModuleInterface) {
          let init_peer_id = "init_peer_id";
          let service_id = "service_id";

@@ -16,9 +16,12 @@ deals:
 hosts:
   defaultWorker:
     peerIds:
-      - 12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA
-      # - 12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA
+      - 12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA    # stage
+      # - 12D3KooWKnEqMfYo9zvfHmqTLpLdiHXPe4SVqUWcWHDJdFGrSmcA  # kras
 relays: stage
 services:
   call_parameters:
     get: service
+dependencies:
+  cargo:
+    mrepl: "0.21.3"

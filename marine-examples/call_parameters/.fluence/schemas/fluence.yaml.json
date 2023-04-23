@@ -239,7 +239,7 @@
       "type": "object",
       "title": "Dependencies",
       "nullable": true,
-      "description": "A map of dependency versions",
+      "description": "(For advanced users) Overrides for the project dependencies",
       "properties": {
         "npm": {
           "type": "object",
@@ -445,6 +445,14 @@
         ]
       },
       "required": []
+    },
+    "aquaImports": {
+      "type": "array",
+      "description": "A list of path to be considered by aqua compiler to be used as imports. First dependency in the list has the highest priority. Priority of imports is considered in the following order: imports from --import flags, imports from aquaImports property in fluence.yaml, project's .fluence/aqua dir, npm dependencies from fluence.yaml, npm dependencies from user's .fluence/config.yaml, npm dependencies recommended by fluence",
+      "items": {
+        "type": "string"
+      },
+      "nullable": true
     }
   },
   "required": [
