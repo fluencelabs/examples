@@ -1,0 +1,464 @@
+{
+  "type": "object",
+  "properties": {
+    "services": {
+      "title": "Services",
+      "description": "A map with service names as keys and Service configs as values. You can have any number of services listed here (According to JSON schema they are called 'additionalProperties') as long as service name keys start with a lowercase letter and contain only letters numbers and underscores. You can use `fluence service add` command to add a service to this config",
+      "type": "object",
+      "additionalProperties": {
+        "title": "Service config",
+        "description": "Service names as keys (must start with a lowercase letter and contain only letters numbers and underscores) and Service config (defines where the service is and how to deploy it) as values",
+        "type": "object",
+        "properties": {
+          "get": {
+            "type": "string",
+            "description": "Path to service directory or URL to the tar.gz archive with the service"
+          },
+          "overrideModules": {
+            "type": "object",
+            "title": "Overrides",
+            "description": "A map of modules to override",
+            "additionalProperties": {
+              "type": "object",
+              "title": "Module overrides",
+              "description": "Module names as keys and overrides for the module config as values",
+              "properties": {
+                "get": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Path to module directory or URL to the tar.gz archive with the module"
+                },
+                "maxHeapSize": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\n\nK, Kb - kilobyte\n\nKi, KiB - kibibyte\n\nM, Mb - megabyte\n\nMi, MiB - mebibyte\n\nG, Gb - gigabyte\n\nGi, GiB - gibibyte\n\nCurrent limit is 4 GiB"
+                },
+                "loggerEnabled": {
+                  "type": "boolean",
+                  "nullable": true,
+                  "description": "Set true to allow module to use the Marine SDK logger"
+                },
+                "loggingMask": {
+                  "type": "number",
+                  "nullable": true,
+                  "description": "Used for logging management. Example:\n```rust\nconst TARGET_MAP: [(&str, i64); 4] = [\n(\"instruction\", 1 << 1),\n(\"data_cache\", 1 << 2),\n(\"next_peer_pks\", 1 << 3),\n(\"subtree_complete\", 1 << 4),\n];\npub fn main() {\nuse std::collections::HashMap;\nuse std::iter::FromIterator;\n\nlet target_map = HashMap::from_iter(TARGET_MAP.iter().cloned());\n\nmarine_rs_sdk::WasmLoggerBuilder::new()\n    .with_target_map(target_map)\n    .build()\n    .unwrap();\n}\n#[marine]\npub fn foo() {\nlog::info!(target: \"instruction\", \"this will print if (loggingMask & 1) != 0\");\nlog::info!(target: \"data_cache\", \"this will print if (loggingMask & 2) != 0\");\n}\n```\n"
+                },
+                "volumes": {
+                  "type": "object",
+                  "nullable": true,
+                  "required": [],
+                  "title": "Volumes",
+                  "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
+                },
+                "envs": {
+                  "type": "object",
+                  "title": "Environment variables",
+                  "nullable": true,
+                  "required": [],
+                  "description": "environment variables accessible by a particular module with standard Rust env API like this: std::env::var(IPFS_ADDR_ENV_NAME).\n\nPlease note that Marine adds three additional environment variables. Module environment variables could be examined with repl"
+                },
+                "mountedBinaries": {
+                  "title": "Mounted binaries",
+                  "type": "object",
+                  "nullable": true,
+                  "required": [],
+                  "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                }
+              },
+              "required": [],
+              "nullable": true
+            },
+            "nullable": true,
+            "required": []
+          },
+          "deploy": {
+            "type": "array",
+            "title": "Deployment list",
+            "nullable": true,
+            "description": "List of deployments for the particular service",
+            "items": {
+              "type": "object",
+              "title": "Deployment",
+              "description": "A small config for a particular deployment. You can have specific overrides for each and specific deployment properties like count, etc.",
+              "properties": {
+                "keyPairName": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "The name of the Key Pair to use. It is resolved in the following order (from the lowest to the highest priority):\n1. \"defaultKeyPairName\" property from user-secrets.yaml\n1. \"defaultKeyPairName\" property from project-secrets.yaml\n1. \"keyPairName\" property from the top level of fluence.yaml\n1. \"keyPairName\" property from the \"services\" level of fluence.yaml\n1. \"keyPairName\" property from the individual \"deploy\" property item level of fluence.yaml"
+                },
+                "deployId": {
+                  "type": "string",
+                  "description": "This id can be used in Aqua to access actually deployed peer and service ids. The ID must start with a lowercase letter and contain only letters, numbers, and underscores."
+                },
+                "count": {
+                  "type": "number",
+                  "minimum": 1,
+                  "nullable": true,
+                  "description": "Number of services to deploy. Default: 1 or if \"peerIds\" property is provided - exactly the number of peerIds"
+                },
+                "peerId": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Peer id or peer id name to deploy to. Default: Peer ids from the \"relay\" property of fluence.yaml are selected for each deploy. Named peerIds can be listed in \"peerIds\" property of fluence.yaml)"
+                },
+                "peerIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "nullable": true,
+                  "title": "Peer ids",
+                  "description": "Peer ids or peer id names to deploy to. Overrides \"peerId\" property. Named peerIds can be listed in \"peerIds\" property of fluence.yaml)"
+                },
+                "overrideModules": {
+                  "type": "object",
+                  "title": "Overrides",
+                  "description": "A map of modules to override",
+                  "additionalProperties": {
+                    "type": "object",
+                    "title": "Module overrides",
+                    "description": "Module names as keys and overrides for the module config as values",
+                    "properties": {
+                      "get": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Path to module directory or URL to the tar.gz archive with the module"
+                      },
+                      "maxHeapSize": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\n\nK, Kb - kilobyte\n\nKi, KiB - kibibyte\n\nM, Mb - megabyte\n\nMi, MiB - mebibyte\n\nG, Gb - gigabyte\n\nGi, GiB - gibibyte\n\nCurrent limit is 4 GiB"
+                      },
+                      "loggerEnabled": {
+                        "type": "boolean",
+                        "nullable": true,
+                        "description": "Set true to allow module to use the Marine SDK logger"
+                      },
+                      "loggingMask": {
+                        "type": "number",
+                        "nullable": true,
+                        "description": "Used for logging management. Example:\n```rust\nconst TARGET_MAP: [(&str, i64); 4] = [\n(\"instruction\", 1 << 1),\n(\"data_cache\", 1 << 2),\n(\"next_peer_pks\", 1 << 3),\n(\"subtree_complete\", 1 << 4),\n];\npub fn main() {\nuse std::collections::HashMap;\nuse std::iter::FromIterator;\n\nlet target_map = HashMap::from_iter(TARGET_MAP.iter().cloned());\n\nmarine_rs_sdk::WasmLoggerBuilder::new()\n    .with_target_map(target_map)\n    .build()\n    .unwrap();\n}\n#[marine]\npub fn foo() {\nlog::info!(target: \"instruction\", \"this will print if (loggingMask & 1) != 0\");\nlog::info!(target: \"data_cache\", \"this will print if (loggingMask & 2) != 0\");\n}\n```\n"
+                      },
+                      "volumes": {
+                        "type": "object",
+                        "nullable": true,
+                        "required": [],
+                        "title": "Volumes",
+                        "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
+                      },
+                      "envs": {
+                        "type": "object",
+                        "title": "Environment variables",
+                        "nullable": true,
+                        "required": [],
+                        "description": "environment variables accessible by a particular module with standard Rust env API like this: std::env::var(IPFS_ADDR_ENV_NAME).\n\nPlease note that Marine adds three additional environment variables. Module environment variables could be examined with repl"
+                      },
+                      "mountedBinaries": {
+                        "title": "Mounted binaries",
+                        "type": "object",
+                        "nullable": true,
+                        "required": [],
+                        "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                      }
+                    },
+                    "required": [],
+                    "nullable": true
+                  },
+                  "nullable": true,
+                  "required": []
+                }
+              },
+              "required": [
+                "deployId"
+              ]
+            }
+          },
+          "keyPairName": {
+            "type": "string",
+            "nullable": true,
+            "description": "The name of the Key Pair to use. It is resolved in the following order (from the lowest to the highest priority):\n1. \"defaultKeyPairName\" property from user-secrets.yaml\n1. \"defaultKeyPairName\" property from project-secrets.yaml\n1. \"keyPairName\" property from the top level of fluence.yaml\n1. \"keyPairName\" property from the \"services\" level of fluence.yaml\n1. \"keyPairName\" property from the individual \"deploy\" property item level of fluence.yaml"
+          }
+        },
+        "required": [
+          "get"
+        ]
+      },
+      "required": [],
+      "nullable": true
+    },
+    "relays": {
+      "title": "Relays",
+      "description": "List of Fluence Peer multi addresses or a name of the network. This multi addresses are used for connecting to the Fluence network when deploying. Peer ids from these addresses are also used for deploying in case if you don't specify \"peerId\" or \"peerIds\" property in the deployment config. Default: kras",
+      "type": [
+        "string",
+        "array",
+        "null"
+      ],
+      "oneOf": [
+        {
+          "type": "string",
+          "title": "Network name",
+          "enum": [
+            "kras",
+            "stage",
+            "testnet"
+          ]
+        },
+        {
+          "type": "array",
+          "title": "Multi addresses",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      ],
+      "nullable": true
+    },
+    "peerIds": {
+      "title": "Peer ids",
+      "description": "A map of named peerIds. Example:\n\nMY_PEER: 12D3KooWCMr9mU894i8JXAFqpgoFtx6qnV1LFPSfVc3Y34N4h4LS",
+      "type": "object",
+      "nullable": true,
+      "required": [],
+      "additionalProperties": {
+        "type": "string",
+        "description": "Peer id names as keys and the actual peer ids as values"
+      }
+    },
+    "keyPairName": {
+      "type": "string",
+      "nullable": true,
+      "description": "The name of the Key Pair to use. It is resolved in the following order (from the lowest to the highest priority):\n1. \"defaultKeyPairName\" property from user-secrets.yaml\n1. \"defaultKeyPairName\" property from project-secrets.yaml\n1. \"keyPairName\" property from the top level of fluence.yaml\n1. \"keyPairName\" property from the \"services\" level of fluence.yaml\n1. \"keyPairName\" property from the individual \"deploy\" property item level of fluence.yaml"
+    },
+    "version": {
+      "type": "number",
+      "const": 2
+    },
+    "dependencies": {
+      "type": "object",
+      "title": "Dependencies",
+      "nullable": true,
+      "description": "(For advanced users) Overrides for the project dependencies",
+      "properties": {
+        "npm": {
+          "type": "object",
+          "title": "npm dependencies",
+          "nullable": true,
+          "description": "A map of npm dependency versions. CLI ensures dependencies are installed each time you run aqua",
+          "required": []
+        },
+        "cargo": {
+          "type": "object",
+          "title": "Cargo dependencies",
+          "nullable": true,
+          "description": "A map of cargo dependency versions. CLI ensures dependencies are installed each time you run commands that depend on Marine or Marine REPL",
+          "required": []
+        }
+      },
+      "required": []
+    },
+    "aquaInputPath": {
+      "type": "string",
+      "nullable": true,
+      "description": "Path to the aqua file or directory with aqua files that you want to compile by default. Must be relative to the project root dir"
+    },
+    "aquaOutputTSPath": {
+      "type": "string",
+      "nullable": true,
+      "description": "Path to the default compilation target dir from aqua to ts. Must be relative to the project root dir"
+    },
+    "aquaOutputJSPath": {
+      "type": "string",
+      "nullable": true,
+      "description": "Path to the default compilation target dir from aqua to js. Must be relative to the project root dir. Overrides 'aquaOutputTSPath' property"
+    },
+    "appTSPath": {
+      "type": "string",
+      "nullable": true,
+      "description": "Path to the directory where you want to generate app.ts after deployment. If you run registerApp() function in your typescript code after initializing FluenceJS client you will be able to access ids of the deployed services in aqua"
+    },
+    "appJSPath": {
+      "type": "string",
+      "nullable": true,
+      "description": "Path to the directory where you want to generate app.js after deployment. If you run registerApp() function in your javascript code after initializing FluenceJS client you will be able to access ids of the deployed services in aqua"
+    },
+    "hosts": {
+      "description": "A map of objects with worker names as keys, each object defines a list of peer IDs to host the worker on",
+      "type": "object",
+      "nullable": true,
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "peerIds": {
+            "type": "array",
+            "description": "An array of peer IDs to deploy on",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "peerIds"
+        ]
+      },
+      "required": []
+    },
+    "workers": {
+      "nullable": true,
+      "description": "A Map with worker names as keys and worker configs as values",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "description": "Worker config",
+        "properties": {
+          "services": {
+            "description": "An array of service names to include in this worker. Service names must be listed in fluence.yaml",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "spells": {
+            "description": "An array of spell names to include in this worker. Spell names must be listed in fluence.yaml",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "required": []
+      },
+      "required": []
+    },
+    "deals": {
+      "description": "A map of objects with worker names as keys, each object defines a deal",
+      "type": "object",
+      "nullable": true,
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "minWorkers": {
+            "type": "number",
+            "description": "Required workers to activate the deal",
+            "default": 1,
+            "nullable": true,
+            "minimum": 1
+          },
+          "targetWorkers": {
+            "type": "number",
+            "description": "Max workers in the deal",
+            "default": 3,
+            "nullable": true,
+            "minimum": 1
+          }
+        },
+        "required": []
+      },
+      "required": []
+    },
+    "chainNetwork": {
+      "type": "string",
+      "description": "The network in which the transactions will be carried out",
+      "enum": [
+        "local",
+        "testnet"
+      ],
+      "default": "testnet",
+      "nullable": true
+    },
+    "spells": {
+      "type": "object",
+      "nullable": true,
+      "description": "A map with spell names as keys and spell configs as values",
+      "additionalProperties": {
+        "type": "object",
+        "description": "Spell config",
+        "properties": {
+          "get": {
+            "type": "string",
+            "description": "Path to spell"
+          },
+          "version": {
+            "type": "number",
+            "const": 0
+          },
+          "aquaFilePath": {
+            "type": "string",
+            "description": "Path to Aqua file which contains an Aqua function that you want to use as a spell",
+            "nullable": true
+          },
+          "function": {
+            "type": "string",
+            "description": "Name of the Aqua function that you want to use as a spell",
+            "nullable": true
+          },
+          "initArgs": {
+            "type": "object",
+            "description": "A map of Aqua function arguments names as keys and arguments values as values. They will be passed to the spell function and will be stored in the key-value storage for this particular spell.",
+            "nullable": true
+          },
+          "clock": {
+            "type": "object",
+            "nullable": true,
+            "description": "Trigger the spell execution periodically. If you want to disable this property by overriding it in fluence.yaml - pass empty config for it like this: `clock: {}`",
+            "properties": {
+              "periodSec": {
+                "type": "number",
+                "description": "How often the spell will be executed. If set to 0, the spell will be executed only once. If this value not provided at all - the spell will never be executed",
+                "minimum": 0,
+                "maximum": 3153600000,
+                "nullable": true
+              },
+              "startTimestamp": {
+                "type": "string",
+                "description": "An ISO timestamp when the periodic execution should start. If this property or `startDelaySec` not specified, periodic execution will start immediately. If it is set to 0 - the spell will never be executed",
+                "nullable": true
+              },
+              "endTimestamp": {
+                "type": "string",
+                "description": "An ISO timestamp when the periodic execution should end. If this property or `endDelaySec` not specified, periodic execution will never end. If it is in the past at the moment of spell creation on Rust peer - the spell will never be executed",
+                "nullable": true
+              },
+              "startDelaySec": {
+                "type": "number",
+                "description": "How long to wait before the first execution in seconds. If this property or `startTimestamp` not specified, periodic execution will start immediately. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. This property conflicts with `startTimestamp`. You can specify only one of them",
+                "nullable": true,
+                "minimum": 0,
+                "maximum": 4294967295
+              },
+              "endDelaySec": {
+                "type": "number",
+                "description": "How long to wait before the last execution in seconds. If this property or `endTimestamp` not specified, periodic execution will never end. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. If it is in the past at the moment of spell creation - the spell will never be executed. This property conflicts with `endTimestamp`. You can specify only one of them",
+                "nullable": true,
+                "minimum": 0,
+                "maximum": 4294967295
+              }
+            },
+            "required": []
+          }
+        },
+        "required": [
+          "get"
+        ]
+      },
+      "required": []
+    },
+    "aquaImports": {
+      "type": "array",
+      "description": "A list of path to be considered by aqua compiler to be used as imports. First dependency in the list has the highest priority. Priority of imports is considered in the following order: imports from --import flags, imports from aquaImports property in fluence.yaml, project's .fluence/aqua dir, npm dependencies from fluence.yaml, npm dependencies from user's .fluence/config.yaml, npm dependencies recommended by fluence",
+      "items": {
+        "type": "string"
+      },
+      "nullable": true
+    }
+  },
+  "required": [
+    "version"
+  ],
+  "$id": "https://fluence.dev/schemas/fluence.yaml",
+  "title": "fluence.yaml",
+  "description": "Defines Fluence Project, most importantly - what exactly you want to deploy and how. You can use `fluence init` command to generate a template for new Fluence project"
+}

@@ -1,0 +1,20 @@
+data GetWorkersInfoHostsDefaultWorkerInstallationSpells:
+    hostId: string
+    spellId: string
+    workerId: string
+
+data GetWorkersInfoHostsDefaultWorker:
+    definition: string
+    installationSpells: []GetWorkersInfoHostsDefaultWorkerInstallationSpells
+    timestamp: string
+    relayId: string
+
+data GetWorkersInfoHosts:
+    defaultWorker: GetWorkersInfoHostsDefaultWorker
+
+data GetWorkersInfo:
+    deals: ?u8
+    hosts: GetWorkersInfoHosts
+
+func getWorkersInfo() -> GetWorkersInfo:
+    <- GetWorkersInfo(deals=nil,hosts=GetWorkersInfoHosts(defaultWorker=GetWorkersInfoHostsDefaultWorker(definition="bafkreiefqniy3e624vwu4ysgjk5yyxlpzz6xvbjnnigscyszpfkmlat35q",installationSpells=[GetWorkersInfoHostsDefaultWorkerInstallationSpells(hostId="12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",spellId="db3ff7c8-d3b7-42ef-851a-cd90e5721830",workerId="12D3KooWFphE7mXCooFv29DbenruBhCCca52kTAXgXibGtSmRP2u")],timestamp="2023-04-23T05:55:33.752Z",relayId="12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA")))

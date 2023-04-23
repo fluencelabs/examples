@@ -1,0 +1,3 @@
+[[module]]
+name = "call_parameters"
+load_from = "/Users/bebo/localdev/examples/marine-examples/call_parameters/target/wasm32-wasi/release/call_parameters.wasm"

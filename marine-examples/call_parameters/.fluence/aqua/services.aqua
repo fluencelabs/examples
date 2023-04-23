@@ -1,0 +1,2 @@
+service CallParameters("call_parameters"):
+  call_parameters() -> string
