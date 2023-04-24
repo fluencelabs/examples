@@ -9,9 +9,23 @@ data GetWorkersInfoDealsDefaultWorker:
 data GetWorkersInfoDeals:
     defaultWorker: GetWorkersInfoDealsDefaultWorker
 
+data GetWorkersInfoHostsDefaultWorkerInstallationSpells:
+    hostId: string
+    spellId: string
+    workerId: string
+
+data GetWorkersInfoHostsDefaultWorker:
+    definition: string
+    installationSpells: []GetWorkersInfoHostsDefaultWorkerInstallationSpells
+    timestamp: string
+    relayId: string
+
+data GetWorkersInfoHosts:
+    defaultWorker: GetWorkersInfoHostsDefaultWorker
+
 data GetWorkersInfo:
     deals: GetWorkersInfoDeals
-    hosts: ?u8
+    hosts: GetWorkersInfoHosts
 
 func getWorkersInfo() -> GetWorkersInfo:
-    <- GetWorkersInfo(deals=GetWorkersInfoDeals(defaultWorker=GetWorkersInfoDealsDefaultWorker(definition="bafkreienjhwj727gvxpxr4aa4m3xhi76sgwtehpi5kousma7d6phioegbi",timestamp="2023-04-24T06:11:21.896Z",dealIdOriginal="0xD78f25dE9f0D73aa0c1C009CB99D1A9B2078934f",dealId="d78f25de9f0d73aa0c1c009cb99d1a9b2078934f",chainNetwork="testnet",chainNetworkId=1313161555)),hosts=nil)
+    <- GetWorkersInfo(deals=GetWorkersInfoDeals(defaultWorker=GetWorkersInfoDealsDefaultWorker(definition="bafkreienjhwj727gvxpxr4aa4m3xhi76sgwtehpi5kousma7d6phioegbi",timestamp="2023-04-24T05:54:59.215Z",dealIdOriginal="0x4CE2CC9d7f7EdCb32679a5154761cd55eA4DAEF3",dealId="4ce2cc9d7f7edcb32679a5154761cd55ea4daef3",chainNetwork="testnet",chainNetworkId=1313161555)),hosts=GetWorkersInfoHosts(defaultWorker=GetWorkersInfoHostsDefaultWorker(definition="bafkreig2qgnju5l6tqmwx2a6nufxboyh5nqslxgy657vmuus73xhuzvkey",installationSpells=[GetWorkersInfoHostsDefaultWorkerInstallationSpells(hostId="12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA",spellId="efa3c54b-28e8-4f4e-8683-f618edb1bead",workerId="12D3KooWRyAh6agnPhQJaYEScTtZqLo44RN3cSSEmqgamymzzJpM")],timestamp="2023-04-24T18:20:44.516Z",relayId="12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE")))

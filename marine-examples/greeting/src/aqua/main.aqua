@@ -8,14 +8,26 @@ import "@fluencelabs/spell/spell_service.aqua"
 import "workers.aqua"
 import "services.aqua"
 
-export greeting, greetings_seq, greetings_par
+export greeting, greetings_seq, greetings_par, tester
 
+service Console("run-console"):
+    print(msg: []?string)
+
+service Console2("run-console"):
+    print(msg: string)
 
 func getWorkers() -> []Record:
   workersInfo <- getWorkersInfo()
   dealId = workersInfo.deals.defaultWorker.dealId
   workersOp, err <- resolveSubnetwork(dealId)
+  Console.print([err])
   <- workersOp!
+
+func tester():
+  workersInfo <- getWorkersInfo()
+  dealId = workersInfo.deals.defaultWorker.dealId
+  -- workersOp, err <- resolveSubnetwork(dealId)
+  Console2.print("tester")
 
 
 func greeting(arg: string) -> string:
