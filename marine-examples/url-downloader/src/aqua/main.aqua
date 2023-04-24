@@ -23,18 +23,21 @@ func put(file_name: string, file_content: []u8) -> PutResult, string, string:
     res <- UrlDownloader.put(file_name, file_content)
   <- res, w.metadata.peer_id, w.metadata.relay_id!
 
-func get_without_ids(file_name: string) -> []u8:
+func get_without_ids(file_name: string) -> []u8, []string:
   result: *[]u8
+  peers: *string
   workers <- getWorkers()
   for w <- workers par:
     on w.metadata.peer_id via w.metadata.relay_id:
       res <- UrlDownloader.get(file_name)
         if res.stderr == "":
           result <<- res.stdout
+          peers <<- w.metadata.peer_id
+          peers <<- w.metadata.relay_id!
       -- result <<- res.stdout
   join result[workers.length - 1]
   par Peer.timeout(10000, "Finding file timed out.")
-  <- result!
+  <- result!, peers
 
 func get_with_ids(file_name: string, peer_id: string, relay_id: string) -> GetResult:
   on peer_id via relay_id:
