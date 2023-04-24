@@ -16,8 +16,9 @@ deals:
 hosts:
   defaultWorker:
     peerIds:
-      - 12D3KooWDUszU2NeWyUVjCXhGEt1MoZrhvdmaQQwtZUriuGN1jTr
-relays: kras
+      # - 12D3KooWD7CvsYcpF9HE9CCV9aY3SJ317tkXVykjtZnht2EbzDPm # krase
+      - 12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA # stage
+relays: stage # kras
 services:
   service:
     get: service

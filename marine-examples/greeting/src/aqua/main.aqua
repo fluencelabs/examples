@@ -14,7 +14,7 @@ export greeting, greetings_seq, greetings_par
 func getWorkers() -> []Record:
   workersInfo <- getWorkersInfo()
   dealId = workersInfo.deals.defaultWorker.dealId
-  workersOp <- resolveSubnetwork(dealId)
+  workersOp, err <- resolveSubnetwork(dealId)
   <- workersOp!
 
 
