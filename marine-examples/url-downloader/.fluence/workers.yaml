@@ -5,20 +5,20 @@
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/workers.md
 
 version: 0
-hosts:
-  defaultWorker:
-    definition: bafkreifh4vhq5kqpkbhaxmb4iuzg7rr33oxjvksxmarwkekotj26u2vsju
-    installation_spells:
-      - host_id: 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE
-        spell_id: 039f4e06-923e-4a21-8814-8164fa9b137c
-        worker_id: 12D3KooWKsxVXgnpL4wrTts9d49jiNSEN1auaxotdMYa4HpFS66g
-    timestamp: 2023-04-23T23:47:35.550Z
-    relayId: 12D3KooWMigkP4jkVyufq5JnDJL6nXvyjeaDNpRfEZqQhsG3sYCU
 deals:
   defaultWorker:
-    definition: bafkreifh4vhq5kqpkbhaxmb4iuzg7rr33oxjvksxmarwkekotj26u2vsju
-    timestamp: 2023-04-24T00:18:54.042Z
-    dealIdOriginal: "0x9d7503E13Bc2d3430536e3d5D635D8172141d884"
-    dealId: 9d7503e13bc2d3430536e3d5d635d8172141d884
+    definition: bafkreiavs62hqa5gax2vk6iazyy3jb7iw2xsik55373kzlbznghjhplbtq
+    timestamp: 2023-04-24T19:12:03.894Z
+    dealIdOriginal: "0x475F6ffb327821F77F33dD3bf6701c24172C63bB"
+    dealId: 475f6ffb327821f77f33dd3bf6701c24172c63bb
     chainNetwork: testnet
     chainNetworkId: 1313161555
+hosts:
+  defaultWorker:
+    definition: bafkreiavs62hqa5gax2vk6iazyy3jb7iw2xsik55373kzlbznghjhplbtq
+    installation_spells:
+      - host_id: 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE
+        spell_id: 228360c0-0735-430a-858b-f7d761eec125
+        worker_id: 12D3KooWC5p6gScLhnit4RmDLoZAb29KHvnYpDB5J55XdukQ4ZKy
+    timestamp: 2023-04-24T19:13:48.337Z
+    relayId: 12D3KooWMigkP4jkVyufq5JnDJL6nXvyjeaDNpRfEZqQhsG3sYCU

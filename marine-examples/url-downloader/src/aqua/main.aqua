@@ -13,7 +13,7 @@ export put_workers, get_workers, get_and_save_workers
 func getWorkers() -> []Record:
   workersInfo <- getWorkersInfo()
   dealId = workersInfo.deals.defaultWorker.dealId
-  workersOp <- resolveSubnetwork(dealId)
+  workersOp, err <- resolveSubnetwork(dealId)
   <- workersOp!
 
 func put(file_name: string, file_content: []u8) -> PutResult, string, string:
@@ -23,20 +23,18 @@ func put(file_name: string, file_content: []u8) -> PutResult, string, string:
     res <- UrlDownloader.put(file_name, file_content)
   <- res, w.metadata.peer_id, w.metadata.relay_id!
 
-func get_without_ids(file_name: string) -> [][]u8:
+func get_without_ids(file_name: string) -> []u8:
   result: *[]u8
   workers <- getWorkers()
   for w <- workers par:
     on w.metadata.peer_id via w.metadata.relay_id:
       res <- UrlDownloader.get(file_name)
-        -- if res.stderr == "":
-        --  result <<- res.stdout
-        -- else:
-        --  result <<- []
-      result <<- res.stdout
-    par Peer.timeout(10000, "Finding file timed out.")
-    join result[workers.length - 1]
-  <- result
+        if res.stderr == "":
+          result <<- res.stdout
+      -- result <<- res.stdout
+  join result[workers.length - 1]
+  par Peer.timeout(10000, "Finding file timed out.")
+  <- result!
 
 func get_with_ids(file_name: string, peer_id: string, relay_id: string) -> GetResult:
   on peer_id via relay_id:
