@@ -27,7 +27,8 @@ func console_tester() -> string:
         dealId = workersInfo.deals.defaultWorker.dealId
         workersOp, err <- resolveSubnetwork(dealId)
     ConsoleAny.print(err)
-    ConsoleAny.print(workersOp)
+    ConsoleAny.print(workersOp!)
+    -- ConsoleAny.print(workersOp)
     Console.print("tester end")
     <- "the end of tester"
 
