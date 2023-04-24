@@ -1,0 +1,56 @@
+aqua Main
+
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/registry/subnetwork.aqua"
+import Registry, Record from "@fluencelabs/registry/registry-service.aqua"
+import "@fluencelabs/spell/spell_service.aqua"
+
+import "workers.aqua"
+import "services.aqua"
+
+export greeting, greetings_seq, greetings_par
+
+
+func getWorkers() -> []Record:
+  workersInfo <- getWorkersInfo()
+  dealId = workersInfo.deals.defaultWorker.dealId
+  workersOp <- resolveSubnetwork(dealId)
+  <- workersOp!
+
+
+func greeting(arg: string) -> string:
+  on HOST_PEER_ID:
+      workers  <- getWorkers()
+      worker = workers[0]
+      on worker.metadata.peer_id via worker.metadata.relay_id:
+        res <- Service.greeting(arg)
+  <- res
+
+func greetings_seq(arg: string) -> [][]string:
+    result: *[]string
+    on HOST_PEER_ID:
+        workers  <- getWorkers()
+        for worker <- workers:
+            res: *string
+            on worker.metadata.peer_id via worker.metadata.relay_id:
+                res <- Service.greeting(arg)
+                res <<- worker.metadata.peer_id
+                res <<- worker.metadata.relay_id!
+                result <<- res
+    <- result
+
+func greetings_par(arg: string) -> [][]string:
+    result: *[]string
+    on HOST_PEER_ID:
+        workers  <- getWorkers()
+        for worker <- workers par:
+            res: *string
+            on worker.metadata.peer_id via worker.metadata.relay_id:
+                res <- Service.greeting(arg)
+                res <<- worker.metadata.peer_id
+                res <<- worker.metadata.relay_id!
+                result <<- res
+        -- par Peer.timeout(100000, "timeout")
+        join result[workers.length -1]
+        par Peer.timeout(100000, "timeout")
+    <- result

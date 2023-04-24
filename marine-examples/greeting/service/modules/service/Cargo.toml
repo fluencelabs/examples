@@ -1,0 +1,14 @@
+[package]
+name = "service"
+version = "0.1.0"
+edition = "2018"
+
+[[bin]]
+name = "service"
+path = "src/main.rs"
+
+[dependencies]
+marine-rs-sdk = "0.7.1"
+
+[dev-dependencies]
+marine-rs-sdk-test = "0.9.0"
