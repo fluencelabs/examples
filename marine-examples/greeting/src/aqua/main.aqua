@@ -8,27 +8,35 @@ import "@fluencelabs/spell/spell_service.aqua"
 import "workers.aqua"
 import "services.aqua"
 
-export greeting, greetings_seq, greetings_par, tester
+export greeting, greetings_seq, greetings_par
+export console_tester
 
-service Console("run-console"):
+service ConsoleAny("run-console"):
+    print(any: ⊤)
+
+service ConsoleAny2("run-console"):
     print(msg: []?string)
 
-service Console2("run-console"):
+service Console("run-console"):
     print(msg: string)
+
+func console_tester():
+    Console.print("tester start")
+    on HOST_PEER_ID:
+        workersInfo <- getWorkersInfo()
+        dealId = workersInfo.deals.defaultWorker.dealId
+        workersOp, err <- resolveSubnetwork(dealId)
+    ConsoleAny.print(err)
+    Console.print("tester end")
+
 
 func getWorkers() -> []Record:
   workersInfo <- getWorkersInfo()
   dealId = workersInfo.deals.defaultWorker.dealId
   workersOp, err <- resolveSubnetwork(dealId)
-  Console.print([err])
+  ConsoleAny.print([err])
+  ConsoleAny2.print([err])
   <- workersOp!
-
-func tester():
-  workersInfo <- getWorkersInfo()
-  dealId = workersInfo.deals.defaultWorker.dealId
-  -- workersOp, err <- resolveSubnetwork(dealId)
-  Console2.print("tester")
-
 
 func greeting(arg: string) -> string:
   on HOST_PEER_ID:
