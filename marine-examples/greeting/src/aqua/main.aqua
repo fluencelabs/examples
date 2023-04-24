@@ -20,7 +20,7 @@ service ConsoleAny2("run-console"):
 service Console("run-console"):
     print(msg: string)
 
-func console_tester():
+func console_tester() -> string:
     Console.print("tester start")
     on HOST_PEER_ID:
         workersInfo <- getWorkersInfo()
@@ -28,6 +28,7 @@ func console_tester():
         workersOp, err <- resolveSubnetwork(dealId)
     ConsoleAny.print(err)
     Console.print("tester end")
+    <- "the end of tester"
 
 
 func getWorkers() -> []Record:
