@@ -6,54 +6,78 @@ import "@fluencelabs/spell/spell_service.aqua"
 import "workers.aqua"
 import "services.aqua"
 
-export put, get
+export put, get_with_ids, get_without_ids, get_bad
 export put_workers, get_workers, get_and_save_workers
 
+-- functions to interact with deal deployed services
 func getWorkers() -> []Record:
   workersInfo <- getWorkersInfo()
   dealId = workersInfo.deals.defaultWorker.dealId
   workersOp <- resolveSubnetwork(dealId)
   <- workersOp!
 
-func put(file_name: string, file_content: []u8) -> string:
+func put(file_name: string, file_content: []u8) -> PutResult, string, string:
   workers <- getWorkers()
-  w = workers[0]
+  w = workers[5]
   on w.metadata.peer_id via w.metadata.relay_id:
     res <- UrlDownloader.put(file_name, file_content)
+  <- res, w.metadata.peer_id, w.metadata.relay_id!
+
+func get_without_ids(file_name: string) -> [][]u8:
+  result: *[]u8
+  workers <- getWorkers()
+  for w <- workers par:
+    on w.metadata.peer_id via w.metadata.relay_id:
+      res <- UrlDownloader.get(file_name)
+        -- if res.stderr == "":
+        --  result <<- res.stdout
+        -- else:
+        --  result <<- []
+      result <<- res.stdout
+    par Peer.timeout(10000, "Finding file timed out.")
+    join result[workers.length - 1]
+  <- result
+
+func get_with_ids(file_name: string, peer_id: string, relay_id: string) -> GetResult:
+  on peer_id via relay_id:
+    res <- UrlDownloader.get(file_name)
   <- res
 
-
-func get(file_name: string) -> []u8:
+func get_bad(file_name: string) -> GetResult:
   workers <- getWorkers()
   w =  workers[0]
   on w.metadata.peer_id via w.metadata.relay_id:
     res <- UrlDownloader.get(file_name)
   <- res
 
-func get_and_save(url: string, fname: string) -> string:
+func get_and_save(url: string, fname: string) -> PutResult:
     workers <- getWorkers()
     w =  workers[0]
     on w.metadata.peer_id via w.metadata.relay_id:
         res = UrlDownloader.get_n_save(url, fname)
     <- res
 
-func put_workers(file_name: string, file_content: []u8) -> string:
+-- functions to interact with workers deployed service
+func put_workers(file_name: string, file_content: []u8) -> PutResult:
   info <- getWorkersInfo()
   spell = info.hosts.defaultWorker.installationSpells[0]
   on spell.workerId via spell.hostId:
     res <- UrlDownloader.put(file_name, file_content)
   <- res
 
+--func get_workers(file_name: string) -> GetResult:
 func get_workers(file_name: string) -> []u8:
   info <- getWorkersInfo()
   spell = info.hosts.defaultWorker.installationSpells[0]
   on spell.workerId via spell.hostId:
     res <- UrlDownloader.get(file_name)
-  <- res
+  --<- res
+  <- res.stdout
 
-func get_and_save_workers(url: string, fname: string) -> string:
+func get_and_save_workers(url: string, fname: string) -> PutResult:
   info <- getWorkersInfo()
   spell = info.hosts.defaultWorker.installationSpells[0]
   on spell.workerId via spell.hostId:
       res = UrlDownloader.get_n_save(url, fname)
   <- res
+

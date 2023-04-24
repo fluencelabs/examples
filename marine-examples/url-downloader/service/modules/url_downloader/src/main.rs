@@ -10,26 +10,51 @@ pub fn main() {
     WasmLoggerBuilder::new().build().unwrap();
 }
 
+
+#[marine]
+pub struct PutResult {
+    stdout: String,
+    stderr: String, 
+}
+
+#[marine]
+pub struct GetResult {
+    stdout: Vec<u8>,
+    stderr: String, 
+}
+
 /// Combining of modules: `curl` and `local_storage`.
 /// Calls `curl` and stores returned result into a file.
 #[marine]
-pub fn get_n_save(url: String, file_name: String) -> String {
+pub fn get_n_save(url: String, file_name: String) -> PutResult {
     log::info!("get_n_save called with {} {}\n", url, file_name);
 
     let result = download(url);
-    file_put(file_name, result.into_bytes());
-
-    String::from("Ok")
+    put(file_name, result.into_bytes())
 }
 
 #[marine]
-pub fn put(file_name: String, file_content: Vec<u8>) -> String {
-    file_put(file_name, file_content)
+pub fn put(file_name: String, file_content: Vec<u8>) -> PutResult {
+    let res = file_put(file_name, file_content);
+
+    if res == String::from("Ok") {
+        PutResult { stdout: res, stderr: String::from("")}
+    }
+    else {
+        PutResult { stdout: String::from(""), stderr: res}
+    }
 }
 
 #[marine]
-pub fn get(file_name: String) -> Vec<u8> {
-    file_get(file_name)
+pub fn get(file_name: String) -> GetResult {
+    let res = file_get(file_name);
+
+    if res == b"error while reading file" {
+        GetResult { stdout: vec!(), stderr: String::from_utf8(res).unwrap()}
+    }
+    else {
+        GetResult { stdout: res, stderr: String::from("")}
+    }
 }
 
 /// Importing `curl` module

@@ -1,4 +1,12 @@
+data GetResult:
+  stdout: []u8
+  stderr: string
+
+data PutResult:
+  stdout: string
+  stderr: string
+
 service UrlDownloader("url_downloader"):
-  get(file_name: string) -> []u8
-  get_n_save(url: string, file_name: string) -> string
-  put(file_name: string, file_content: []u8) -> string
+  get(file_name: string) -> GetResult
+  get_n_save(url: string, file_name: string) -> PutResult
+  put(file_name: string, file_content: []u8) -> PutResult

@@ -7,17 +7,17 @@
 version: 0
 hosts:
   defaultWorker:
-    definition: bafkreicdordcic2qmd2pnacl5adffsuhwg4eleu4prcgaldjvzr6ds2f2m
+    definition: bafkreifh4vhq5kqpkbhaxmb4iuzg7rr33oxjvksxmarwkekotj26u2vsju
     installation_spells:
       - host_id: 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE
         spell_id: 039f4e06-923e-4a21-8814-8164fa9b137c
         worker_id: 12D3KooWKsxVXgnpL4wrTts9d49jiNSEN1auaxotdMYa4HpFS66g
-    timestamp: 2023-04-23T07:00:05.549Z
-    relayId: 12D3KooWAKNos2KogexTXhrkMZzFYpLHuWJ4PgoAhurSAv7o5CWA
+    timestamp: 2023-04-23T23:47:35.550Z
+    relayId: 12D3KooWMigkP4jkVyufq5JnDJL6nXvyjeaDNpRfEZqQhsG3sYCU
 deals:
   defaultWorker:
-    definition: bafkreicdordcic2qmd2pnacl5adffsuhwg4eleu4prcgaldjvzr6ds2f2m
-    timestamp: 2023-04-23T07:01:18.682Z
+    definition: bafkreifh4vhq5kqpkbhaxmb4iuzg7rr33oxjvksxmarwkekotj26u2vsju
+    timestamp: 2023-04-24T00:18:54.042Z
     dealIdOriginal: "0x9d7503E13Bc2d3430536e3d5D635D8172141d884"
     dealId: 9d7503e13bc2d3430536e3d5d635d8172141d884
     chainNetwork: testnet
