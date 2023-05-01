@@ -1,0 +1,42 @@
+aqua Main
+
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/registry/subnetwork.aqua"
+import Registry, Record from "@fluencelabs/registry/registry-service.aqua"
+import "@fluencelabs/spell/spell_service.aqua"
+
+import "workers.aqua"
+import "services.aqua"
+
+export did_create, did_create_w
+
+
+service Console("run-console"):
+    print(any: ⊤)
+    -- print(any: ?[]string)
+
+func getWorkers() -> []Record, []Error:
+  workersInfo <- getWorkersInfo()
+  dealId = workersInfo.deals.defaultWorker.dealId
+  workersOp, err <- resolveSubnetwork(dealId)
+  if err.length > 0:
+      Console.print(["err not empty: ", workersOp!.length, err])
+  <- workersOp!, err
+
+
+
+func did_create() -> string:
+    workers, err <- getWorkers()
+    -- if err.length > 0:
+        -- do something
+    w = workers[0]
+    on w.metadata.peer_id via w.metadata.relay_id:
+        res = Glaze.did_create()
+    <- res.stdout
+
+func did_create_w() -> string:
+  info <- getWorkersInfo()
+  spell = info.hosts.defaultWorker.installationSpells[0]
+  on spell.workerId via spell.hostId:
+    res <- Glaze.did_create()
+  <- res.stdout

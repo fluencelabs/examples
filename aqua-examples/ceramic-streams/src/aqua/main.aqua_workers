@@ -1,0 +1,119 @@
+aqua Main
+
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/registry/subnetwork.aqua"
+import Registry, Record from "@fluencelabs/registry/registry-service.aqua"
+import "@fluencelabs/spell/spell_service.aqua"
+
+import "workers.aqua"
+import "services.aqua"
+
+export did_create
+
+
+service Console("run-console"):
+    print(any: ⊤)
+    -- print(any: ?[]string)
+
+func getWorkers() -> []Record, []Error:
+  workersInfo <- getWorkersInfo()
+  dealId = workersInfo.deals.defaultWorker.dealId
+  workersOp, err <- resolveSubnetwork(dealId)
+  if err.length > 0:
+      Console.print(["err not empty: ", workersOp!.length, err])
+  <- workersOp!, err
+
+
+
+func did_create() -> string:
+    workers, err <- getWorkers()
+    -- if err.length > 0:
+        -- do something
+    w = workers[0]
+    on w.metadata.peer_id via w.metadata.relay_id:
+        res = Glaze.did_create()
+    <- res.stdout
+
+
+
+func did_create_w() -> string:
+  info <- getWorkersInfo()
+  spell = info.hosts.defaultWorker.installationSpells[0]
+  on spell.workerId via spell.hostId:
+    res <- Glaze.did_create()
+  <- res.stdout
+
+
+
+-- IMPORTANT: Add exports for all functions that you want to run
+--export helloWorld, helloWorldRemote, getInfo, getInfos, getInfosInParallel
+
+-- DOCUMENTATION:
+-- https://fluence.dev
+
+
+-- export status
+
+-- service Console("run-console"):
+    -- print(any: ⊤)
+
+-- -- example of running a service deployed using 'fluence deal deploy'
+-- -- with worker 'defaultWorker' which has service 'MyService' with method 'greeting'
+
+-- func status():
+    -- workersInfo <- getWorkersInfo()
+    -- dealId = workersInfo.deals.defaultWorker.dealId
+    -- print = (answer: string, peer: string):
+      -- Console.print([answer, peer])
+
+    -- answers: *string
+    -- on HOST_PEER_ID:
+        -- workers <- resolveSubnetwork(dealId)
+        -- for w <- workers! par:
+            -- on w.metadata.peer_id via w.metadata.relay_id:
+                -- answer <- MyService.greeting("fluence")
+                -- answers <<- answer
+                -- print(answer, w.metadata.peer_id)
+
+    -- Console.print("getting answers...")
+    -- join answers[workers!.length - 1]
+    -- par Peer.timeout(PARTICLE_TTL / 2, "TIMED OUT")
+    -- Console.print("done")
+
+-- local
+func helloWorld(name: string) -> string:
+    <- Op.concat_strings("Hello, ", name)
+
+-- remote
+func helloWorldRemote(name: string) -> string:
+    on HOST_PEER_ID:
+        hello_msg <- helloWorld(name)
+        from_msg <- Op.concat_strings(hello_msg, "! From ")
+        from_peer_msg <- Op.concat_strings(from_msg, HOST_PEER_ID)
+    <- from_peer_msg
+
+-- request response
+func getInfo() -> Info, PeerId:
+    on HOST_PEER_ID:
+        info <- Peer.identify()
+    <- info, HOST_PEER_ID
+
+-- iterate through several peers
+func getInfos(peers: []PeerId) -> []Info:
+    infos: *Info
+    for p <- peers:
+        on p:
+            infos <- Peer.identify()
+    <- infos
+
+-- parallel computation
+func getInfosInParallel(peers: []PeerId) -> []Info:
+    infos: *Info
+    for p <- peers par:
+        on p:
+            infos <- Peer.identify()
+
+    join infos[Op.array_length(peers) - 1] -- "-1" because it's 0-based
+    par Peer.timeout(PARTICLE_TTL / 2, "")
+
+    <- infos
