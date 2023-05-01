@@ -13,10 +13,12 @@ pub fn stream_commits(stream_id: String) -> Result {
 
     if stderr.contains("Stream commits loaded") && stdout.chars().count() > 0 {
         let s = stdout
-            .replace("[\n  \u{1b}[32m", "")
-            .replace("'\u{1b}[39m,\n", "");
-        let s = s.split(" ").collect::<Vec<&str>>()[0];
-        stdout = json!({ "commit_id": s }).to_string();
+        .replace("\n", "")
+        .replace("\u{1b}[32m", "")
+        .replace("\u{1b}[39m", "")
+        .replace(" ", "");
+
+        stdout = json!({ "commits": s }).to_string();
         stderr = "".to_string();
     }
 

@@ -80,7 +80,7 @@ pub fn tile_show(stream_id: String) -> Result {
 }
 
 #[marine]
-pub fn tile_update(stream_id: String, payload: String, commit_id: String, sk: String) -> Result {
+pub fn tile_update(stream_id: String, payload: String, metadata: String, sk: String) -> Result {
     let mut args = vec![
         "tile:update".to_owned(),
         stream_id,
@@ -90,9 +90,10 @@ pub fn tile_update(stream_id: String, payload: String, commit_id: String, sk: St
         payload,
     ];
 
-    if commit_id.chars().count() > 0 {
+    if metadata.len() > 0 {
         args.push("--metadata".to_owned());
-        args.push(format!("{{\"schema\": {} }}", commit_id));
+        // args.push(format!("{{\"schema\": {} }}", metadata));
+        args.push(metadata.to_owned());
     }
 
     let res = glaze_request(args);
