@@ -1,0 +1,19 @@
+data Result:
+  stdout: string
+  stderr: string
+
+service Glaze("glaze"):
+  config_get() -> Result
+  did_create() -> Result
+  model_add_definition(model_name: string, definition_name: string, definition: string, sk: string) -> Result
+  model_add_schema(model_name: string, schema_name: string, schema: string, sk: string) -> Result
+  model_add_tile(model_name: string, tile_name: string, tile_data: string, sk: string) -> Result
+  model_create(model_name: string) -> Result
+  model_delete(model_name: string) -> Result
+  model_deploy(model_name: string) -> Result
+  model_inspect(model_name: string) -> Result
+  rsplitter(s: string, token: string) -> string
+  stream_commits(stream_id: string) -> Result
+  tile_create(payload: string, commit_id: string, sk: string) -> Result
+  tile_show(stream_id: string) -> Result
+  tile_update(stream_id: string, payload: string, commit_id: string, sk: string) -> Result

@@ -1,0 +1,10 @@
+[[module]]
+name = "glaze_adapter"
+load_from = "/Users/bebo/localdev/examples/aqua-examples/ceramic-streams/target/wasm32-wasi/release/glaze_adapter.wasm"
+
+  [module.mounted_binaries]
+  glaze = "/Users/bebo/.nvm/versions/node/v16.19.0/bin/glaze"
+
+[[module]]
+name = "glaze"
+load_from = "/Users/bebo/localdev/examples/aqua-examples/ceramic-streams/target/wasm32-wasi/release/glaze.wasm"

@@ -1,0 +1,2 @@
+[workspace]
+members = [ "service/modules/glaze", "service/modules/glaze_adapter" ]
