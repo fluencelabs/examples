@@ -5,20 +5,20 @@
 # Documentation: https://github.com/fluencelabs/fluence-cli/tree/main/docs/configs/workers.md
 
 version: 0
-deals:
-  defaultWorker:
-    definition: bafkreidgjmle7qttpgsfvqxbnm4ooisfhheanfq6gkutyxg2k7xszmzrtq
-    timestamp: 2023-05-01T17:02:49.158Z
-    dealIdOriginal: "0x07711142A254c9b1e97eF51F0C51D0D7e8dcb37d"
-    dealId: 07711142a254c9b1e97ef51f0c51d0d7e8dcb37d
-    chainNetwork: testnet
-    chainNetworkId: 1313161555
 hosts:
   defaultWorker:
-    definition: bafkreidgjmle7qttpgsfvqxbnm4ooisfhheanfq6gkutyxg2k7xszmzrtq
+    definition: bafkreicggus7ukfannt5mwu6g5qgip3fjlehxumsqihby4wtynkgjvnbva
     installation_spells:
       - host_id: 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE
         spell_id: 228360c0-0735-430a-858b-f7d761eec125
         worker_id: 12D3KooWC5p6gScLhnit4RmDLoZAb29KHvnYpDB5J55XdukQ4ZKy
-    timestamp: 2023-05-01T17:06:43.273Z
-    relayId: 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE
+    timestamp: 2023-05-01T22:39:53.552Z
+    relayId: 12D3KooWHCJbJKGDfCgHSoCuK9q4STyRnVveqLoXAPBbXHTZx9Cv
+deals:
+  defaultWorker:
+    definition: bafkreicggus7ukfannt5mwu6g5qgip3fjlehxumsqihby4wtynkgjvnbva
+    timestamp: 2023-05-01T22:44:04.296Z
+    dealIdOriginal: "0x6612BBB3D38CF0276950Ccc5ad7567861472bA85"
+    dealId: 6612bbb3d38cf0276950ccc5ad7567861472ba85
+    chainNetwork: testnet
+    chainNetworkId: 1313161555

@@ -16,4 +16,4 @@ service Glaze("glaze"):
   stream_commits(stream_id: string) -> Result
   tile_create(payload: string, commit_id: string, sk: string) -> Result
   tile_show(stream_id: string) -> Result
-  tile_update(stream_id: string, payload: string, commit_id: string, sk: string) -> Result
+  tile_update(stream_id: string, payload: string, metadata: string, sk: string) -> Result
