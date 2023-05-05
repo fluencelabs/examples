@@ -83,9 +83,9 @@ As always, take note of the service id!
 
 ### Approach
 
-We implemented a custom service that returns the mode and frequency for an array of timestamps, see `src/` that can be deployed on to any node of the peer-to-peer network and, once deployed, used to in an Aqua script. Moreover, network peers have builtin services including Kademlia and timestamp services. Both custom and bultin services are accessible by Aqua and ready for composition into an application.
+We implemented a custom service that returns the mode and frequency for an array of timestamps (see `src/`) that can be deployed to any node of the peer-to-peer network and, once deployed, used in an Aqua script. Moreover, network peers have builtin services including Kademlia and timestamp services. Both custom and builtin services are accessible by Aqua and ready for composition into an application.
 
-Our oracle solution is implemented in Aqua and utilizes timestamps from peers selected from our Kademlia neighborhood and, for illustrative purposes, use the deployed service to arrive at the point estimate for our oracle. See `src/main.rs`. There certanly are better ways to process the timestamps into an oracle but for our purposes, mode works.
+Our oracle solution is implemented in Aqua and utilizes timestamps from peers selected from our Kademlia neighborhood and, for illustrative purposes, use the deployed service to arrive at the point estimate for our oracle (see `src/main.rs`). There certanly are better ways to process the timestamps into an oracle but mode works for our purposes.
 
 In our Aqua script, `aqua-scripts/ts_getter.aqua`, we separate the timestamp collections from the subsequent oracle processing. That is, if a peer-client wants to process the timestamps locally, all that's needed are the timestamps, which can be obtained by calling the `ts_getter` function. Alternatively, the timestamps may be processed by calling one or more `ts-oracle` services deployed on the network.
 
