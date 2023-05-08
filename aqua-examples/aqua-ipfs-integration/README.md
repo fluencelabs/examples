@@ -1,11 +1,15 @@
 # IPFS code execution example
 
-> The build and deploy instructions as well as some of the Aqua code are outdated and the deployed services are no longer available. An updated version will be available soon.
+> The build and deploy instructions as well as some of the Aqua code are
+> outdated and the deployed services are no longer available. An updated version
+> will be available soon.
 
 This example showcases 2 things:
 
-1. how it's possible to store .wasm modules on IPFS, then deploy them to Fluence as a service
-2. ability to process IPFS files via a Fluence service. In this example, we get a size of a file
+1. how it's possible to store .wasm modules on IPFS, then deploy them to Fluence
+   as a service
+2. ability to process IPFS files via a Fluence service. In this example, we get
+   a size of a file
 
 ## Learn about AquaIPFS
 
@@ -19,23 +23,24 @@ You need npm v7 or later to run the examples
 
 1. Run it
 
-    ```bash
-    npm i
-    npm run build -w aqua
-    npm start -w web
-    ```
+   ```bash
+   npm i
+   npm run build -w aqua
+   npm start -w web
+   ```
 
 2. Press "deploy"
 3. Copy WASM service CID and press "get_size"
 
 ### NodeJS example
 
-```bash
-npm i
-npm run build -w aqua
-npm start -w nodejs
-```
+  ```bash
+  npm i
+  npm run build -w aqua
+  npm start -w nodejs
+  ```
 
 ## Aqua implementation
 
-The business logic is implemented in Aqua in [process.aqua](aqua/aqua/process.aqua)
+The business logic is implemented in Aqua in
+[process.aqua](aqua/aqua/process.aqua)

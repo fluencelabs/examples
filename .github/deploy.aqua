@@ -1,8 +1,0 @@
-service CallParameters:
-  call_parameters() -> string
-
-func call(service_id: string) -> string:
-  on HOST_PEER_ID:
-    CallParameters service_id
-    r <- CallParameters.call_parameters()
-    <- r

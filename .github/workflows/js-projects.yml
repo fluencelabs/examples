@@ -1,0 +1,92 @@
+name: Run tests in JS projects
+
+on:
+  workflow_call:
+
+env:
+  CI: true
+  FORCE_COLOR: true
+
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+
+    outputs:
+      matrix: "${{ steps.changed.outputs.all_changed_files }}"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Get changed files
+        id: changed
+        uses: tj-actions/changed-files@v35
+        with:
+          files: |
+            quickstart/1-browser-to-browser
+            quickstart/3-browser-to-service
+            js-client-examples/hello-world
+            js-client-examples/browser-example
+            js-client-examples/node-example
+            aqua-examples/echo-greeter/client-peer
+            aqua-examples/price-oracle/client-peer
+            aqua-examples/price-oracle/web
+            aqua-examples/aqua-ipfs-integration
+          dir_names: true
+          json: true
+          json_raw_format: true
+
+      - name: Print matrix
+        run: |
+          echo '${{ steps.changed.outputs.all_changed_files }}' | jq
+
+  test:
+    runs-on: ubuntu-latest
+
+    needs: matrix
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dir: ${{ fromJSON(needs.matrix.outputs.matrix) }}
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.dir }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly-2022-06-27
+          target: wasm32-wasi
+
+      - name: Setup marine
+        uses: fluencelabs/setup-marine@v1
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          registry-url: "https://registry.npmjs.org"
+          cache-dependency-path: "${{ matrix.dir }}/package-lock.json"
+
+      - run: npm i
+      - run: npm run build
+
+      - name: Run tests
+        if: matrix.dir != 'aqua-examples/aqua-ipfs-integration'
+        run: npm run test
+
+      - name: Run aqua-ipfs-integration tests for web
+        if: matrix.dir == 'aqua-examples/aqua-ipfs-integration'
+        run: npm run test -w web
+
+      - name: Run aqua-ipfs-integration tests for nodejs
+        if: matrix.dir == 'aqua-examples/aqua-ipfs-integration'
+        run: npm run test -w nodejs

@@ -18,4 +18,5 @@ npm start
 
 ## Learn more
 
-To learn more, refer to the [documentation page](https://fluence.dev//docs/build/js-client/js-client)
+To learn more, refer to the
+[documentation page](https://fluence.dev//docs/build/js-client/js-client)
