@@ -1,0 +1,17 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "stage/jobs/fluence/rust-peer/**"
+
+concurrency:
+  group: "gitops-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  js:
+    name: "JS projects"
+    uses: ./.github/workflows/js-projects.yml
