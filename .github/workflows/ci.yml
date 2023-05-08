@@ -4,8 +4,8 @@ on:
   pull_request:
     branches:
       - "main"
-    paths:
-      - "stage/jobs/fluence/rust-peer/**"
+    # paths:
+    #   - "!**.md"
 
 concurrency:
   group: "gitops-${{ github.ref }}"
