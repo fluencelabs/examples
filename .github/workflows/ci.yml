@@ -4,8 +4,8 @@ on:
   pull_request:
     branches:
       - "main"
-    # paths:
-    #   - "!**.md"
+    paths:
+      - "!**.md"
 
 concurrency:
   group: "gitops-${{ github.ref }}"
