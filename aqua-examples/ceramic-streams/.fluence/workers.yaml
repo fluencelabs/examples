@@ -12,13 +12,5 @@ hosts:
       - host_id: 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE
         spell_id: 228360c0-0735-430a-858b-f7d761eec125
         worker_id: 12D3KooWC5p6gScLhnit4RmDLoZAb29KHvnYpDB5J55XdukQ4ZKy
-    timestamp: 2023-05-01T22:39:53.552Z
-    relayId: 12D3KooWHCJbJKGDfCgHSoCuK9q4STyRnVveqLoXAPBbXHTZx9Cv
-deals:
-  defaultWorker:
-    definition: bafkreicggus7ukfannt5mwu6g5qgip3fjlehxumsqihby4wtynkgjvnbva
-    timestamp: 2023-05-01T22:44:04.296Z
-    dealIdOriginal: "0x6612BBB3D38CF0276950Ccc5ad7567861472bA85"
-    dealId: 6612bbb3d38cf0276950ccc5ad7567861472ba85
-    chainNetwork: testnet
-    chainNetworkId: 1313161555
+    timestamp: 2023-05-08T14:35:44.538Z
+    relayId: 12D3KooWDcpWuyrMTDinqNgmXAuRdfd2mTdY9VoXZSAet2pDzh6r
