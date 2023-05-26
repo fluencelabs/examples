@@ -453,6 +453,11 @@
         "type": "string"
       },
       "nullable": true
+    },
+    "cliVersion": {
+      "type": "string",
+      "description": "The version of the CLI that is compatible with this project. Set this to enforce a particular set of versions of all fluence components",
+      "nullable": true
     }
   },
   "required": [

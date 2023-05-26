@@ -7,10 +7,16 @@
 version: 0
 hosts:
   defaultWorker:
-    definition: bafkreicggus7ukfannt5mwu6g5qgip3fjlehxumsqihby4wtynkgjvnbva
+    definition: bafkreigsedbqzvof2pukkgvb3xrdb6o5lpxrlughampdbcoibjokc2evay
     installation_spells:
-      - host_id: 12D3KooWJ4bTHirdTFNZpCS72TAzwtdmavTBkkEXtzo6wHL25CtE
-        spell_id: 228360c0-0735-430a-858b-f7d761eec125
-        worker_id: 12D3KooWC5p6gScLhnit4RmDLoZAb29KHvnYpDB5J55XdukQ4ZKy
-    timestamp: 2023-05-08T14:35:44.538Z
-    relayId: 12D3KooWDcpWuyrMTDinqNgmXAuRdfd2mTdY9VoXZSAet2pDzh6r
+      - host_id: 12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR
+        spell_id: fcad2e82-b89b-4fbe-8f07-69696ee2186b
+        worker_id: 12D3KooWGKG4icJzZSG797h9CU2JqVQN64TjFJnh53xPK4inyLbo
+      - host_id: 12D3KooWQdpukY3p2DhDfUfDgphAqsGu5ZUrmQ4mcHSGrRag6gQK
+        spell_id: 53531199-1f9a-49cf-a637-a406adc24300
+        worker_id: 12D3KooWE6RuM7vkL9JdoD9yE2fgqkBWgmUH7bpyotv995LAEzzN
+      - host_id: 12D3KooWRT8V5awYdEZm6aAV9HWweCEbhWd7df4wehqHZXAB7yMZ
+        spell_id: e3f27d6e-bbb4-416a-852a-028aac2dcc3f
+        worker_id: 12D3KooWJ1ConV2Gc79FBvgUZJgt8gYLdMFYoGEratVSZa22jQCK
+    timestamp: 2023-05-02T21:24:23.361Z
+    relayId: 12D3KooWBM3SdXWqGaawQDGQ6JprtwswEg3FWGvGhmgmMez1vRbR

@@ -1,5 +1,8 @@
 aqua Main
 
+import Ipfs, IpfsGetResult from "/Users/folex/Library/pnpm/global/5/node_modules/@fluencelabs/aqua-ipfs/ipfs.aqua"
+import "/Users/folex/Library/pnpm/global/5/node_modules/@fluencelabs/installation-spell/src/aqua/json.aqua"
+
 import "@fluencelabs/aqua-lib/builtin.aqua"
 import "@fluencelabs/registry/subnetwork.aqua"
 import Registry, Record from "@fluencelabs/registry/registry-service.aqua"
@@ -8,31 +11,90 @@ import "@fluencelabs/spell/spell_service.aqua"
 import "workers.aqua"
 import "services.aqua"
 
-export did_create, did_create_w
+
+export did_create, did_create_w, try_ipfs, check_def, set_ipfs_timeout
 
 
 service Console("run-console"):
     print(any: ⊤)
-    -- print(any: ?[]string)
 
-func getWorkers() -> []Record, []Error:
+service J("json"):
+  parse(s: string) -> ⊤
+
+func getWorkers() -> []GetWorkersInfoHostsDefaultWorkerInstallationSpells:
   workersInfo <- getWorkersInfo()
-  dealId = workersInfo.deals.defaultWorker.dealId
-  workersOp, err <- resolveSubnetwork(dealId)
-  if err.length > 0:
-      Console.print(["err not empty: ", workersOp!.length, err])
-  <- workersOp!, err
-
+  spells = workersInfo.hosts.defaultWorker.installationSpells
+  <- spells
 
 
 func did_create() -> string:
-    workers, err <- getWorkers()
-    -- if err.length > 0:
-        -- do something
+    workers <- getWorkers()
     w = workers[0]
-    on w.metadata.peer_id via w.metadata.relay_id:
+    on w.workerId via w.hostId:
         res = Glaze.did_create()
     <- res.stdout
+
+func check_def(ipfs: string, worker_def_cid: string) -> string:
+    print = (m: ⊤):
+      Console.print(m)
+
+    workers <- getWorkers()
+    w = workers[0]
+    on w.workerId via w.hostId:
+      try:
+          -- download App Config from IPFS
+          json <- Ipfs.cat_from(worker_def_cid, ipfs)
+          print(json)
+          if json.success:
+              worker_definition <- WDJson.parse(json.contents)
+
+              for s <- worker_definition.services:
+                  try:
+                      hashes: *Hash
+                      for m <- s.modules:
+                          get_wasm <- Ipfs.get_from(m.wasm, ipfs)
+                          json_cfg <- Ipfs.cat_from(m.config, ipfs)
+                          cfg <- ModuleConfigJson.parse(json_cfg.contents)
+                          hash <- Dist.add_module_from_vault(get_wasm.path, cfg)
+                          hashes <- Op.concat_strings("hash:", hash)
+
+                      blueprint <- Dist.make_blueprint(s.name, hashes)
+                      blueprint_id <- Dist.add_blueprint(blueprint)
+
+                      print(blueprint)
+
+                      -- co print([s.name, "deployed", is_deployed(s.name, blueprint_id)])
+      catch e:
+        print(e)
+
+    <- "OK"
+
+func try_ipfs(ipfs: string) -> string:
+  print = (w: ⊤):
+    Console.print(w)
+  workers <- getWorkers()
+  for w <- workers:
+    on w.workerId via w.hostId:
+      -- Ipfs.set_timeout(10)
+      -- get_wasm <- Ipfs.get_from("bafkreibzipsyogrdxm4gw6yalusuq3ybrszbxldti7g4ixbvcrqiummrqe", ipfs)
+      cat1 <- Ipfs.cat_from("bafkreifdumx7wmxpma6ajigqliv2p65myf2caxrthbqh2zzp6smh57d6eq", ipfs)
+      cat2 <- Ipfs.cat_from("bafkreig6zfn7ajb66x3lymq3732brlddqakrwde2rwkc6j6jz4dha5oze4", ipfs)
+      -- print(get_wasm)
+      -- print(cat1)
+      -- print(cat2)
+      p1 <- J.parse(cat1.contents)
+      p2 <- J.parse(cat2.contents)
+      print(p1)
+      print(p2)
+  <- "OK"
+
+func set_ipfs_timeout(ipfs: string) -> string:
+  workers <- getWorkers()
+  for w <- workers:
+    on w.workerId via w.hostId:
+      Ipfs.set_timeout(10)
+      -- get_wasm <- Ipfs.get_from("bafkreibzipsyogrdxm4gw6yalusuq3ybrszbxldti7g4ixbvcrqiummrqe", ipfs)
+  <- "OK"
 
 func did_create_w() -> string:
   info <- getWorkersInfo()

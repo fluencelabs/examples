@@ -6,36 +6,36 @@ import "@fluencelabs/spell/spell_service.aqua"
 import "workers.aqua"
 import "services.aqua"
 
-export put, get
+-- export put, get
 export put_workers, get_workers, get_and_save_workers
 
-func getWorkers() -> []Record:
-  workersInfo <- getWorkersInfo()
-  dealId = workersInfo.deals.defaultWorker.dealId
-  workersOp <- resolveSubnetwork(dealId)
-  <- workersOp!
+-- func getWorkers() -> []Record:
+--   workersInfo <- getWorkersInfo()
+--   dealId = workersInfo.deals.defaultWorker.dealId
+--   workersOp <- resolveSubnetwork(dealId)
+--   <- workersOp!
 
-func put(file_name: string, file_content: []u8) -> string:
-  workers <- getWorkers()
-  w = workers[0]
-  on w.metadata.peer_id via w.metadata.relay_id:
-    res <- UrlDownloader.put(file_name, file_content)
-  <- res
+-- func put(file_name: string, file_content: []u8) -> string:
+--   workers <- getWorkers()
+--   w = workers[0]
+--   on w.metadata.peer_id via w.metadata.relay_id:
+--     res <- UrlDownloader.put(file_name, file_content)
+--   <- res
 
 
-func get(file_name: string) -> []u8:
-  workers <- getWorkers()
-  w =  workers[0]
-  on w.metadata.peer_id via w.metadata.relay_id:
-    res <- UrlDownloader.get(file_name)
-  <- res
+-- func get(file_name: string) -> []u8:
+--   workers <- getWorkers()
+--   w =  workers[0]
+--   on w.metadata.peer_id via w.metadata.relay_id:
+--     res <- UrlDownloader.get(file_name)
+--   <- res
 
-func get_and_save(url: string, fname: string) -> string:
-    workers <- getWorkers()
-    w =  workers[0]
-    on w.metadata.peer_id via w.metadata.relay_id:
-        res = UrlDownloader.get_n_save(url, fname)
-    <- res
+-- func get_and_save(url: string, fname: string) -> string:
+--     workers <- getWorkers()
+--     w =  workers[0]
+--     on w.metadata.peer_id via w.metadata.relay_id:
+--         res = UrlDownloader.get_n_save(url, fname)
+--     <- res
 
 func put_workers(file_name: string, file_content: []u8) -> string:
   info <- getWorkersInfo()

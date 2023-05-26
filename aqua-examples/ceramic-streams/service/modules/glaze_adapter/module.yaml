@@ -8,5 +8,4 @@ version: 0
 type: rust
 name: glaze_adapter
 mountedBinaries:
-  # glaze: /Users/bebo/.nvm/versions/node/v16.19.0/bin/glaze
   glaze: /usr/bin/glaze
