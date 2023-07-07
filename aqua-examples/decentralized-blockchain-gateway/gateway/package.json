@@ -22,8 +22,8 @@
   "dependencies": {
     "json-rpc-2.0": "1.4.2",
     "web3": "1.8.2",
-    "@fluencelabs/js-client.node": "0.6.11",
-    "@fluencelabs/js-client.api": "0.11.7"
+    "@fluencelabs/js-client.node": "0.7.0",
+    "@fluencelabs/js-client.api": "0.12.0"
   },
   "devDependencies": {
   }
