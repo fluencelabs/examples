@@ -11,7 +11,7 @@ name = "ipfs-adapter"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = { version = "0.7.1", features = ["logger"] }
+marine-rs-sdk = { version = "0.8.0", features = ["logger"] }
 log = "0.4.14"
 
 [dev-dependencies]
