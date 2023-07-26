@@ -11,7 +11,7 @@ name = "drand"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = { version = "0.7.1", features = ["logger"] }
+marine-rs-sdk = { version = "0.8.0", features = ["logger"] }
 drand-verify = { version = "0.3.0", js = false, optional = false }
 hex = "0.4.3"
 serde = "1.0.148"
