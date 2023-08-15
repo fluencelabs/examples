@@ -12,6 +12,6 @@ name = "greeting"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = { version="0.8.0", feature=["log"]}
+marine-rs-sdk = { version="0.8.1", feature=["log"]}
 
 

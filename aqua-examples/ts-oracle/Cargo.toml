@@ -11,11 +11,11 @@ name = "ts_oracle"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = { version = "0.8.0", features = ["logger"] }
+marine-rs-sdk = { version = "0.8.1", features = ["logger"] }
 log = "0.4.14"
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.10.0"
+marine-rs-sdk-test = "0.10.2"
 
 [dev]
 [profile.release]
