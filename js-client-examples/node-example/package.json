@@ -23,7 +23,7 @@
         "ts-jest": "29.0.5"
     },
     "dependencies": {
-        "@fluencelabs/js-client.api": "0.12.1",
+        "@fluencelabs/js-client.api": "0.13.1",
         "@fluencelabs/js-client.node": "0.7.1",
         "@fluencelabs/fluence-network-environment": "1.1.2"
     }
