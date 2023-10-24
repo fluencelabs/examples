@@ -8,9 +8,9 @@ name = "curl_adapter"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = { version = "0.9.0", features = ["logger"] }
+marine-rs-sdk = { version = "0.10.1", features = ["logger"] }
 log = "0.4.8"
 
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.10.2"
+marine-rs-sdk-test = "0.11.0"
