@@ -1,6 +1,4 @@
-import '@fluencelabs/js-client.node';
-import { Fluence } from '@fluencelabs/js-client.api';
-import { kras } from '@fluencelabs/fluence-network-environment';
+import { Fluence, kras } from '@fluencelabs/js-client';
 import { registerCalc, CalcDef } from './_aqua/calc.js';
 
 class Calc implements CalcDef {

@@ -2,20 +2,21 @@ import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.scss';
 
-import { Fluence } from '@fluencelabs/js-client.api';
-import type { ConnectionState } from '@fluencelabs/js-client.api';
-import { krasnodar } from '@fluencelabs/fluence-network-environment';
+import { Fluence, kras, randomKras } from '@fluencelabs/js-client';
 import { getRelayTime } from './_aqua/getting-started';
+// TODO: Hack to extract ConnectionState type from js-client. In the next version this type will be exported from the package.
+type ConnectionState = Parameters<Parameters<(typeof Fluence)['onConnectionStateChange']>[0]>[0];
 
-const relayNode = krasnodar[0];
+const relayNode = kras[0];
 
 function App() {
     const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
     const [relayTime, setRelayTime] = useState<Date | null>(null);
 
     useEffect(() => {
-        Fluence.onConnectionStateChange((state) => {
-            setConnectionState(state);
+        setConnectionState('connecting');
+        Fluence.connect(randomKras()).then(() => {
+            setConnectionState('connected');
         });
     }, []);
 
@@ -23,7 +24,6 @@ function App() {
         if (connectionState !== 'connected') {
             return;
         }
-
         const time = await getRelayTime(relayNode.peerId);
         setRelayTime(new Date(time));
     };
