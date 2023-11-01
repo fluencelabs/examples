@@ -1,21 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import logo from './logo.svg';
 import './App.scss';
 
 import { Fluence, kras } from '@fluencelabs/js-client';
-import { sayHello, registerHelloPeer } from './_aqua/getting-started';
+import { resolveSubnet, add_one_parallel, add_one_sequential, add_one_single } from './_aqua/getting-started';
+
 // TODO: Hack to extract ConnectionState type from js-client. In the next version this type will be exported from the package.
 type ConnectionState = Parameters<Parameters<(typeof Fluence)['onConnectionStateChange']>[0]>[0];
 
 const relayNodes = [kras[4], kras[5], kras[6]];
 
+interface ComputationResult {
+    host_id: string;
+    value: number;
+    worker_id: string;
+}
+
 function App() {
     const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
     const [peerInfo, setPeerInfo] = useState<{ peerId: string; relayPeerId: string } | null>(null);
-    const [helloMessage, setHelloMessage] = useState<string | null>(null);
 
-    const [peerIdInput, setPeerIdInput] = useState<string>('');
-    const [relayPeerIdInput, setRelayPeerIdInput] = useState<string>('');
+    const [numbers, setNumbers] = useState([1, 2, 3]);
+    const [computedNumbers, setComputedNumbers] = useState<number[]>();
+    const [computationInProgress, setComputationInProgress] = useState(false);
+
+    const onNumberChange = (input: string, index: number) => {
+        setNumbers([...numbers.slice(0, index), Number(input) || 0, ...numbers.slice(index + 1)]);
+    }
+
+    const numberContainers = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
 
     useEffect(() => {
         if (connectionState === 'connected') {
@@ -32,28 +45,71 @@ function App() {
             setConnectionState('connecting');
             await Fluence.connect(relayPeerId);
             setConnectionState('connected');
-
-            // Register handler for this call in aqua:
-            // HelloPeer.hello(%init_peer_id%)
-            registerHelloPeer({
-                hello: (from) => {
-                    setHelloMessage('Hello from: \n' + from);
-                    return 'Hello back to you, \n' + from;
-                },
-            });
         } catch (err) {
             console.log('Client could not connect', err);
         }
     };
 
-    const helloBtnOnClick = async () => {
+    const getComputationResuls = async () => {
+        const subnets = await resolveSubnet();
+        const size = Math.max(subnets.length, numbers.length);
+
+        const computationResults: ComputationResult[] = [];
+
+        for (let i = 0; i < size; i++) {
+            const workerId = subnets[i].worker_id;
+
+            if (workerId === null) {
+                continue;
+            }
+
+            computationResults.push({
+                value: numbers[i],
+                worker_id: workerId,
+                host_id: subnets[i].host_id,
+            })
+        }
+
+        return computationResults;
+    };
+
+    const computeSingleBtnOnClick = async () => {
         if (connectionState !== 'connected') {
             return;
         }
+        setComputationInProgress(true);
 
-        // Using aqua is as easy as calling a javascript function
-        const res = await sayHello(peerIdInput, relayPeerIdInput);
-        setHelloMessage(res);
+        const computationResults = await getComputationResuls();
+
+        const result = await add_one_single(computationResults[0]);
+        setComputedNumbers([result]);
+        setComputationInProgress(false);
+    };
+
+    const computeSequentialBtnOnClick = async () => {
+        if (connectionState !== 'connected') {
+            return;
+        }
+        setComputationInProgress(true);
+
+        const computationResults = await getComputationResuls();
+
+        const results = await add_one_sequential(computationResults);
+        setComputedNumbers(results);
+        setComputationInProgress(false);
+    };
+
+    const computeParallelBtnOnClick = async () => {
+        if (connectionState !== 'connected') {
+            return;
+        }
+        setComputationInProgress(true);
+
+        const computationResults = await getComputationResuls();
+
+        const results = await add_one_parallel(computationResults);
+        setComputedNumbers(results);
+        setComputationInProgress(false);
     };
 
     const isConnected = connectionState === 'connected';
@@ -102,41 +158,48 @@ function App() {
                         </table>
 
                         <div>
-                            <h2>Say hello!</h2>
+                            <h2>Input numbers for computation</h2>
                             <p className="p">
-                                Now try opening a new tab with the same application. Copy paste the peer id and relay
-                                from the second tab and say hello!
+                                Input 3 numbers for parallel computation
                             </p>
+                            {
+                                numberContainers.map((ref, i) => (
+                                    <div className="row" key={i}>
+                                        <label className="label bold">Number {i}</label>
+                                        <input
+                                            ref={ref}
+                                            style={{width: 'auto'}}
+                                            id="targetPeerId"
+                                            className="input"
+                                            type="text"
+                                            onChange={(e) => onNumberChange(e.target.value, i)}
+                                            value={numbers[i]}
+                                        />
+                                    </div>
+                                ))
+                            }
                             <div className="row">
-                                <label className="label bold">Target peer id</label>
-                                <input
-                                    id="targetPeerId"
-                                    className="input"
-                                    type="text"
-                                    onChange={(e) => setPeerIdInput(e.target.value)}
-                                    value={peerIdInput}
-                                />
+                                <button className="btn btn-hello" style={{float: 'initial'}} onClick={computeSingleBtnOnClick}>
+                                    Compute signle
+                                </button>
                             </div>
+
                             <div className="row">
-                                <label className="label bold">Target relay</label>
-                                <input
-                                    id="targetRelayId"
-                                    className="input"
-                                    type="text"
-                                    onChange={(e) => setRelayPeerIdInput(e.target.value)}
-                                    value={relayPeerIdInput}
-                                />
+                                <button className="btn btn-hello" style={{float: 'initial'}} onClick={computeSequentialBtnOnClick}>
+                                    Compute sequential
+                                </button>
                             </div>
+
                             <div className="row">
-                                <button className="btn btn-hello" onClick={helloBtnOnClick}>
-                                    say hello
+                                <button className="btn btn-hello" style={{float: 'initial'}} onClick={computeParallelBtnOnClick}>
+                                    Compute parallel
                                 </button>
                             </div>
                         </div>
                     </>
                 ) : (
                     <>
-                        <h1>Intro 1: P2P browser-to-browser</h1>
+                        <h1>Intro 2: Computing on the network</h1>
                         <h2>Pick a relay</h2>
                         <ul>
                             {relayNodes.map((x) => (
@@ -151,10 +214,10 @@ function App() {
                     </>
                 )}
 
-                {helloMessage && (
+                {(computedNumbers || computationInProgress) && (
                     <>
-                        <h2>Message</h2>
-                        <div id="message"> {helloMessage} </div>
+                        <h2>Computation result</h2>
+                        <div id="message"> {computationInProgress ? '...' : JSON.stringify(computedNumbers)} </div>
                     </>
                 )}
             </div>

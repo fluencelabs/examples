@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-set -o errexit -o nounset -o pipefail
-cargo update --aggressive
-
-mkdir -p artifacts
-rm -f artifacts/*.wasm
-marine build --release
-cp target/wasm32-wasi/release/adder.wasm artifacts/

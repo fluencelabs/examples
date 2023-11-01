@@ -1,0 +1,60 @@
+-- Import builtin services
+import "@fluencelabs/aqua-lib/builtin.aqua"
+-- Import subnets
+import Subnet, Worker from "@fluencelabs/aqua-lib/subnet.aqua"
+
+-- Deal id of the deployed worker. We need this to resolve subnet 
+const ADDER_DEAL_ID ?= "0x3C85E6765e58Df1e6c09E5CDC0C386bEEBdBa155"
+
+-- The service runs on a Fluence node
+service Adder("adder"):
+    add_one(value: u64) -> u64
+
+-- Function to get all workers from subnet
+func resolveSubnet() -> []Worker:
+    -- It's possible to resolve subnet only on HOST_PEER_ID i.e. on relay. This won't work locally.
+    on HOST_PEER_ID:
+        -- Resolving subnets using Deal id of deployed service
+        subnet <- Subnet.resolve(ADDER_DEAL_ID)
+    <- subnet.workers
+
+-- This structure forms a computation requests from frontend
+data ComputationRequest:
+    worker_id: string
+    host_id: string
+    value: u64
+
+-- Executes signle computation request
+func add_one_single(request: ComputationRequest) -> u64:
+    -- Extracting worker and host for execution service request
+    on request.worker_id via request.host_id:
+        -- Service execution
+        res <- Adder.add_one(request.value)
+    -- Returning result from function
+    <- res
+
+func add_one_sequential(requests: []ComputationRequest) -> *u64:
+    -- Stream for keeping all computation results
+    results: *u64
+
+    -- Iterating over every computation request, one by one
+    for request <- requests:
+        on request.worker_id via request.host_id:
+            res <- Adder.add_one(request.value)
+            results <<- res
+
+    <- results
+
+func add_one_parallel(requests: []ComputationRequest) -> *u64:
+    results: *u64
+
+    -- Starting a parallel computation. Cycle body called in parallel
+    for request <- requests par:
+        on request.worker_id via request.host_id:
+            res <- Adder.add_one(request.value)
+            results <<- res
+
+    -- waiting for all parallel calls to finish
+    join results[requests.length - 1]
+
+    <- results
