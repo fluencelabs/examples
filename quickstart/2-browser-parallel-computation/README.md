@@ -30,7 +30,7 @@ import "@fluencelabs/aqua-lib/builtin.aqua"
 import Subnet, Worker from "@fluencelabs/aqua-lib/subnet.aqua"
 
 use "deals.aqua"
-use "services.aqua"
+import "services.aqua"
 
 -- Function to get all workers from subnet
 func resolveSubnet() -> []Worker:
