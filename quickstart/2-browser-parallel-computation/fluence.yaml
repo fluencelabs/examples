@@ -4,9 +4,7 @@
 
 # Documentation: https://github.com/fluencelabs/cli/tree/main/docs/configs/fluence.md
 
-version: 2
-
-relays: kras
+version: 4
 
 aquaInputPath: src/aqua/main.aqua
 

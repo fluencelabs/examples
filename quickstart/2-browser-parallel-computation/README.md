@@ -2,7 +2,7 @@
 
 > It's recommended to complete [CLI quickstart](https://fluence.dev/docs/build/get-started) before exploring this example as the example contains concepts build upon deployed service 
 
-In the first section, we explored browser-to-browser messaging using local, i.e. browser-native, services and the Fluence network for message transport. Now imagine that we have deployed a simple service `Adder`, and we will try to experiment with this.
+In the first section, we explored browser-to-browser messaging using local, i.e. browser-native, services and the Fluence network for message transport. Now we have already deployed a simple service `Adder` for you, and we will try to experiment with this.
 
 The service code:
 
@@ -17,7 +17,7 @@ value + 1
 }
 ```
 
-You can deploy it yourself by following [CLI quickstart](https://fluence.dev/docs/build/get-started) guide, replacing `HelloWorld` module with following code and renaming `HelloWorld` service to `Adder` service.
+You can deploy it yourself by following [CLI quickstart](https://fluence.dev/docs/build/get-started) guide, replacing `HelloWorld` module with following code and renaming `HelloWorld` service to `Adder` service there.
 
 Let's navigate to the `2-browser-parallel-computation` directory in the VSCode terminal and install the dependencies:
 
