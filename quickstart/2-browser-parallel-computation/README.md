@@ -26,7 +26,6 @@ First, let's have a look at the Aqua file. Navigate to the `aqua/getting_started
 > Read carefully through comments, starting with `--`.
 
 ```aqua
-import "@fluencelabs/aqua-lib/builtin.aqua"
 import Subnet, Worker from "@fluencelabs/aqua-lib/subnet.aqua"
 
 use "deals.aqua"
