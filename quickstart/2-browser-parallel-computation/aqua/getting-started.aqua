@@ -10,13 +10,13 @@ func resolveSubnet() -> []Worker:
     deals <- Deals.get()
     dealId = deals.defaultWorker!.dealIdOriginal
 
-    -- It's possible to resolve subnet only on HOST_PEER_ID i.e. on relay. This won't work locally.
+    -- Subnets cannot be resolved on local (client) peers, e.g., the CLI client or the browser. Instead, a subnet needs to be resolved on a relay.
     on HOST_PEER_ID:
         -- Resolving subnets using Deal id of deployed service
         subnet <- Subnet.resolve(dealId)
     <- subnet.workers
 
--- This structure forms a computation requests from frontend
+-- This data structure is representing calling aqua function on the worker via frontend.
 data ComputationRequest:
     worker_id: string
     host_id: string

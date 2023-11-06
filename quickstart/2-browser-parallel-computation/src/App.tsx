@@ -178,7 +178,7 @@ function App() {
                             }
                             <div className="row">
                                 <button className="btn btn-hello" style={{float: 'initial'}} onClick={computeSingleBtnOnClick}>
-                                    Compute signle
+                                    Compute single
                                 </button>
                             </div>
 

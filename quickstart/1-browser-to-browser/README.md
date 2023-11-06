@@ -23,7 +23,7 @@ The client peer is now connected to the relay and ready for business:
 
 ![Connection confirmation to network](./assets/Connection-confirmation-to-network.png)
 
-Let's follow the instructions, open another browser tab, i.e. client peer, using `http://localhost:3000` , select any one of the relays and copying the ensuing peer id and relay peer id to the first client peer, i.e. the first browser tab, and click the `say hello` button:
+Let's follow the instructions, open another browser tab preferably in another browser, using `http://localhost:3000` , select any one of the relays and copying the ensuing peer id and relay peer id to the first client peer, i.e. the first browser tab, and click the `say hello` button:
 
 ![Peer-to-peer communication between two browser client peers](./assets/Peer-to-peer-communication-between-two-browser-client-peers.png)
 
@@ -50,7 +50,7 @@ In broad strokes, the Aqua code breaks down as follows:
 
 - Import the Aqua [standard library](https://github.com/fluencelabs/aqua-lib) into our application (1)
 - Create a service interface binding to the local service (see below) with the `HelloPeer` namespace and `hello` function (4-5)
-- Create the composition function `sayHello` that executes the `hello` call on the provided `targetPeerId` via the provided `targetRelayPeerId` and returns the result (7-10). Recall the copy and paste job you did earlier in the browser tab for the peer and relay id? Well, you just found the consumption place for these two parameters.
+- Create the function `sayHello` that executes the `hello` call on the provided `targetPeerId` via the provided `targetRelayPeerId` and returns the result (7-10). Recall the copy and paste job you did earlier in the browser tab for the peer and relay id? That's where these parameters are interacted with.
 
 Not only is Aqua rather succinct in allowing you to seamlessly program both network routes and distributed application workflows but also provides the ability to compile Aqua to Typescript stubs wrapping compiled Aqua, called AIR -- short for Aqua Intermediate Representation, into ready to use code blocks. Navigate to the `src/_aqua` directory and open the `aqua/getting-started.ts` file and poke around a bit.
 
@@ -65,7 +65,7 @@ import { Fluence, kras } from "@fluencelabs/js-client";
 import { sayHello, registerHelloPeer } from "./_aqua/getting-started";
 ```
 
-We wrote a little more than a handful of lines of code in Aqua and ended up with a deployment-ready code block that includes both the network routing and a compute logic to facilitate browser-to-browser messaging over a peer-to-peer network.
+We wrote a little more than a handful of lines of code in Aqua and ended up with a deployment-ready code block that includes both the network routing and compute logic to facilitate browser-to-browser messaging over a peer-to-peer network.
 
 The local (browser) service `HelloPeer` is also implemented in the `App.tsx` file:
 
@@ -88,6 +88,6 @@ const connect = async (relayPeerId: string) => {
 };
 ```
 
-To summarize, we run an app that facilities messaging between two browsers over a peer-to-peer network. At the core of this capability is Aqua which allowed us in just a few lines of code to program both the network topology and the application workflow in barely more than a handful of lines of code. Hint: You should be excited. For more information on Aqua, see the [Aqua Book](../../../aqua-book/introduction.md).
+To summarize, we ran an app that facilities messaging between two browsers over a peer-to-peer network. Aqua allowed us in just a few lines of code to program both the network topology and the application workflow in barely more than a handful of lines of code. Hint: You should be excited. For more information on Aqua, see the [Aqua Book](https://fluence.dev/docs/aqua-book/introduction).
 
 To learn how to write and deploy your own WebAssembly modules refer to [this](https://fluence.dev/docs/build/get-started) doc.

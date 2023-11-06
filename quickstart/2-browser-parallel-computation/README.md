@@ -19,37 +19,11 @@ value + 1
 
 You can deploy it yourself by following [CLI quickstart](https://fluence.dev/docs/build/get-started) guide, replacing `HelloWorld` module with following code and renaming `HelloWorld` service to `Adder` service there.
 
-Let's navigate to the `2-browser-parallel-computation` directory in the VSCode terminal and install the dependencies:
+First, let's have a look at the Aqua file. Navigate to the `aqua/getting_started.aqua` file in your IDE or terminal:
 
-```sh
-npm install
-```
+> If you have trouble reading aqua, feel free to refer to [aqua book](https://fluence.dev/docs/aqua-book/introduction) 
 
-And run the application with:
-
-```sh
-npm start
-```
-
-Which will open a new browser tab at `http://localhost:3000` . Following the instructions, we connect to any one of the displayed relay ids.
-
-![Browser To Service Implementation](./assets/Browser-Parallel-Computation.png)
-
-First, try to input some numbers there. They're args for aqua functions.
-
-After this you can try to click on the buttons below
-
-> **Compute Single** - Takes only first number and adds 1 to the number. Returns the result of computation below.
-
-> **Compute Sequential** - Takes 3 numbers and uses them in the sequential computation. When the last result has been finished, prints output below.
-
-> **Compute Parallel** - Takes 3 numbers and uses them in the parallel computation. Computation of every number is processed in parallel. When every computation has been finished, it prints results in the output.
-
-> Note: parallel results looks like sequential but in a random order. It's because output order is sorted by computation speed (fastest comes first).
-
-Let's have a look at the Aqua file. Navigate to the `aqua/getting_started.aqua` file in your IDE or terminal:
-
-> If you have troubles reading aqua, feel free to refer to [aqua book](https://fluence.dev/docs/aqua-book/introduction)
+> Read carefully through comments, starting with `--`.
 
 ```aqua
 -- Import builtin services
@@ -66,19 +40,19 @@ service Adder("adder"):
 
 -- Function to get all workers from subnet
 func resolveSubnet() -> []Worker:
-    -- It's possible to resolve subnet only on HOST_PEER_ID i.e. on relay. This won't work locally.
+    -- Subnets cannot be resolved on local (client) peers, e.g., the CLI client or the browser. Instead, a subnet needs to be resolved on a relay.
     on HOST_PEER_ID:
         -- Resolving subnets using Deal id of deployed service
         subnet <- Subnet.resolve(ADDER_DEAL_ID)
     <- subnet.workers
 
--- This structure forms a computation requests from frontend
+-- This data structure is representing calling aqua function on the worker via frontend.
 data ComputationRequest:
     worker_id: string
     host_id: string
     value: u64
 
--- Executes signle computation request
+-- Executes single computation request
 func add_one_single(request: ComputationRequest) -> u64:
     -- Extracting worker and host for execution service request
     on request.worker_id via request.host_id:
@@ -114,8 +88,35 @@ func add_one_parallel(requests: []ComputationRequest) -> *u64:
     <- results
 ```
 
-> Read carefully through comments, started with `--`.
+Let's navigate to the `2-browser-parallel-computation` directory in the VSCode terminal and install the dependencies:
+
+```sh
+npm install
+```
+
+And run the application with:
+
+```sh
+npm start
+```
+
+Which will open a new browser tab at `http://localhost:3000` . Following the instructions, we connect to any one of the displayed relay ids.
+
+![Browser To Service Implementation](./assets/Browser-Parallel-Computation.png)
+
+First, try to input some numbers there. They're args for aqua functions.
+
+After this you can try to click on the buttons below
+
+> **Compute Single** - Takes only first number and adds 1 to the number. Returns the result of computation below.
+
+> **Compute Sequential** - Each of the numbers provided is incremented one after the other. That is, we have three sequential function calls.
+
+> **Compute Parallel** - Each of the three numbers provide is increment in parallel. That is, we fork the call into three arms, execute the Adder function for each arm, join the the arms and present the result, which may be either the value for each arm or a timeout.
+
+
+> Note: the joined results vary in order, which is determined by the latency of each of the Adder calls; fastest responses fill the array first.
 
 A little more involved than our first example, but we are again getting a lot done with very little code. Of course, there could be more than one hosted service in play and we could implement, for example, hosted spell checking, text formatting and so much more without much extra effort to express additional workflow logic in our Aqua script.
 
-This brings us to the end of this quick start tutorial. We hope you are as excited as we are to put Aqua and the Fluence stack to work. To continue your Fluence journey, have a look at the remainder of this book, take a deep dive into Aqua with the [Aqua book](../../../aqua-book/introduction.md) or dig into Marine and Aqua examples in the [repo](https://github.com/fluencelabs/examples).
+This brings us to the end of this quick start tutorial. We hope you are as excited as we are to put Aqua and the Fluence stack to work. To continue your Fluence journey, have a look at the remainder of this book, take a deep dive into Aqua with the [Aqua book](https://fluence.dev/docs/aqua-book/introduction) or dig into Marine and Aqua examples in the [repo](https://github.com/fluencelabs/examples).
