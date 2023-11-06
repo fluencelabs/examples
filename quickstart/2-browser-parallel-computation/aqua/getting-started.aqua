@@ -1,21 +1,19 @@
--- Import builtin services
 import "@fluencelabs/aqua-lib/builtin.aqua"
--- Import subnets
 import Subnet, Worker from "@fluencelabs/aqua-lib/subnet.aqua"
 
--- Deal id of the deployed worker. We need this to resolve subnet 
-const ADDER_DEAL_ID ?= "0x3C85E6765e58Df1e6c09E5CDC0C386bEEBdBa155"
-
--- The service runs on a Fluence node
-service Adder("adder"):
-    add_one(value: u64) -> u64
+use "deals.aqua"
+import "services.aqua"
 
 -- Function to get all workers from subnet
 func resolveSubnet() -> []Worker:
+    -- Getting deal id of deployed deal to resolve subnet
+    deals <- Deals.get()
+    dealId = deals.defaultWorker!.dealIdOriginal
+
     -- It's possible to resolve subnet only on HOST_PEER_ID i.e. on relay. This won't work locally.
     on HOST_PEER_ID:
         -- Resolving subnets using Deal id of deployed service
-        subnet <- Subnet.resolve(ADDER_DEAL_ID)
+        subnet <- Subnet.resolve(dealId)
     <- subnet.workers
 
 -- This structure forms a computation requests from frontend
@@ -24,7 +22,7 @@ data ComputationRequest:
     host_id: string
     value: u64
 
--- Executes signle computation request
+-- Executes single computation request
 func add_one_single(request: ComputationRequest) -> u64:
     -- Extracting worker and host for execution service request
     on request.worker_id via request.host_id:

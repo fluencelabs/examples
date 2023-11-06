@@ -1,30 +1,10 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# production
-/build
-
-# misc
+.idea
 .DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+/.fluence/project-secrets.yaml
+/.fluence/schemas
+**/node_modules
+**/target/
+.repl_history
+.vscode/settings.json
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# fluence
-
-src/_aqua/*
-
-public/*.wasm
-public/runnerScript.*
+src/_aqua/

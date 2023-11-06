@@ -1,0 +1,2 @@
+service Adder("adder"):
+  add_one(value: u64) -> u64

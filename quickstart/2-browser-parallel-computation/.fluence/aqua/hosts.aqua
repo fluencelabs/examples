@@ -1,0 +1,21 @@
+aqua Hosts declares *
+
+data SpellLocation:
+    hostId: string
+    spellId: string
+    workerId: string
+
+data Host:
+    definition: string
+    installationSpells: []SpellLocation
+    relayId: string
+    timestamp: string
+    dummyDealId: string
+
+data Hosts:
+    defaultWorker: ?Host
+
+func get() -> Hosts:
+    <- Hosts(
+        defaultWorker=nil
+    )
