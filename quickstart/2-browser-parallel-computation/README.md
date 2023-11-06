@@ -13,7 +13,7 @@ pub fn main() {}
 
 #[marine]
 pub fn add_one(value: u64) -> u64 {
-value + 1
+  value + 1
 }
 ```
 
@@ -26,24 +26,22 @@ First, let's have a look at the Aqua file. Navigate to the `aqua/getting_started
 > Read carefully through comments, starting with `--`.
 
 ```aqua
--- Import builtin services
 import "@fluencelabs/aqua-lib/builtin.aqua"
--- Import subnets
 import Subnet, Worker from "@fluencelabs/aqua-lib/subnet.aqua"
 
--- Deal id of the deployed worker. We need this to resolve subnet 
-const ADDER_DEAL_ID ?= "0x3C85E6765e58Df1e6c09E5CDC0C386bEEBdBa155"
-
--- The service runs on a Fluence node
-service Adder("adder"):
-    add_one(value: u64) -> u64
+use "deals.aqua"
+use "services.aqua"
 
 -- Function to get all workers from subnet
 func resolveSubnet() -> []Worker:
+    -- Getting deal id of deployed deal to resolve subnet
+    deals <- Deals.get()
+    dealId = deals.defaultWorker!.dealIdOriginal
+
     -- Subnets cannot be resolved on local (client) peers, e.g., the CLI client or the browser. Instead, a subnet needs to be resolved on a relay.
     on HOST_PEER_ID:
         -- Resolving subnets using Deal id of deployed service
-        subnet <- Subnet.resolve(ADDER_DEAL_ID)
+        subnet <- Subnet.resolve(dealId)
     <- subnet.workers
 
 -- This data structure is representing calling aqua function on the worker via frontend.

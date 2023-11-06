@@ -4,19 +4,17 @@
 
 # Documentation: https://github.com/fluencelabs/cli/tree/main/docs/configs/fluence.md
 
-version: 4
+version: 5
 
 aquaInputPath: src/aqua/main.aqua
-
-workers:
-  defaultWorker:
-    services: [ adder ]
-    spells: []
 
 deals:
   defaultWorker:
     minWorkers: 1
     targetWorkers: 3
+    services:
+      - adder
+    spells: []
 
 services:
   adder:

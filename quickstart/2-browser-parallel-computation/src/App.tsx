@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.scss';
 
 import { Fluence, kras, type ConnectionState } from '@fluencelabs/js-client';
-import { resolveSubnet, add_one_parallel, add_one_sequential, add_one_single } from './_aqua/getting-started';
+import { resolveSubnet, add_one_parallel, add_one_sequential, add_one_single } from './aqua/getting-started';
 
 
 const relayNodes = [kras[4], kras[5], kras[6]];
