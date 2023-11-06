@@ -10,13 +10,13 @@
         "start": "node --loader ts-node/esm ./src/index.ts",
         "build": "tsc",
         "test": "jest",
-        "compile-aqua": "fluence aqua -i ./aqua/ -o ./src/_aqua",
-        "watch-aqua": "fluence aqua -w -i ./aqua/ -o ./src/_aqua"
+        "compile-aqua": "fluence aqua -i ./aqua/ -o src/aqua",
+        "watch-aqua": "fluence aqua -w -i ./aqua/ -o src/aqua"
     },
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@fluencelabs/cli": "0.11.4",
+        "@fluencelabs/cli": "0.12.1",
         "ts-node": "10.9.1",
         "@types/node": "20.8.10",
         "@types/jest": "29.4.0",
@@ -24,7 +24,7 @@
         "ts-jest": "29.0.5"
     },
     "dependencies": {
-        "@fluencelabs/js-client": "0.4.1",
+        "@fluencelabs/js-client": "0.4.3",
         "@fluencelabs/marine-js": "0.7.4"
     }
 }

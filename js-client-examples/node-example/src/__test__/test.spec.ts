@@ -1,5 +1,5 @@
 import { justStop, runServer } from '../main.js';
-import { demoCalculation } from '../_aqua/demo-calculation.js';
+import { demoCalculation } from '../aqua/demo-calculation.js';
 
 describe('smoke test', () => {
     it('should work', async () => {

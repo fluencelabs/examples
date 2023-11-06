@@ -1,5 +1,5 @@
 import { Fluence, randomKras } from '@fluencelabs/js-client';
-import { registerHelloWorld, sayHello, getRelayTime, tellFortune } from './_aqua/hello-world.js';
+import { registerHelloWorld, sayHello, getRelayTime, tellFortune } from './aqua/hello-world.js';
 
 export async function main() {
     await Fluence.connect(randomKras());

@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.scss';
 
-import { Fluence, kras, randomKras } from '@fluencelabs/js-client';
-import { getRelayTime } from './_aqua/getting-started';
-// TODO: Hack to extract ConnectionState type from js-client. In the next version this type will be exported from the package.
-type ConnectionState = Parameters<Parameters<(typeof Fluence)['onConnectionStateChange']>[0]>[0];
+import { Fluence, kras, randomKras, type ConnectionState } from '@fluencelabs/js-client';
+import { getRelayTime } from './aqua/getting-started';
 
 const relayNode = kras[0];
 

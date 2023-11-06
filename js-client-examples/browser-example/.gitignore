@@ -24,7 +24,7 @@ yarn-error.log*
 
 # fluence
 
-src/_aqua/*
+src/aqua/*
 
 public/*.wasm
 public/runnerScript.*

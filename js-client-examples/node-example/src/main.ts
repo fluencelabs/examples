@@ -1,5 +1,5 @@
 import { Fluence, kras } from '@fluencelabs/js-client';
-import { registerCalc, CalcDef } from './_aqua/calc.js';
+import { registerCalc, CalcDef } from './aqua/calc.js';
 
 class Calc implements CalcDef {
     private _state: number = 0;

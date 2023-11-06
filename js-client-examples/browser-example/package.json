@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@fluencelabs/js-client": "0.4.1",
+        "@fluencelabs/js-client": "0.4.3",
         "@testing-library/jest-dom": "^5.14.1",
         "@testing-library/react": "^11.2.7",
         "@testing-library/user-event": "^12.8.3",
@@ -26,8 +26,8 @@
         "test": "jest --config=jest.config.js",
         "_test": "react-scripts test",
         "eject": "react-scripts eject",
-        "compile-aqua": "fluence aqua -i ./aqua/ -o ./src/_aqua",
-        "watch-aqua": "fluence aqua -w -i ./aqua/ -o ./src/_aqua"
+        "compile-aqua": "fluence aqua -i ./aqua/ -o src/aqua",
+        "watch-aqua": "fluence aqua -w -i ./aqua/ -o src/aqua"
     },
     "eslintConfig": {
         "extends": [
@@ -50,7 +50,7 @@
         ]
     },
     "devDependencies": {
-        "@fluencelabs/cli": "0.11.4",
+        "@fluencelabs/cli": "0.12.1",
         "@types/jest-environment-puppeteer": "^4.4.1",
         "@types/puppeteer": "^5.4.4",
         "jest-puppeteer": "^6.0.2",
