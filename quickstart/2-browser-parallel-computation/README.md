@@ -46,7 +46,7 @@ func resolveSubnet() -> []Worker:
         subnet <- Subnet.resolve(dealId)
     <- subnet.workers
 
--- This data structure is representing calling aqua function on the worker via frontend.
+-- This data structure represents the aqua function that is calling the worker via the frontend.
 data ComputationRequest:
     worker_id: string
     host_id: string
