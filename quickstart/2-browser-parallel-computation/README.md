@@ -28,8 +28,11 @@ First, let's have a look at the Aqua file. Navigate to the `aqua/getting_started
 ```aqua
 import Subnet, Worker from "@fluencelabs/aqua-lib/subnet.aqua"
 
+-- 'use' clause brings Deal service into the scope
 use "deals.aqua"
-import "services.aqua"
+
+-- 'import from' allows for fine-grained import, makes code easier to follow
+import Adder from "services.aqua"
 
 -- Function to get all workers from subnet
 func resolveSubnet() -> []Worker:
