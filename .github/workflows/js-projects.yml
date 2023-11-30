@@ -26,7 +26,7 @@ jobs:
         with:
           files: |
             quickstart/1-browser-to-browser
-            quickstart/3-browser-to-service
+            quickstart/2-browser-parallel-computation
             js-client-examples/hello-world
             js-client-examples/browser-example
             js-client-examples/node-example

@@ -2,10 +2,10 @@
 
 The first example demonstrates how to communicate between two client peers, i.e. browsers, with local services. The project is based on a create-react-app template with slight modifications to integrate Fluence. The primary focus is the integration itself and React could be swapped with any framework of your choice.
 
-Make sure you are in the `examples/quickstart/1-browser-to-browser` directory to install the dependencies:
+Make sure you are in the `examples/quickstart/1-browser-to-browser/src/frontend` directory to install the dependencies:
 
 ```sh
-cd examples/quickstart/1-browser-to-browser
+cd 1-browser-to-browser/src/frontend
 npm install
 ```
 

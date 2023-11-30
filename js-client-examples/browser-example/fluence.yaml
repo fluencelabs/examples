@@ -6,18 +6,7 @@
 
 version: 5
 
-aquaInputPath: src/aqua/getting-started.aqua
-
-deals:
-  defaultWorker:
-    targetWorkers: 3
-    services:
-      - adder
-    spells: []
-
-services:
-  adder:
-    get: src/services/adder
+aquaInputPath: src/aqua
 
 relaysPath: src/frontend/src
 

@@ -88,7 +88,7 @@ func add_one_parallel(requests: []ComputationRequest) -> *u64:
     <- results
 ```
 
-Let's navigate to the `2-browser-parallel-computation` directory in the VSCode terminal and install the dependencies:
+Let's navigate to the `2-browser-parallel-computation/src/frontend` directory in the VSCode terminal and install the dependencies:
 
 ```sh
 npm install
