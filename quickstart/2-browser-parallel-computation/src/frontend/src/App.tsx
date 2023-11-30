@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import logo from './logo.svg';
 import './App.scss';
 
-import { Fluence, kras, type ConnectionState } from '@fluencelabs/js-client';
+import { Fluence, type ConnectionState } from '@fluencelabs/js-client';
 import { resolveSubnet, add_one_parallel, add_one_sequential, add_one_single } from './compiled-aqua/getting-started';
+import relays from "./relays.json";
 
 
-const relayNodes = [kras[4], kras[5], kras[6]];
+const relayNodes = [relays[0], relays[1], relays[2]];
 
 interface ComputationResult {
     host_id: string;

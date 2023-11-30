@@ -19,7 +19,7 @@ pub fn add_one(value: u64) -> u64 {
 
 You can deploy it yourself by following [CLI quickstart](https://fluence.dev/docs/build/get-started) guide, replacing `HelloWorld` module with following code and renaming `HelloWorld` service to `Adder` service there.
 
-First, let's have a look at the Aqua file. Navigate to the `aqua/getting_started.aqua` file in your IDE or terminal:
+First, let's have a look at the Aqua file. Navigate to the `2-browser-parallel-computation/src/aqua/getting_started.aqua` file in your IDE or terminal:
 
 > If you have trouble reading aqua, feel free to refer to [aqua book](https://fluence.dev/docs/aqua-book/introduction) 
 
@@ -31,8 +31,8 @@ import Subnet, Worker from "@fluencelabs/aqua-lib/subnet.aqua"
 -- 'use' clause brings Deal service into the scope
 use "deals.aqua"
 
--- 'import from' allows for fine-grained import, makes code easier to follow
-import Adder from "services.aqua"
+-- this 'import' brings every aqua service declaration into the scope
+import "services.aqua"
 
 -- Function to get all workers from subnet
 func resolveSubnet() -> []Worker:

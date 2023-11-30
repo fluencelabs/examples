@@ -3,8 +3,8 @@ import Subnet, Worker from "@fluencelabs/aqua-lib/subnet.aqua"
 -- 'use' clause brings Deal service into the scope
 use "deals.aqua"
 
--- 'import from' allows for fine-grained import, makes code easier to follow
-import Adder from "services.aqua"
+-- this 'import' brings every aqua service declaration into the scope
+import "services.aqua"
 
 -- Function to get all workers from subnet
 func resolveSubnet() -> []Worker:
