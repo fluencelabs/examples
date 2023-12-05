@@ -9,6 +9,12 @@ cd 1-browser-to-browser/src/frontend
 npm install
 ```
 
+Run aqua compiler:
+
+```bash
+fluence aqua
+```
+
 Run the app with `npm start` :
 
 ```sh

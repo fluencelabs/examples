@@ -18,6 +18,12 @@ Install dependencies:
 npm i
 ```
 
+Run aqua compiler:
+
+```bash
+fluence aqua
+```
+
 Start the Node.js application:
 
 ```bash

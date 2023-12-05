@@ -1,4 +1,4 @@
-# 3. Browser-Parallel-Computation
+# 2. Browser-Parallel-Computation
 
 > It's recommended to complete [CLI quickstart](https://fluence.dev/docs/build/get-started) before exploring this example as the example contains concepts build upon deployed service 
 
@@ -92,6 +92,12 @@ Let's navigate to the `2-browser-parallel-computation/src/frontend` directory in
 
 ```sh
 npm install
+```
+
+Run aqua compiler:
+
+```bash
+fluence aqua
 ```
 
 And run the application with:
