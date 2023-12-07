@@ -1,0 +1,25 @@
+data ServiceCreationResult:
+    success: bool
+    service_id: ?string
+    error: ?string
+
+data RemoveResult:
+    success: bool
+    error: ?string
+
+alias ListServiceResult: []string
+
+service Srv("single_module_srv"):
+    -- Used to create a service on a certain node
+    -- Arguments:
+    --  bytes – a base64 string containing the .wasm module to add.
+    -- Returns: service_id – the service ID of the created service.
+    create(wasm_b64_content: string) -> ServiceCreationResult
+
+    -- Used to remove a service from a certain node
+    -- Arguments:
+    --  service_id – ID of the service to remove
+    remove(service_id: string) -> RemoveResult
+
+    -- Returns a list of services ids running on a peer
+    list() -> ListServiceResult
