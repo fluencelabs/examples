@@ -108,7 +108,7 @@ npm start
 
 Which will open a new browser tab at `http://localhost:3000` . Following the instructions, we connect to any one of the displayed relay ids.
 
-![Browser To Service Implementation](./assets/Browser-Parallel-Computation.png)
+![Browser To Service Implementation](./src/frontend/assets/Browser-Parallel-Computation.png)
 
 First, try to input some numbers there. They're args for aqua functions.
 
