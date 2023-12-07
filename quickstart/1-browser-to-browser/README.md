@@ -23,15 +23,15 @@ npm start
 
 Which opens a new tab in your browser at `http://localhost:3000`. The browser tab, representing the client peer, wants you to pick a relay node it, i.e., the browser client, can connect to and, of course, allows the peer to respond to the browser client. Select any one of the offered relays:
 
-![Relay Selection](./src/frontend/assets/Relay-Selection.png)
+![Relay Selection](./assets/Relay-Selection.png)
 
 The client peer is now connected to the relay and ready for business:
 
-![Connection confirmation to network](./src/frontend/assets/Connection-confirmation-to-network.png)
+![Connection confirmation to network](./assets/Connection-confirmation-to-network.png)
 
 Let's follow the instructions, open another browser tab preferably in another browser, using `http://localhost:3000` , select any one of the relays and copying the ensuing peer id and relay peer id to the first client peer, i.e. the first browser tab, and click the `say hello` button:
 
-![Peer-to-peer communication between two browser client peers](./src/frontend/assets/Peer-to-peer-communication-between-two-browser-client-peers.png)
+![Peer-to-peer communication between two browser client peers](./assets/Peer-to-peer-communication-between-two-browser-client-peers.png)
 
 Congratulations, you just sent messages between two browsers over the Fluence peer-to-peer network, which is pretty cool! Even cooler, however, is how we got here using Aqua, Fluence's distributed network and application composition language.
 
