@@ -32,7 +32,7 @@ Start the dev server
 npm run dev
 ```
 
-Click on the link in console output. Window on `localhost:5173` should open
+Click on the link in console output. Window on `localhost:5173` should open. After that wait for the button and click it. You should see "Hi, Fluence". 
 
 ## Learn more
 

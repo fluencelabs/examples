@@ -4,8 +4,9 @@ service HelloWorld("hello-world"):
     hello(str: string)
     getFortune() -> string
 
-func sayHello():
+func sayHello() -> string:
     HelloWorld.hello("Hello, world!")
+    <- "OK"
 
 func tellFortune() -> string:
     res <- HelloWorld.getFortune()

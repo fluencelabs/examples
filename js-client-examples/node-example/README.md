@@ -32,7 +32,7 @@ npm start
 
 This should start listening to incoming particles from Fluence Network.
 
-Try interacting with the application by executing aqua function:
+Open another terminal window and go to the example dir. Try interacting with the application by executing aqua function:
 
 ```bash
 fluence run -f 'demoCalculation()'
