@@ -1,0 +1,203 @@
+{
+  "$id": "https://fluence.dev/schemas/workers.yaml",
+  "title": "workers.yaml",
+  "type": "object",
+  "description": "A result of app deployment. This file is created automatically after successful deployment using `fluence workers deploy` command",
+  "properties": {
+    "version": {
+      "type": "number",
+      "const": 0
+    },
+    "deals": {
+      "type": "object",
+      "description": "A map of created deals",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "definition": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "ISO timestamp of the time when the worker was deployed"
+          },
+          "dealId": {
+            "type": "string"
+          },
+          "dealIdOriginal": {
+            "type": "string"
+          },
+          "chainNetwork": {
+            "type": "string",
+            "enum": [
+              "kras",
+              "testnet",
+              "stage",
+              "local"
+            ]
+          },
+          "chainNetworkId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "timestamp",
+          "definition",
+          "dealId",
+          "dealIdOriginal",
+          "chainNetwork",
+          "chainNetworkId"
+        ]
+      },
+      "properties": {
+        "Worker_deployed_using_deals": {
+          "type": "object",
+          "properties": {
+            "definition": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "string",
+              "description": "ISO timestamp of the time when the worker was deployed"
+            },
+            "dealId": {
+              "type": "string"
+            },
+            "dealIdOriginal": {
+              "type": "string"
+            },
+            "chainNetwork": {
+              "type": "string",
+              "enum": [
+                "kras",
+                "testnet",
+                "stage",
+                "local"
+              ]
+            },
+            "chainNetworkId": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "timestamp",
+            "definition",
+            "dealId",
+            "dealIdOriginal",
+            "chainNetwork",
+            "chainNetworkId"
+          ]
+        }
+      },
+      "required": [],
+      "nullable": true
+    },
+    "hosts": {
+      "type": "object",
+      "description": "A map of deployed workers",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "definition": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "ISO timestamp of the time when the worker was deployed"
+          },
+          "dummyDealId": {
+            "type": "string"
+          },
+          "installation_spells": {
+            "type": "array",
+            "description": "A list of installation spells",
+            "items": {
+              "type": "object",
+              "properties": {
+                "host_id": {
+                  "type": "string"
+                },
+                "spell_id": {
+                  "type": "string"
+                },
+                "worker_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "host_id",
+                "spell_id",
+                "worker_id"
+              ]
+            }
+          },
+          "relayId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "timestamp",
+          "definition",
+          "installation_spells",
+          "relayId",
+          "dummyDealId"
+        ]
+      },
+      "properties": {
+        "Worker_deployed_using_direct_hosting": {
+          "type": "object",
+          "properties": {
+            "definition": {
+              "type": "string"
+            },
+            "timestamp": {
+              "type": "string",
+              "description": "ISO timestamp of the time when the worker was deployed"
+            },
+            "dummyDealId": {
+              "type": "string"
+            },
+            "installation_spells": {
+              "type": "array",
+              "description": "A list of installation spells",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "host_id": {
+                    "type": "string"
+                  },
+                  "spell_id": {
+                    "type": "string"
+                  },
+                  "worker_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "host_id",
+                  "spell_id",
+                  "worker_id"
+                ]
+              }
+            },
+            "relayId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "timestamp",
+            "definition",
+            "installation_spells",
+            "relayId",
+            "dummyDealId"
+          ]
+        }
+      },
+      "required": [],
+      "nullable": true
+    }
+  },
+  "required": [
+    "version"
+  ]
+}

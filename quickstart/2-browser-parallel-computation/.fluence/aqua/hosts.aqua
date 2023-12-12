@@ -1,0 +1,4 @@
+aqua Hosts declares *
+
+func get() -> ?u8:
+    <- nil

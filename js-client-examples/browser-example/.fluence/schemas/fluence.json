@@ -1,0 +1,779 @@
+{
+  "type": "object",
+  "properties": {
+    "services": {
+      "title": "Services",
+      "description": "A map with service names as keys and Service configs as values. You can have any number of services listed here as long as service name keys start with a lowercase letter and contain only letters numbers and underscores. You can use `fluence service add` command to add a service to this config",
+      "type": "object",
+      "additionalProperties": {
+        "title": "Service config",
+        "description": "Service config. Defines where the service is and how to deploy it",
+        "type": "object",
+        "properties": {
+          "get": {
+            "type": "string",
+            "description": "Path to service directory or URL to the tar.gz archive with the service"
+          },
+          "overrideModules": {
+            "type": "object",
+            "title": "Overrides",
+            "description": "A map of modules to override",
+            "additionalProperties": {
+              "type": "object",
+              "title": "Module overrides",
+              "description": "Overrides for the module config",
+              "properties": {
+                "maxHeapSize": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+                },
+                "loggerEnabled": {
+                  "type": "boolean",
+                  "nullable": true,
+                  "description": "Set true to allow module to use the Marine SDK logger"
+                },
+                "loggingMask": {
+                  "type": "number",
+                  "nullable": true,
+                  "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
+                },
+                "volumes": {
+                  "type": "object",
+                  "nullable": true,
+                  "required": [],
+                  "title": "Volumes",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "properties": {
+                    "Alias": {
+                      "type": "string",
+                      "description": "path"
+                    }
+                  },
+                  "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
+                },
+                "envs": {
+                  "type": "object",
+                  "title": "Environment variables",
+                  "nullable": true,
+                  "required": [],
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "properties": {
+                    "Environment_variable_name": {
+                      "type": "string",
+                      "description": "Environment variable value"
+                    }
+                  },
+                  "description": "environment variables accessible by a particular module with standard Rust env API like this: std::env::var(IPFS_ADDR_ENV_NAME). Please note that Marine adds three additional environment variables. Module environment variables could be examined with repl"
+                },
+                "mountedBinaries": {
+                  "title": "Mounted binaries",
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "properties": {
+                    "Mounted_binary_name": {
+                      "type": "string",
+                      "description": "Path to a mounted binary"
+                    }
+                  },
+                  "nullable": true,
+                  "required": [],
+                  "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                }
+              },
+              "required": [],
+              "nullable": true
+            },
+            "properties": {
+              "Module_name": {
+                "type": "object",
+                "title": "Module overrides",
+                "description": "Overrides for the module config",
+                "properties": {
+                  "maxHeapSize": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+                  },
+                  "loggerEnabled": {
+                    "type": "boolean",
+                    "nullable": true,
+                    "description": "Set true to allow module to use the Marine SDK logger"
+                  },
+                  "loggingMask": {
+                    "type": "number",
+                    "nullable": true,
+                    "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
+                  },
+                  "volumes": {
+                    "type": "object",
+                    "nullable": true,
+                    "required": [],
+                    "title": "Volumes",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "Alias": {
+                        "type": "string",
+                        "description": "path"
+                      }
+                    },
+                    "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
+                  },
+                  "envs": {
+                    "type": "object",
+                    "title": "Environment variables",
+                    "nullable": true,
+                    "required": [],
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "Environment_variable_name": {
+                        "type": "string",
+                        "description": "Environment variable value"
+                      }
+                    },
+                    "description": "environment variables accessible by a particular module with standard Rust env API like this: std::env::var(IPFS_ADDR_ENV_NAME). Please note that Marine adds three additional environment variables. Module environment variables could be examined with repl"
+                  },
+                  "mountedBinaries": {
+                    "title": "Mounted binaries",
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "Mounted_binary_name": {
+                        "type": "string",
+                        "description": "Path to a mounted binary"
+                      }
+                    },
+                    "nullable": true,
+                    "required": [],
+                    "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                  }
+                },
+                "required": [],
+                "nullable": true
+              }
+            },
+            "nullable": true,
+            "required": []
+          }
+        },
+        "required": [
+          "get"
+        ]
+      },
+      "properties": {
+        "Service_name": {
+          "title": "Service config",
+          "description": "Service config. Defines where the service is and how to deploy it",
+          "type": "object",
+          "properties": {
+            "get": {
+              "type": "string",
+              "description": "Path to service directory or URL to the tar.gz archive with the service"
+            },
+            "overrideModules": {
+              "type": "object",
+              "title": "Overrides",
+              "description": "A map of modules to override",
+              "additionalProperties": {
+                "type": "object",
+                "title": "Module overrides",
+                "description": "Overrides for the module config",
+                "properties": {
+                  "maxHeapSize": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+                  },
+                  "loggerEnabled": {
+                    "type": "boolean",
+                    "nullable": true,
+                    "description": "Set true to allow module to use the Marine SDK logger"
+                  },
+                  "loggingMask": {
+                    "type": "number",
+                    "nullable": true,
+                    "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
+                  },
+                  "volumes": {
+                    "type": "object",
+                    "nullable": true,
+                    "required": [],
+                    "title": "Volumes",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "Alias": {
+                        "type": "string",
+                        "description": "path"
+                      }
+                    },
+                    "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
+                  },
+                  "envs": {
+                    "type": "object",
+                    "title": "Environment variables",
+                    "nullable": true,
+                    "required": [],
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "Environment_variable_name": {
+                        "type": "string",
+                        "description": "Environment variable value"
+                      }
+                    },
+                    "description": "environment variables accessible by a particular module with standard Rust env API like this: std::env::var(IPFS_ADDR_ENV_NAME). Please note that Marine adds three additional environment variables. Module environment variables could be examined with repl"
+                  },
+                  "mountedBinaries": {
+                    "title": "Mounted binaries",
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "Mounted_binary_name": {
+                        "type": "string",
+                        "description": "Path to a mounted binary"
+                      }
+                    },
+                    "nullable": true,
+                    "required": [],
+                    "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                  }
+                },
+                "required": [],
+                "nullable": true
+              },
+              "properties": {
+                "Module_name": {
+                  "type": "object",
+                  "title": "Module overrides",
+                  "description": "Overrides for the module config",
+                  "properties": {
+                    "maxHeapSize": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Max size of the heap that a module can allocate in format: [number][whitespace?][specificator?] where ? is an optional field and specificator is one from the following (case-insensitive):\nK, Kb - kilobyte\nKi, KiB - kibibyte\nM, Mb - megabyte\nMi, MiB - mebibyte\nG, Gb - gigabyte\nGi, GiB - gibibyte\nCurrent limit is 4 GiB"
+                    },
+                    "loggerEnabled": {
+                      "type": "boolean",
+                      "nullable": true,
+                      "description": "Set true to allow module to use the Marine SDK logger"
+                    },
+                    "loggingMask": {
+                      "type": "number",
+                      "nullable": true,
+                      "description": "manages the logging targets, described in detail: https://fluence.dev/docs/marine-book/marine-rust-sdk/developing/logging#using-target-map"
+                    },
+                    "volumes": {
+                      "type": "object",
+                      "nullable": true,
+                      "required": [],
+                      "title": "Volumes",
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "properties": {
+                        "Alias": {
+                          "type": "string",
+                          "description": "path"
+                        }
+                      },
+                      "description": "A map of accessible files and their aliases. Aliases should be used in Marine module development because it's hard to know the full path to a file"
+                    },
+                    "envs": {
+                      "type": "object",
+                      "title": "Environment variables",
+                      "nullable": true,
+                      "required": [],
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "properties": {
+                        "Environment_variable_name": {
+                          "type": "string",
+                          "description": "Environment variable value"
+                        }
+                      },
+                      "description": "environment variables accessible by a particular module with standard Rust env API like this: std::env::var(IPFS_ADDR_ENV_NAME). Please note that Marine adds three additional environment variables. Module environment variables could be examined with repl"
+                    },
+                    "mountedBinaries": {
+                      "title": "Mounted binaries",
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "properties": {
+                        "Mounted_binary_name": {
+                          "type": "string",
+                          "description": "Path to a mounted binary"
+                        }
+                      },
+                      "nullable": true,
+                      "required": [],
+                      "description": "A map of binary executable files that module is allowed to call. Example: curl: /usr/bin/curl"
+                    }
+                  },
+                  "required": [],
+                  "nullable": true
+                }
+              },
+              "nullable": true,
+              "required": []
+            }
+          },
+          "required": [
+            "get"
+          ]
+        }
+      },
+      "required": [],
+      "nullable": true
+    },
+    "version": {
+      "type": "number",
+      "const": 5
+    },
+    "dependencies": {
+      "type": "object",
+      "title": "Dependencies",
+      "nullable": true,
+      "description": "(For advanced users) Overrides for the project dependencies",
+      "properties": {
+        "npm": {
+          "type": "object",
+          "title": "npm dependencies",
+          "nullable": true,
+          "description": "A map of npm aqua dependency versions. Fluence CLI ensures dependencies are installed each time you run aqua",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "properties": {
+            "npm_dependency_name": {
+              "type": "string",
+              "description": "npm dependency version"
+            }
+          },
+          "required": []
+        },
+        "cargo": {
+          "type": "object",
+          "title": "Cargo dependencies",
+          "nullable": true,
+          "description": "A map of cargo dependency versions. Fluence CLI ensures dependencies are installed each time you run commands that depend on Marine or Marine REPL",
+          "required": [],
+          "additionalProperties": {
+            "type": "string"
+          },
+          "properties": {
+            "Cargo_dependency_name": {
+              "type": "string",
+              "description": "cargo dependency version"
+            }
+          }
+        }
+      },
+      "required": []
+    },
+    "aquaInputPath": {
+      "type": "string",
+      "nullable": true,
+      "description": "Path to the aqua file or directory with aqua files that you want to compile by default. Must be relative to the project root dir"
+    },
+    "aquaOutputTSPath": {
+      "type": "string",
+      "nullable": true,
+      "description": "Path to the default compilation target dir from aqua to ts. Must be relative to the project root dir"
+    },
+    "aquaOutputJSPath": {
+      "type": "string",
+      "nullable": true,
+      "description": "Path to the default compilation target dir from aqua to js. Must be relative to the project root dir. Overrides 'aquaOutputTSPath' property"
+    },
+    "hosts": {
+      "description": "A map of objects with worker names as keys, each object defines a list of peer IDs to host the worker on. Intended to be used by providers to deploy directly without using the blockchain",
+      "type": "object",
+      "nullable": true,
+      "additionalProperties": {
+        "type": "object",
+        "description": "Worker config",
+        "properties": {
+          "services": {
+            "description": "An array of service names to include in this worker. Service names must be listed in fluence.yaml",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "spells": {
+            "description": "An array of spell names to include in this worker. Spell names must be listed in fluence.yaml",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "peerIds": {
+            "type": "array",
+            "description": "An array of peer IDs to deploy on",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": []
+      },
+      "properties": {
+        "workerName": {
+          "type": "object",
+          "description": "Worker config",
+          "properties": {
+            "services": {
+              "description": "An array of service names to include in this worker. Service names must be listed in fluence.yaml",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "spells": {
+              "description": "An array of spell names to include in this worker. Spell names must be listed in fluence.yaml",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "peerIds": {
+              "type": "array",
+              "description": "An array of peer IDs to deploy on",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            }
+          },
+          "required": []
+        }
+      },
+      "required": []
+    },
+    "deals": {
+      "description": "A map of objects with worker names as keys, each object defines a deal",
+      "type": "object",
+      "nullable": true,
+      "additionalProperties": {
+        "type": "object",
+        "description": "Worker config",
+        "properties": {
+          "services": {
+            "description": "An array of service names to include in this worker. Service names must be listed in fluence.yaml",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "spells": {
+            "description": "An array of spell names to include in this worker. Spell names must be listed in fluence.yaml",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "minWorkers": {
+            "type": "number",
+            "description": "Required workers to activate the deal",
+            "default": 1,
+            "nullable": true,
+            "minimum": 1
+          },
+          "targetWorkers": {
+            "type": "number",
+            "description": "Max workers in the deal",
+            "default": 3,
+            "nullable": true,
+            "minimum": 1
+          }
+        },
+        "required": []
+      },
+      "properties": {
+        "dealName": {
+          "type": "object",
+          "description": "Worker config",
+          "properties": {
+            "services": {
+              "description": "An array of service names to include in this worker. Service names must be listed in fluence.yaml",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "spells": {
+              "description": "An array of spell names to include in this worker. Spell names must be listed in fluence.yaml",
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "minWorkers": {
+              "type": "number",
+              "description": "Required workers to activate the deal",
+              "default": 1,
+              "nullable": true,
+              "minimum": 1
+            },
+            "targetWorkers": {
+              "type": "number",
+              "description": "Max workers in the deal",
+              "default": 3,
+              "nullable": true,
+              "minimum": 1
+            }
+          },
+          "required": []
+        }
+      },
+      "required": []
+    },
+    "spells": {
+      "type": "object",
+      "nullable": true,
+      "description": "A map with spell names as keys and spell configs as values",
+      "additionalProperties": {
+        "type": "object",
+        "description": "Spell config",
+        "properties": {
+          "get": {
+            "type": "string",
+            "description": "Path to spell"
+          },
+          "version": {
+            "type": "number",
+            "const": 0
+          },
+          "aquaFilePath": {
+            "type": "string",
+            "description": "Path to Aqua file which contains an Aqua function that you want to use as a spell",
+            "nullable": true
+          },
+          "function": {
+            "type": "string",
+            "description": "Name of the Aqua function that you want to use as a spell",
+            "nullable": true
+          },
+          "initArgs": {
+            "type": "object",
+            "description": "A map of Aqua function arguments names as keys and arguments values as values. They will be passed to the spell function and will be stored in the key-value storage for this particular spell.",
+            "nullable": true
+          },
+          "clock": {
+            "type": "object",
+            "nullable": true,
+            "description": "Trigger the spell execution periodically. If you want to disable this property by overriding it in fluence.yaml - pass empty config for it like this: `clock: {}`",
+            "properties": {
+              "periodSec": {
+                "type": "number",
+                "description": "How often the spell will be executed. If set to 0, the spell will be executed only once. If this value not provided at all - the spell will never be executed",
+                "minimum": 0,
+                "maximum": 3153600000,
+                "nullable": true
+              },
+              "startTimestamp": {
+                "type": "string",
+                "description": "An ISO timestamp when the periodic execution should start. If this property or `startDelaySec` not specified, periodic execution will start immediately. If it is set to 0 - the spell will never be executed",
+                "nullable": true
+              },
+              "endTimestamp": {
+                "type": "string",
+                "description": "An ISO timestamp when the periodic execution should end. If this property or `endDelaySec` not specified, periodic execution will never end. If it is in the past at the moment of spell creation on Rust peer - the spell will never be executed",
+                "nullable": true
+              },
+              "startDelaySec": {
+                "type": "number",
+                "description": "How long to wait before the first execution in seconds. If this property or `startTimestamp` not specified, periodic execution will start immediately. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. This property conflicts with `startTimestamp`. You can specify only one of them",
+                "nullable": true,
+                "minimum": 0,
+                "maximum": 4294967295
+              },
+              "endDelaySec": {
+                "type": "number",
+                "description": "How long to wait before the last execution in seconds. If this property or `endTimestamp` not specified, periodic execution will never end. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. If it is in the past at the moment of spell creation - the spell will never be executed. This property conflicts with `endTimestamp`. You can specify only one of them",
+                "nullable": true,
+                "minimum": 0,
+                "maximum": 4294967295
+              }
+            },
+            "required": []
+          }
+        },
+        "required": [
+          "get"
+        ]
+      },
+      "properties": {
+        "Spell_name": {
+          "type": "object",
+          "description": "Spell config",
+          "properties": {
+            "get": {
+              "type": "string",
+              "description": "Path to spell"
+            },
+            "version": {
+              "type": "number",
+              "const": 0
+            },
+            "aquaFilePath": {
+              "type": "string",
+              "description": "Path to Aqua file which contains an Aqua function that you want to use as a spell",
+              "nullable": true
+            },
+            "function": {
+              "type": "string",
+              "description": "Name of the Aqua function that you want to use as a spell",
+              "nullable": true
+            },
+            "initArgs": {
+              "type": "object",
+              "description": "A map of Aqua function arguments names as keys and arguments values as values. They will be passed to the spell function and will be stored in the key-value storage for this particular spell.",
+              "nullable": true
+            },
+            "clock": {
+              "type": "object",
+              "nullable": true,
+              "description": "Trigger the spell execution periodically. If you want to disable this property by overriding it in fluence.yaml - pass empty config for it like this: `clock: {}`",
+              "properties": {
+                "periodSec": {
+                  "type": "number",
+                  "description": "How often the spell will be executed. If set to 0, the spell will be executed only once. If this value not provided at all - the spell will never be executed",
+                  "minimum": 0,
+                  "maximum": 3153600000,
+                  "nullable": true
+                },
+                "startTimestamp": {
+                  "type": "string",
+                  "description": "An ISO timestamp when the periodic execution should start. If this property or `startDelaySec` not specified, periodic execution will start immediately. If it is set to 0 - the spell will never be executed",
+                  "nullable": true
+                },
+                "endTimestamp": {
+                  "type": "string",
+                  "description": "An ISO timestamp when the periodic execution should end. If this property or `endDelaySec` not specified, periodic execution will never end. If it is in the past at the moment of spell creation on Rust peer - the spell will never be executed",
+                  "nullable": true
+                },
+                "startDelaySec": {
+                  "type": "number",
+                  "description": "How long to wait before the first execution in seconds. If this property or `startTimestamp` not specified, periodic execution will start immediately. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. This property conflicts with `startTimestamp`. You can specify only one of them",
+                  "nullable": true,
+                  "minimum": 0,
+                  "maximum": 4294967295
+                },
+                "endDelaySec": {
+                  "type": "number",
+                  "description": "How long to wait before the last execution in seconds. If this property or `endTimestamp` not specified, periodic execution will never end. WARNING! Currently your computer's clock is used to determine a final timestamp that is sent to the server. If it is in the past at the moment of spell creation - the spell will never be executed. This property conflicts with `endTimestamp`. You can specify only one of them",
+                  "nullable": true,
+                  "minimum": 0,
+                  "maximum": 4294967295
+                }
+              },
+              "required": []
+            }
+          },
+          "required": [
+            "get"
+          ]
+        }
+      },
+      "required": []
+    },
+    "aquaImports": {
+      "type": "array",
+      "description": "A list of path to be considered by aqua compiler to be used as imports. First dependency in the list has the highest priority. Priority of imports is considered in the following order: imports from --import flags, imports from aquaImports property in fluence.yaml, project's .fluence/aqua dir, npm dependencies from fluence.yaml, npm dependencies from user's .fluence/config.yaml, npm dependencies recommended by fluence",
+      "items": {
+        "type": "string"
+      },
+      "nullable": true
+    },
+    "marineBuildArgs": {
+      "type": "string",
+      "description": "Space separated `cargo build` flags and args to pass to marine build. Can be overridden using --marine-build-args flag Default: --release",
+      "nullable": true
+    },
+    "cliVersion": {
+      "type": "string",
+      "description": "The version of the Fluence CLI that is compatible with this project. Set this to enforce a particular set of versions of all fluence components",
+      "nullable": true
+    },
+    "ipfsAddr": {
+      "type": "string",
+      "description": "IPFS multiaddress to use when uploading workers with 'deal deploy'. Default: /dns4/ipfs.fluence.dev/tcp/5001 or /ip4/127.0.0.1/tcp/5001 if using local local env (for 'workers deploy' IPFS address provided by relay that you are connected to is used)",
+      "nullable": true,
+      "default": "/dns4/ipfs.fluence.dev/tcp/5001"
+    },
+    "customFluenceEnv": {
+      "type": "object",
+      "description": "Custom Fluence environment to use when connecting to Fluence network",
+      "nullable": true,
+      "properties": {
+        "contractsEnv": {
+          "type": "string",
+          "description": "Contracts environment to use for this fluence network to sign contracts on the blockchain",
+          "enum": [
+            "kras",
+            "testnet",
+            "stage",
+            "local"
+          ]
+        },
+        "relays": {
+          "type": "array",
+          "description": "List of custom relay multiaddresses to use when connecting to Fluence network",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "contractsEnv",
+        "relays"
+      ]
+    },
+    "defaultSecretKeyName": {
+      "description": "Secret key with this name will be used by default by js-client inside CLI to run Aqua code",
+      "type": "string",
+      "nullable": true
+    },
+    "relaysPath": {
+      "description": "Path to the directory where you want relays.json file to be generated. Must be relative to the project root dir. This file contains a list of relays to use when connecting to Fluence network and depends on the default environment that you use in your project",
+      "type": "string",
+      "nullable": true
+    }
+  },
+  "required": [
+    "version"
+  ],
+  "$id": "https://fluence.dev/schemas/fluence.yaml",
+  "title": "fluence.yaml",
+  "description": "Defines Fluence Project, most importantly - what exactly you want to deploy and how. You can use `fluence init` command to generate a template for new Fluence project"
+}

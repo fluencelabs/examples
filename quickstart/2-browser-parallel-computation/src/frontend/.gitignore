@@ -1,0 +1,10 @@
+.idea
+.DS_Store
+/.fluence/project-secrets.yaml
+/.fluence/schemas
+**/node_modules
+**/target/
+.repl_history
+.vscode/settings.json
+
+src/compiled-aqua/

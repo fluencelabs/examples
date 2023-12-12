@@ -1,0 +1,60 @@
+import Subnet, Worker from "@fluencelabs/aqua-lib/subnet.aqua"
+
+-- 'use' clause brings Deal service into the scope
+use "deals.aqua"
+
+-- this 'import' brings every aqua service declaration into the scope
+import "services.aqua"
+
+-- Function to get all workers from subnet
+func resolveSubnet() -> []Worker:
+    -- Getting deal id of deployed deal to resolve subnet
+    deals <- Deals.get()
+    dealId = deals.defaultWorker!.dealIdOriginal
+
+    -- Subnets cannot be resolved on local (client) peers, e.g., the CLI client or the browser. Instead, a subnet needs to be resolved on a relay.
+    on HOST_PEER_ID:
+        -- Resolving subnets using Deal id of deployed service
+        subnet <- Subnet.resolve(dealId)
+    <- subnet.workers
+
+-- This data structure represents the aqua function that is calling the worker via the frontend.
+data ComputationRequest:
+    worker_id: string
+    host_id: string
+    value: u64
+
+-- Executes single computation request
+func add_one_single(request: ComputationRequest) -> u64:
+    -- Extracting worker and host for execution service request
+    on request.worker_id via request.host_id:
+        -- Service execution
+        res <- Adder.add_one(request.value)
+    -- Returning result from function
+    <- res
+
+func add_one_sequential(requests: []ComputationRequest) -> *u64:
+    -- Stream for keeping all computation results
+    results: *u64
+
+    -- Iterating over every computation request, one by one
+    for request <- requests:
+        on request.worker_id via request.host_id:
+            res <- Adder.add_one(request.value)
+            results <<- res
+
+    <- results
+
+func add_one_parallel(requests: []ComputationRequest) -> *u64:
+    results: *u64
+
+    -- Starting a parallel computation. Cycle body called in parallel
+    for request <- requests par:
+        on request.worker_id via request.host_id:
+            res <- Adder.add_one(request.value)
+            results <<- res
+
+    -- waiting for all parallel calls to finish
+    join results[requests.length - 1]
+
+    <- results

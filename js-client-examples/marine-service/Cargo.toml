@@ -1,0 +1,2 @@
+[workspace]
+members = [ "src/services/myService/modules/myService" ]

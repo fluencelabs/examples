@@ -1,0 +1,14 @@
+import Srv from "./srv.aqua"
+
+export hello as my_hello
+
+service Greeting:
+  greeting(name: string) -> string
+
+service Debug("debug"):
+  stringify(message: string)
+
+func hello(name: string, wasm_content: string) -> string:
+    created_service <- Srv.create(wasm_content)
+    Greeting created_service.service_id!
+    <- Greeting.greeting(name)
