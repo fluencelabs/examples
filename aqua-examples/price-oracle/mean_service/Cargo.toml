@@ -11,7 +11,7 @@ name = "mean_service"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = "0.10.1"
+marine-rs-sdk = "0.14.0"
 log = "0.4.14"
 
 [dev]
