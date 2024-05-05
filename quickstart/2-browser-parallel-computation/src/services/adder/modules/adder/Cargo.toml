@@ -8,7 +8,7 @@ name = "adder"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = "0.10.0"
+marine-rs-sdk = "0.14.0"
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.10.0"
+marine-rs-sdk-test = "0.16.0"
