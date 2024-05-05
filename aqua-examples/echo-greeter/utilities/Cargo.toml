@@ -11,11 +11,11 @@ name = "utilities"
 path = "src/main.rs"
 
 [dependencies]
-marine-rs-sdk = { version = "0.10.1", features = ["logger"] }
+marine-rs-sdk = { version = "0.14.0", features = ["logger"] }
 log = "0.4.14"
 
 [dev-dependencies]
-marine-rs-sdk-test = "0.11.0"
+marine-rs-sdk-test = "0.16.0"
 
 [dev]
 [profile.release]
